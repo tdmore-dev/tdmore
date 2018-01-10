@@ -40,17 +40,13 @@ ipred <- model %>%
 
 print(summary(ipred))
 
-profile <- profile(fit, maxpts=20)
+profile <- profile(ipred, maxpts=20)
 ggplot(profile, aes(x=ETA1, y=ETA2, z=logLik)) + geom_contour()
 
 newdata = data.frame(TIME=seq(0, 12, length.out=50), CONC=NA)
 
-ggplot(fit %>% predict(newdata), aes(x=TIME, y=CONC)) +
+ggplot(ipred %>% predict(newdata), aes(x=TIME, y=CONC)) +
   geom_line(aes(color="Fit")) +
-  geom_ribbon(aes(fill="Fit (95% CI)", ymin=CONC.lower, ymax=CONC.upper), data=fit %>% predict(newdata, se.fit=TRUE), alpha=0.3)+
+  geom_ribbon(aes(fill="Fit (95% CI)", ymin=CONC.lower, ymax=CONC.upper), data=ipred %>% predict(newdata, se.fit=TRUE), alpha=0.3)+
   geom_line(aes(color="Population"), data=pred %>% predict(newdata)) +
   geom_point(aes(color="Observed"), data=observed)
-
-
-
-
