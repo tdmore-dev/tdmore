@@ -1,3 +1,4 @@
+## Goal: test defining structural model using RxODE
 library(testthat)
 library(tdmore)
 context("Test that the Model class works as intended")
@@ -23,27 +24,38 @@ d/dt(abs) = -ka*abs;
 d/dt(centr) = ka*abs - k12*perip + k21*perip - ke*centr;
 d/dt(perip) = k12*perip - k21*perip;
 "
-mod1 <- RxODE::RxODE(modelCode)
-tmt <- data.frame(
-  EVID=2,
+model <- RxODE::RxODE(modelCode)
 
-)
 
-myModel <- Model(
-  predict=function(times, estimates=c(ETA1=0, ETA2=0)) {
-    observed <- data.frame(time=times)
-    ev <- eventTable()
-    ev$add.dosing(dose=5, nbr.doses=10, dosing.interval = 24)
-    ev$add.sampling(time=observed$time)
-    res <- myRxODEModel$solve(params=c(observed[1,], estimates), events=ev, inits=c(0, 0, 0))
-    if(!is.matrix(res)) {
-      res <- matrix(res, nrow=1, dimnames = list(NULL, names(res)))
-    }
-    res %>% as.data.frame()
-  },
-  parameters=myRxODEModel$get.modelVars()$params,
-  propSigma = 0.23 #23%
+regimen <- data.frame(
+  TIME=seq(0, 7)*24,
+  AMT=5 #5mg
 )
+observed <- data.frame(TIME=2, CONC=0.04)
+
+pred <- model %>%
+  tdmore(prop=0.23) %>%
+  estimate(regimen=regimen)
+
+fit <- model %>%
+  tdmore(prop=0.23) %>%
+  estimate(observed, regimen)
+
+confint(fit)
+profile <- profile(fit, maxpts=20)
+ggplot(profile, aes(x=ETA1, y=ETA2, z=logLik)) + geom_contour()
+
+newdata = data.frame(TIME=seq(0, 12, length.out=50), CONC=NA)
+ggplot(fit %>% predict(newdata), aes(x=TIME, y=CONC)) +
+  geom_line(aes(color="Fit")) +
+  geom_point(aes(color="Observed"), data=observed) +
+  geom_line(aes(color="Population"), data=pred %>% predict(newdata))
+
+ggplot()
+
+stop("STOP")
+
+
 
 trueParam <- c(ETA1=0.4, ETA2=-0.3)
 true <- myModel %>% predict(times=seq(0, 48), estimate=trueParam)
