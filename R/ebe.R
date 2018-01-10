@@ -27,6 +27,7 @@ ll <- function(estimate, tdmore, observed, regimen) {
 #'
 #' @return
 #' @export
+#' @S3method
 #'
 #' @examples
 estimate <- function(tdmore, observed=data.frame(), regimen, ...) {
@@ -63,33 +64,101 @@ estimate <- function(tdmore, observed=data.frame(), regimen, ...) {
     ), class=c("tdmorefit"))
 }
 
-
-# Good generics
-#    profile         residuals
-#terms
+#' Title
+#'
+#' @param tdmorefit
+#'
+#' @return
+#' @export
+#' @S3method
+#'
+#' @examples
 summary.tdmorefit <- function(tdmorefit) {
   cat("Fit of model to ", nrow(tdmorefit$observed), " points of data\n")
-  cat("OFV = ", tdmorefit$ofv, "\n")
-  cat("Point estimate: ", tdmorefit$res, "\n")
-  cat("Variance/covariance matrix: ", tdmorefit$varcov, "\n")
+  cat("LogLikelihood = ", logLik(tdmorefit), "\n")
+  cat("Point estimate: ", coef(tdmorefit), "\n")
+  cat("Variance/covariance matrix: ", vcov(tdmorefit), "\n")
 }
 
+#' Title
+#'
+#' @param tdmorefit
+#'
+#' @return
+#' @export
+#' @S3method
+#'
+#' @examples
 coef.tdmorefit <- function(tdmorefit) {tdmorefit$res}
+#' Title
+#'
+#' @param tdmorefit
+#'
+#' @return
+#' @S3method
+#' @export
+#'
+#' @examples
 vcov.tdmorefit <- function(tdmorefit) {tdmorefit$varcov}
-confint.tdmorefit <- confint.default
 
+#' @S3method
+confint.tdmorefit <- function(tdmorefit) {
+  confint.default(tdmorefit)
+}
+
+#' @S3method
 fitted.tdmorefit <- function(tdmorefit) {
   predict.tdmore(tdmorefit$tdmore, tdmorefit$observed, tdmorefit$regimen, tdmorefit$res)
 }
 
-predict.tdmorefit <- function(tdmorefit, newdata, se.fit=FALSE, level=0.95) {
-  ## TODO: error checking of newdata?
+
+#' Title
+#'
+#' @param tdmorefit
+#' @param newdata
+#' @param se.fit
+#' @param level
+#' @param maxpts
+#'
+#' @return
+#' @S3method
+#' @export
+#'
+#' @examples
+predict.tdmorefit <- function(tdmorefit, newdata, se.fit=FALSE, level=0.95, maxpts=100) {
   assert_that("TIME" %in% colnames(newdata))
-  predict.tdmore(tdmorefit$tdmore, newdata, tdmorefit$regimen, tdmorefit$res, se=se.fit)
+
+  if(se.fit) {
+    oNames <- names(newdata)
+    oNames <- oNames[oNames != "TIME"]
+    pNames <- names(coef(tdmorefit))
+    mc <- as.data.frame( mnormt::rmnorm(maxpts, mean=coef(tdmorefit), varcov=vcov(tdmorefit)) )
+    mc$subject <- 1:maxpts
+    fittedMC <- plyr::ddply(mc, 1, function(row) {
+      res <- row[pNames]
+      pred <- predict.tdmore(tdmorefit$tdmore, newdata, tdmorefit$regimen, unlist(res))
+      pred$subject <- row$subject
+      pred
+    }, .progress="text")
+    a <- (1-level)/2
+    plyr::ddply(fittedMC, .(TIME), function(x) {
+      result <- list(TIME = x$TIME[1])
+      for(i in oNames) {
+        result[i] <- median(x[,i])
+        result[paste0(i, ".lower")] <- quantile(x[,i], probs=a)
+        result[paste0(i, ".upper")] <- quantile(x[,i], probs=1-a)
+      }
+      unlist(result)
+    })
+  } else {
+    predict.tdmore(tdmorefit$tdmore, newdata, tdmorefit$regimen, tdmorefit$res)
+  }
 }
 
+#' @S3method
 logLik.tdmorefit <- function(tdmorefit) {tdmorefit$logLik}
 
+#' @S3method
 profile.tdmorefit <- function(tdmorefit, which = 1:npar, maxpts = 100, limits=c(-1.96, 1.96)) {
   model <- tdmorefit$tdmore
   x <- seq(limits[1], limits[2], length.out=maxpts)
@@ -103,18 +172,3 @@ profile.tdmorefit <- function(tdmorefit, which = 1:npar, maxpts = 100, limits=c(
 
 
 
-
-## TODO: add an argument 'interval' to predict and 'maxpts'
-predictMC.EstimationResult <- function(estimationResult, times, N=100) {
-  mc <- mnormt::rmnorm(N, mean=estimationResult$res, varcov=estimationResult$varcov) %>% as.data.frame()
-  model <- estimationResult$model
-  colnames(mc) <- model$parameters
-  mc$subject <- 1:N
-  fittedMC <- plyr::ddply(mc, 1, function(res) {
-    res <- res[names(res) != "subject"]
-    pred <- predict.TDM.Model(model, estimates=res, times=times) %>% as.data.frame
-    pred$subject <- res$subject
-    pred
-  }, .progress="text")
-  fittedMC
-}
