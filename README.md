@@ -16,6 +16,7 @@ This example code uses `RxODE` to define the model.
 ```R
 library(RxODE)
 library(ggplot2)
+library(tdmore)
 
 modelCode <- "
 CL = 3.7 * exp(ETA1*0.19);
