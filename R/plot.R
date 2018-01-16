@@ -1,5 +1,12 @@
 
-plot.tdmorefit <- function(tdmorefit, newdata, .progress="none") {
+plot.tdmorefit <- function(tdmorefit, newdata=NULL, .progress="none") {
+  if(is.null(newdata)) {
+    newdata <- data.frame(TIME=seq(0, max(tdmorefit$observed$TIME), length.out=100))
+    for(i in colnames(tdmorefit$observed)) {
+      if(i == "TIME") next
+      newdata[, i] <- NA
+    }
+  }
   oNames <- names(newdata)
   oNames <- oNames[oNames != "TIME"]
   melt <- function(x, measure.vars=oNames, se=FALSE) {

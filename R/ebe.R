@@ -20,14 +20,13 @@ ll <- function(estimate, tdmore, observed, regimen) {
 #' Calculate the Emperical Bayesian Estimated parameters that predict
 #' a given dataset using the model
 #'
-#' @param model
-#' @param observed
-#' @param ...
-#' Extra parameters to pass to nlm
+#' @param model a tdmore object
+#' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
+#' @param regimen data frame
+#' @param ... Extra parameters to pass to nlm
 #'
 #' @return
 #' @export
-#' @S3method
 #'
 #' @examples
 estimate <- function(tdmore, observed=data.frame(), regimen, print.level=0, ...) {

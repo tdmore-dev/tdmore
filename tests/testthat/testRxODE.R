@@ -37,6 +37,9 @@ observed <- data.frame(TIME=2, CONC=0.04)
 ipred <- model %>%
   estimate(observed, regimen)
 
+## Predict concentration for regimen on standard population
+#pred <- model %>% estimate(regimen=regimen) %>% predict(observed, se.fit=TRUE, level=0.95)
+
 print(summary(ipred))
 
 z <- ggplot(ipred %>% profile(maxpts=20), aes(x=ETA1, y=ETA2, z=logLik)) + geom_contour()
