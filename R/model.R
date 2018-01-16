@@ -55,7 +55,7 @@ model_predict.RxODE <- function(model, observed, regimen=data.frame(TIME=c()), p
   assert_that(all(modVars$params %in% pNames))
 
   # All arguments look good, let's prepare the simulation
-  ev <- eventTable()
+  ev <- RxODE::eventTable()
   ev$add.sampling(time=observed$TIME)
   for(i in 1:nrow(regimen)) {
     row <- regimen[i, ,drop=FALSE]
@@ -116,9 +116,9 @@ tdmore <- function(model, parameters=NULL, add=0, prop=0, exp=0) {
 }
 
 
-predict.tdmore <- function(tdmore, observed, regimen, parameters, se=FALSE) {
-  ## TODO: add se functionality
-  model_predict(tdmore$model, observed, regimen, parameters)
+predict.tdmore <- function(tdmore, observed, regimen, parameters, se=FALSE, level=0.95) {
+  predicted <- model_predict(tdmore$model, observed, regimen, parameters)
+  model.frame.tdmore(tdmore, predicted, se=se, level=level)
 }
 
 residuals.tdmore <- function(tdmore, observed, predicted, log=TRUE) {
@@ -140,3 +140,26 @@ residuals.tdmore <- function(tdmore, observed, predicted, log=TRUE) {
     )
   }
 }
+
+model.frame.tdmore <- function(tdmore, observed, se=FALSE, level=0.95) {
+  if(!se) return(observed)
+  oNames <- colnames(observed)
+  oNames <- oNames[oNames != "TIME"]
+  a <- (1 - level) / 2
+  q <- qnorm(a)
+  res <- tdmore$res_var
+  for(n in oNames) {
+    obs <- observed[, n]
+    if(res$exp != 0) {
+      observed[, paste0(n, ".upper")] <- obs * exp(res$exp * q)
+      observed[, paste0(n, ".lower")] <- obs * exp(-res$exp * q)
+    } else {
+      observed[, paste0(n, ".upper")] <- obs * (1 + res$prop*q) + res$add*q
+      observed[, paste0(n, ".lower")] <- obs * (1 - res$prop*q) - res$add*q
+    }
+  }
+
+  observed
+}
+
+formula.tdmore <- function(tdmore) {tdmore$model}
