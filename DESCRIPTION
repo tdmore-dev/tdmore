@@ -1,13 +1,17 @@
 Package: tdmore
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Bayesian Therapeutic Drug Monitoring Framework
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-Imports: assertthat, mnormt, plyr, numDeriv, reshape
-License: What license is it under?
+Author: Ruben Faelens <ruben.faelens@sgs.com>
+Maintainer: Ruben Faelens <ruben.faelens@sgs.com>
+Description: Easily define a Nonlinear Mixed-Effects Model,
+    predict individual posthoc parameters with uncertainty, and
+    explore new dosing regimen in a user-defined search space. 
+    Finally, select the best dose and present this to the clinician.
+    Provide value by automatically generating a Shiny app for use
+    in a clinical setting.
+Imports: assertthat, mnormt, plyr, numDeriv, reshape, stats, RxODE, ggplot2, magrittr, gridExtra
+License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat

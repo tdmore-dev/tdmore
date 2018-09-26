@@ -1,14 +1,10 @@
 ## Goal: test defining structural model using RxODE
 rm(list=ls(all=T))
 library(testthat)
-library(tdmore)
 context("Test that the Model class works as intended")
 
 library(RxODE)
-library(plyr)
-library(dplyr)
-library(ggplot2)
-
+## TODO: this does not compile correctly in R CMD CHECK, NOOOOOO :-(
 modelCode <- "
 CL = 3.7 * exp(ETA1*0.19);
 Vc = 61 * exp(ETA2*0.28);
@@ -34,17 +30,9 @@ regimen <- data.frame(
 )
 observed <- data.frame(TIME=2, CONC=0.04)
 
-ipred <- model %>%
-  estimate(observed, regimen)
+pred <- model %>% estimate(regimen=regimen)
 
-## Predict concentration for regimen on standard population
-#pred <- model %>% estimate(regimen=regimen) %>% predict(observed, se.fit=TRUE, level=0.95)
-
-print(summary(ipred))
-
-z <- ggplot(ipred %>% profile(maxpts=20), aes(x=ETA1, y=ETA2, z=logLik)) + geom_contour()
-print(z)
-
+ipred <- model %>% estimate(observed, regimen)
+pred %>% predict()
+ipred %>% predict()
 newdata = data.frame(TIME=seq(0, 12, length.out=50), CONC=NA)
-z <- plot.tdmorefit(ipred, newdata, .progress="text")
-print(z)

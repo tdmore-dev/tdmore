@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 tdmore.d/**
+man/**
 rx_*
