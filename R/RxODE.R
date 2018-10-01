@@ -2,6 +2,7 @@
 #'
 #' @param model the RxODE model
 #' @param parameters list of parameter names, or NULL to use all parameters names from RxODE
+#' @param omega omega variance-covariance matrix, or NULL to use a diagonal matrix of variances 1
 #' @param add additive residual error, as stdev
 #' @param prop proportional residual error, as stdev
 #' @param exp exponential residual error, as stdev. The exponential error cannot be used in conjunction with the additive or proportional error
@@ -11,7 +12,7 @@
 #' @export
 #'
 #' @example inst/examples/RxODE.R
-tdmore.RxODE <- function(model, parameters=NULL, covariates=NULL, add=0, prop=0, exp=0, ...) {
+tdmore.RxODE <- function(model, parameters=NULL, omega=NULL, covariates=NULL, add=0, prop=0, exp=0, ...) {
   assert_that(class(model) %in% c("RxODE")) #currently, only RxODE is supported
 
   # Check that parameters + covariates together supplies the parameters needed for the model
@@ -20,6 +21,11 @@ tdmore.RxODE <- function(model, parameters=NULL, covariates=NULL, add=0, prop=0,
   if(is.null(covariates)) covariates = modVars$params[ ! modVars$params %in% parameters ] #the rest
 
   assert_that( all.equal( sort(c(parameters, covariates)), sort(modVars$params)) )
+
+  if(is.null(omega)) omega = diag(rep(1, length(parameters)))
+  assertthat::are_equal(nrow(omega), length(parameters))
+  assertthat::are_equal(ncol(omega), length(parameters))
+  assertthat::assert_that(all( eigen(omega)$values >= 0)) #matrix should be positive semi-definite
 
   assertthat::is.number(add)
   assertthat::is.number(prop)
@@ -30,6 +36,7 @@ tdmore.RxODE <- function(model, parameters=NULL, covariates=NULL, add=0, prop=0,
 
   structure(list(
     model=model,
+    omega=omega,
     res_var=list(add=add, prop=prop, exp=exp),
     parameters=parameters,
     extraArguments=list(...)

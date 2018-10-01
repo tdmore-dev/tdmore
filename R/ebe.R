@@ -1,6 +1,6 @@
 # The functions here are used to calculate an emperical bayesian estimate
-pop_ll <- function(estimate) {
-  sum( dnorm(estimate, log=TRUE ) )
+pop_ll <- function(estimate, omega) {
+  sum( mvtnorm::dmvnorm(estimate, sigma=omega, log=TRUE) )
 }
 
 pred_ll <- function(estimate, tdmore, observed, regimen, covariates) {
@@ -12,7 +12,7 @@ pred_ll <- function(estimate, tdmore, observed, regimen, covariates) {
 
 ll <- function(estimate, tdmore, observed, regimen, covariates) {
   if(is.null(names(estimate))) names(estimate) <- tdmore$parameters #you should support named parameters as well!
-  res <- pop_ll(estimate) + pred_ll(estimate, tdmore, observed, regimen, covariates)
+  res <- pop_ll(estimate, tdmore$omega) + pred_ll(estimate, tdmore, observed, regimen, covariates)
   res
 }
 
