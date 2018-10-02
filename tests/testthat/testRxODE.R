@@ -18,9 +18,10 @@ ke=CL/Vc;
 CONC = centr / Vc;
 
 d/dt(abs) = -ka*abs;
-d/dt(centr) = ka*abs - k12*perip + k21*perip - ke*centr;
-d/dt(perip) = k12*perip - k21*perip;
+d/dt(centr) = ka*abs - k12*centr + k21*perip - ke*centr;
+d/dt(perip) = k12*centr - k21*perip;
 "
+
 model <- RxODE::RxODE(modelCode) %>%
   tdmore(prop=0.23) #Model has 23% proportional error
 
@@ -33,6 +34,8 @@ observed <- data.frame(TIME=2, CONC=0.04)
 pred <- model %>% estimate(regimen=regimen)
 
 ipred <- model %>% estimate(observed, regimen)
+
 pred %>% predict()
 ipred %>% predict()
+
 newdata = data.frame(TIME=seq(0, 12, length.out=50), CONC=NA)
