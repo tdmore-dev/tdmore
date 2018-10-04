@@ -1,4 +1,5 @@
-# The functions here are used to calculate an emperical bayesian estimate
+#' The functions here are used to calculate an emperical bayesian estimate
+#' @importFrom mvtnorm dmvnorm
 pop_ll <- function(estimate, omega) {
   sum( mvtnorm::dmvnorm(estimate, sigma=omega, log=TRUE) )
 }

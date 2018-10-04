@@ -3,10 +3,9 @@
 #' @param model the nlmixr UI object
 #' @param ... extra arguments will be passed to the model_predict call
 #'
-#' @return An object of class tdmore, which can be used to estimate posthoc Bayesian parameters
+#' @return An object of class tdmore, which can be used to estimate posthoc Bayesian parameters.
+#' The model contained within is actually an RxODE object.
 #' @export
-#'
-#' @example inst/examples/RxODE.R
 tdmore.nlmixrUI <- function(model, ...) {
   assert_that(class(model) %in% c("nlmixrUI"))
 
