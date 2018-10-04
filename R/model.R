@@ -18,7 +18,7 @@ model_predict <- function(model, newdata, regimen, parameters, covariates, extra
 }
 
 # Main API ----------------------------------------------------------------
-#' Create a new TDM model
+#' Create a new TDM model based on the RxODE model
 #'
 #' @param model The model itself
 #' @param parameters character vector of parameter names, or NULL to auto-detect
@@ -32,6 +32,19 @@ model_predict <- function(model, newdata, regimen, parameters, covariates, extra
 #'
 #' @example inst/examples/RxODE.R
 tdmore <- function(model, parameters=NULL, add=0, prop=0, exp=0, ...) {
+  UseMethod("tdmore")
+}
+
+#' Create a new TDM model based on the nlmixr model
+#'
+#' @param model the nlmixr UI object
+#' @param ... extra arguments
+#'
+#' @return An object of class tdmore, which can be used to estimate posthoc Bayesian parameters
+#' @export
+#'
+#' @example inst/examples/nlmixr.R
+tdmore <- function(model, ...) {
   UseMethod("tdmore")
 }
 
