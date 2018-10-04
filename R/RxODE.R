@@ -94,7 +94,7 @@ model_predict.RxODE <- function(model, newdata, regimen=data.frame(TIME=c()), pa
 
   assert_that("data.frame" %in% class(regimen))
   assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
-  assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "CMT", "II", "ADDL")))
+  assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "DURATION", "CMT", "II", "ADDL")))
   if("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))
     assert_that(all(c("II", "ADDL") %in% colnames(regimen)))
 
@@ -115,7 +115,12 @@ model_predict.RxODE <- function(model, newdata, regimen=data.frame(TIME=c()), pa
       #nbr.doses <- ceiling(duration / dosing.interval)
     }
 
-    if("RATE" %in% names(row)) rate = row$RATE
+    if(isTRUE(is.finite(row$RATE))) rate=row$RATE
+    if(isTRUE(is.finite(row$DURATION))) {
+      if(!is.null(rate)) stop("Cannot specify RATE and DURATION in the same treatment row ", i)
+      rate = row$AMT / row$DURATION
+    }
+
     if("CMT" %in% names(row)) dosing.to <- row$CMT
     ev$add.dosing(start.time = row$TIME,
                   dose=row$AMT,
