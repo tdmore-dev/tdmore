@@ -4,6 +4,8 @@ library(testthat)
 context("Test that the Model class works as intended")
 
 library(nlmixr)
+library(plyr)
+library(dplyr)
 
 modelCode <- function(){
   ini({
@@ -11,16 +13,14 @@ modelCode <- function(){
     TVV1 <- 61
     TVQ <- 10
     TVCL <- 3.7
-    OV1 <- 0.28
-    OCL <- 0.19
-    ECL ~ 1 # ETA1
-    EV1 ~ 1 #ETA2
+    ECL ~ 0.0784 #ETA1 sqrt(0.28)
+    EV1 ~ 0.0361 #ETA2 sqrt(0.19)
     EPS_PROP <- 0.23
   })
   model({
     KA <- TVKA
-    CL <- TVCL * (70/70)^0.75 * exp(ECL*OCL)
-    V1 <- TVV1 * exp(EV1*OV1)
+    CL <- TVCL * (WT/70)^0.75 * exp(ECL)
+    V1 <- TVV1 * exp(EV1)
     V2 <- V1
     Q <- TVQ
     K12 <- Q/V1
@@ -35,19 +35,43 @@ modelCode <- function(){
   })
 }
 
-model <-nlmixrUI(modelCode) %>% tdmore()
+model <- nlmixrUI(modelCode) %>% tdmore(covs_interpolation="constant")
 
 regimen <- data.frame(
-  TIME=seq(0, 7)*24,
+  TIME=seq(0, 1)*24,
   AMT=5 #5mg
 )
-observed <- data.frame(TIME=2, CONC=0.04)
 
-pred <- model %>% estimate(regimen=regimen)
-ipred <- model %>% estimate(observed, regimen)
+observed <- data.frame(TIME=c(2), CONC=c(0.040))
+covariates <- data.frame(TIME=c(0), WT=c(70))
 
-pred %>% predict()
-ipred %>% predict()
+# Compute PRED
+pred <- model %>% estimate(regimen = regimen, covariates = covariates)
+stopifnot(all.equal(pred$res, c(ECL=0.0, EV1=0.0)))
 
-newdata = data.frame(TIME=seq(0, 12, length.out=50), CONC=NA)
+# Compute IPRED
+ipred <- model %>% estimate(observed = observed, regimen = regimen, covariates = covariates)
+stopifnot(all.equal(round(ipred$res, digits=4), c(ECL=0.0336, EV1=0.1175)))
 
+# Custom plot, compare PRED & IPRED
+library(ggplot2)
+ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
+  geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 48, by=0.1))) +
+  geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 48, by=0.1)))
+
+# Plot IPRED
+plot(ipred, newdata=data.frame(TIME=seq(0, 48, by=0.1), CONC=NA))
+
+#----------------------------------------------------------------------
+
+observed <- data.frame(TIME=c(2,26), CONC=c(0.040, 0.0675))
+covariates <- data.frame(TIME=c(0), WT=c(70))
+
+# Compute new IPRED
+ipred <- model %>% estimate(observed = observed, regimen = regimen, covariates = covariates)
+
+# Plot IPRED
+plot(ipred, newdata=data.frame(TIME=seq(0, 48, by=0.1), CONC=NA))
+
+# Find dose test
+D <- findDose(ipred, regimen=regimen, target=data.frame(TIME=35, CONC=0.0395))

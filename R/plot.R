@@ -55,7 +55,7 @@ plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, se.obs=TRUE, mc.maxpts=
 
   ipred <- tdmorefit %>% predict(newdata) %>% melt
   ipredre <- tdmorefit %>% predict.tdmorefit(newdata, se.fit=TRUE, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% melt(se=TRUE)
-  pred <- estimate(tdmorefit$tdmore, regimen=tdmorefit$regimen) %>% predict(newdata) %>% melt
+  pred <- estimate(tdmorefit$tdmore, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates) %>% predict(newdata) %>% melt
   obs <- model.frame.tdmorefit(tdmorefit, se=TRUE, level=0.95) %>% melt(se=TRUE)
 
   z <- ggplot(mapping=aes_string(x="TIME", y="value")) +

@@ -28,9 +28,8 @@ tdmore_deSolve <- function(parameters, add=0, prop=0, exp=0, ...) {
 #' Predict for tdmore_deSolve
 #'
 #' @param model The model function
-#' @param observed
-#' A dataframe with at least a column 'TIME' and other values that should be observed,
-#' or a numeric TIME vector to produce all values that can be observed by this model
+#' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
+#' If not specified, we estimate the population prediction
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).
 #' @param parameters either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector
 #'

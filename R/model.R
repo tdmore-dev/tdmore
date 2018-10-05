@@ -46,8 +46,8 @@ tdmore.default <- function(model, ...) {
 #' @param newdata Data.frame of new data with at least a TIME column, and blank columns with all desired predictions
 #' or a numeric vector to predict all possible values from the model
 #' @param regimen Treatment regimen
-#' @param parameters The parameter values to use
-#' missing values are taken from the population
+#' @param parameters The parameter values to use, missing values are taken from the population
+#' @param covariates the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0
 #' @param se Whether to add residual error
 #' @param level How much residual error to add
 #' @param ... ignored

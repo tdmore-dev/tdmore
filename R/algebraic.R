@@ -118,6 +118,8 @@ algebraic <- function(predictFunction) {
 #' @param newdata dataframe with at least a column 'TIME' and other values. A prediction will be generated for each filled-in value.
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)
 #' @param parameters either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector
+#' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
+#' @param extraArguments named list with extra arguments to use for call
 #'
 #' @return
 #' A data.frame similar to the newdata data frame, but with predicted values.
@@ -163,6 +165,7 @@ model_predict.algebraic <- function(model, newdata, regimen=data.frame(TIME=c())
 #'
 #' @param model The algebraic model
 #' @param parameters Lits of parameters, should be NULL
+#' @param omega the omega matrix of the model
 #' @param add additive residual error, as stdev
 #' @param prop proportional residual error, as stdev
 #' @param exp exponential residual error, as stdev. The exponential error cannot be used in conjunction with the additive or proportional error

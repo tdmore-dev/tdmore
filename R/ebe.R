@@ -1,9 +1,23 @@
-#' The functions here are used to calculate an emperical bayesian estimate
-#' @importFrom mvtnorm dmvnorm
+#' Calculate the population log likelihood.
+#'
+#' @param estimate the current estimate of the parameters
+#' @param omega the omega matrix of the model
+#'
+#' @return the population log likelihood
 pop_ll <- function(estimate, omega) {
   sum( mvtnorm::dmvnorm(estimate, sigma=omega, log=TRUE) )
 }
 
+#' Calculate the prediction log likelihood.
+#'
+#' @param estimate the current estimate of the parameters
+#' @param tdmore the tdmore object
+#' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
+#' If not specified, we estimate the population prediction
+#' @param regimen data frame describing the treatment regimen.
+#' @param covariates the model covariates
+#'
+#' @return the prediction log likelihood
 pred_ll <- function(estimate, tdmore, observed, regimen, covariates) {
   if(is.null(observed) || nrow(observed) == 0) return(0)
   pred <- predict.tdmore(object=tdmore, newdata=observed, regimen=regimen, parameters=estimate, covariates=covariates)
@@ -11,6 +25,16 @@ pred_ll <- function(estimate, tdmore, observed, regimen, covariates) {
   sum(res)
 }
 
+#' Calculate the log likelihood as the sum of the population likelihood and the prediction likelihood.
+#'
+#' @param estimate the current estimate of the parameters
+#' @param tdmore the tdmore object
+#' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
+#' If not specified, we estimate the population prediction
+#' @param regimen data frame describing the treatment regimen.
+#' @param covariates the model covariates
+#'
+#' @return the log likelihood
 ll <- function(estimate, tdmore, observed, regimen, covariates) {
   if(is.null(names(estimate))) names(estimate) <- tdmore$parameters #you should support named parameters as well!
   res <- pop_ll(estimate, tdmore$omega) + pred_ll(estimate, tdmore, observed, regimen, covariates)
@@ -25,6 +49,7 @@ ll <- function(estimate, tdmore, observed, regimen, covariates) {
 #' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
 #' @param regimen data frame describing the treatment regimen.
+#' @param covariates the model covariates
 #' @param p optional starting parameter for the MLE minimization
 #' @param ... Extra parameters to pass to nlm
 #'
@@ -70,9 +95,11 @@ estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, p=NULL, ..
 #' @param tdmore the tdmore object
 #' @param observed the observed data.frame, or NULL
 #' @param regimen the treatment regimen data.frame
+#' @param covariates the model covariates
 #' @param ofv (optional) the OFV value
 #' @param res the found parameter values, as a named vector, or NULL to use 0
 #' @param varcov the found varcov matrix, or NULL to use a diagonal matrix
+#' @param nlmresult the result of the non-linear minimization
 #'
 #' @return A tdmorefit object, manually created
 #' @export
@@ -209,7 +236,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     for(i in names(parameters)) mc[, i] <- parameters[i]
     fittedMC <- plyr::ddply(mc, 1, function(row) {
       res <- row[pNames]
-      pred <- predict.tdmore(tdmorefit$tdmore, newdata, regimen, unlist(res))
+      pred <- predict.tdmore(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=unlist(res), covariates=covariates)
       cbind(row, pred)
       #pred$sample <- row$sample
       #pred

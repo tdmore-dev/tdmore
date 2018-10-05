@@ -3,6 +3,7 @@
 #' @param model the RxODE model
 #' @param parameters list of parameter names, or NULL to use all parameters names from RxODE
 #' @param omega omega variance-covariance matrix, or NULL to use a diagonal matrix of variances 1
+#' @param covariates the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0
 #' @param add additive residual error, as stdev
 #' @param prop proportional residual error, as stdev
 #' @param exp exponential residual error, as stdev. The exponential error cannot be used in conjunction with the additive or proportional error
@@ -51,6 +52,7 @@ tdmore.RxODE <- function(model, parameters=NULL, omega=NULL, covariates=NULL, ad
 #' or a numeric TIME vector to produce all values that can be observed by this model
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).
 #' @param parameters either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector
+#' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
 #' @param extraArguments extra arguments to use
 #'
 #' @export
