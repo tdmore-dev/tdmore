@@ -1,0 +1,122 @@
+---
+title: "TDMore, a global framework for Therapeutic Drug Monitoring (TDM)"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TDMore, a global framework for Therapeutic Drug Monitoring (TDM)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+![tdmore](tdmore_logo.JPG)
+
+# What's TDMore?
+
+TDMore is an R package that attemps to provide a global framework for making Therapeutic Drug Monitoring software. It is designed not only for the pharmacometricians but also for the physicians.
+
+# Creating your model
+
+There are several ways telling TDMore what your model is. The easiest way is to provide the model in the form of a nxlmir model. The following example shows how a 2-compartment-PK model can be written. For the purpose of this demonstration, the 'Meroponem' PK model will be used. As Meroponem is given by injection into a vein, the absorption compartment is omitted.
+
+```{r}
+library(nlmixr)
+
+modelCode <- function(){
+  ini({
+    TVV1 <- 24.4;
+    TVV2 <- 7.01;
+    TVQ <- 4.97;
+    TVCL <- 9.87;
+    ECL ~ 0.194 # This value corresponds to OMEGA_CL
+    EV1 ~ 0.287 # This value corresponds to OMEGA_V1
+    EPS_PROP <- 0.371
+  })
+  model({
+    CL <- TVCL * exp(ECL)
+    V1 <- TVV1 * exp(EV1)
+    V2 <- TVV2
+    Q <- TVQ
+    K12 <- Q/V1
+    K21 <- Q/V2
+
+    d/dt(center) = - CL/V1 * center - K12*center + K21 * periph
+    d/dt(periph) = K12*center - K21 * periph
+
+    CONC = center / V1
+    CONC ~ prop(EPS_PROP) # Proportional error linked to the PK model
+  })
+}
+
+```
+
+Once the model is created, a TDMore object can be instantiated as follows:
+
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
+library(tdmore)
+
+nlmixrUI <- nlmixrUI(modelCode)
+tdmore <- tdmore(nlmixrUI)
+```
+
+The TDMore object is now ready for use.
+
+# Predicting new data
+
+TDMore can be used to run simulations, based on the model defined in the previous step. For doing so, the regimen first needs to be specified. In the case of Meroponem, an 30-min injection is given into the central compartment every 8 hour. This can be written as follows:
+
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
+regimen <- data.frame(
+  TIME=seq(0, 3*8-1, by=8), # Every 8 hour and for 1 day, an injection is given
+  AMT=rep(1000, 3),         # 1g is administered
+  RATE=rep(1000, 3)/0.5     # 30-minute infusion (rate=dose/infusion time)
+)
+```
+
+Let's now simulating the population PK model for 1 day. This can be done using the TDMore predict() function.
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.align='center'}
+data <- predict(object = tdmore, newdata = seq(0, 24, by = 0.5), regimen = regimen)
+
+library(ggplot2)
+ggplot(data, aes(x=TIME, y=CONC)) + geom_point() +
+  geom_line(aes(color="Population"), data=data)
+
+```
+
+# Estimating individual parameters
+
+This section will show you how the individual parameters can be estimated, based on some observed data. Let's first estimate the parameters of a typical individual. This is achieved by calling the estimate() function.
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+pred <- estimate(tdmore = tdmore, regimen = regimen)
+result <- pred$res
+result
+```
+
+Both eta's ECL and EV1 have been estimated to 0. This is not surprising, as zero eta's best describe the population average.
+Now, let's assume blood samples have been collected for a subject X at different times. As an example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
+
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
+observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
+```
+
+We can ask TDMore to re-estimate the parameters for this specific individual:
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
+result <- ipred$res
+result
+```
+
+Both eta's from the res array maximises the likelihood for this specific subject. Predictions for the population (pred) and this specific subject can be compared by doing: 
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.align='center'}
+ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
+  geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 24, by=0.1))) +
+  geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 24, by=0.1)))
+```
+
+Default TDMore plotting function can also be used, as follows:
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.align='center'}
+plot(ipred, newdata=data.frame(TIME=seq(0, 24, by=0.1), CONC=NA))
+```

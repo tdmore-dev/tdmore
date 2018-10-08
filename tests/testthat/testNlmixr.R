@@ -4,8 +4,6 @@ library(testthat)
 context("Test that the Model class works as intended")
 
 library(nlmixr)
-library(plyr)
-library(dplyr)
 
 modelCode <- function(){
   ini({
