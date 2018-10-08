@@ -21,12 +21,10 @@ d/dt(abs) = -ka*abs;
 d/dt(centr) = ka*abs - k12*centr + k21*perip - ke*centr;
 d/dt(perip) = k12*centr - k21*perip;
 "
-omega <- diag(1,2)
-omega[1,1] <- 0.28^2
-omega[2,2] <- 0.19^2
+omegas=c(V=0.28^2, CL=0.19^2)
 
 model <- RxODE::RxODE(modelCode) %>%
-  tdmore(omega=omega, prop=0.23) #Model has 23% proportional error
+  tdmore(omega=convertVectorToDiag(omegas), prop=0.23) #Model has 23% proportional error
 
 regimen <- data.frame(
   TIME=seq(0, 7)*24,

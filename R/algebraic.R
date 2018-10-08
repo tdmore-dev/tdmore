@@ -2,9 +2,9 @@
 #' A function to predict concentration in a 1cpt PK model with bolus administration
 #'
 #' @param THETA a list(V=xx, CL=yy) with all typical values
-#' @param OMEGA a list(V=0.20, CL=0.30) with all standard deviations for IIV
+#' @param OMEGA a list(V=0.20, CL=0.30) with all variances describing IIV
 #'
-#' @return A function to predict PK 1cpt concentration, useable in algebraic()
+#' @return the algebraic definition to predict PK 1cpt concentration, useable in algebraic()
 #' @export
 #'
 #' @importFrom magrittr "%>%"
@@ -14,41 +14,43 @@
 #' model <- algebraic(predictFunction)
 #' tdmore <- tdmore(model)
 pk1cptivbolusVCL <- function(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30)) {
-  function(times, regimen, ETA_V, ETA_CL) {
-    assertthat::assert_that(all(colnames(regimen) == c("TIME", "AMT")))
-    V = THETA$V * exp(OMEGA$V * ETA_V)
-    CL = THETA$CL * exp(OMEGA$CL * ETA_CL)
-    k = CL / V
-    t = times
+  return(structure(list(
+    predictFunction = function(times, regimen, ETA_V, ETA_CL) {
+      assertthat::assert_that(all(colnames(regimen) == c("TIME", "AMT")))
+      V = THETA$V * exp(ETA_V)
+      CL = THETA$CL * exp(ETA_CL)
+      k = CL / V
+      t = times
 
-    CONC <- rep(0, length(times))
-    for(i in seq(1, nrow(regimen))) {
-      tD = regimen$TIME[i]
-      D = regimen$AMT[i]
-      II = regimen$II[i] # a number, 0, or NULL
-      if(II > 0) { # Keep repeating the dose until we are past the last observation time
-        nbrDoses <- row$ADDL
-        while(tD <= max(t) && nbrDoses > 0) {
+      CONC <- rep(0, length(times))
+      for(i in seq(1, nrow(regimen))) {
+        tD = regimen$TIME[i]
+        D = regimen$AMT[i]
+        II = regimen$II[i] # a number, 0, or NULL
+        if(!is.null(II) && II > 0) { # Keep repeating the dose until we are past the last observation time
+          nbrDoses <- row$ADDL
+          while(tD <= max(t) && nbrDoses > 0) {
+            CONC <- CONC + ifelse(t >= tD, D / V * exp(-k*(t-tD)), 0)
+            tD <- tD + II
+            nbrDoses <- nbrDoses - 1
+          }
+        } else {
+          # Single administration
           CONC <- CONC + ifelse(t >= tD, D / V * exp(-k*(t-tD)), 0)
-          tD <- tD + II
-          nbrDoses <- nbrDoses - 1
         }
-      } else {
-        # Single administration
-        CONC <- CONC + ifelse(t >= tD, D / V * exp(-k*(t-tD)), 0)
       }
-    }
-    CONC
-  }
+      return(CONC)
+      }
+    , omega = convertVectorToDiag(OMEGA)), class = "algebraic_definition"))
 }
 
 
 #' A function to predict concentration in a 1cpt PK model with bolus administration
 #'
 #' @param THETA a list(KA=xx, V=xx, CL=yy) with all typical values
-#' @param OMEGA a list(KA=xx, V=0.20, CL=0.30) with all standard deviations for IIV
+#' @param OMEGA a list(KA=xx, V=0.20, CL=0.30) with all variances describing IIV
 #'
-#' @return A function to predict PK 1cpt concentration, useable in algebraic()
+#' @return the algebraic definition to predict PK 1cpt concentration, useable in algebraic()
 #' @export
 #'
 #' @importFrom magrittr "%>%"
@@ -58,7 +60,8 @@ pk1cptivbolusVCL <- function(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30)
 #' model <- algebraic(predictFunction)
 #' tdmore <- tdmore(model)
 pk1cptoralbolusVCL <- function(THETA=list(KA=0.5, V=10, CL=5), OMEGA=list(KA=0, V=0.20, CL=0.30)) {
-  function(times, regimen, ETA_V, ETA_CL, ETA_KA) {
+  return(structure(list(
+    predictFunction = function(times, regimen, ETA_V, ETA_CL, ETA_KA) {
     assertthat::assert_that(all(colnames(regimen) == c("TIME", "AMT")))
     V = THETA$V * exp(OMEGA$V * ETA_V)
     CL = THETA$CL * exp(OMEGA$CL * ETA_CL)
@@ -71,7 +74,7 @@ pk1cptoralbolusVCL <- function(THETA=list(KA=0.5, V=10, CL=5), OMEGA=list(KA=0, 
       tD = regimen$TIME[i]
       D = regimen$AMT[i]
       II = regimen$II[i] # a number, 0, or NULL
-      if(II > 0) { # Keep repeating the dose until we are past the last observation time
+      if(!is.null(II) && II > 0) { # Keep repeating the dose until we are past the last observation time
         nbrDoses <- row$ADDL
         while(tD <= max(t) && nbrDoses > 0) {
           CONC <- CONC + ifelse(t >= tD, D / V * exp(-k*(t-tD)), 0)
@@ -83,8 +86,9 @@ pk1cptoralbolusVCL <- function(THETA=list(KA=0.5, V=10, CL=5), OMEGA=list(KA=0, 
         CONC <- CONC + ifelse(t >= tD, D / V * exp(-k*(t-tD)), 0)
       }
     }
-    CONC
-  }
+    return(CONC)
+    }
+    , omega = convertVectorToDiag(OMEGA)), class = "algebraic_definition"))
 }
 
 
@@ -94,27 +98,34 @@ pk1cptoralbolusVCL <- function(THETA=list(KA=0.5, V=10, CL=5), OMEGA=list(KA=0, 
 #'
 #' @return An algebraic model
 #' @export
-algebraic <- function(predictFunction) {
-  argNames <- names( formals(predictFunction) )
+algebraic <- function(algebraicDefinition) {
+  predictFunction <- algebraicDefinition$predictFunction
+  omega <- algebraicDefinition$omega
+
+  argNames <- names(formals(predictFunction))
   assertthat::assert_that(all(argNames[1:2] == c("times", "regimen")))
   pNames <- c()
-  if(length(argNames) > 2) { pNames <- argNames[seq(3, length(argNames))] }
+  if (length(argNames) > 2) {
+    pNames <- argNames[seq(3, length(argNames))]
+  }
 
-  structure(
-    list(predictFunction = function(times, regimen, parameters) {
-      do.call(predictFunction, c(list(times=times, regimen=regimen), parameters))
+  structure(list(
+    predictFunction = function(times, regimen, parameters) {
+      do.call(predictFunction, c(list(
+        times = times, regimen = regimen
+      ), parameters))
     },
-    parameters=pNames
-    ),
-    class="algebraic"
-  )
+    parameters = pNames,
+    omega = omega
+  ),
+  class = "algebraic")
 }
 
 #' Predict for algebraic models
 #'
 #' We only support dosing into the default compartment, and only bolus doses
 #'
-#' @param model The model itself.
+#' @param model the algebraic model
 #' @param newdata dataframe with at least a column 'TIME' and other values. A prediction will be generated for each filled-in value.
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)
 #' @param parameters either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector
@@ -175,6 +186,7 @@ model_predict.algebraic <- function(model, newdata, regimen=data.frame(TIME=c())
 tdmore.algebraic <- function(model, parameters=NULL, omega=NULL, add=0, prop=0, exp=0) {
   # Check that parameters + covariates together supplies the parameters needed for the model
   if(!is.null(parameters)) stop("Algebraic models can only work with their own parameters")
+  if(!is.null(omega)) stop("Algebraic models can only work with its own omega matrix")
 
   assertthat::is.number(add)
   assertthat::is.number(prop)
@@ -185,7 +197,7 @@ tdmore.algebraic <- function(model, parameters=NULL, omega=NULL, add=0, prop=0, 
 
   structure(list(
     model=model,
-    omega=omega,
+    omega=model$omega,
     res_var=list(add=add, prop=prop, exp=exp),
     parameters=model$parameters
   ), class="tdmore")

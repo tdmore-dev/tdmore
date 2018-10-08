@@ -13,8 +13,8 @@ modelCode <- function(){
     TVV1 <- 61
     TVQ <- 10
     TVCL <- 3.7
-    ECL ~ 0.0784 #ETA1 sqrt(0.28)
-    EV1 ~ 0.0361 #ETA2 sqrt(0.19)
+    ECL ~ 0.0784 #ETA1 (0.28^2)
+    EV1 ~ 0.0361 #ETA2 (0.19^2)
     EPS_PROP <- 0.23
   })
   model({
