@@ -1,6 +1,6 @@
 ---
 title: "TDMore, a global framework for Therapeutic Drug Monitoring (TDM)"
-date: "2018-10-09"
+date: "`r Sys.Date()`"
 output:
   html_document:
     keep_md: true
@@ -19,8 +19,7 @@ TDMore is an R package that attemps to provide a global framework for making The
 
 There are several ways telling TDMore what your model is. The easiest way is to provide the model in the form of a nxlmir model. The following example shows how a 2-compartment-PK model can be written. For the purpose of this demonstration, the 'Meroponem' PK model will be used. As Meroponem is given by injection into a vein, the absorption compartment is omitted.
 
-
-```r
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 library(nlmixr)
 
 modelCode <- function(){
@@ -48,12 +47,12 @@ modelCode <- function(){
     CONC ~ prop(EPS_PROP) # Proportional error linked to the PK model
   })
 }
+
 ```
 
 Once the model is created, a TDMore object can be instantiated as follows:
 
-
-```r
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 library(tdmore)
 
 nlmixrUI <- nlmixrUI(modelCode)
@@ -66,8 +65,7 @@ The TDMore object is now ready for use.
 
 TDMore can be used to run simulations, based on the model defined in the previous step. For doing so, the regimen first needs to be specified. In the case of Meroponem, an 30-min injection is given into the central compartment every 8 hour. This can be written as follows:
 
-
-```r
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 regimen <- data.frame(
   TIME=c(0, 8, 16),            # Every 8 hour and for 1 day, an injection is given
   AMT=c(1000, 1000, 1000),     # 1g is administered
@@ -77,75 +75,54 @@ regimen <- data.frame(
 
 Let's now simulating the population PK model for 1 day. This can be done using the TDMore predict() function.
 
-
-```r
+```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
 data <- predict(object = tdmore, newdata = seq(0, 24, by = 0.5), regimen = regimen)
 
 library(ggplot2)
 ggplot(data, aes(x=TIME, y=CONC)) + geom_point() +
   geom_line(aes(color="Population"), data=data)
-```
 
-<img src="running_tdmore_reference_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
+```
 
 
 # Estimating individual parameters
 
 This section will show you how the individual parameters can be estimated, based on some observed data. Let's first estimate the parameters of a typical individual. This is achieved by calling the estimate() function.
 
-
-```r
+```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE}
 pred <- estimate(tdmore = tdmore, regimen = regimen)
 result <- pred$res
 result
 ```
 
-```
-## ECL EV1 
-##   0   0
-```
-
 Both eta's ECL and EV1 have been estimated to 0. This is not surprising, as zero eta's best describe the population average.
 Now, let's assume blood samples have been collected for a subject X at different times. As an example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
 
-
-```r
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
 ```
 
 We can ask TDMore to re-estimate the parameters for this specific individual:
 
-
-```r
+```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE}
 ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
 result <- ipred$res
 result
 ```
 
-```
-##        ECL        EV1 
-## -0.2586462  0.2624485
-```
-
 Eta's from the 'res' array maximise altogether the likelihood for this specific subject. Predictions for the population (pred) and this specific subject (ipred) can be compared by doing: 
 
-
-```r
+```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
 ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
   geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 24, by=0.1))) +
   geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 24, by=0.1)))
 ```
 
-<img src="running_tdmore_reference_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
-
 Default TDMore plotting function can also be used, as follows (only ipred needs to be given):
 
-
-```r
+```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
 plot(ipred, newdata=data.frame(TIME=seq(0, 24, by=0.1), CONC=NA))
 ```
-
-<img src="running_tdmore_reference_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 
 On this default plot, ipred and pred are shown respectively in black and red. A 95% confidence interval is shown around the ipred prediction. 95% confidence interval in the form of error bars are also given around the observations.
 
@@ -153,8 +130,7 @@ On this default plot, ipred and pred are shown respectively in black and red. A 
 
 A very interesting feature in TDMore is the possibility to ask the framework the next dose to be given knowing all the previous observations that were collected and some known end-points. For example, assume we still collected the same two observations on the first day, we would like to find the best first dose to be given on the second day. We would like to reach the trough concentration of 3.10 mg/L as much as possible. This can be expressed, as follows:
 
-
-```r
+```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE}
 newRegimen <- data.frame(
   TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
   AMT=c(1000, 1000, 1000, NA),       # Adding an unknown dose on the second day
@@ -167,27 +143,9 @@ newDose <- findDose(ipred, regimen=newRegimen, interval=c(100, 5000), target=dat
 newDose
 ```
 
-```
-## $root
-## [1] 296.6246
-## 
-## $f.root
-## [1] -4.040324e-12
-## 
-## $iter
-## [1] 5
-## 
-## $init.it
-## [1] NA
-## 
-## $estim.prec
-## [1] 6.103516e-05
-```
-
 The result of the findDose() routine is shown above. It tells us that 300 mg (approximately) is the recommended starting dose on the second day. The following code helps up verify this visually.
 
-
-```r
+```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
 ipredRecommendedRegimen <- data.frame(
   TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
   AMT=c(1000, 1000, 1000, 300),      # Adding the recommended on the second day
@@ -206,7 +164,5 @@ ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
   geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 32, by=0.1))) +
   geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 32, by=0.1)))
 ```
-
-<img src="running_tdmore_reference_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
 The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day. 
