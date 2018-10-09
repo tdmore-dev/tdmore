@@ -17,7 +17,10 @@ TDMore is an R package that attemps to provide a global framework for making The
 
 # Creating your model
 
-There are several ways telling TDMore what your model is. The easiest way is to provide the model in the form of a nxlmir model. The following example shows how a 2-compartment-PK model can be written. For the purpose of this demonstration, the 'Meroponem' PK model will be used. As Meroponem is given by injection into a vein, the absorption compartment is omitted.
+There are several ways telling TDMore what your model is. The easiest way is to provide the model in the form of a nxlmir model. The following example shows how a 2-compartment-PK model can be written. For the purpose of this demonstration, the 'Meropenem' PK model will be used. As Meropenem is given by injection into a vein, the absorption compartment is omitted.
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+set.seed(0) 
+```
 
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 library(nlmixr)
@@ -63,7 +66,7 @@ The TDMore object is now ready for use.
 
 # Predicting new data
 
-TDMore can be used to run simulations, based on the model defined in the previous step. For doing so, the regimen first needs to be specified. In the case of Meroponem, an 30-min injection is given into the central compartment every 8 hour. This can be written as follows:
+TDMore can be used to run simulations, based on the model defined in the previous step. For doing so, the regimen first needs to be specified. In the case of Meropenem, an 30-min injection is given into the central compartment every 8 hour. This can be written as follows:
 
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 regimen <- data.frame(
@@ -75,7 +78,7 @@ regimen <- data.frame(
 
 Let's now simulating the population PK model for 1 day. This can be done using the TDMore predict() function.
 
-```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
+```{r population_prediction, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
 data <- predict(object = tdmore, newdata = seq(0, 24, by = 0.5), regimen = regimen)
 
 library(ggplot2)
@@ -96,7 +99,7 @@ result
 ```
 
 Both eta's ECL and EV1 have been estimated to 0. This is not surprising, as zero eta's best describe the population average.
-Now, let's assume blood samples have been collected for a subject X at different times. As an example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
+Now, let's assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
 
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
@@ -112,7 +115,7 @@ result
 
 Eta's from the 'res' array maximise altogether the likelihood for this specific subject. Predictions for the population (pred) and this specific subject (ipred) can be compared by doing: 
 
-```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
+```{r pred_ipred_predictions, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
 ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
   geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 24, by=0.1))) +
   geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 24, by=0.1)))
@@ -120,7 +123,7 @@ ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
 
 Default TDMore plotting function can also be used, as follows (only ipred needs to be given):
 
-```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
+```{r default_plot_function, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
 plot(ipred, newdata=data.frame(TIME=seq(0, 24, by=0.1), CONC=NA))
 ```
 
@@ -145,10 +148,10 @@ newDose
 
 The result of the findDose() routine is shown above. It tells us that 300 mg (approximately) is the recommended starting dose on the second day. The following code helps up verify this visually.
 
-```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
+```{r find_dose_pred_ipred_predictions, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
 ipredRecommendedRegimen <- data.frame(
   TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
-  AMT=c(1000, 1000, 1000, 300),      # Adding the recommended on the second day
+  AMT=c(1000, 1000, 1000, 300),      # Adding the recommended dose on the second day
   RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
 )
 predRegimen <- data.frame(

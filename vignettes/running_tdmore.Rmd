@@ -17,7 +17,8 @@ TDMore is an R package that attemps to provide a global framework for making The
 
 # Creating your model
 
-There are several ways telling TDMore what your model is. The easiest way is to provide the model in the form of a nxlmir model. The following example shows how a 2-compartment-PK model can be written. For the purpose of this demonstration, the 'Meroponem' PK model will be used. As Meroponem is given by injection into a vein, the absorption compartment is omitted.
+There are several ways telling TDMore what your model is. The easiest way is to provide the model in the form of a nxlmir model. The following example shows how a 2-compartment-PK model can be written. For the purpose of this demonstration, the 'Meropenem' PK model will be used. As Meropenem is given by injection into a vein, the absorption compartment is omitted.
+
 
 
 ```r
@@ -64,7 +65,7 @@ The TDMore object is now ready for use.
 
 # Predicting new data
 
-TDMore can be used to run simulations, based on the model defined in the previous step. For doing so, the regimen first needs to be specified. In the case of Meroponem, an 30-min injection is given into the central compartment every 8 hour. This can be written as follows:
+TDMore can be used to run simulations, based on the model defined in the previous step. For doing so, the regimen first needs to be specified. In the case of Meropenem, an 30-min injection is given into the central compartment every 8 hour. This can be written as follows:
 
 
 ```r
@@ -86,7 +87,7 @@ ggplot(data, aes(x=TIME, y=CONC)) + geom_point() +
   geom_line(aes(color="Population"), data=data)
 ```
 
-<img src="running_tdmore_reference_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
+<img src="running_tdmore_reference_files/figure-html/population_prediction-1.png" style="display: block; margin: auto;" />
 
 
 # Estimating individual parameters
@@ -106,7 +107,7 @@ result
 ```
 
 Both eta's ECL and EV1 have been estimated to 0. This is not surprising, as zero eta's best describe the population average.
-Now, let's assume blood samples have been collected for a subject X at different times. As an example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
+Now, let's assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
 
 
 ```r
@@ -136,7 +137,7 @@ ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
   geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 24, by=0.1)))
 ```
 
-<img src="running_tdmore_reference_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+<img src="running_tdmore_reference_files/figure-html/pred_ipred_predictions-1.png" style="display: block; margin: auto;" />
 
 Default TDMore plotting function can also be used, as follows (only ipred needs to be given):
 
@@ -145,7 +146,7 @@ Default TDMore plotting function can also be used, as follows (only ipred needs 
 plot(ipred, newdata=data.frame(TIME=seq(0, 24, by=0.1), CONC=NA))
 ```
 
-<img src="running_tdmore_reference_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
+<img src="running_tdmore_reference_files/figure-html/default_plot_function-1.png" style="display: block; margin: auto;" />
 
 On this default plot, ipred and pred are shown respectively in black and red. A 95% confidence interval is shown around the ipred prediction. 95% confidence interval in the form of error bars are also given around the observations.
 
@@ -190,7 +191,7 @@ The result of the findDose() routine is shown above. It tells us that 300 mg (ap
 ```r
 ipredRecommendedRegimen <- data.frame(
   TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
-  AMT=c(1000, 1000, 1000, 300),      # Adding the recommended on the second day
+  AMT=c(1000, 1000, 1000, 300),      # Adding the recommended dose on the second day
   RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
 )
 predRegimen <- data.frame(
@@ -207,6 +208,6 @@ ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
   geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 32, by=0.1)))
 ```
 
-<img src="running_tdmore_reference_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
+<img src="running_tdmore_reference_files/figure-html/find_dose_pred_ipred_predictions-1.png" style="display: block; margin: auto;" />
 
 The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day. 
