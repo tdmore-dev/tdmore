@@ -65,9 +65,9 @@ TDMore can be used to run simulations, based on the model defined in the previou
 
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 regimen <- data.frame(
-  TIME=seq(0, 3*8-1, by=8), # Every 8 hour and for 1 day, an injection is given
-  AMT=rep(1000, 3),         # 1g is administered
-  RATE=rep(1000, 3)/0.5     # 30-minute infusion (rate=dose/infusion time)
+  TIME=c(0, 8, 16),            # Every 8 hour and for 1 day, an injection is given
+  AMT=c(1000, 1000, 1000),     # 1g is administered
+  RATE=c(1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
 )
 ```
 
@@ -143,8 +143,8 @@ A very interesting feature in TDMore is the possibility to ask the framework the
 
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 newRegimen <- data.frame(
-  TIME=c(0, 8, 16, 24),            # A fourth dose on the second day is added
-  AMT=c(1000, 1000, 1000, NA),     # Adding an unknown dose on the secon day
+  TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
+  AMT=c(1000, 1000, 1000, NA),       # Adding an unknown dose on the second day
   RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
 )
 
@@ -176,12 +176,12 @@ It tells us that 300 mg (approximately) is the recommended starting dose on the 
 
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 ipredRecommendedRegimen <- data.frame(
-  TIME=c(0, 8, 16, 24),            # A fourth dose on the second day is added
-  AMT=c(1000, 1000, 1000, 300),     # Adding the recommended on the second day
+  TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
+  AMT=c(1000, 1000, 1000, 300),      # Adding the recommended on the second day
   RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
 )
 predRegimen <- data.frame(
-  TIME=c(0, 8, 16, 24),            # A fourth dose on the second day is added
+  TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
   AMT=c(1000, 1000, 1000, 1000),     # Adding the new classical dose (1g)
   RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
 )
