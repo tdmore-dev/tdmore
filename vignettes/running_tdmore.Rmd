@@ -117,7 +117,7 @@ result
 -0.2586462  0.2624485
 ```
 
-Both eta's from the res array maximises the likelihood for this specific subject. Predictions for the population (pred) and this specific subject can be compared by doing: 
+Eta's from the 'res' array maximise altogether the likelihood for this specific subject. Predictions for the population (pred) and this specific subject (ipred) can be compared by doing: 
 
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
@@ -127,10 +127,73 @@ ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
 
 ![Meropenem PRED vs IPRED plot](meropenem_pred_ipred.png)
 
-Default TDMore plotting function can also be used, as follows:
+Default TDMore plotting function can also be used, as follows (only ipred needs to be given):
 
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 plot(ipred, newdata=data.frame(TIME=seq(0, 24, by=0.1), CONC=NA))
 ```
 
 ![IPRED default plot](default_ipred_plot.png)
+
+On this default plot, ipred and pred are shown respectively in black and red. A 95% confidence interval is shown around the ipred prediction. 95% confidence interval in the form of error bars are also given around the observations.
+
+# Finding the right dose to give
+
+A very interesting feature in TDMore is the possibility to ask the framework the next dose to be given knowing all the previous observations that were collected and some known end-points. For example, assume we still collected the same two observations on the first day, we would like to find the best first dose to be given on the second day. We would like to reach the trough concentration of 3.10 mg/L as much as possible. This can be expressed, as follows:
+
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
+newRegimen <- data.frame(
+  TIME=c(0, 8, 16, 24),            # A fourth dose on the second day is added
+  AMT=c(1000, 1000, 1000, NA),     # Adding an unknown dose on the secon day
+  RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
+)
+
+ipred <- estimate(tdmore = tdmore, observed = observed, regimen = newRegimen) #  Optional step
+
+newDose <- findDose(ipred, regimen=newRegimen, interval=c(100, 5000), target=data.frame(TIME=32, CONC=3.1))
+newDose
+```
+
+The result of the findDose() routine is the following:
+
+```c
+$`root`
+[1] 296.6246
+
+$f.root
+[1] -4.040324e-12
+
+$iter
+[1] 5
+
+$init.it
+[1] NA
+
+$estim.prec
+[1] 6.103516e-05
+```
+It tells us that 300 mg (approximately) is the recommended starting dose on the second day. The following code helps up verify this visually.
+
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
+ipredRecommendedRegimen <- data.frame(
+  TIME=c(0, 8, 16, 24),            # A fourth dose on the second day is added
+  AMT=c(1000, 1000, 1000, 300),     # Adding the recommended on the second day
+  RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
+)
+predRegimen <- data.frame(
+  TIME=c(0, 8, 16, 24),            # A fourth dose on the second day is added
+  AMT=c(1000, 1000, 1000, 1000),     # Adding the new classical dose (1g)
+  RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
+)
+
+ipred <- estimate(tdmore = tdmore, observed = observed, regimen = ipredRecommendedRegimen) # New dose added in regimen
+pred <- estimate(tdmore = tdmore, regimen = predRegimen) # New dose added in regimen
+
+ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
+  geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 32, by=0.1))) +
+  geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 32, by=0.1)))
+```
+
+![Resulting plot](find_dose_result_plot.png)
+
+The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day. 
