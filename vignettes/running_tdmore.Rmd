@@ -17,7 +17,7 @@ TDMore is an R package that attemps to provide a global framework for making The
 
 There are several ways telling TDMore what your model is. The easiest way is to provide the model in the form of a nxlmir model. The following example shows how a 2-compartment-PK model can be written. For the purpose of this demonstration, the 'Meroponem' PK model will be used. As Meroponem is given by injection into a vein, the absorption compartment is omitted.
 
-```{r}
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 library(nlmixr)
 
 modelCode <- function(){
@@ -73,7 +73,7 @@ regimen <- data.frame(
 
 Let's now simulating the population PK model for 1 day. This can be done using the TDMore predict() function.
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.align='center'}
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 data <- predict(object = tdmore, newdata = seq(0, 24, by = 0.5), regimen = regimen)
 
 library(ggplot2)
@@ -82,14 +82,20 @@ ggplot(data, aes(x=TIME, y=CONC)) + geom_point() +
 
 ```
 
+![Meropenem population plot](meropenem_simulation.png)
+
 # Estimating individual parameters
 
 This section will show you how the individual parameters can be estimated, based on some observed data. Let's first estimate the parameters of a typical individual. This is achieved by calling the estimate() function.
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE}
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 pred <- estimate(tdmore = tdmore, regimen = regimen)
 result <- pred$res
 result
+```
+```c
+ECL EV1 
+  0   0
 ```
 
 Both eta's ECL and EV1 have been estimated to 0. This is not surprising, as zero eta's best describe the population average.
@@ -101,22 +107,30 @@ observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
 
 We can ask TDMore to re-estimate the parameters for this specific individual:
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE}
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
 result <- ipred$res
 result
 ```
+```c
+       ECL        EV1 
+-0.2586462  0.2624485
+```
 
 Both eta's from the res array maximises the likelihood for this specific subject. Predictions for the population (pred) and this specific subject can be compared by doing: 
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.align='center'}
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
   geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 24, by=0.1))) +
   geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 24, by=0.1)))
 ```
 
+![Meropenem PRED vs IPRED plot](meropenem_pred_ipred.png)
+
 Default TDMore plotting function can also be used, as follows:
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.align='center'}
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 plot(ipred, newdata=data.frame(TIME=seq(0, 24, by=0.1), CONC=NA))
 ```
+
+![IPRED default plot](default_ipred_plot.png)
