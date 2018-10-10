@@ -7,8 +7,6 @@
 #' @return the algebraic definition to predict PK 1cpt concentration, useable in algebraic()
 #' @export
 #'
-#' @importFrom magrittr "%>%"
-#'
 #' @examples
 #' predictFunction <- pk1cptivbolusVCL(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30))
 #' model <- algebraic(predictFunction)
@@ -94,7 +92,7 @@ pk1cptoralbolusVCL <- function(THETA=list(KA=0.5, V=10, CL=5), OMEGA=list(KA=0, 
 
 #' Use an external function to generate an algebraic model, capable of being used with tdmore()
 #'
-#' @param predictFunction a function with at least arguments times and regimen. Any extra values are used as parameters.
+#' @param algebraicDefinition the algebraic model definition
 #'
 #' @return An algebraic model
 #' @export
@@ -180,10 +178,11 @@ model_predict.algebraic <- function(model, newdata, regimen=data.frame(TIME=c())
 #' @param add additive residual error, as stdev
 #' @param prop proportional residual error, as stdev
 #' @param exp exponential residual error, as stdev. The exponential error cannot be used in conjunction with the additive or proportional error
+#' @param ... extra arguments will be passed to the model_predict call
 #'
 #' @return a tdmore object, capable of estimating bayesian individual parameters
 #' @export
-tdmore.algebraic <- function(model, parameters=NULL, omega=NULL, add=0, prop=0, exp=0) {
+tdmore.algebraic <- function(model, parameters=NULL, omega=NULL, add=0, prop=0, exp=0, ...) {
   # Check that parameters + covariates together supplies the parameters needed for the model
   if(!is.null(parameters)) stop("Algebraic models can only work with their own parameters")
   if(!is.null(omega)) stop("Algebraic models can only work with its own omega matrix")

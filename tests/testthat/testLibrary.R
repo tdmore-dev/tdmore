@@ -1,4 +1,9 @@
 library(tdmore)
+library(RxODE)
+library(ggplot2)
+library(testthat)
+
+context("Test that the algebraic library works as intented")
 
 omegas=c(V=0.28^2, CL=0.19^2)
 mod1 <- pk1cptivbolusVCL(THETA = list(V = 61, CL = 3.7),
@@ -25,7 +30,7 @@ ipred2 <- mod2 %>% estimate(observed, regimen)
 p2 <- plot(ipred2, newdata=data.frame(TIME=seq(0, 34, length.out=100), CONC=NA))
 
 # Check resuls are same (rxode vs algebraic)
-stopifnot(all.equal(round(ipred1$res, digits=4), round(ipred2$res, digits=4)))
+expect_equal(round(ipred1$res, digits=4), round(ipred2$res, digits=4))
 
 gridExtra::grid.arrange(p1 + ggtitle("Algebraic"), p2 + ggtitle("RxODE"))
 cat("Algebraic method:\n")

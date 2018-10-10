@@ -1,10 +1,10 @@
-## Goal: test defining structural model using RxODE
-rm(list=ls(all=T))
+library(tdmore)
 library(testthat)
-context("Test that the Model class works as intended")
-
 library(RxODE)
-## TODO: this does not compile correctly in R CMD CHECK, NOOOOOO :-(
+library(magrittr)
+
+context("Test that the RxODE model class works as intended")
+
 modelCode <- "
 CL = 3.7 * exp(ETA1);
 Vc = 61 * exp(ETA2);
@@ -35,11 +35,11 @@ observed <- data.frame(TIME=c(2), CONC=c(0.040))
 
 # Compute PRED
 pred <- model %>% estimate(regimen = regimen)
-stopifnot(all.equal(pred$res, c(ETA1=0.0, ETA2=0.0)))
+expect_equal(pred$res, c(ETA1=0.0, ETA2=0.0))
 
 # Compute IPRED
 ipred <- model %>% estimate(observed = observed, regimen = regimen)
-stopifnot(all.equal(round(ipred$res, digits=4), c(ETA1=0.0336, ETA2=0.1175)))
+expect_equal(round(ipred$res, digits=4), c(ETA1=0.0336, ETA2=0.1175))
 
 # Custom plot, compare PRED & IPRED
 library(ggplot2)

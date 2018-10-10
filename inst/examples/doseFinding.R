@@ -148,5 +148,5 @@ evaluators[["DosePrice"]] = function(tdmorefit, regimen) {
   totalDose * 150 #150 euro / mg
 }
 
-x <- evaluate(ipred, regimen, searchspace, evaluators)
-plot.possibilities(ipred, regimen, searchspace, evaluators)
+# x <- evaluate(ipred, regimen, searchspace, evaluators)
+# plot.possibilities(ipred, regimen, searchspace, evaluators)

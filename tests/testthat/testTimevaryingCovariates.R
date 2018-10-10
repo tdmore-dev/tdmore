@@ -1,14 +1,12 @@
-#Goal:  test time-varying covariates
-rm(list=ls(all=T))
+library(tdmore)
 library(testthat)
-context("Test time-varying covariates")
-
 library(RxODE)
 library(tdmore)
 library(magrittr)
 library(dplyr)
 
-## Test the covariates functionality
+context("Test the time-varying covariates")
+
 modelCode <- "
 ALB_Obs = ALB;
 K=0.05;
