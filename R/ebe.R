@@ -199,6 +199,7 @@ fitted.tdmorefit <- function(object, ...) {
 #' @param regimen Treatment regimen
 #' @param parameters Set parameters. If missing, or if only part of the parameters are specified,
 #' the other parameters are taken from the tdmorefit object
+#' @param covariates the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0
 #' @param se.fit TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower
 #' @param level The confidence interval, or NA to return all mc.maxpts results
 #' @param mc.maxpts Maximum number of points to sample in Monte Carlo simulation

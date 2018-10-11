@@ -28,10 +28,12 @@ tdmore_deSolve <- function(parameters, add=0, prop=0, exp=0, ...) {
 #' Predict for tdmore_deSolve
 #'
 #' @param model The model function
-#' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
+#' @param newdata data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).
 #' @param parameters either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector
+#' @param covariates NOT IMPLEMENTED
+#' @param extraArguments extra arguments to use
 #'
 #' @export
 #'
@@ -39,25 +41,25 @@ tdmore_deSolve <- function(parameters, add=0, prop=0, exp=0, ...) {
 #' A data.frame similar to the observed data frame, but with predicted values.
 #' @importFrom RxODE eventTable
 #'
-model_predict.tdmore_deSolve <- function(model, observed, regimen=data.frame(TIME=c()), parameters=c()) {
+model_predict.tdmore_deSolve <- function(model, newdata, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, extraArguments=list()) {
   if(any(parameters > 10 | parameters < -10)) {
     warning("Solver requested with highly unlikely parameters, returning NA")
-    observed[, colnames(observed) != "TIME"] <- NA
-    return(observed) #we cannot calculate this...
+    newdata[, colnames(newdata) != "TIME"] <- NA
+    return(newdata) #we cannot calculate this...
   }
   # Verify arguments are good
   samplingTimes <- NULL
   oNames <- NULL
-  if("data.frame" %in% class(observed)) {
-    assert_that("data.frame" %in% class(observed))
-    assert_that("TIME" %in% colnames(observed))
-    oNames <- colnames(observed)
+  if("data.frame" %in% class(newdata)) {
+    assert_that("data.frame" %in% class(newdata))
+    assert_that("TIME" %in% colnames(newdata))
+    oNames <- colnames(newdata)
     oNames <- oNames[oNames != "TIME"]
     assert_that(length(oNames) > 0)
-    samplingTimes <- observed$TIME
+    samplingTimes <- newdata$TIME
   } else {
-    assert_that(is.numeric(observed))
-    samplingTimes <- observed
+    assert_that(is.numeric(newdata))
+    samplingTimes <- newdata
   }
 
   assert_that("data.frame" %in% class(regimen))

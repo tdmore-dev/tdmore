@@ -61,6 +61,8 @@ tdmore.RxODE <- function(model, parameters=NULL, omega=NULL, covariates=NULL, ad
 #' A data.frame similar to the observed data frame, but with predicted values.
 #' @importFrom RxODE eventTable
 #' @importFrom RxODE rxSolve
+#' @importFrom dplyr transmute
+#' @importFrom dplyr left_join
 #'
 model_predict.RxODE <- function(model, newdata, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, extraArguments=list()) {
   ### RxODE sometimes errors out...
@@ -146,7 +148,7 @@ model_predict.RxODE <- function(model, newdata, regimen=data.frame(TIME=c()), pa
     missingTimes <- covariates$TIME[ !(covariates$TIME %in% ev$get.sampling()$time) ]
     if(length(missingTimes) > 0) ev$add.sampling(missingTimes)
 
-    covs <- ev$get.EventTable() %>% transmute(TIME=time) %>% left_join(covariates, by="TIME")
+    covs <- ev$get.EventTable() %>% dplyr::transmute(TIME=time) %>% dplyr::left_join(covariates, by="TIME")
     for(i in colnames(covs))
       covs[, i] <- zoo::na.locf( covs[, i] )
 
