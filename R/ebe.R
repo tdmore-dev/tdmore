@@ -4,7 +4,8 @@
 #' @param omega the omega matrix of the model
 #'
 #' @return the population log likelihood
-pop_ll <- function(estimate, omega) {
+pop_ll <- function(estimate, tdmore, observed, regimen, covariates) {
+  omega <- tdmore$omega
   sum( mvtnorm::dmvnorm(estimate, sigma=omega, log=TRUE) )
 }
 
@@ -36,8 +37,10 @@ pred_ll <- function(estimate, tdmore, observed, regimen, covariates) {
 #'
 #' @return the log likelihood
 ll <- function(estimate, tdmore, observed, regimen, covariates) {
+  ## TODO: what happens if the estimates are in the wrong order wrt OMEGA??
+  ## Trust noone...
   if(is.null(names(estimate))) names(estimate) <- tdmore$parameters #you should support named parameters as well!
-  res <- pop_ll(estimate, tdmore$omega) + pred_ll(estimate, tdmore, observed, regimen, covariates)
+  res <- pop_ll(estimate, tdmore, observed, regimen, covariates) + pred_ll(estimate, tdmore, observed, regimen, covariates)
   res
 }
 
@@ -288,6 +291,7 @@ logLik.tdmorefit <- function(object, ...) {
 #' Get an overview of the log-likelihood for varying parameter values
 #'
 #' @param fitted A tdmorefit object
+#' @param fix Which parameters to fix? Named vector of the parameters that are fixed and should not be profiled
 #' @param maxpts Maximum number of points per parameter
 #' @param limits Limits to explore (numeric vector of form c(min, max))
 #' @param .progress See plyr::ddply
@@ -295,14 +299,27 @@ logLik.tdmorefit <- function(object, ...) {
 #'
 #' @return A data.frame with each parameter value tested, and an additional `logLik` column with the log-likelihood for each parameter combination
 #' @export
-profile.tdmorefit <- function(fitted, maxpts = 100, limits=c(-1.96, 1.96), .progress="none", ...) {
+profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 100, limits=c(-1.96, 1.96), type=c('ll', 'pop', 'pred'), .progress="none", ...) {
   tdmorefit <- fitted
   model <- tdmorefit$tdmore
+  type <- match.arg(type, c('ll', 'pop', 'pred'))
+  if(type == "ll") fun <- ll
+  else if (type == "pop") fun <- pop_ll
+  else if (type == "pred") fun <- pred_ll
+  else stop("Unknown log-likelihood function")
+
+  profiledParameters <- model$parameters
+  if(!is.null(fix)) profiledParameters <- profiledParameters[ !(profiledParameters %in% names(fix)) ]
   x <- seq(limits[1], limits[2], length.out=maxpts)
-  x <- expand.grid(rep(list(x), length(model$parameters)))
-  colnames(x) <- model$parameters
+  x <- expand.grid(rep(list(x), length(profiledParameters)))
+  colnames(x) <- profiledParameters
+  for(i in names(fix)) x[,i] <- fix[i]
+  x <- x[, model$parameters] #reorder the columns
+
   result <- plyr::adply(x, 1, function(estimate) {
-    c(logLik=ll(as.numeric(estimate), model, tdmorefit$observed, tdmorefit$regimen, tdmorefit$covariates))
+    eta <- as.numeric(estimate)
+    names(eta) <- model$parameters
+    c(logLik=fun(eta, model, tdmorefit$observed, tdmorefit$regimen, tdmorefit$covariates))
   }, .progress=.progress)
   result
 }
