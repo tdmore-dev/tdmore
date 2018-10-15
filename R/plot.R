@@ -7,7 +7,6 @@
 #' time 0 and max(observationTime),
 #' or a numeric vector of times
 #' @param se.fit Add a curve for the confidence interval around the fit
-#' @param se.obs Add error bars for the residual error around the observations
 #' @param mc.maxpts Maximum number of points to use for the monte carlo fit
 #' @param .progress either "none" or "text" to see calculation progress of monte carlo simulations
 #' @param ... ignored
@@ -17,7 +16,7 @@
 #' @importFrom ggplot2 ggplot aes_string geom_line geom_ribbon geom_point geom_errorbar
 #' @importFrom stats predict
 #' @export
-plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, se.obs=TRUE, mc.maxpts=100, .progress="none", ...) {
+plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progress="none", ...) {
   tdmorefit <- x
   if(is.null(newdata)) {
     tmax <- max(0, tdmorefit$observed$TIME,
@@ -56,15 +55,14 @@ plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, se.obs=TRUE, mc.maxpts=
   ipred <- tdmorefit %>% predict(newdata) %>% melt
   ipredre <- tdmorefit %>% predict.tdmorefit(newdata, se.fit=TRUE, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% melt(se=TRUE)
   pred <- estimate(tdmorefit$tdmore, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates) %>% predict(newdata) %>% melt
-  obs <- model.frame.tdmorefit(tdmorefit, se=TRUE, level=0.95) %>% melt(se=TRUE)
+  obs <- model.frame.tdmorefit(tdmorefit) %>% melt
 
   z <- ggplot(mapping=aes_string(x="TIME", y="value")) +
-    geom_line(color=1, data=ipred)
-  if(se.fit) z <- z + geom_ribbon(fill=1, aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.3)
+    geom_line(color="tomato1", data=ipred)
+  if(se.fit) z <- z + geom_ribbon(fill="tomato1", aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.10)
   z <- z +
-    geom_line(color=2, data=pred) +
+    geom_line(color="steelblue2", data=pred) +
     geom_point(data=obs)
-  if(se.obs) z <- z + geom_errorbar(aes_string(ymax="value.upper", ymin="value.lower"), data=obs)
   z
 }
 

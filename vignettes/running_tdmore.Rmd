@@ -1,6 +1,6 @@
 ---
 title: "TDMore, a global framework for Therapeutic Drug Monitoring (TDM)"
-date: "2018-10-09"
+date: "2018-10-15"
 output:
   html_document:
     keep_md: true
@@ -30,9 +30,9 @@ modelCode <- function(){
     TVV2 <- 7.01;
     TVQ <- 4.97;
     TVCL <- 9.87;
-    ECL ~ 0.194 # This value corresponds to OMEGA_CL
-    EV1 ~ 0.287 # This value corresponds to OMEGA_V1
-    EPS_PROP <- 0.371
+    ECL ~ 0.194 # This value corresponds to OMEGA_CL (44% SD)
+    EV1 ~ 0.287 # This value corresponds to OMEGA_V1 (54% SD)
+    EPS_PROP <- 0.371 # Proportional error (37% SD)
   })
   model({
     CL <- TVCL * exp(ECL)
@@ -76,19 +76,22 @@ regimen <- data.frame(
 )
 ```
 
-Let's now simulating the population PK model for 1 day. This can be done using the TDMore predict() function.
+Let's now simulate the population PK model for 1 day. This can be done using the TDMore predict() function. A dataframe with all the times to predict (and respective NA concentration) is given to the 'newdata' argument. Field 'se' is set to true, it tells TDMore we are interested to simulate the model with residual variability.
 
 
 ```r
-data <- predict(object = tdmore, newdata = seq(0, 24, by = 0.5), regimen = regimen)
+data <- predict(object = tdmore, newdata = data.frame(TIME=seq(0, 24, by = 0.5), CONC=NA), regimen = regimen, se=TRUE)
 
 library(ggplot2)
-ggplot(data, aes(x=TIME, y=CONC)) + geom_point() +
-  geom_line(aes(color="Population"), data=data)
+ggplot(data, aes(x=TIME, y=CONC)) +
+  geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), fill="steelblue2", alpha=0.15) +
+  geom_line(aes(color="Population"), data=data) +
+  scale_color_manual(values=c("steelblue2"))
 ```
 
 <img src="running_tdmore_reference_files/figure-html/population_prediction-1.png" style="display: block; margin: auto;" />
 
+The plot above shows the median of the population (typical profile) and its 95% confidence interval. The range of the confidence interval can be changed using the argument 'level'.
 
 # Estimating individual parameters
 
@@ -97,8 +100,7 @@ This section will show you how the individual parameters can be estimated, based
 
 ```r
 pred <- estimate(tdmore = tdmore, regimen = regimen)
-result <- pred$res
-result
+coef(pred)
 ```
 
 ```
@@ -106,8 +108,20 @@ result
 ##   0   0
 ```
 
-Both eta's ECL and EV1 have been estimated to 0. This is not surprising, as zero eta's best describe the population average.
-Now, let's assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
+Both eta's ECL and EV1 have been estimated to 0. This is not surprising, as zero eta's best describe the population average. We can also look at the uncertainty on these estimates.
+
+
+```r
+vcov(pred)
+```
+
+```
+##              ECL          EV1
+## ECL 1.940000e-01 1.090438e-13
+## EV1 1.090438e-13 2.870000e-01
+```
+
+Their uncertainty is equal to the population inter-individual variability (OMEGA matrix). Now, let's assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
 
 
 ```r
@@ -119,8 +133,7 @@ We can ask TDMore to re-estimate the parameters for this specific individual:
 
 ```r
 ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
-result <- ipred$res
-result
+coef(ipred)
 ```
 
 ```
@@ -128,27 +141,40 @@ result
 ## -0.2586462  0.2624485
 ```
 
-Eta's from the 'res' array maximise altogether the likelihood for this specific subject. Predictions for the population (pred) and this specific subject (ipred) can be compared by doing: 
+Eta's obtained by calling 'coef' on pred maximise altogether the likelihood for this specific subject. The variance-covariance matrix shows the uncertainty of the individual estimates, and their correlation.
 
 
 ```r
-ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
-  geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 24, by=0.1))) +
-  geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 24, by=0.1)))
+vcov(ipred)
+```
+
+```
+##            ECL        EV1
+## ECL 0.03173634 0.03653847
+## EV1 0.03653847 0.12738851
+```
+
+Predictions for the population (pred) and this specific subject (ipred) can be compared using the following snippet: 
+
+
+```r
+data <- predict(ipred, newdata=data.frame(TIME=seq(0, 24, 0.1), CONC=NA), se=TRUE)
+ggplot(data, aes(x=TIME))  +
+  geom_line(aes(color="Individual", y=CONC.median)) +
+  geom_ribbon(aes(fill="Individual", ymin=CONC.lower, ymax=CONC.upper), fill="tomato1", alpha=0.10) +
+  geom_line(aes(color="Population", y=CONC), data=predict(pred, newdata=seq(0, 24, 0.1))) +
+  geom_point(aes(y=CONC), data=observed) +
+  scale_color_manual(values=c("tomato1", "steelblue2"))
 ```
 
 <img src="running_tdmore_reference_files/figure-html/pred_ipred_predictions-1.png" style="display: block; margin: auto;" />
 
-Default TDMore plotting function can also be used, as follows (only ipred needs to be given):
+Ipred and pred are shown respectively in red and blue. A 95% confidence interval has been added around the ipred prediction. Note that the default TDMore plotting function can also be used to obtain the exact same plot in a single line of code:
 
 
 ```r
 plot(ipred, newdata=data.frame(TIME=seq(0, 24, by=0.1), CONC=NA))
 ```
-
-<img src="running_tdmore_reference_files/figure-html/default_plot_function-1.png" style="display: block; margin: auto;" />
-
-On this default plot, ipred and pred are shown respectively in black and red. A 95% confidence interval is shown around the ipred prediction. 95% confidence interval in the form of error bars are also given around the observations.
 
 # Finding the right dose to give
 
@@ -204,8 +230,9 @@ ipred <- estimate(tdmore = tdmore, observed = observed, regimen = ipredRecommend
 pred <- estimate(tdmore = tdmore, regimen = predRegimen) # New dose added in regimen
 
 ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
+  geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 32, by=0.1))) +
   geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 32, by=0.1))) +
-  geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 32, by=0.1)))
+  scale_color_manual(values=c("tomato1", "steelblue2"))
 ```
 
 <img src="running_tdmore_reference_files/figure-html/find_dose_pred_ipred_predictions-1.png" style="display: block; margin: auto;" />

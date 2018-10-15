@@ -12,9 +12,9 @@ modelCode <- function(){
     TVV1 <- 61
     TVQ <- 10
     TVCL <- 3.7
-    ECL ~ 0.0784 #ETA1 (0.28^2)
-    EV1 ~ 0.0361 #ETA2 (0.19^2)
-    EPS_PROP <- 0.23
+    ECL ~ 0.0784 #ETA1, 28%
+    EV1 ~ 0.0361 #ETA2, 19%
+    EPS_PROP <- 0.23 # Proportional error, 23% SD
   })
   model({
     KA <- TVKA
@@ -63,6 +63,7 @@ ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
   geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 48, by=0.1)))
 
 # Plot IPRED
+#debugonce(tdmore:::plot.tdmorefit)
 p1 <- plot(ipred, newdata=data.frame(TIME=seq(0, 48, by=0.1), CONC=NA))
 
 
