@@ -18,6 +18,7 @@ tdmore.nlmixrUI <- function(model, ...) {
   # Collecting all covariates
   covariates <- model$all.covs
 
+  ## TODO: Why make it so difficult? We have the model$omega matrix, no?
   # Search for all parameters
   parameters <- model$rest.vars[!(model$rest.vars %in% thetas)]
   parameters <- parameters[!parameters %in% covariates]
@@ -77,9 +78,13 @@ tdmore.nlmixrUI <- function(model, ...) {
   # Create RxODE object
   rxModel <- RxODE::RxODE(rxOdeModelCode)
 
+  omega <- model$omega
+  # TODO: Why not simply use omega to get the parameters??
+  parameters <- colnames(omega)
+
   structure(list(
     model=rxModel,
-    omega=model$omega,
+    omega=omega,
     res_var=list(add=add, prop=prop, exp=exp),
     parameters=parameters,
     extraArguments=list(...)
