@@ -1,18 +1,18 @@
 #' Print a recommendation object.
 #'
-#' @param object a recommendation object
+#' @param x a recommendation object
+#' @param ... ignored
 #'
-#' @return print the recommended dose
 #' @export
-print.recommendation <- function(object, ...) {
-  print(object$dose)
+print.recommendation <- function(x, ...) {
+  print(x$dose)
 }
 
 #' Summarize a recommendation object.
 #'
 #' @param object a recommendation object
+#' @param ... ignored
 #'
-#' @return print the recommended dose
 #' @export
 summary.recommendation <- function(object, ...) {
   list(dose = object$dose,

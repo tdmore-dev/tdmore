@@ -3,7 +3,7 @@
 #' @param estimate the current estimate of the parameters
 #' @param tdmore the tdmore object
 #' @param observed the observed data, not used in the population log likelihoold
-#' @param omega the omega matrix of the model
+#' @param regimen data frame describing the treatment regimen
 #' @param covariates the model covariates, not used in the population log likelihoold
 #'
 #' @return the population log likelihood
@@ -18,7 +18,7 @@ pop_ll <- function(estimate, tdmore, observed, regimen, covariates) {
 #' @param tdmore the tdmore object
 #' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
-#' @param regimen data frame describing the treatment regimen.
+#' @param regimen data frame describing the treatment regimen
 #' @param covariates the model covariates
 #'
 #' @return the prediction log likelihood
@@ -275,6 +275,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
 #'
 #' @return A numeric value
 #' @export
+#' @importFrom stats formula model.frame
 logLik.tdmorefit <- function(object, ...) {
   res <- object$logLik
   if(is.finite(res))
@@ -298,6 +299,7 @@ logLik.tdmorefit <- function(object, ...) {
 #' @param fix Which parameters to fix? Named vector of the parameters that are fixed and should not be profiled
 #' @param maxpts Maximum number of points per parameter
 #' @param limits Limits to explore (numeric vector of form c(min, max))
+#' @param type log-lokelihood function type, 3 possible values: 'pop', 'pred' or 'll' (= pop + pred)
 #' @param .progress See plyr::ddply
 #' @param ... ignored
 #'
