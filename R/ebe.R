@@ -1,7 +1,10 @@
 #' Calculate the population log likelihood.
 #'
 #' @param estimate the current estimate of the parameters
+#' @param tdmore the tdmore object
+#' @param observed the observed data, not used in the population log likelihoold
 #' @param omega the omega matrix of the model
+#' @param covariates the model covariates, not used in the population log likelihoold
 #'
 #' @return the population log likelihood
 pop_ll <- function(estimate, tdmore, observed, regimen, covariates) {

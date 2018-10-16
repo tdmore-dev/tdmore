@@ -79,8 +79,13 @@ regimen <- data.frame(
 Let's now simulate the population PK model for 1 day. This can be done using the TDMore predict() function. A dataframe with all the times to predict (and respective NA concentration) is given to the 'newdata' argument. Field 'se' is set to true, it tells TDMore we are interested to simulate the model with residual variability.
 
 ```{r population_prediction, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
-data <- predict(object = tdmore, newdata = data.frame(TIME=seq(0, 24, by = 0.5), CONC=NA), regimen = regimen, se=TRUE)
-
+data <- predict(
+  object = tdmore,
+  newdata = data.frame(TIME = seq(0, 24, by = 0.5), CONC = NA),
+  regimen = regimen,
+  se = TRUE
+  )
+  
 library(ggplot2)
 ggplot(data, aes(x=TIME, y=CONC)) +
   geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), fill="steelblue2", alpha=0.15) +
@@ -106,7 +111,7 @@ Both eta's ECL and EV1 have been estimated to 0. This is not surprising, as zero
 vcov(pred)
 ```
 
-Their uncertainty is equal to the population inter-individual variability (OMEGA matrix). Now, let's assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
+This uncertainty is equal to the population inter-individual variability (OMEGA matrix). Now, let's assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
 
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
@@ -154,29 +159,32 @@ newRegimen <- data.frame(
   RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
 )
 
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = newRegimen) #  Optional step
-
-newDose <- findDose(ipred, regimen=newRegimen, interval=c(100, 5000), target=data.frame(TIME=32, CONC=3.1))
-newDose
+recommendation <- findDose(
+  ipred,
+  regimen = newRegimen,
+  interval = c(100, 5000),
+  target = data.frame(TIME = 32, CONC = 3.1)
+  )
+summary(recommendation)
 ```
 
 The result of the findDose() routine is shown above. It tells us that 300 mg (approximately) is the recommended starting dose on the second day. The following code helps up verify this visually.
 
+```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE}
+# Recommended regimen for individual can be directly accessed from the recommendation object
+ipredRecommendedRegimen <- recommendation$regimen
+
+# Population regimen can be updated using the 'updateRegimen' method, a 4th dose of 1000 is used
+predUpdatedRegimen <- updateRegimen(regimen = newRegimen, newDose = 1000)
+print(predUpdatedRegimen) # Check pred regimen
+```
+
+```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE}
+ipred <- estimate(tdmore = tdmore, observed = observed, regimen = ipredRecommendedRegimen)
+pred <- estimate(tdmore = tdmore, regimen = predUpdatedRegimen)
+```
+
 ```{r find_dose_pred_ipred_predictions, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
-ipredRecommendedRegimen <- data.frame(
-  TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
-  AMT=c(1000, 1000, 1000, 300),      # Adding the recommended dose on the second day
-  RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
-)
-predRegimen <- data.frame(
-  TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
-  AMT=c(1000, 1000, 1000, 1000),     # Adding the new classical dose (1g)
-  RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
-)
-
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = ipredRecommendedRegimen) # New dose added in regimen
-pred <- estimate(tdmore = tdmore, regimen = predRegimen) # New dose added in regimen
-
 ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
   geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 32, by=0.1))) +
   geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 32, by=0.1))) +

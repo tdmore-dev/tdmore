@@ -79,7 +79,7 @@ p2 <- plot(ipred, newdata=data.frame(TIME=seq(0, 48, by=0.1), CONC=NA))
 
 # Find dose test
 D <- findDose(ipred, regimen=regimen, target=data.frame(TIME=35, CONC=0.0395))
-expect_equal(round(D$root, digits=2), 5.84)
+expect_equal(round(D$dose, digits=2), 5.84)
 
 plot(p1)
 plot(p2)
