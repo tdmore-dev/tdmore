@@ -245,8 +245,6 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
       res <- row[pNames]
       pred <- predict.tdmore(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=unlist(res), covariates=covariates)
       cbind(row, pred)
-      #pred$sample <- row$sample
-      #pred
     }, .progress=.progress, .parallel=.parallel)
     if(is.na(level)) { #user requested full dataframe without summary
       return(fittedMC)
