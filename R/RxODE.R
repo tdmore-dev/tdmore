@@ -59,10 +59,8 @@ tdmore.RxODE <- function(model, parameters=NULL, omega=NULL, covariates=NULL, ad
 #'
 #' @return
 #' A data.frame similar to the observed data frame, but with predicted values.
-#' @importFrom RxODE eventTable
-#' @importFrom RxODE rxSolve
-#' @importFrom dplyr transmute
-#' @importFrom dplyr left_join
+#' @importFrom RxODE eventTable rxSolve
+#' @importFrom dplyr transmute left_join
 #'
 model_predict.RxODE <- function(model, newdata, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, extraArguments=list()) {
   ### RxODE sometimes errors out...
@@ -148,7 +146,8 @@ model_predict.RxODE <- function(model, newdata, regimen=data.frame(TIME=c()), pa
     missingTimes <- covariates$TIME[ !(covariates$TIME %in% ev$get.sampling()$time) ]
     if(length(missingTimes) > 0) ev$add.sampling(missingTimes)
 
-    covs <- ev$get.EventTable() %>% dplyr::transmute(TIME=time) %>% dplyr::left_join(covariates, by="TIME")
+    eventTable <- ev$get.EventTable()
+    covs <-  eventTable %>% dplyr::transmute(TIME=eventTable$time) %>% dplyr::left_join(covariates, by="TIME")
     for(i in colnames(covs))
       covs[, i] <- zoo::na.locf( covs[, i] )
 
@@ -176,6 +175,8 @@ model_predict.RxODE <- function(model, newdata, regimen=data.frame(TIME=c()), pa
   result <- as.data.frame(result)
   result$TIME <- result$time
   if(!is.null(oNames)) result <- result[, c("TIME", oNames)]
-  result <- subset( result, TIME %in% newdata$TIME ) # Remove spurious sampling times due to covariates
+
+  # TIME replaced by result$TIME to avoid "no visible binding for global variable 'TIME'" warning
+  result <- subset( result, result$TIME %in% newdata$TIME) # Remove spurious sampling times due to covariates
   result
 }

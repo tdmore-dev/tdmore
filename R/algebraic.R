@@ -8,7 +8,9 @@
 #' @export
 #'
 #' @examples
-#' predictFunction <- pk1cptivbolusVCL(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30))
+#' predictFunction <- pk1cptivbolusVCL(
+#'   THETA=list(V=10, CL=5),
+#'   OMEGA=list(V=0.20, CL=0.30))
 #' model <- algebraic(predictFunction)
 #' tdmore <- tdmore(model)
 pk1cptivbolusVCL <- function(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30)) {
@@ -54,7 +56,9 @@ pk1cptivbolusVCL <- function(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30)
 #' @importFrom magrittr "%>%"
 #'
 #' @examples
-#' predictFunction <- pk1cptoralbolusVCL(THETA=list(KA=0.5, V=10, CL=5), OMEGA=list(KA=0.70, V=0.20, CL=0.30))
+#' predictFunction <- pk1cptoralbolusVCL(
+#'   THETA=list(KA=0.5, V=10, CL=5),
+#'   OMEGA=list(KA=0.70, V=0.20, CL=0.30))
 #' model <- algebraic(predictFunction)
 #' tdmore <- tdmore(model)
 pk1cptoralbolusVCL <- function(THETA=list(KA=0.5, V=10, CL=5), OMEGA=list(KA=0, V=0.20, CL=0.30)) {

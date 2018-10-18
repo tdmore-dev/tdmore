@@ -1,7 +1,10 @@
 #' Calculate the population log likelihood.
 #'
 #' @param estimate the current estimate of the parameters
-#' @param omega the omega matrix of the model
+#' @param tdmore the tdmore object
+#' @param observed the observed data, not used in the population log likelihoold
+#' @param regimen data frame describing the treatment regimen
+#' @param covariates the model covariates, not used in the population log likelihoold
 #'
 #' @return the population log likelihood
 pop_ll <- function(estimate, tdmore, observed, regimen, covariates) {
@@ -15,7 +18,7 @@ pop_ll <- function(estimate, tdmore, observed, regimen, covariates) {
 #' @param tdmore the tdmore object
 #' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
-#' @param regimen data frame describing the treatment regimen.
+#' @param regimen data frame describing the treatment regimen
 #' @param covariates the model covariates
 #'
 #' @return the prediction log likelihood
@@ -242,8 +245,6 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
       res <- row[pNames]
       pred <- predict.tdmore(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=unlist(res), covariates=covariates)
       cbind(row, pred)
-      #pred$sample <- row$sample
-      #pred
     }, .progress=.progress, .parallel=.parallel)
     if(is.na(level)) { #user requested full dataframe without summary
       return(fittedMC)
@@ -272,6 +273,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
 #'
 #' @return A numeric value
 #' @export
+#' @importFrom stats formula model.frame
 logLik.tdmorefit <- function(object, ...) {
   res <- object$logLik
   if(is.finite(res))
@@ -289,40 +291,75 @@ logLik.tdmorefit <- function(object, ...) {
      covariates=covariates)
 }
 
-#' Get an overview of the log-likelihood for varying parameter values
+#' Get an overview of the log-likelihood for varying parameter values.
+#' If arguments `fix` and `limits` are not set for a specific parameter, individual eta's will be generated to cover 95 percent of the population distribution.
 #'
 #' @param fitted A tdmorefit object
 #' @param fix Which parameters to fix? Named vector of the parameters that are fixed and should not be profiled
 #' @param maxpts Maximum number of points per parameter
-#' @param limits Limits to explore (numeric vector of form c(min, max))
+#' @param limits limits to explore (numeric vector of form c(min, max) or specific limits per parameter in the form list(ETA1=c(min,max), ETA2=c(min,max), etc))
+#' @param type log-lokelihood function type, 3 possible values: 'pop', 'pred' or 'll' (= pop + pred)
 #' @param .progress See plyr::ddply
 #' @param ... ignored
 #'
-#' @return A data.frame with each parameter value tested, and an additional `logLik` column with the log-likelihood for each parameter combination
+#' @return a tdmore profile object. It namely contains a data.frame with each parameter value tested, and an additional `logLik` column with the log-likelihood for each parameter combination.
 #' @export
-profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 100, limits=c(-1.96, 1.96), type=c('ll', 'pop', 'pred'), .progress="none", ...) {
+profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 100, limits=NULL, type=c('ll', 'pop', 'pred'), .progress="none", ...) {
   tdmorefit <- fitted
   model <- tdmorefit$tdmore
+  omegas <- diag(tdmorefit$tdmore$omega)
+  profiledParameters <- model$parameters
+  if(!is.null(fix)) profiledParameters <- profiledParameters[ !(profiledParameters %in% names(fix)) ]
+
+  limitsAsList <- !is.null(limits) && is.list(limits)
+  if(limitsAsList) assert_that(all(names(limits) %in% profiledParameters))
+
+  limitsAsNumeric <- !is.null(limits) && is.numeric(limits)
+  if(limitsAsNumeric) assert_that(length(limits)==2)
+
   type <- match.arg(type, c('ll', 'pop', 'pred'))
   if(type == "ll") fun <- ll
   else if (type == "pop") fun <- pop_ll
   else if (type == "pred") fun <- pred_ll
   else stop("Unknown log-likelihood function")
 
-  profiledParameters <- model$parameters
-  if(!is.null(fix)) profiledParameters <- profiledParameters[ !(profiledParameters %in% names(fix)) ]
-  x <- seq(limits[1], limits[2], length.out=maxpts)
-  x <- expand.grid(rep(list(x), length(profiledParameters)))
-  colnames(x) <- profiledParameters
-  for(i in names(fix)) x[,i] <- fix[i]
-  x <- x[, model$parameters] #reorder the columns
+  list <- lapply(
+    profiledParameters,
+    FUN = function(profiledParameter) {
+        if (limitsAsNumeric) {
+          return(seq(limits[1], limits[2], length.out=maxpts))
 
-  result <- plyr::adply(x, 1, function(estimate) {
+        } else if (limitsAsList){
+          parameterRange <- unlist(limits[profiledParameter])
+          if(!is.null(parameterRange)) {
+            cat()
+            return(seq(parameterRange[1], parameterRange[2], length.out=maxpts))
+          }
+        }
+        # Default case, take omega value to generate a 95% range of possible eta's
+        omega <- omegas[profiledParameter]
+        return(seq(-1.96 * sqrt(omega), 1.96 * sqrt(omega), length.out = maxpts))
+    }
+  )
+  grid <- expand.grid(list)
+  colnames(grid) <- profiledParameters
+  for(i in names(fix)) grid[,i] <- fix[i]
+  grid <- grid[, model$parameters] #reorder the columns
+
+  profile <- plyr::adply(grid, 1, function(estimate) {
     eta <- as.numeric(estimate)
     names(eta) <- model$parameters
     c(logLik=fun(eta, model, tdmorefit$observed, tdmorefit$regimen, tdmorefit$covariates))
   }, .progress=.progress)
-  result
+
+  return(structure(
+    list(
+      profile = profile,
+      profiledParameters = profiledParameters,
+      tdmorefit = tdmorefit
+    ),
+    class = c("tdmoreprofile")
+  ))
 }
 
 #' Get the model used to provide this fit

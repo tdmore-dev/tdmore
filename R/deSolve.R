@@ -40,6 +40,7 @@ tdmore_deSolve <- function(parameters, add=0, prop=0, exp=0, ...) {
 #' @return
 #' A data.frame similar to the observed data frame, but with predicted values.
 #' @importFrom RxODE eventTable
+#' @importFrom deSolve ode
 #'
 model_predict.tdmore_deSolve <- function(model, newdata, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, extraArguments=list()) {
   if(any(parameters > 10 | parameters < -10)) {
@@ -102,7 +103,7 @@ model_predict.tdmore_deSolve <- function(model, newdata, regimen=data.frame(TIME
   #eventdat <- subset(eventdat, min(samplingTimes) <= time & time <= max(samplingTimes))
   if(nrow(eventdat) == 0) eventdat = NULL
 
-  result <- do.call(ode, args=c(
+  result <- do.call(deSolve::ode, args=c(
     list(times=c(0, samplingTimes), parms=params, events=list(data=eventdat)),
     model$extraArgs
     ) )
