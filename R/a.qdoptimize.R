@@ -16,30 +16,17 @@
 #' @export
 #' @importFrom stats uniroot
 findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), target, se.fit = FALSE, level = 0.95, mc.maxpts = 100, .progress="none", .parallel=FALSE, ...) {
+    if(!se.fit) {
+      # Find the best dose for the estimated parameters
+      rootFunction <- function(AMT) {
+        myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)
+        obs <- predict(tdmorefit, newdata=target, regimen=myRegimen)
+        obs[ , colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
+      }
+      result <- runUniroot(rootFunction, interval, ...)
+      return(convertResultToRecommendation(result, regimen, doseRows))
 
-  defaultRootFunction <- function(AMT) {
-    myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)
-    obs <- predict(tdmorefit, newdata=target, regimen=myRegimen)
-    obs[ , colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
-  }
-
-  iValues <- c(defaultRootFunction(interval[1]), defaultRootFunction(interval[2]) )
-
-  if(sign(iValues[1]) == sign(iValues[2])) {
-    warning("Predicted values at edges of interval both ",
-            switch(sign(iValues[1]), "0"="equal to", "1"="above", "2"="below"),
-            " target, returning closest value...")
-    i <- which.min(abs(iValues))
-    result <- list(
-      root=interval[i],
-      f.root=iValues[i],
-      iter=0,
-      estim.prec=Inf
-    )
-    return(convertResultToRecommendation(result, regimen, doseRows))
-
-  } else {
-    if(se.fit) {
+    } else {
       # Find the dose for each Monte-Carlo sample
       mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit), varcov=vcov(tdmorefit)) )
       mc$sample <- 1:mc.maxpts
@@ -54,16 +41,32 @@ findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), tar
           obs[, colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
         }
 
-        result <- uniroot(f=mcRootFunction, interval=interval, ...)
+        result <- runUniroot(mcRootFunction, interval, ...)
         cbind(row, dose=result$root, f.root=result$f.root, iter=result$iter, estim.prec=result$estim.prec)
       }, .progress=.progress, .parallel=.parallel)
-      return(convertMCResultToRecommendation(mcResult, regimen, doseRows, level))
 
-    } else {
-      # Find the dose for the exact parameters
-      result <- uniroot(f=defaultRootFunction, interval=interval, ...)
-      return(convertResultToRecommendation(result, regimen, doseRows))
+      return(convertMCResultToRecommendation(mcResult, regimen, doseRows, level))
     }
+}
+
+runUniroot <- function(rootFunction, interval, ...) {
+  iValues <- c(rootFunction(interval[1]), rootFunction(interval[2]))
+
+  if(sign(iValues[1]) == sign(iValues[2])) {
+    warning("Predicted values at edges of interval both ",
+            switch(sign(iValues[1]), "0"="equal to", "1"="above", "2"="below"),
+            " target, returning closest value...")
+    i <- which.min(abs(iValues))
+
+    result <- list(
+      root=interval[i],
+      f.root=iValues[i],
+      iter=0,
+      estim.prec=Inf
+    )
+    return(result)
+  } else {
+    return(uniroot(f=rootFunction, interval=interval, ...))
   }
 }
 
@@ -100,21 +103,18 @@ convertResultToRecommendation <- function(result, regimen, doseRows) {
 #' @importFrom dplyr summarise
 convertMCResultToRecommendation <- function(mcResult, regimen, doseRows, level) {
   ciLevel <- (1-level)/2
-  mcResult$dose[mcResult$dose < 0] <- 0 # We can't give a negative dose
-
-  dose <- mcResult %>% summarise(
-    dose.median = median(mcResult$dose),
-    dose.lower = quantile(mcResult$dose, ciLevel),
-    dose.upper = quantile(mcResult$dose, 1 - ciLevel)
+  dose <- c(
+    dose.median = as.numeric(median(mcResult$dose)),
+    dose.lower = as.numeric(quantile(mcResult$dose, ciLevel)),
+    dose.upper = as.numeric(quantile(mcResult$dose, 1 - ciLevel))
   )
-
   return(structure(
     list(
       dose = dose,
       regimen = updateRegimen(
         regimen = regimen,
         doseRows = doseRows,
-        newDose = dose$dose.median
+        newDose = dose['dose.median']
       ),
       result = mcResult
     ),

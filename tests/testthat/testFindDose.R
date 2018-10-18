@@ -103,10 +103,13 @@ recommendation2 <- findDose(
   target = data.frame(TIME = 32, CONC = 3.1),
   se.fit = T,
   level = 0.95,
-  mc.maxpts = 50,
-  extendInt = "yes"
+  mc.maxpts = 50
 )
-expect_equal(round(recommendation2$dose$dose.median, digits=2), 224.83)
+expect_equal(unlist(round(recommendation2$dose, digits=2)), c(
+  dose.median = 224.83,
+  dose.lower = 100,
+  dose.upper = 775.66
+))
 
 # Continue
 regimen <- recommendation2$regimen
