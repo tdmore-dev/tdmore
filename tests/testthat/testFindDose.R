@@ -4,6 +4,8 @@ library(nlmixr)
 library(ggplot2)
 library(testthat)
 
+context("Test that the findDose method works as intended")
+
 set.seed(0)
 
 # Creating your model

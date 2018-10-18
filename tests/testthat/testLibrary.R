@@ -1,6 +1,5 @@
 library(tdmore)
 library(RxODE)
-library(ggplot2)
 library(testthat)
 
 context("Test that the algebraic library works as intented")
