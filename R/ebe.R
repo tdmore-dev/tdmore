@@ -9,6 +9,7 @@
 #' @return the population log likelihood
 pop_ll <- function(estimate, tdmore, observed, regimen, covariates) {
   omega <- tdmore$omega
+  omega <- omega[!tdmore$omega0, !tdmore$omega0, drop=FALSE]
   sum( mvtnorm::dmvnorm(estimate, sigma=omega, log=TRUE) )
 }
 
@@ -42,7 +43,7 @@ pred_ll <- function(estimate, tdmore, observed, regimen, covariates) {
 ll <- function(estimate, tdmore, observed, regimen, covariates) {
   ## TODO: what happens if the estimates are in the wrong order wrt OMEGA??
   ## Trust noone...
-  if(is.null(names(estimate))) names(estimate) <- tdmore$parameters #you should support named parameters as well!
+  if(is.null(names(estimate))) names(estimate) <- tdmore$parameters[!tdmore$omega0] #you should support named parameters as well!
   res <- pop_ll(estimate, tdmore, observed, regimen, covariates) + pred_ll(estimate, tdmore, observed, regimen, covariates)
   res
 }
@@ -65,35 +66,54 @@ ll <- function(estimate, tdmore, observed, regimen, covariates) {
 estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, p=NULL, ...) {
   assert_that(class(tdmore) == "tdmore")
   if(is.null(p)) p<-rep(0, length(tdmore$parameters))
+
+  # Remove omega 0 parameters
+  omega0 <- tdmore$omega0
+  p <- p[!omega0]
+
   # First try to estimate at starting values, as a precaution
   ll(estimate=p,
      tdmore=tdmore,
      observed=observed,
      regimen=regimen,
      covariates=covariates)
+
   # Then do the full nlm
-  pointEstimate <- stats::nlm(f=function(...) {
-    tryCatch({
-      -2*ll(...)
-    }, error=function(e){ 999999 })
+  pointEstimate <- stats::nlm(
+    f = function(...) {
+      tryCatch({
+        -2 * ll(...)
+      }, error = function(e) {
+        999999
+      })
     },
-                       p=p,
-                       tdmore,
-                       observed,
-                       regimen,
-                       covariates,
-                       ...)
-  res <- pointEstimate$estimate
+    p = p,
+    tdmore,
+    observed,
+    regimen,
+    covariates,
+    ...
+  )
+  parametersLength <- length(tdmore$parameters)
+  res <- rep(0, parametersLength)
+  res[!omega0] <- pointEstimate$estimate
   names(res) <- tdmore$parameters
 
   #OFIM <- pointEstimate$hessian ##!!! Wrong hessian!?
   # Observed fisher information matrix is -1*hessian(ll)
-  OFIM <- numDeriv::hessian(ll, res, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)
+  OFIM <- numDeriv::hessian(ll, res[!tdmore$omega0], tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)
   varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
   if(all(diag(varcov) <= 0)) varcov <- -1 * varcov
-  dimnames(varcov) = list(tdmore$parameters, tdmore$parameters)
+
+  extendedVarcov <- matrix(0, nrow=parametersLength, ncol=parametersLength)
+  extendedVarcov[1:nrow(varcov), 1:ncol(varcov)] <- varcov
+  columnNames <- c(tdmore$parameters[!omega0], tdmore$parameters[omega0])
+  dimnames(extendedVarcov) = list(columnNames, columnNames)
+  extendedVarcov <- extendedVarcov[, tdmore$parameters, drop=FALSE]
+  extendedVarcov <- extendedVarcov[tdmore$parameters, , drop=FALSE]
+
   ofv <- pointEstimate$minimum
-  tdmorefit(tdmore, observed, regimen, covariates, ofv, res, varcov, nlmresult=pointEstimate)
+  tdmorefit(tdmore, observed, regimen, covariates, ofv, res, extendedVarcov, nlmresult=pointEstimate)
 }
 
 #' Create a tdmorefit object manually
@@ -238,14 +258,22 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     oNames <- names(newdata)
     oNames <- oNames[oNames != "TIME"]
     pNames <- names(coef(tdmorefit))
-    mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit), varcov=vcov(tdmorefit)) )
-    mc$sample <- 1:mc.maxpts
+
+    omega0 <- tdmorefit$tdmore$omega0
+    varcov <- vcov(tdmorefit)
+    varcov <- varcov[!omega0, !omega0, drop=FALSE]
+    mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit)[!omega0], varcov=varcov) )
+    colnames(mc) <- names(pars[!omega0])
+    for(i in pNames[omega0]) mc[, i] <- 0
     for(i in names(parameters)) mc[, i] <- parameters[i]
+    mc$sample <- 1:mc.maxpts
+
     fittedMC <- plyr::ddply(mc, 1, function(row) {
       res <- row[pNames]
       pred <- predict.tdmore(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=unlist(res), covariates=covariates)
       cbind(row, pred)
     }, .progress=.progress, .parallel=.parallel)
+
     if(is.na(level)) { #user requested full dataframe without summary
       return(fittedMC)
     }
@@ -344,12 +372,13 @@ profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 100, limits=NULL, type=
   grid <- expand.grid(list)
   colnames(grid) <- profiledParameters
   for(i in names(fix)) grid[,i] <- fix[i]
-  grid <- grid[, model$parameters] #reorder the columns
+  # Reorder the columns
+  grid <- grid[, model$parameters, drop=FALSE] # grid still a data.frame
 
   profile <- plyr::adply(grid, 1, function(estimate) {
     eta <- as.numeric(estimate)
     names(eta) <- model$parameters
-    c(logLik=fun(eta, model, tdmorefit$observed, tdmorefit$regimen, tdmorefit$covariates))
+    c(logLik=fun(eta[!tdmorefit$tdmore$omega0], model, tdmorefit$observed, tdmorefit$regimen, tdmorefit$covariates))
   }, .progress=.progress)
 
   return(structure(

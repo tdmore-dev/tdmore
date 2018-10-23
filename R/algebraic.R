@@ -201,6 +201,7 @@ tdmore.algebraic <- function(model, parameters=NULL, omega=NULL, add=0, prop=0, 
   structure(list(
     model=model,
     omega=model$omega,
+    omega0=diag(model$omega)==0,
     res_var=list(add=add, prop=prop, exp=exp),
     parameters=model$parameters
   ), class="tdmore")

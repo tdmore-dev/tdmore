@@ -38,6 +38,7 @@ tdmore.RxODE <- function(model, parameters=NULL, omega=NULL, covariates=NULL, ad
   structure(list(
     model=model,
     omega=omega,
+    omega0=diag(omega)==0,
     res_var=list(add=add, prop=prop, exp=exp),
     parameters=parameters,
     extraArguments=list(...)

@@ -77,6 +77,7 @@ tdmore.nlmixrUI <- function(model, ...) {
   structure(list(
     model=rxModel,
     omega=omega,
+    omega0=diag(omega)==0,
     res_var=list(add=add, prop=prop, exp=exp),
     parameters=parameters,
     extraArguments=list(...)
