@@ -58,6 +58,8 @@ tdmore.default <- function(model, ...) {
 #' @export
 predict.tdmore <- function(object, newdata, regimen, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
   tdmore <- object
+  checkCovariates(tdmore, covariates)
+
   pars <- rep(0, length(tdmore$parameters)) #population prediction
   names(pars) <- tdmore$parameters
   if(!is.null(parameters)) {

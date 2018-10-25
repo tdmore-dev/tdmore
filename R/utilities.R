@@ -17,6 +17,7 @@ vectorToDiagonalMatrix <- function(vector) {
 #' Melt prediction results.
 #'
 #' @param x dataframe returned by the predict function
+#' @param se standard error in input dataframe, logical value
 #'
 #' @return the melted dataframe
 meltPredictions <- function(x, se=FALSE) {

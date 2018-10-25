@@ -3,7 +3,6 @@
 #' @param model the RxODE model
 #' @param parameters list of parameter names, or NULL to use all parameters names from RxODE
 #' @param omega omega variance-covariance matrix, or NULL to use a diagonal matrix of variances 1
-#' @param covariates the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0
 #' @param add additive residual error, as stdev
 #' @param prop proportional residual error, as stdev
 #' @param exp exponential residual error, as stdev. The exponential error cannot be used in conjunction with the additive or proportional error
@@ -13,7 +12,7 @@
 #' @export
 #'
 #' @example inst/examples/RxODE.R
-tdmore.RxODE <- function(model, parameters=NULL, omega=NULL, covariates=NULL, add=0, prop=0, exp=0, ...) {
+tdmore.RxODE <- function(model, parameters=NULL, omega=NULL, add=0, prop=0, exp=0, ...) {
   assert_that(class(model) %in% c("RxODE")) #currently, only RxODE is supported
 
   tdmore <- structure(list(
@@ -21,7 +20,7 @@ tdmore.RxODE <- function(model, parameters=NULL, omega=NULL, covariates=NULL, ad
     omega=omega,
     res_var=list(add=add, prop=prop, exp=exp),
     parameters=parameters,
-    covariates=covariates,
+    covariates=NULL, # Computed automatically in checkTdmore
     extraArguments=list(...)
   ), class="tdmore")
 
@@ -122,7 +121,8 @@ model_predict.RxODE <- function(model, newdata, regimen=data.frame(TIME=c()), pa
   params = NULL
   assert_that(is.numeric(parameters))
   pNames <- names(parameters)
-  params = parameters
+  params = parameters # parameters + fixed covariate values
+  cNames <- c()
 
   if("data.frame" %in% class(covariates)) {
     assert_that("TIME" %in% colnames(covariates))
@@ -138,23 +138,22 @@ model_predict.RxODE <- function(model, newdata, regimen=data.frame(TIME=c()), pa
 
     cNames <- colnames(covariates)
     cNames <- cNames[cNames != "TIME"]
-    pNames <- c(pNames, cNames)
   } else if (is.numeric(covariates)){
-    pNames <- c(pNames, names(covariates))
+    cNames <- names(covariates)
     params = c(parameters, covariates)
     covs = NULL
-  } else if (length(covariates) == 0 || is.null(covariates)) {
+  } else if (length(covariates) == 0) {
     covs=NULL
   } else {
     stop("Covariates in wrong format")
   }
 
+  pNames <- c(pNames, cNames) # parameter names + all covariate names
   assert_that(all(pNames %in% modVars$params))
   assert_that(all(modVars$params %in% pNames))
 
   # Run the simulation
   result <- do.call(RxODE::rxSolve, c( list(object=model, events=ev, params=params, covs=covs), extraArguments))
-  #result <- model$solve(events=ev, params=params, covs=covs)
 
   # Only get the values we want
   result <- as.data.frame(result)

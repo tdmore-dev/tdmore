@@ -7,23 +7,22 @@ context("Test that the nlmixr class works as intended")
 
 # Load the default tdmore
 source(paste0(test_path(), ("/modelLibrary.R")))
-tdmore <- nlmixrUI(default_model) %>% tdmore(covs_interpolation="constant")
+tdmore <- nlmixrUI(default_model) %>% tdmore()
 
 regimen <- data.frame(
   TIME=seq(0, 1)*24,
   AMT=5 #5mg
 )
+covariates = c(WT=70)
 
 # Default tdmore plot
-#debugonce(tdmore:::plot.tdmore)
-covariates <- data.frame(TIME=c(0), WT=c(70))
-plot(tdmore, regimen, vars=c("center", "periph"), covariates=covariates) # Don't like this. Default covariates should be in TDMore model...
+plot(tdmore, regimen, vars=c("center", "periph"), covariates=covariates)
 
 # Create the observed and covariates dataframe
 observed <- data.frame(TIME=c(2), CONC=c(0.040))
 
 # Compute PRED
-pred <- tdmore %>% estimate(regimen = regimen, covariates = covariates)
+pred <- tdmore %>% estimate(regimen = regimen, covariates=covariates)
 expect_equal(pred$res, c(ECL=0.0, EV1=0.0))
 
 # Compute IPRED

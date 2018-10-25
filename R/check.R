@@ -76,3 +76,18 @@ checkModel <- function(tdmore) {
   tdmore$covariates <- covariates
   return(tdmore)
 }
+
+checkCovariates <- function(tdmore, covariates) {
+  if("data.frame" %in% class(covariates)) {
+    cNames <- colnames(covariates)
+    cNames <- cNames[cNames != "TIME"]
+  } else if (is.numeric(covariates)){
+    cNames <- names(covariates)
+  } else if (length(covariates) == 0) {
+    cNames <- c()
+  } else {
+    stop("Covariates in wrong format")
+  }
+  condition <- tdmore$covariates %in% cNames
+  assert_that(all(condition), msg=paste("Value for covariate(s)", paste(tdmore$covariates[!condition], collapse=",")  ,"missing"))
+}
