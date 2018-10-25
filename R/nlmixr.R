@@ -41,10 +41,6 @@ tdmore.nlmixrUI <- function(model, ...) {
     exp <- model$est[[expIndex]]
   }
 
-  # Exponential and add/prop are mutually exclusive
-  if(exp != 0) assert_that(add==0 & prop==0)
-  if(add != 0 || prop != 0) assert_that(exp == 0)
-
   # Model and structural equations processing
   modelFunction <- model$theta.pars
   thetaIndexes <- !is.na(model$ntheta)
@@ -74,11 +70,16 @@ tdmore.nlmixrUI <- function(model, ...) {
   # Create RxODE object
   rxModel <- RxODE::RxODE(rxOdeModelCode)
 
-  structure(list(
+  # Construct the TDMore object
+  tdmore <- structure(list(
     model=rxModel,
     omega=omega,
     res_var=list(add=add, prop=prop, exp=exp),
     parameters=parameters,
+    covariates=covariates,
     extraArguments=list(...)
   ), class="tdmore")
+
+  # Check consistency and return
+  return(checkTdmore(tdmore))
 }

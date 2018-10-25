@@ -4,17 +4,19 @@ library(testthat)
 
 context("Test that the algebraic library works as intented")
 
-omegas=c(V=0.28^2, CL=0.19^2)
+omegas1=list(V=0.28^2, CL=0.19^2)
 mod1 <- pk1cptivbolusVCL(THETA = list(V = 61, CL = 3.7),
-                   OMEGA = omegas) %>% algebraic() %>% tdmore(exp = 0.30)
+                   OMEGA = omegas1) %>% algebraic() %>% tdmore(exp = 0.30)
 
 modelCode <- "
-Vc = 61 * exp(ETA_V);
-CL = 3.7 * exp(ETA_CL);
+Vc = 61 * exp(EV);
+CL = 3.7 * exp(ECL);
 CONC = centr / Vc;
 d/dt(centr) = -CL/Vc*centr;
 "
-mod2 <- RxODE::RxODE(modelCode) %>% tdmore(exp=0.30, omega=convertVectorToDiag(omegas))
+
+omegas2=c(EV=0.28^2, ECL=0.19^2)
+mod2 <- RxODE::RxODE(modelCode) %>% tdmore(exp=0.30, omega=convertVectorToDiag(omegas2))
 
 regimen <- data.frame(
   TIME=seq(0, 7)*24,

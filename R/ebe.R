@@ -239,7 +239,9 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     oNames <- oNames[oNames != "TIME"]
     pNames <- names(coef(tdmorefit))
     mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit), varcov=vcov(tdmorefit)) )
+    colnames(mc) <- names(pars)
     mc$sample <- 1:mc.maxpts
+
     for(i in names(parameters)) mc[, i] <- parameters[i]
     fittedMC <- plyr::ddply(mc, 1, function(row) {
       res <- row[pNames]
@@ -344,7 +346,7 @@ profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 100, limits=NULL, type=
   grid <- expand.grid(list)
   colnames(grid) <- profiledParameters
   for(i in names(fix)) grid[,i] <- fix[i]
-  grid <- grid[, model$parameters] #reorder the columns
+  grid <- grid[, model$parameters, drop=FALSE] # Reorder the columns
 
   profile <- plyr::adply(grid, 1, function(estimate) {
     eta <- as.numeric(estimate)

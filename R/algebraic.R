@@ -15,10 +15,10 @@
 #' tdmore <- tdmore(model)
 pk1cptivbolusVCL <- function(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30)) {
   return(structure(list(
-    predictFunction = function(times, regimen, ETA_V, ETA_CL) {
+    predictFunction = function(times, regimen, EV, ECL) {
       assertthat::assert_that(all(colnames(regimen) == c("TIME", "AMT")))
-      V = THETA$V * exp(ETA_V)
-      CL = THETA$CL * exp(ETA_CL)
+      V = THETA$V * exp(EV)
+      CL = THETA$CL * exp(ECL)
       k = CL / V
       t = times
 
@@ -41,7 +41,7 @@ pk1cptivbolusVCL <- function(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30)
       }
       return(CONC)
       }
-    , omega = convertVectorToDiag(OMEGA)), class = "algebraic_definition"))
+    , omega = convertVectorToDiag(list(EV=OMEGA$V, ECL=OMEGA$CL))), class = "algebraic_definition"))
 }
 
 
@@ -63,12 +63,12 @@ pk1cptivbolusVCL <- function(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30)
 #' tdmore <- tdmore(model)
 pk1cptoralbolusVCL <- function(THETA=list(KA=0.5, V=10, CL=5), OMEGA=list(KA=0, V=0.20, CL=0.30)) {
   return(structure(list(
-    predictFunction = function(times, regimen, ETA_V, ETA_CL, ETA_KA) {
+    predictFunction = function(times, regimen, EV, ECL, EKA) {
     assertthat::assert_that(all(colnames(regimen) == c("TIME", "AMT")))
-    V = THETA$V * exp(OMEGA$V * ETA_V)
-    CL = THETA$CL * exp(OMEGA$CL * ETA_CL)
+    V = THETA$V * exp(OMEGA$V * EV)
+    CL = THETA$CL * exp(OMEGA$CL * ECL)
     k = CL / V
-    KA = THETA$KA * exp(OMEGA$KA * ETA_KA)
+    KA = THETA$KA * exp(OMEGA$KA * EKA)
     t = times
 
     CONC <- rep(0, length(times))
@@ -90,7 +90,7 @@ pk1cptoralbolusVCL <- function(THETA=list(KA=0.5, V=10, CL=5), OMEGA=list(KA=0, 
     }
     return(CONC)
     }
-    , omega = convertVectorToDiag(OMEGA)), class = "algebraic_definition"))
+    , omega = convertVectorToDiag(list(EKA=OMEGA$KA, ECL=OMEGA$CL, EV=OMEGA$V))), class = "algebraic_definition"))
 }
 
 
@@ -191,17 +191,14 @@ tdmore.algebraic <- function(model, parameters=NULL, omega=NULL, add=0, prop=0, 
   if(!is.null(parameters)) stop("Algebraic models can only work with their own parameters")
   if(!is.null(omega)) stop("Algebraic models can only work with its own omega matrix")
 
-  assertthat::is.number(add)
-  assertthat::is.number(prop)
-  assertthat::is.number(exp)
-  ## Exponential and add/prop are mutually exclusive
-  if(exp != 0) assertthat::assert_that(add==0 & prop==0)
-  if(add != 0 || prop != 0) assertthat::assert_that(exp == 0)
-
-  structure(list(
+  tdmore <- structure(list(
     model=model,
     omega=model$omega,
     res_var=list(add=add, prop=prop, exp=exp),
-    parameters=model$parameters
+    parameters=model$parameters,
+    covariates=NULL
   ), class="tdmore")
+
+  # Check consistency and return
+  return(checkTdmore(tdmore))
 }

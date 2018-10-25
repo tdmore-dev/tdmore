@@ -53,7 +53,8 @@ plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progres
   }
 
   ipred <- tdmorefit %>% predict(newdata) %>% melt
-  ipredre <- tdmorefit %>% predict.tdmorefit(newdata, se.fit=TRUE, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% melt(se=TRUE)
+  tmp <- predict.tdmorefit(tdmorefit, newdata, se.fit=TRUE, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress)
+  ipredre <- tmp %>% melt(se=TRUE)
   pred <- estimate(tdmorefit$tdmore, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates) %>% predict(newdata) %>% melt
   obs <- model.frame.tdmorefit(tdmorefit) %>% melt
 

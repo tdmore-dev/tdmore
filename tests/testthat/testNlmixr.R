@@ -5,35 +5,9 @@ library(testthat)
 
 context("Test that the nlmixr class works as intended")
 
-modelCode <- function(){
-  ini({
-    TVKA <- 3.7
-    TVV1 <- 61
-    TVQ <- 10
-    TVCL <- 3.7
-    ECL ~ 0.0784 #ETA1, 28%
-    EV1 ~ 0.0361 #ETA2, 19%
-    EPS_PROP <- 0.23 # Proportional error, 23% SD
-  })
-  model({
-    KA <- TVKA
-    CL <- TVCL * (WT/70)^0.75 * exp(ECL)
-    V1 <- TVV1 * exp(EV1)
-    V2 <- V1
-    Q <- TVQ
-    K12 <- Q/V1
-    K21 <- Q/V2
-
-    d/dt(depot) = -KA*depot
-    d/dt(center) = KA*depot - CL/V1 * center - K12*center + K21 * periph
-    d/dt(periph) = K12*center - K21 * periph
-
-    CONC = center / V1
-    CONC ~ prop(EPS_PROP)
-  })
-}
-
-model <- nlmixrUI(modelCode) %>% tdmore(covs_interpolation="constant")
+# Load the default model
+source(paste0(test_path(), ("/modelLibrary.R")))
+model <- nlmixrUI(default_model) %>% tdmore(covs_interpolation="constant")
 
 regimen <- data.frame(
   TIME=seq(0, 1)*24,
@@ -43,10 +17,6 @@ regimen <- data.frame(
 # Create the observed and covariates dataframe
 observed <- data.frame(TIME=c(2), CONC=c(0.040))
 covariates <- data.frame(TIME=c(0), WT=c(70))
-
-# Compute PRED
-pred <- model %>% estimate(regimen = regimen, covariates = covariates)
-expect_equal(pred$res, c(ECL=0.0, EV1=0.0))
 
 # Compute PRED
 pred <- model %>% estimate(regimen = regimen, covariates = covariates)

@@ -16,32 +16,17 @@
 tdmore.RxODE <- function(model, parameters=NULL, omega=NULL, covariates=NULL, add=0, prop=0, exp=0, ...) {
   assert_that(class(model) %in% c("RxODE")) #currently, only RxODE is supported
 
-  # Check that parameters + covariates together supplies the parameters needed for the model
-  modVars <- model$get.modelVars()
-  if(is.null(parameters)) parameters=modVars$params
-  if(is.null(covariates)) covariates = modVars$params[ ! modVars$params %in% parameters ] #the rest
-
-  assert_that( all.equal( sort(c(parameters, covariates)), sort(modVars$params)) )
-
-  if(is.null(omega)) omega = diag(rep(1, length(parameters)))
-  assertthat::are_equal(nrow(omega), length(parameters))
-  assertthat::are_equal(ncol(omega), length(parameters))
-  assertthat::assert_that(all( eigen(omega)$values >= 0)) #matrix should be positive semi-definite
-
-  assertthat::is.number(add)
-  assertthat::is.number(prop)
-  assertthat::is.number(exp)
-  ## Exponential and add/prop are mutually exclusive
-  if(exp != 0) assert_that(add==0 & prop==0)
-  if(add != 0 || prop != 0) assert_that(exp == 0)
-
-  structure(list(
+  tdmore <- structure(list(
     model=model,
     omega=omega,
     res_var=list(add=add, prop=prop, exp=exp),
     parameters=parameters,
+    covariates=covariates,
     extraArguments=list(...)
   ), class="tdmore")
+
+  # Check consistency and return
+  return(checkTdmore(tdmore))
 }
 
 #' Predict for RxODE

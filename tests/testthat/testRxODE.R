@@ -6,8 +6,8 @@ library(magrittr)
 context("Test that the RxODE model class works as intended")
 
 modelCode <- "
-CL = 3.7 * exp(ETA1);
-Vc = 61 * exp(ETA2);
+CL = 3.7 * exp(ECL);
+Vc = 61 * exp(EVc);
 ka=3.7;
 Q = 10;
 Vp = Vc;
@@ -21,7 +21,7 @@ d/dt(abs) = -ka*abs;
 d/dt(centr) = ka*abs - k12*centr + k21*perip - ke*centr;
 d/dt(perip) = k12*centr - k21*perip;
 "
-omegas=c(V=0.28^2, CL=0.19^2)
+omegas=c(EVc=0.19^2, ECL=0.28^2)
 
 model <- RxODE::RxODE(modelCode) %>%
   tdmore(omega=convertVectorToDiag(omegas), prop=0.23) #Model has 23% proportional error
@@ -35,11 +35,11 @@ observed <- data.frame(TIME=c(2), CONC=c(0.040))
 
 # Compute PRED
 pred <- model %>% estimate(regimen = regimen)
-expect_equal(pred$res, c(ETA1=0.0, ETA2=0.0))
+expect_equal(pred$res, c(ECL=0.0, EVc=0.0))
 
 # Compute IPRED
 ipred <- model %>% estimate(observed = observed, regimen = regimen)
-expect_equal(round(ipred$res, digits=4), c(ETA1=0.0336, ETA2=0.1175))
+expect_equal(round(ipred$res, digits=4), c(ECL=0.0336, EVc=0.1175))
 
 # Custom plot, compare PRED & IPRED
 library(ggplot2)
