@@ -23,29 +23,26 @@ d/dt(perip) = k12*centr - k21*perip;
 "
 omegas=c(EVc=0.19^2, ECL=0.28^2)
 
-model <- RxODE::RxODE(modelCode) %>%
-  tdmore(omega=convertVectorToDiag(omegas), prop=0.23) #Model has 23% proportional error
+tdmore <- RxODE::RxODE(modelCode) %>%
+  tdmore(omega=vectorToDiagonalMatrix(omegas), prop=0.23) #Model has 23% proportional error
 
 regimen <- data.frame(
-  TIME=seq(0, 7)*24,
+  TIME=seq(0, 3)*24,
   AMT=5 #5mg
 )
 
-observed <- data.frame(TIME=c(2), CONC=c(0.040))
+# Default tdmore plot
+plot(tdmore, regimen, vars=c("perip", "centr"))
 
 # Compute PRED
-pred <- model %>% estimate(regimen = regimen)
+pred <- tdmore %>% estimate(regimen = regimen)
 expect_equal(pred$res, c(ECL=0.0, EVc=0.0))
 
 # Compute IPRED
-ipred <- model %>% estimate(observed = observed, regimen = regimen)
+observed <- data.frame(TIME=c(2), CONC=c(0.040))
+ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
 expect_equal(round(ipred$res, digits=4), c(ECL=0.0336, EVc=0.1175))
 
-# Custom plot, compare PRED & IPRED
-library(ggplot2)
-ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
-  geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 48, by=0.1))) +
-  geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 48, by=0.1)))
+# Default IPRED plot
+plot(ipred)
 
-# Default TDMore plot for IPRED
-plot(ipred, newdata=data.frame(TIME=seq(0, 48, by=0.1), CONC=NA))

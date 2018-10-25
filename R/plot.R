@@ -1,13 +1,11 @@
 
-#' Plot a tdmorefit object
+#' Plot a tdmorefit object.
 #'
 #' @param x the tdmorefit object
-#' @param newdata a data.frame with at least TIME and any other columns to plot,
-#' or NULL to plot all columns from the original observed data between
-#' time 0 and max(observationTime),
-#' or a numeric vector of times
-#' @param se.fit Add a curve for the confidence interval around the fit
-#' @param mc.maxpts Maximum number of points to use for the monte carlo fit
+#' @param newdata a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times
+#' @param vars additional variables to be plotted
+#' @param se.fit add a curve for the confidence interval around the fit
+#' @param mc.maxpts maximum number of points to use for the monte carlo fit
 #' @param .progress either "none" or "text" to see calculation progress of monte carlo simulations
 #' @param ... ignored
 #'
@@ -16,54 +14,92 @@
 #' @importFrom ggplot2 ggplot aes_string geom_line geom_ribbon geom_point geom_errorbar
 #' @importFrom stats predict
 #' @export
-plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progress="none", ...) {
+plot.tdmorefit <- function(x, newdata=NULL, vars=NULL, se.fit=TRUE, mc.maxpts=100, .progress="none", ...) {
   tdmorefit <- x
-  if(is.null(newdata)) {
-    tmax <- max(0, tdmorefit$observed$TIME,
-                tdmorefit$regimen$TIME,
-                tdmorefit$regimen$TIME + tdmorefit$regimen$ADDL * tdmorefit$regimen$II,
-                na.rm=TRUE)
-    newdata <- data.frame(TIME=seq(0, tmax, length.out=100))
-    for(i in colnames(tdmorefit$observed)) {
-      if(i == "TIME") next
-      newdata[, i] <- NA
-    }
-  }
-  if(is.numeric(newdata)) {
-    #TODO
-  }
-  #oNames <- names(newdata)
-  #oNames <- oNames[oNames != "TIME"]
-  melt <- function(x, se=FALSE) {
-    measure.vars <- colnames(x)
-    measure.vars <- measure.vars[measure.vars != "TIME"]
-    vars <- measure.vars
-    if( se ) {
-      for(i in c(".upper", ".lower")) vars <-c(vars, paste0(measure.vars, i))
-    }
-    tmp <- reshape::melt(x, id.vars="TIME")
-    if(se) {
-      result <- tmp[ tmp$variable %in% measure.vars , ]
-      result$value.upper <- tmp$value[ tmp$variable %in% paste0(measure.vars, ".upper") ]
-      result$value.lower <- tmp$value[ tmp$variable %in% paste0(measure.vars, ".lower") ]
-    } else {
-      result <- tmp
-    }
-    result
+  newdata <- processNewData(newdata, regimen=tdmorefit$regimen, observed=tdmorefit$observed, vars=NULL)
+
+  ipred <- tdmorefit %>% predict(newdata) %>% meltPredictions()
+  if(se.fit) {
+    ipredre <- tdmorefit %>% predict.tdmorefit(newdata, se.fit=T, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% meltPredictions(se=T)
   }
 
-  ipred <- tdmorefit %>% predict(newdata) %>% melt
-  tmp <- predict.tdmorefit(tdmorefit, newdata, se.fit=TRUE, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress)
-  ipredre <- tmp %>% melt(se=TRUE)
-  pred <- estimate(tdmorefit$tdmore, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates) %>% predict(newdata) %>% melt
-  obs <- model.frame.tdmorefit(tdmorefit) %>% melt
+  pred <- estimate(tdmorefit$tdmore, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates) %>% predict(newdata) %>% meltPredictions()
+  obs <- model.frame.tdmorefit(tdmorefit) %>% meltPredictions()
 
-  z <- ggplot(mapping=aes_string(x="TIME", y="value")) +
-    geom_line(color="tomato1", data=ipred)
-  if(se.fit) z <- z + geom_ribbon(fill="tomato1", aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.10)
-  z <- z +
-    geom_line(color="steelblue2", data=pred) +
-    geom_point(data=obs)
-  z
+  plot <- ggplot(mapping=aes_string(x="TIME", y="value", group="variable")) + geom_line(color=red(), data=ipred)
+  if(se.fit) plot <- plot + geom_ribbon(fill=red(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.03)
+  plot <- plot + geom_line(color=blue(), data=pred) + geom_point(data=obs)
+  yVars <- colnames(newdata)[colnames(newdata) != "TIME"]
+  plot <- plot + labs(y=paste(yVars, collapse = " / "))
+  return(plot)
 }
 
+#' Plot a tdmore object.
+#'
+#' @param x the tdmorefit object
+#' @param regimen the regimen to be predicted
+#' @param covariates covariates
+#' @param newdata a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times
+#' @param vars additional variables to be plotted
+#' @param se add a curve for the confidence interval around the population prediction
+#' @param mc.maxpts maximum number of points to use for the monte carlo fit
+#' @param .progress either "none" or "text" to see calculation progress of monte carlo simulations
+#' @param ... ignored
+#'
+#' @return a ggplot object with the fitted individual curve, the 95% ci of this curve, the population prediction, the observed data and the residual error around the observed data
+#' @importFrom magrittr "%>%"
+#' @importFrom ggplot2 ggplot aes_string geom_line geom_ribbon geom_point geom_errorbar
+#' @importFrom stats predict
+#' @export
+plot.tdmore <- function(x, regimen, covariates=NULL, newdata=NULL, vars=NULL, se=TRUE, mc.maxpts=100, .progress="none", ...) {
+  tdmore <- x
+  newdata <- processNewData(newdata, regimen, observed=NULL, vars)
+  predict <- predict.tdmore(tdmore, newdata, regimen=regimen, covariates=covariates)
+  pred <- tdmore %>% predict.tdmore(newdata, regimen=regimen, covariates=covariates) %>% meltPredictions()
+  if(se) {
+    predre <- tdmore %>% predict.tdmore(newdata, regimen=regimen, covariates=covariates, se=T, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% meltPredictions(se=T)
+  }
+
+  plot <- ggplot(mapping=aes_string(x="TIME", y="value", group="variable")) + geom_line(color=blue(), data=pred)
+  if(se) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=predre, alpha=0.06)
+  yVars <- colnames(newdata)[colnames(newdata) != "TIME"]
+  plot <- plot + labs(y=paste(yVars, collapse = " / "))
+  return(plot)
+}
+
+processNewData <- function(newdata, regimen, observed, vars) {
+  if (is.null(newdata)) {
+    newdata <- data.frame(TIME = seq(0, computeTmax(regimen, observed), length.out = 100))
+    newdata <- addObservedVariables(newdata, observed, vars)
+  }
+  if (is.numeric(newdata)) {
+    newdata <- data.frame(TIME = newdata)
+    newdata <- addObservedVariables(newdata, observed, vars)
+  }
+  return(newdata)
+}
+
+addObservedVariables <- function(newdata, observed, vars) {
+  observedVariables <- c()
+  if (!is.null(observed)) {
+    observedVariables <- c(observedVariables, colnames(observed))
+  }
+  if (!is.null(vars)) {
+    observedVariables <- c(observedVariables, vars)
+  }
+
+  for (i in unique(observedVariables)) {
+    if (i == "TIME")
+      next
+    newdata[, i] <- NA
+  }
+  return(newdata)
+}
+
+blue <- function() {
+  return("steelblue2")
+}
+
+red <- function() {
+  return("tomato1")
+}

@@ -41,7 +41,7 @@ pk1cptivbolusVCL <- function(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30)
       }
       return(CONC)
       }
-    , omega = convertVectorToDiag(list(EV=OMEGA$V, ECL=OMEGA$CL))), class = "algebraic_definition"))
+    , omega = vectorToDiagonalMatrix(list(EV=OMEGA$V, ECL=OMEGA$CL))), class = "algebraic_definition"))
 }
 
 
@@ -90,7 +90,7 @@ pk1cptoralbolusVCL <- function(THETA=list(KA=0.5, V=10, CL=5), OMEGA=list(KA=0, 
     }
     return(CONC)
     }
-    , omega = convertVectorToDiag(list(EKA=OMEGA$KA, ECL=OMEGA$CL, EV=OMEGA$V))), class = "algebraic_definition"))
+    , omega = vectorToDiagonalMatrix(list(EKA=OMEGA$KA, ECL=OMEGA$CL, EV=OMEGA$V))), class = "algebraic_definition"))
 }
 
 

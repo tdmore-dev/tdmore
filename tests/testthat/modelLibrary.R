@@ -85,7 +85,7 @@ meropenem_1param_model <- function(){
     TVV2 <- 7.01;
     TVQ <- 4.97;
     TVCL <- 9.87;
-    ECL <- 0.0 # This value corresponds to OMEGA_CL (0% SD)
+    ECL <- 0.0 # Fixed to 0. Not considered as a parameter in TDMore.
     EV1 ~ 0.287 # This value corresponds to OMEGA_V1 (54% SD)
     EPS_PROP <- 0.371 # Proportional error (37% SD)
   })

@@ -219,9 +219,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
   tdmorefit <- object
   if(is.null(regimen)) regimen=tdmorefit$regimen
   if(is.null(newdata)) {
-    tmax = regimen$TIME + regimen$II * regimen$ADDL
-    tmax = max(0, tmax, tdmorefit$observed$TIME)
-    newdata = seq(0, tmax, length.out=ip.maxpts)
+    newdata <- seq(0, computeTmax(regimen, tdmorefit$observed), length.out=ip.maxpts)
   }
   if(is.numeric(newdata)) {
     # keep as numeric
