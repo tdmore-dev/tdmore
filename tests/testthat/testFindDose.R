@@ -75,10 +75,10 @@ recommendation2 <- suppressWarnings(findDose(
   mc.maxpts = 50
 ))
 
-expect_equal(unlist(round(recommendation2$dose, digits=2)), c(
-  dose.median = 224.83,
+expect_equal(unlist(round(recommendation2$dose, digits=1)), c(
+  dose.median = 224.8,
   dose.lower = 100,
-  dose.upper = 775.66
+  dose.upper = 775.7
 ))
 
 # Continue

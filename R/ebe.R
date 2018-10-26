@@ -40,8 +40,6 @@ pred_ll <- function(estimate, tdmore, observed, regimen, covariates) {
 #'
 #' @return the log likelihood
 ll <- function(estimate, tdmore, observed, regimen, covariates) {
-  ## TODO: what happens if the estimates are in the wrong order wrt OMEGA??
-  ## Trust noone...
   if(is.null(names(estimate))) names(estimate) <- tdmore$parameters #you should support named parameters as well!
   res <- pop_ll(estimate, tdmore, observed, regimen, covariates) + pred_ll(estimate, tdmore, observed, regimen, covariates)
   res
@@ -65,12 +63,17 @@ ll <- function(estimate, tdmore, observed, regimen, covariates) {
 estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, p=NULL, ...) {
   assert_that(class(tdmore) == "tdmore")
   if(is.null(p)) p<-rep(0, length(tdmore$parameters))
+
   # First try to estimate at starting values, as a precaution
   ll(estimate=p,
      tdmore=tdmore,
      observed=observed,
      regimen=regimen,
      covariates=covariates)
+
+  # Max omega value
+  maxOmega <- max(diag(tdmore$omega))
+
   # Then do the full nlm
   pointEstimate <- stats::nlm(f=function(...) {
     tryCatch({
@@ -78,6 +81,7 @@ estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, p=NULL, ..
     }, error=function(e){ 999999 })
     },
                        p=p,
+                       stepmax=sqrt(maxOmega)*4, # 99.99%
                        tdmore,
                        observed,
                        regimen,
