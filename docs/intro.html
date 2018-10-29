@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="preface.html">
+<link rel="prev" href="preface.html">
+<link rel="next" href="install.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -133,26 +133,27 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title"><code>TDMore</code>: an R package for therapeutic drug monitoring</h1>
-<h4 class="author"><em>Ruben Faelens, Thomas Bouillon, Nicolas Luyckx and Quentin Leirens</em></h4>
-<h4 class="date"><em>2018-10-29</em></h4>
-</div>
-<div id="welcome-to-tdmore" class="section level1 unnumbered">
-<h1>Welcome to TDMore</h1>
-<p>We’d like to welcome you on the <code>TDMore</code> bookdown site.</p>
-<p>Get started as quick as possible with <a href="https://github.com/tdmore-dev/tdmore">tdmore</a>, an R package that provides a global framework for making Therapeutic Drug Monitoring easy. You’ll get information on the package itself, its installation, interesting use cases and much more.</p>
-<p><img src="figures/tdmore_logo.JPG" width="80%" style="display: block; margin: auto;" /></p>
-<p>Please note that this project does not include a license. This means that all work is under exclusive copyright. Nobody else can use, copy, distribute or modify this work (more details in Chapter <a href="license.html#license">3</a>)</p>
+<div id="intro" class="section level1">
+<h1><span class="header-section-number">Chapter 1</span> Introduction</h1>
+<div id="prereq" class="section level2">
+<h2><span class="header-section-number">1.1</span> Prerequisites</h2>
+<p>The <code>TDMore</code> framework is based on the <a href="https://cran.r-project.org/"><code>R</code></a> programming language, a free sofware environment for statistical computing.</p>
+<p><code>TDMore</code> relies on a series of R open-source packages. In particular, it depends on:</p>
+<ul>
+<li><a href="https://cran.r-project.org/package=RxODE"><code>RxODE</code></a>(An R package for simulating PK/PD models. This package is intensively used by <code>TDMore</code> to predict data)</li>
+<li><a href="https://cran.r-project.org/package=nlmixr"><code>nlmixr</code></a>(An R package for estimating PK/PD model parameters. Although <code>TDMore</code> also estimates model parameters, it does not rely on the <code>nlmixr</code> for the estimation part. However, this package is used for its nice way of defining PK/PD models.)</li>
+</ul>
+<p>More information on the installation of packages and software can be found in Chapter <a href="install.html#install">2</a>.</p>
 
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="preface.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="preface.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="install.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

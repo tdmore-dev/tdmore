@@ -1,0 +1,6 @@
+# Installation  {#install}
+
+```R
+devtools::install_github("tdmore-dev/tdmore")
+```
+We suggest you also install `tidyverse` and `RxODE`. The latter requires a working C and fortran compiler to work.
