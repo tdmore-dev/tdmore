@@ -90,7 +90,8 @@ library(ggplot2)
 ggplot(data, aes(x=TIME, y=CONC)) +
   geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), fill="steelblue2", alpha=0.15) +
   geom_line(aes(color="Population"), data=data) +
-  scale_color_manual(values=c("steelblue2"))
+  scale_color_manual(values=c("steelblue2")) +
+  scale_y_log10()
   
 ```
 
@@ -114,7 +115,7 @@ vcov(pred)
 This uncertainty is equal to the population inter-individual variability (OMEGA matrix). Now, let's assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
 
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
-observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
+observed <- data.frame(TIME=c(9, 15), CONC=c(30, 2))
 ```
 
 We can ask TDMore to re-estimate the parameters for this specific individual:
@@ -139,7 +140,8 @@ ggplot(data, aes(x=TIME))  +
   geom_ribbon(aes(fill="Individual", ymin=CONC.lower, ymax=CONC.upper), fill="tomato1", alpha=0.10) +
   geom_line(aes(color="Population", y=CONC), data=predict(pred, newdata=seq(0, 24, 0.1))) +
   geom_point(aes(y=CONC), data=observed) +
-  scale_color_manual(values=c("tomato1", "steelblue2"))
+  scale_color_manual(values=c("tomato1", "steelblue2")) +
+  scale_y_log10()
 ```
 
 Ipred and pred are shown respectively in red and blue. A 95% confidence interval has been added around the ipred prediction. Note that the default TDMore plotting function can also be used to obtain the exact same plot in a single line of code:
@@ -163,19 +165,19 @@ recommendation <- findDose(
   ipred,
   regimen = newRegimen,
   interval = c(100, 5000),
-  target = data.frame(TIME = 32, CONC = 3.1)
+  target = data.frame(TIME = 32, CONC = 8)
   )
 summary(recommendation)
 ```
 
-The result of the findDose() routine is shown above. It tells us that 300 mg (approximately) is the recommended starting dose on the second day. The following code helps up verify this visually.
+The result of the findDose() routine is shown above. It tells us that XXX mg (approximately) is the recommended starting dose on the second day. The following code helps up verify this visually.
 
 ```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE}
 # Recommended regimen for individual can be directly accessed from the recommendation object
 ipredRecommendedRegimen <- recommendation$regimen
 
 # Population regimen can be updated using the 'updateRegimen' method, a 4th dose of 1000 is used
-predUpdatedRegimen <- updateRegimen(regimen = newRegimen, newDose = 1000)
+predUpdatedRegimen <- updateRegimen(regimen = newRegimen, newDose = 4500)
 print(predUpdatedRegimen) # Check pred regimen
 ```
 
@@ -187,8 +189,12 @@ pred <- estimate(tdmore = tdmore, regimen = predUpdatedRegimen)
 ```{r find_dose_pred_ipred_predictions, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
 ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
   geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 32, by=0.1))) +
+  geom_ribbon(aes(fill="Individual", ymin=CONC.lower, ymax=CONC.upper), data=predict(ipred, newdata=data.frame(TIME=seq(0, 32, by=0.1), CONC=NA), se.fit=TRUE), alpha=0.25) +
   geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 32, by=0.1))) +
-  scale_color_manual(values=c("tomato1", "steelblue2"))
+  geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), data=predict(pred, newdata=data.frame(TIME=seq(0, 32, by=0.1), CONC=NA), se.fit=TRUE), alpha=0.1) +
+  scale_color_manual(values=c("tomato1", "steelblue2")) +
+  geom_hline(yintercept=8) +
+  scale_y_log10()
 ```
 
 The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day. 
