@@ -12,7 +12,7 @@
 #'   THETA=list(V=10, CL=5),
 #'   OMEGA=list(V=0.20, CL=0.30))
 #' model <- algebraic(predictFunction)
-#' tdmore <- tdmore(model)
+#' tdmore <- tdmore(model, res_var=list(errorModel("CONC", prop=0.10)))
 pk1cptivbolusVCL <- function(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30)) {
   return(structure(list(
     predictFunction = function(times, regimen, EV, ECL) {
@@ -60,7 +60,7 @@ pk1cptivbolusVCL <- function(THETA=list(V=10, CL=5), OMEGA=list(V=0.20, CL=0.30)
 #'   THETA=list(KA=0.5, V=10, CL=5),
 #'   OMEGA=list(KA=0.70, V=0.20, CL=0.30))
 #' model <- algebraic(predictFunction)
-#' tdmore <- tdmore(model)
+#' tdmore <- tdmore(model, res_var=list(errorModel("CONC", prop=0.10)))
 pk1cptoralbolusVCL <- function(THETA=list(KA=0.5, V=10, CL=5), OMEGA=list(KA=0, V=0.20, CL=0.30)) {
   return(structure(list(
     predictFunction = function(times, regimen, EV, ECL, EKA) {

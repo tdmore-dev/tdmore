@@ -7,4 +7,4 @@ d/dt(abs) = -ka*abs;
 d/dt(centr) = ka*abs - CL/Vc*centr;
 "
 rxodeModel <- RxODE::RxODE(modelCode)
-model <- tdmore(rxodeModel, add=3.7)
+model <- tdmore(rxodeModel, res_var=list(errorModel(var="CONC", add=3.7)))
