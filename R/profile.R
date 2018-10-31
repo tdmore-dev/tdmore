@@ -6,7 +6,7 @@
 #' @param contour use the 'geom_contour' method to draw the profile, logical value
 #' @param raster use the 'raster method' to draw the profile, logical value
 #' @param ... unused arguments
-#' @importFrom ggplot2 ggplot aes_string geom_raster geom_contour geom_point geom_line
+#' @importFrom ggplot2 ggplot aes_string geom_raster geom_contour geom_point geom_line labs
 #' @export
 plot.tdmoreprofile <- function(x, parameters=NULL, contour=T, raster=T, ...) {
   profile <- x
@@ -25,7 +25,8 @@ plot.tdmoreprofile <- function(x, parameters=NULL, contour=T, raster=T, ...) {
     plot <- ggplot(data = profile$profile, aes_string(x=selectedParameters[1], y=selectedParameters[2], z="exp(logLik)"))
     if(raster) {plot <- plot + geom_raster(aes_string(fill = "exp(logLik)"))}
     if(contour){plot <- plot + geom_contour(colour="grey")}
-    plot + geom_point(aes(x=c(ipred$res[1]), y=c(ipred$res[2])), colour="white")
+    res <- coef(profile$tdmorefit)
+    plot + geom_point(x=c(res[1]), y=c(res[2]), colour="white", inherit.aes=FALSE)
 
   } else if(length == 1) {
     ggplot(data = profile$profile, aes_string(x=selectedParameters[1], y="exp(logLik)")) +
