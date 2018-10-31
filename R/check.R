@@ -39,16 +39,18 @@ checkOmegaMatrix <- function(tdmore) {
 }
 
 checkErrorModel <- function(tdmore) {
-  add <- tdmore$res_var$add
-  prop <- tdmore$res_var$prop
-  exp <- tdmore$res_var$exp
+  for (errorModel in tdmore$res_var) {
+    add <- errorModel$add
+    prop <- errorModel$prop
+    exp <- errorModel$exp
 
-  assertthat::is.number(add)
-  assertthat::is.number(prop)
-  assertthat::is.number(exp)
+    assertthat::is.number(add)
+    assertthat::is.number(prop)
+    assertthat::is.number(exp)
 
-  if (exp != 0) assert_that(add==0 & prop==0, msg = "Exponential and add/prop are not mutually exclusive")
-  if (add != 0 || prop != 0) assert_that(exp == 0, msg = "Exponential and add/prop are not mutually exclusive")
+    if (exp != 0) assert_that(add==0 & prop==0, msg = "Exponential and add/prop are not mutually exclusive")
+    if (add != 0 || prop != 0) assert_that(exp == 0, msg = "Exponential and add/prop are not mutually exclusive")
+  }
   return(tdmore)
 }
 

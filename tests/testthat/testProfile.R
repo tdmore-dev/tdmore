@@ -11,7 +11,7 @@ set.seed(0)
 
 # Load the Meropenem model
 source(paste0(test_path(), ("/modelLibrary.R")))
-tdmore <- nlmixrUI(meropenem_model) %>% tdmore(covs_interpolation="constant")
+tdmore <- nlmixrUI(meropenem_model) %>% tdmore()
 
 # Predicting new data
 regimen <- data.frame(

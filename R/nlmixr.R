@@ -19,26 +19,22 @@ tdmore.nlmixrUI <- function(model, ...) {
   # Collecting all covariates
   covariates <- model$all.covs
 
-  # Default values
-  add <- 0
-  prop <- 0
-  exp <- 0
-
-  # Collect the error model params
-  addIndex <- which(model$err=="add")
-  assert_that(length(addIndex) <= 1)
-  if(length(addIndex) == 1) {
-    add <- model$est[[addIndex]]
-  }
-  propIndex <- which(model$err=="prop")
-  assert_that(length(propIndex) <= 1)
-  if(length(propIndex) == 1) {
-    prop <- model$est[[propIndex]]
-  }
-  expIndex <- which(model$err=="exp")
-  assert_that(length(expIndex) <= 1)
-  if(length(expIndex) == 1) {
-    exp <- model$est[[expIndex]]
+  # Summarising the error models
+  errorDf <- data.frame(cond=model$condition, errorType=model$err, value=model$est)
+  errorDf <- errorDf %>% subset(errorType %in% c("add", "prop", "exp"))
+  predDf <- model$predDf
+  assert_that(nrow(predDf) >= 1, msg = "No error model defined, please define one")
+  errorModels <- list()
+  for (index in 1:nrow(predDf)) {
+    row <- predDf[index,]
+    add <- errorDf %>% subset(cond==as.character(row$cond) & errorType=="add")
+    prop <- errorDf %>% subset(cond==as.character(row$cond) & errorType=="prop")
+    exp <- errorDf %>% subset(cond==as.character(row$cond) & errorType=="exp")
+    err <- errorModel(var = as.character(row$var),
+                      add = if(nrow(add) > 0) as.numeric(add$value) else 0,
+                      prop = if(nrow(prop) > 0) as.numeric(prop$value) else 0,
+                      exp = if(nrow(exp) > 0) as.numeric(exp$value) else 0)
+    errorModels[[length(errorModels) + 1]] <- err
   }
 
   # Model and structural equations processing
@@ -74,7 +70,7 @@ tdmore.nlmixrUI <- function(model, ...) {
   tdmore <- structure(list(
     model=rxModel,
     omega=omega,
-    res_var=list(add=add, prop=prop, exp=exp),
+    res_var=errorModels,
     parameters=parameters,
     covariates=covariates,
     extraArguments=list(...)

@@ -90,22 +90,31 @@ predict.tdmore <- function(object, newdata, regimen, parameters=NULL, covariates
 residuals.tdmore <- function(object, observed, predicted, log=TRUE, ...) {
   tdmore <- object
   oNames <- colnames(observed)
-  oNames <- oNames[oNames != "TIME"]
-  i <- oNames %in% colnames(predicted)
-  i <- oNames[i]
-  ipred <- predicted[,i]
-  obs <- observed[,i]
-  res <- tdmore$res_var
-  if(res$exp != 0) {
-    sd <- res$exp
-    dnorm(log(ipred), log(obs), sd, log=log) #calculate residual in the log domain
-  } else {
-    sd <- sqrt(res$add**2 + (res$prop * ipred)**2)
-    ifelse(sd == 0 & ipred==obs, #treat points with 0 res. error special
-           0, #ignore point
-           dnorm(ipred, obs, sd, log=log) # calculate residual
-    )
+  # 100% correct? Do we detect the case an observed variable is not predicted?
+  # This should raise an error...
+  oNames <- oNames[oNames %in% colnames(predicted)
+                   & oNames != "TIME"]
+  result <- c()
+
+  for (err in tdmore$res_var) {
+    var <- err$var
+    if (!(var %in% oNames)) next
+    ipred <- predicted[, var]
+    obs <- observed[, var]
+
+    if(err$exp != 0) {
+      sd <- err$exp
+      tmp <- dnorm(log(ipred), log(obs), sd, log=log) #calculate residual in the log domain
+    } else {
+      sd <- sqrt(err$add**2 + (err$prop * ipred)**2)
+      tmp <- ifelse(sd == 0 &
+                      ipred == obs, #treat points with 0 res. error special
+                    0, #ignore point
+                    dnorm(ipred, obs, sd, log = log)) # calculate residual)
+    }
+    result <- c(result, tmp)
   }
+  return(result)
 }
 
 #' Get the specified observed values, with the upper and lower bounds provided by the residual error model
@@ -124,24 +133,29 @@ model.frame.tdmore <- function(formula, observed, se=FALSE, level=0.95, ...) {
   tdmore <- formula
   if(!se) return(observed)
   if(is.null(observed)) return(NULL)
+
   assert_that("data.frame" %in% class(observed))
   assert_that("TIME" %in% colnames(observed))
+
   oNames <- colnames(observed)
   oNames <- oNames[oNames != "TIME"]
+
   a <- (1 - level) / 2
   q <- qnorm(a)
-  res <- tdmore$res_var
-  for(n in oNames) {
-    obs <- observed[, n]
-    if(res$exp != 0) {
-      observed[, paste0(n, ".upper")] <- obs * exp(res$exp * q)
-      observed[, paste0(n, ".lower")] <- obs * exp(-res$exp * q)
+
+  for (err in tdmore$res_var) {
+    var <- err$var
+    if (!(var %in% oNames)) next
+    obs <- observed[, var]
+    if(err$exp != 0) {
+      observed[, paste0(var, ".upper")] <- obs * exp(err$exp * q)
+      observed[, paste0(var, ".lower")] <- obs * exp(-err$exp * q)
     } else {
-      observed[, paste0(n, ".upper")] <- obs * (1 + res$prop*q) + res$add*q
-      observed[, paste0(n, ".lower")] <- obs * (1 - res$prop*q) - res$add*q
+      observed[, paste0(var, ".upper")] <- obs * (1 + err$prop*q) + err$add*q
+      observed[, paste0(var, ".lower")] <- obs * (1 - err$prop*q) - err$add*q
     }
   }
-  observed
+  return(observed)
 }
 
 #' Get the original model

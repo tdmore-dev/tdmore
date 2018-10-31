@@ -1,24 +1,22 @@
 #' Create a TDM-capable model from an RxODE model
 #'
 #' @param model the RxODE model
+#' @param res_var the residual variability
 #' @param parameters list of parameter names, or NULL to use all parameters names from RxODE
 #' @param omega omega variance-covariance matrix, or NULL to use a diagonal matrix of variances 1
-#' @param add additive residual error, as stdev
-#' @param prop proportional residual error, as stdev
-#' @param exp exponential residual error, as stdev. The exponential error cannot be used in conjunction with the additive or proportional error
 #' @param ... extra arguments will be passed to the model_predict call
 #'
 #' @return An object of class tdmore, which can be used to estimate posthoc Bayesian parameters
 #' @export
 #'
 #' @example inst/examples/RxODE.R
-tdmore.RxODE <- function(model, parameters=NULL, omega=NULL, add=0, prop=0, exp=0, ...) {
+tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, ...) {
   assert_that(class(model) %in% c("RxODE")) #currently, only RxODE is supported
 
   tdmore <- structure(list(
     model=model,
     omega=omega,
-    res_var=list(add=add, prop=prop, exp=exp),
+    res_var=res_var,
     parameters=parameters,
     covariates=NULL, # Computed automatically in checkTdmore
     extraArguments=list(...)
