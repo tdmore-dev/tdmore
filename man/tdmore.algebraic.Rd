@@ -4,21 +4,17 @@
 \alias{tdmore.algebraic}
 \title{Build a tdmore object based on an algebraic model}
 \usage{
-\method{tdmore}{algebraic}(model, parameters = NULL, omega = NULL,
-  add = 0, prop = 0, exp = 0, ...)
+\method{tdmore}{algebraic}(model, res_var, parameters = NULL,
+  omega = NULL, ...)
 }
 \arguments{
 \item{model}{The algebraic model}
 
+\item{res_var}{the residual variability}
+
 \item{parameters}{Lits of parameters, should be NULL}
 
 \item{omega}{the omega matrix of the model}
-
-\item{add}{additive residual error, as stdev}
-
-\item{prop}{proportional residual error, as stdev}
-
-\item{exp}{exponential residual error, as stdev. The exponential error cannot be used in conjunction with the additive or proportional error}
 
 \item{...}{extra arguments will be passed to the model_predict call}
 }

@@ -65,7 +65,7 @@ model_predict.RxODE <- function(model, newdata, regimen=data.frame(TIME=c()), pa
     assert_that(!is.unsorted(newdata$TIME))
     oNames <- colnames(newdata)
     oNames <- oNames[oNames != "TIME"]
-    assert_that(length(oNames) > 0) ## TODO: What should happen if newdata contains a column that is not predicted by the model??
+    assert_that(length(oNames) > 0, msg="No output variable defined in newdata") ## TODO: What should happen if newdata contains a column that is not predicted by the model??
     oNames <- oNames[oNames %in% c(modVars$lhs, modVars$state)] #only keep the ones that are required
     assert_that(all(oNames %in% c(modVars$lhs, modVars$state))) #TODO: not required when providing covariates! They are in rhs!
     samplingTimes <- newdata$TIME

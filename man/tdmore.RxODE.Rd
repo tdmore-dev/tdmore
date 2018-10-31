@@ -4,21 +4,17 @@
 \alias{tdmore.RxODE}
 \title{Create a TDM-capable model from an RxODE model}
 \usage{
-\method{tdmore}{RxODE}(model, parameters = NULL, omega = NULL,
-  add = 0, prop = 0, exp = 0, ...)
+\method{tdmore}{RxODE}(model, res_var, parameters = NULL, omega = NULL,
+  ...)
 }
 \arguments{
 \item{model}{the RxODE model}
 
+\item{res_var}{the residual variability}
+
 \item{parameters}{list of parameter names, or NULL to use all parameters names from RxODE}
 
 \item{omega}{omega variance-covariance matrix, or NULL to use a diagonal matrix of variances 1}
-
-\item{add}{additive residual error, as stdev}
-
-\item{prop}{proportional residual error, as stdev}
-
-\item{exp}{exponential residual error, as stdev. The exponential error cannot be used in conjunction with the additive or proportional error}
 
 \item{...}{extra arguments will be passed to the model_predict call}
 }
