@@ -5,7 +5,7 @@
 \title{Get an overview of the log-likelihood for varying parameter values.
 If arguments `fix` and `limits` are not set for a specific parameter, individual eta's will be generated to cover 95 percent of the population distribution.}
 \usage{
-\method{profile}{tdmorefit}(fitted, fix = NULL, maxpts = 100,
+\method{profile}{tdmorefit}(fitted, fix = NULL, maxpts = 50,
   limits = NULL, type = c("ll", "pop", "pred"), .progress = "none",
   ...)
 }

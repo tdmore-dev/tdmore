@@ -25,23 +25,31 @@ devtools::install_github("tdmore-dev/tdmore")
 We suggest you also install `tidyverse` and `RxODE`. The latter requires a working C and fortran compiler to work.
 
 # How to use
-This example code uses `RxODE` to define the model. 
+This example code uses `nlmixr` to define the model. 
 
 ```R
-library(RxODE)
-library(ggplot2)
-library(tdmore)
-
-modelCode <- "
-CL = 3.7 * exp(ETA1*0.19);
-Vc = 61 * exp(ETA2*0.28);
-ka=3.7;
-CONC = centr / Vc;
-d/dt(abs) = -ka*abs;
-d/dt(centr) = ka*abs - CL/Vc*centr;
-"
-model <- RxODE::RxODE(modelCode) %>%
-  tdmore(prop=0.23) #Model has 23% proportional error
+modelCode <- function(){
+  ini({
+    TVKA <- 3.7
+    TVVc <- 61
+    TVCL <- 3.7
+    ECL ~ 0.0784 #ETA1, 28%
+    EV1 ~ 0.0361 #ETA2, 19%
+    EPS_PROP <- 0.23 # Proportional error, 23% SD
+  })
+  model({
+    KA <- TVKA
+    CL <- TVCL * exp(ECL)
+    Vc <- TVVc * exp(EV1)
+    
+    d/dt(depot) = -KA*depot
+    d/dt(center) = KA*depot - CL/Vc * center
+    
+    CONC = center / Vc
+    CONC ~ prop(EPS_PROP)
+  })
+}
+model <- nlmixr::nlmixrUI(modelCode) %>% tdmore()
 
 regimen <- data.frame(
   TIME=seq(0, 7)*24,
@@ -49,15 +57,10 @@ regimen <- data.frame(
 )
 observed <- data.frame(TIME=2, CONC=0.04)
 
-ipred <- model %>%
-  estimate(observed, regimen)
-
+ipred <- model %>% estimate(observed, regimen)
 print(summary(ipred))
+plot(ipred)
 
-z <- ggplot(ipred %>% profile(maxpts=20), aes(x=ETA1, y=ETA2, z=logLik)) + geom_contour()
-print(z)
+plot(profile(ipred))
 
-newdata = data.frame(TIME=seq(0, 12, length.out=50), CONC=NA)
-z <- plot.tdmorefit(ipred, newdata, .progress="text")
-print(z)
 ```

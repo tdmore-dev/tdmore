@@ -5,18 +5,16 @@
 \title{Plot a tdmore object.}
 \usage{
 \method{plot}{tdmore}(x, regimen, covariates = NULL, newdata = NULL,
-  vars = NULL, se = TRUE, mc.maxpts = 100, .progress = "none", ...)
+  se = TRUE, mc.maxpts = 100, .progress = "none", ...)
 }
 \arguments{
-\item{x}{the tdmorefit object}
+\item{x}{the tdmore object}
 
 \item{regimen}{the regimen to be predicted}
 
 \item{covariates}{covariates}
 
 \item{newdata}{a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times}
-
-\item{vars}{additional variables to be plotted}
 
 \item{se}{add a curve for the confidence interval around the population prediction}
 

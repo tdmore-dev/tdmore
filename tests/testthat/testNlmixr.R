@@ -16,7 +16,7 @@ regimen <- data.frame(
 covariates = c(WT=70)
 
 # Default tdmore plot
-plot(tdmore, regimen, vars=c("center", "periph"), covariates=covariates)
+plot(tdmore, regimen, covariates=covariates)
 
 # Create the observed and covariates dataframe
 observed <- data.frame(TIME=c(2), CONC=c(0.040))

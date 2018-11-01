@@ -20,7 +20,7 @@ d/dt(abs) = -ka*abs;
 d/dt(centr) = ka*abs - CL/Vc*centr;
 "
 model <- RxODE::RxODE(modelCode) %>%
-  tdmore(add=3.7) #Model has 3.7 ng/mL additive error
+  tdmore(res_var=list(errorModel(var="CONC", add=3.7))) #Model has 3.7 ng/mL additive error
 
 regimen <- data.frame(
   TIME=c(0, 24),

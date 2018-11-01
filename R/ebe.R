@@ -223,7 +223,14 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
   tdmorefit <- object
   if(is.null(regimen)) regimen=tdmorefit$regimen
   if(is.null(newdata)) {
-    newdata <- seq(0, computeTmax(regimen, tdmorefit$observed), length.out=ip.maxpts)
+    if(is.null(tdmorefit$observed)) {
+      return(data.frame())
+    } else {
+      assert_that("TIME" %in% colnames(tdmorefit$observed))
+      newdata <- data.frame(TIME=tdmorefit$observed$TIME)
+      colNames <- colnames(tdmorefit$observed)
+      for(oName in colNames[colNames != "TIME"]) newdata[, oName] <- NA
+    }
   }
   if(is.numeric(newdata)) {
     # keep as numeric
@@ -253,6 +260,13 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     if(is.na(level)) { #user requested full dataframe without summary
       return(fittedMC)
     }
+
+    # By default, if newdata is numeric vector (oNames is null), all outputs from RxODE are returned
+    if(is.null(oNames)) {
+      colnames <- colnames(fittedMC)
+      oNames <- colnames[!(colnames %in% c("time", "TIME", "sample", pNames))]
+    }
+
     a <- (1-level)/2
     plyr::ddply(fittedMC, "TIME", function(x) {
       result <- list(TIME = x$TIME[1])
@@ -308,7 +322,7 @@ logLik.tdmorefit <- function(object, ...) {
 #'
 #' @return a tdmore profile object. It namely contains a data.frame with each parameter value tested, and an additional `logLik` column with the log-likelihood for each parameter combination.
 #' @export
-profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 100, limits=NULL, type=c('ll', 'pop', 'pred'), .progress="none", ...) {
+profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c('ll', 'pop', 'pred'), .progress="none", ...) {
   tdmorefit <- fitted
   model <- tdmorefit$tdmore
   omegas <- diag(tdmorefit$tdmore$omega)

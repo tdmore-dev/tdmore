@@ -39,16 +39,23 @@ checkOmegaMatrix <- function(tdmore) {
 }
 
 checkErrorModel <- function(tdmore) {
-  add <- tdmore$res_var$add
-  prop <- tdmore$res_var$prop
-  exp <- tdmore$res_var$exp
+  for (errorModel in tdmore$res_var) {
+    add <- errorModel$add
+    prop <- errorModel$prop
+    exp <- errorModel$exp
 
-  assertthat::is.number(add)
-  assertthat::is.number(prop)
-  assertthat::is.number(exp)
+    assertthat::is.number(add)
+    assertthat::is.number(prop)
+    assertthat::is.number(exp)
 
-  if (exp != 0) assert_that(add==0 & prop==0, msg = "Exponential and add/prop are not mutually exclusive")
-  if (add != 0 || prop != 0) assert_that(exp == 0, msg = "Exponential and add/prop are not mutually exclusive")
+    if (exp != 0) assert_that(add==0 & prop==0, msg = "Exponential and add/prop are not mutually exclusive")
+    if (add != 0 || prop != 0) assert_that(exp == 0, msg = "Exponential and add/prop are not mutually exclusive")
+
+    if (c("RxODE") %in% class(tdmore$model)) {
+      modVars <- tdmore$model$get.modelVars()
+      assert_that(errorModel$var %in% c(modVars$lhs, modVars$state), msg = "Unknown variable defined in error model")
+    }
+  }
   return(tdmore)
 }
 
@@ -64,7 +71,7 @@ checkModel <- function(tdmore) {
   model <- tdmore$model
   covariates <- tdmore$covariates
 
-  if (class(model) %in% c("RxODE")) {
+  if (c("RxODE") %in% class(model)) {
     # Check that parameters + covariates together supplies the parameters needed for the model
     modVars <- model$get.modelVars()
     if(is.null(parameters)) parameters <- modVars$params

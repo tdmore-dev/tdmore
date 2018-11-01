@@ -79,7 +79,8 @@ d/dt(centr) = -K*centr;
 d/dt(AUC) = CONC;
 "
 rxModel <- RxODE::RxODE(modelCode)
-model <- rxModel %>% tdmore(parameters=c("ETAK", "ETAV"), add=sqrt(0.09), prop=sqrt(0.0376), covs_interpolation="constant")
+res_var <- list(errorModel(var = "CONC", add=sqrt(0.09), prop=sqrt(0.0376)))
+model <- rxModel %>% tdmore(parameters=c("ETAK", "ETAV"), res_var, covs_interpolation="constant")
 regimen <- data.frame(
   TIME=c(0, 14, 42),
   AMT=5*72 #5mg

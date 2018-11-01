@@ -23,5 +23,5 @@ predictFunction <- pk1cptivbolusVCL(
   THETA=list(V=10, CL=5),
   OMEGA=list(V=0.20, CL=0.30))
 model <- algebraic(predictFunction)
-tdmore <- tdmore(model)
+tdmore <- tdmore(model, res_var=list(errorModel("CONC", prop=0.10)))
 }
