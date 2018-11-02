@@ -90,17 +90,21 @@ predict.tdmore <- function(object, newdata, regimen, parameters=NULL, covariates
 residuals.tdmore <- function(object, observed, predicted, log=TRUE, ...) {
   tdmore <- object
   oNames <- colnames(observed)
-  # 100% correct? Do we detect the case an observed variable is not predicted?
-  # This should raise an error...
   oNames <- oNames[oNames %in% colnames(predicted)
                    & oNames != "TIME"]
   result <- c()
-
   for (err in tdmore$res_var) {
     var <- err$var
     if (!(var %in% oNames)) next
-    ipred <- predicted[, var]
-    obs <- observed[, var]
+
+    ipredColumn <- predicted[, var]
+    obsColumn <- observed[, var]
+    obsTimes <- observed[, "TIME"][!is.na(obsColumn)]
+
+    obs <- obsColumn[!is.na(obsColumn)]
+    ipred <- ipredColumn[predicted$TIME %in% obsTimes]
+
+    assert_that(length(obs)==length(ipred), msg = "All observed samples haven't been predicted")
 
     if(err$exp != 0) {
       sd <- err$exp

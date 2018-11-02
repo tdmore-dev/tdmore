@@ -5,7 +5,7 @@
 \title{Plot a tdmore object.}
 \usage{
 \method{plot}{tdmore}(x, regimen, covariates = NULL, newdata = NULL,
-  se = TRUE, mc.maxpts = 100, .progress = "none", ...)
+  bsv = TRUE, mc.subjects = 100, .progress = "none", ...)
 }
 \arguments{
 \item{x}{the tdmore object}
@@ -16,13 +16,13 @@
 
 \item{newdata}{a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times}
 
-\item{se}{add a curve for the confidence interval around the population prediction}
-
-\item{mc.maxpts}{maximum number of points to use for the monte carlo fit}
+\item{bsv}{add between subject variability}
 
 \item{.progress}{either "none" or "text" to see calculation progress of monte carlo simulations}
 
 \item{...}{ignored}
+
+\item{mc.maxpts}{number of subjects in the monte carlo simulation}
 }
 \value{
 a ggplot object with the fitted individual curve, the 95% ci of this curve, the population prediction, the observed data and the residual error around the observed data
