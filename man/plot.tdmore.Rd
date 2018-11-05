@@ -2,10 +2,11 @@
 % Please edit documentation in R/plot.R
 \name{plot.tdmore}
 \alias{plot.tdmore}
-\title{Plot a tdmore object.}
+\title{Plot a tdmore object (typical profile (population) + between subject variability).}
 \usage{
 \method{plot}{tdmore}(x, regimen, covariates = NULL, newdata = NULL,
-  bsv = TRUE, mc.subjects = 100, .progress = "none", ...)
+  bsv = TRUE, mc.subjects = 100, .progress = "none", se = FALSE,
+  ...)
 }
 \arguments{
 \item{x}{the tdmore object}
@@ -18,15 +19,17 @@
 
 \item{bsv}{add between subject variability}
 
+\item{mc.subjects}{number of subjects in the monte carlo simulation}
+
 \item{.progress}{either "none" or "text" to see calculation progress of monte carlo simulations}
 
-\item{...}{ignored}
+\item{se}{add residual error bounds, currently not compatible with bsv}
 
-\item{mc.maxpts}{number of subjects in the monte carlo simulation}
+\item{...}{ignored}
 }
 \value{
 a ggplot object with the fitted individual curve, the 95% ci of this curve, the population prediction, the observed data and the residual error around the observed data
 }
 \description{
-Plot a tdmore object.
+Plot a tdmore object (typical profile (population) + between subject variability).
 }

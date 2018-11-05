@@ -2,8 +2,8 @@ library(nlmixr)
 library(ggplot2)
 library(tdmore)
 
-## Model based on literature
-## Khosravan, Reza, et al. "Population pharmacokinetic/pharmacodynamic modeling of sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor." Clinical pharmacokinetics 55.10 (2016): 1251-1269.
+# Model based on literature
+# Khosravan, Reza, et al. "Population pharmacokinetic/pharmacodynamic modeling of sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor." Clinical pharmacokinetics 55.10 (2016): 1251-1269.
 modelCode <- function(){
   ini({
     ## PK model sunitinib
@@ -80,51 +80,3 @@ plot(m1, regimen, newdata=data.frame(TIME=times, SLD=NA))
 
 # Plotting the CONC
 plot(m1, regimen, newdata=data.frame(TIME=times, CONC=NA))
-
-# Observations EXAMPLE 1
-observed <- data.frame(TIME=c(0, 48, 72), CONC=c(NA, 0.02, 0.028), SLD=c(22.5, NA, NA))
-
-pred <- estimate(tdmore = m1, regimen = regimen)
-ipred <- estimate(tdmore = m1, observed = observed, regimen = regimen)
-coef(ipred) # EBASE well estimated, EKout, EEC50, EKtol badly estimated
-vcov(ipred)
-
-# IPRED plot (concentration)
-plot(ipred, newdata=data.frame(TIME=times, CONC=NA))
-
-# IPRED plot (SLD)
-plot(ipred, newdata=data.frame(TIME=times, SLD=NA))
-
-# 40 weeks regimen
-regimen <- data.frame(
-  TIME=0,
-  AMT=50,
-  II=24,
-  ADDL=40*7
-)
-times <- seq(0, 40*7*24,by=1)
-
-plot(m1, regimen, newdata=data.frame(TIME=times, CONC=NA))
-
-# Observations EXAMPLE 2
-# observed <- data.frame(TIME=c(48, 72, 4000), CONC=c(0.02, 0.028, 0.060), SLD=c(24, 23.9, 12.5))
-# Not working -> BUG IN RXODE, RxODE not able to deal with sparse sampling times...
-# Work-around below, more sampling times and NA values in the observed data frame
-
-observed <- data.frame(TIME=seq(0, 40*7*24,by=1), CONC=NA, SLD=NA)
-observed$CONC[which(observed$TIME==4000)] <- 0.050
-observed$CONC[which(observed$TIME==4024)] <- 0.050
-observed$CONC[which(observed$TIME==4048)] <- 0.050
-observed$SLD[which(observed$TIME==4000)] <- 15
-observed$SLD[which(observed$TIME==6000)] <- 14
-
-ipred <- estimate(tdmore = m1, observed = observed, regimen = regimen)
-coef(ipred)
-vcov(ipred)
-
-# IPRED plot (CONC)
-plot(ipred, newdata=data.frame(TIME=times, CONC=NA))
-
-# IPRED plot (SLD)
-plot(ipred, newdata=data.frame(TIME=times, SLD=NA))
-

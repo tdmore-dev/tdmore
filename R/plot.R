@@ -33,17 +33,20 @@ plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progres
   if (population) {
     # No need to compute PRED because IPRED = PRED
     plot <- ggplot(mapping=aes_string(x="TIME", y="value", group="variable")) + geom_line(color=blue(), data=ipred)
-    if(se.fit || se) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.03)
+    if(se.fit || se) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.05)
 
   } else {
     # Compute PRED
     pred <- estimate(tdmorefit$tdmore, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates) %>% predict(newdata) %>% meltPredictions()
+    if(se.fit) predre <- estimate(tdmorefit$tdmore, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates) %>% predict(newdata, se.fit=T) %>% meltPredictions(se=T)
     obs <- model.frame.tdmorefit(tdmorefit) %>% meltPredictions()
     obs <- subset(obs, variable %in% yVars & !is.na(value))
 
-    plot <- ggplot(mapping=aes_string(x="TIME", y="value", group="variable")) + geom_line(color=red(), data=ipred)
-    if(se.fit) plot <- plot + geom_ribbon(fill=red(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.03)
+    plot <- ggplot(mapping=aes_string(x="TIME", y="value", group="variable"))
     plot <- plot + geom_line(color=blue(), data=pred) + geom_point(data=obs)
+    plot <- plot + geom_line(color=red(), data=ipred) + geom_point(data=obs)
+    if(se.fit) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=predre, alpha=0.05)
+    if(se.fit) plot <- plot + geom_ribbon(fill=red(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.04)
   }
 
   plot <- plot + labs(y=paste(yVars, collapse = " / "))

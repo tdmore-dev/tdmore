@@ -5,7 +5,7 @@
 \title{Plot a tdmorefit object.}
 \usage{
 \method{plot}{tdmorefit}(x, newdata = NULL, se.fit = TRUE,
-  mc.maxpts = 100, .progress = "none", ...)
+  mc.maxpts = 100, .progress = "none", se = FALSE, ...)
 }
 \arguments{
 \item{x}{the tdmorefit object}
@@ -17,6 +17,8 @@
 \item{mc.maxpts}{maximum number of points to use for the monte carlo fit}
 
 \item{.progress}{either "none" or "text" to see calculation progress of monte carlo simulations}
+
+\item{se}{add residual error bounds, currently not compatible with se.fit}
 
 \item{...}{ignored}
 }

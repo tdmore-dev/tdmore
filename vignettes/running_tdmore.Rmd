@@ -147,7 +147,7 @@ ggplot(data, aes(x=TIME))  +
 Ipred and pred are shown respectively in red and blue. A 95% confidence interval has been added around the ipred prediction. Note that the default TDMore plotting function can also be used to obtain the exact same plot in a single line of code:
 
 ```{r default_plot_function, eval=FALSE, results='hide'}
-plot(ipred, newdata=data.frame(TIME=seq(0, 24, by=0.1), CONC=NA))
+plot(ipred, newdata=data.frame(TIME=seq(0.1, 24, by=0.1), CONC=NA)) + scale_y_log10()
 ```
 
 # Finding the right dose to give
@@ -187,14 +187,7 @@ pred <- estimate(tdmore = tdmore, regimen = predUpdatedRegimen)
 ```
 
 ```{r find_dose_pred_ipred_predictions, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}
-ggplot(observed, aes(x=TIME, y=CONC)) + geom_point() +
-  geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 32, by=0.1))) +
-  geom_ribbon(aes(fill="Individual", ymin=CONC.lower, ymax=CONC.upper), data=predict(ipred, newdata=data.frame(TIME=seq(0, 32, by=0.1), CONC=NA), se.fit=TRUE), alpha=0.25) +
-  geom_line(aes(color="Population"), data=predict(pred, newdata=seq(0, 32, by=0.1))) +
-  geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), data=predict(pred, newdata=data.frame(TIME=seq(0, 32, by=0.1), CONC=NA), se.fit=TRUE), alpha=0.1) +
-  scale_color_manual(values=c("tomato1", "steelblue2")) +
-  geom_hline(yintercept=8) +
-  scale_y_log10()
+plot(ipred, newdata=seq(0, 32, by=0.1)) + geom_hline(yintercept=8) + scale_y_log10()
 ```
 
 The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day. 
