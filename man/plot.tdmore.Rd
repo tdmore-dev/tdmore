@@ -5,8 +5,7 @@
 \title{Plot a tdmore object (typical profile (population) + between subject variability).}
 \usage{
 \method{plot}{tdmore}(x, regimen, covariates = NULL, newdata = NULL,
-  bsv = TRUE, mc.subjects = 100, .progress = "none", se = FALSE,
-  ...)
+  bsv = TRUE, mc.subjects = 100, .progress = "none", ...)
 }
 \arguments{
 \item{x}{the tdmore object}
@@ -22,8 +21,6 @@
 \item{mc.subjects}{number of subjects in the monte carlo simulation}
 
 \item{.progress}{either "none" or "text" to see calculation progress of monte carlo simulations}
-
-\item{se}{add residual error bounds, currently not compatible with bsv}
 
 \item{...}{ignored}
 }
