@@ -11,11 +11,11 @@ vignette: >
 ---
 ![TDMore logo](static/tdmore_logo.JPG)
 
-# What's TDMore?
+### What's TDMore? {-}
 
 TDMore is an R package that attemps to provide a global framework for making Therapeutic Drug Monitoring software. It is designed not only for the pharmacometricians but also for the physicians.
 
-# Creating your model
+### Creating your model {-}
 
 There are several ways telling TDMore what your model is. The easiest way is to provide the model in the form of a nxlmir model. The following example shows how a 2-compartment-PK model can be written. For the purpose of this demonstration, the 'Meropenem' PK model will be used. As Meropenem is given by injection into a vein, the absorption compartment is omitted.
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
@@ -64,7 +64,7 @@ tdmore <- tdmore(nlmixrUI)
 
 The TDMore object is now ready for use.
 
-# Predicting new data
+### Predicting new data {-}
 
 TDMore can be used to run simulations, based on the model defined in the previous step. For doing so, the regimen first needs to be specified. In the case of Meropenem, an 30-min injection is given into the central compartment every 8 hour. This can be written as follows:
 
@@ -97,7 +97,7 @@ ggplot(data, aes(x=TIME, y=CONC)) +
 
 The plot above shows the median of the population (typical profile) and its 95% confidence interval. The range of the confidence interval can be changed using the argument 'level'.
 
-# Estimating individual parameters
+### Estimating individual parameters {-}
 
 This section will show you how the individual parameters can be estimated, based on some observed data. Let's first estimate the parameters of a typical individual. This is achieved by calling the estimate() function.
 
@@ -150,7 +150,7 @@ Ipred and pred are shown respectively in red and blue. A 95% confidence interval
 plot(ipred, newdata=data.frame(TIME=seq(0.1, 24, by=0.1), CONC=NA)) + scale_y_log10()
 ```
 
-# Finding the right dose to give
+### Finding the right dose to give {-}
 
 A very interesting feature in TDMore is the possibility to ask the framework the next dose to be given knowing all the previous observations that were collected and some known end-points. For example, assume we still collected the same two observations on the first day, we would like to find the best first dose to be given on the second day. We would like to reach the trough concentration of 3.10 mg/L as much as possible. This can be expressed, as follows:
 

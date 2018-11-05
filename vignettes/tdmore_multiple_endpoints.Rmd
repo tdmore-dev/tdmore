@@ -11,7 +11,7 @@ vignette: >
 ---
 ![TDMore logo](static/tdmore_logo.JPG)
 
-# Writing and testing the PK model
+### Writing and testing the PK model {-}
 
 In this vignette, we will learn how TDMore can deal with multiple endpoints. The PK/PD models chosen to illustrate this section are based on the following paper: "Population PK/PD modeling of Sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor.". PDF file is available here. Let's start writing the Sunitinib PK model.  
   
@@ -85,7 +85,7 @@ This regimen can be plotted using the default TDMore plotting function. It shows
 plot(tdmore, regimen, newdata=times)
 ```
 
-# Adding a PD model
+### Adding a PD model {-}
 
 Many different PD models are described in the paper mentionned above. We will focus on the simplest one: a PD model related to the target tumor's sum of the longest diameters (abbreviated SLD), which corresponds to the main efficacy endpoint of Sunitinib. Adding this PD model to the existing PK model is done as follows. Please note the mandatory '|' nlmixr syntax used to describe the residual variability of both endpoints (CONC and SLD).
 
@@ -168,7 +168,7 @@ times <- seq(0, 40*7*24, by=1)
 plot(tdmore, regimen, newdata=data.frame(TIME=times, SLD=NA))
 ```
 
-# Estimating individual parameters
+### Estimating individual parameters {-}
 
 Assume SLD is measured at week 0 and week 30 for a certain individual. Model parameters can be estimated and visualised as follows:
 ```{r sunitinib_pd_ipred_sld, fig.align='center', fig.height = 3, fig.width = 8}
