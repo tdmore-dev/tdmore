@@ -2,8 +2,6 @@
 
 ## Running TDMore
 
-![TDMore logo](static/tdmore_logo.JPG)
-
 ### What's TDMore? {-}
 
 TDMore is an R package that attemps to provide a global framework for making Therapeutic Drug Monitoring software. It is designed not only for the pharmacometricians but also for the physicians.
@@ -115,9 +113,9 @@ vcov(pred)
 ```
 
 ```
-##              ECL          EV1
-## ECL 1.940000e-01 1.090438e-13
-## EV1 1.090438e-13 2.870000e-01
+##       ECL   EV1
+## ECL 0.194 0.000
+## EV1 0.000 0.287
 ```
 
 This uncertainty is equal to the population inter-individual variability (OMEGA matrix). Now, let's assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
@@ -137,7 +135,7 @@ coef(ipred)
 
 ```
 ##        ECL        EV1 
-##  0.2597632 -0.1320226
+##  0.2597598 -0.1320256
 ```
 
 Eta's obtained by calling 'coef' on pred maximise altogether the likelihood for this specific subject. The variance-covariance matrix shows the uncertainty of the individual estimates, and their correlation.
@@ -149,8 +147,8 @@ vcov(ipred)
 
 ```
 ##            ECL        EV1
-## ECL 0.03154109 0.04680264
-## EV1 0.04680264 0.12759830
+## ECL 0.03154084 0.04680264
+## EV1 0.04680264 0.12759969
 ```
 
 Predictions for the population (pred) and this specific subject (ipred) can be compared using the following snippet: 
@@ -199,14 +197,14 @@ summary(recommendation)
 
 ```
 ## $dose
-## [1] 4540.088
+## [1] 4540.072
 ## 
 ## $regimen
 ##   TIME      AMT RATE
 ## 1    0 1000.000 2000
 ## 2    8 1000.000 2000
 ## 3   16 1000.000 2000
-## 4   24 4540.088 2000
+## 4   24 4540.072 2000
 ```
 
 The result of the findDose() routine is shown above. It tells us that XXX mg (approximately) is the recommended starting dose on the second day. The following code helps up verify this visually.
@@ -244,9 +242,7 @@ plot(ipred, newdata=seq(0, 32, by=0.1)) + geom_hline(yintercept=8) + scale_y_log
 
 The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day. 
 
-## Multiple endpoints example
-
-![TDMore logo](static/tdmore_logo.JPG)
+## Multiple endpoints
 
 ### Writing and testing the PK model {-}
 
@@ -432,9 +428,9 @@ coef(ipred)
 
 ```
 ##           ECL           EVc           EKa         EBASE         EKout 
-##  6.907613e-05  4.194756e-08 -1.629290e-06  5.396732e-01 -6.434838e-02 
+##  6.762903e-05  9.882637e-07 -7.529206e-07  5.396754e-01 -6.433377e-02 
 ##         EEC50         EKtol 
-##  3.830441e-03  1.163145e-02
+##  3.814871e-03  1.165208e-02
 ```
 
 ```r
@@ -443,21 +439,21 @@ vcov(ipred)
 
 ```
 ##                 ECL           EVc           EKa         EBASE
-## ECL    6.047597e-02  7.303712e-07  6.944082e-05 -3.280038e-05
-## EVc    7.303712e-07  5.289996e-02  5.976270e-06 -1.285366e-07
-## EKa    6.944082e-05  5.976270e-06  2.755220e+00  4.203295e-07
-## EBASE -3.280038e-05 -1.285366e-07  4.203295e-07  1.253916e-02
-## EKout  1.949523e-04  5.338609e-07 -5.324829e-07  3.441541e-02
-## EEC50 -2.188495e-04  5.275652e-07  1.373321e-04 -1.808498e-03
-## EKtol -2.737098e-05 -1.110182e-07  6.555534e-06 -5.593317e-03
+## ECL    6.051170e-02 -3.202960e-08  7.977322e-08 -3.281933e-05
+## EVc   -3.202960e-08  5.290001e-02 -1.574797e-08 -1.274422e-07
+## EKa    7.977322e-08 -1.574797e-08  2.755604e+00  5.372490e-07
+## EBASE -3.281933e-05 -1.274422e-07  5.372490e-07  1.253910e-02
+## EKout  1.947017e-04  5.265617e-07 -1.905303e-06  3.441526e-02
+## EEC50 -2.383770e-04 -8.312489e-07  3.327081e-06 -1.808524e-03
+## EKtol -2.901414e-05 -1.094317e-07  4.564505e-07 -5.593560e-03
 ##               EKout         EEC50         EKtol
-## ECL    1.949523e-04 -2.188495e-04 -2.737098e-05
-## EVc    5.338609e-07  5.275652e-07 -1.110182e-07
-## EKa   -5.324829e-07  1.373321e-04  6.555534e-06
-## EBASE  3.441541e-02 -1.808498e-03 -5.593317e-03
-## EKout  3.849541e-01  1.071108e-02  3.277985e-02
-## EEC50  1.071108e-02  3.299326e+00 -1.597595e-03
-## EKtol  3.277985e-02 -1.597595e-03  7.239781e-01
+## ECL    1.947017e-04 -2.383770e-04 -2.901414e-05
+## EVc    5.265617e-07 -8.312489e-07 -1.094317e-07
+## EKa   -1.905303e-06  3.327081e-06  4.564505e-07
+## EBASE  3.441526e-02 -1.808524e-03 -5.593560e-03
+## EKout  3.849601e-01  1.071095e-02  3.278036e-02
+## EEC50  1.071095e-02  3.299272e+00 -1.598567e-03
+## EKtol  3.278036e-02 -1.598567e-03  7.239781e-01
 ```
 
 However, TDMore is not able to estimated PK parameters because no data was provided, as confirmed by the following plot (IPRED strictly equal to PRED, only the last week is shown).

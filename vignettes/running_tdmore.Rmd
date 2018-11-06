@@ -9,8 +9,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-![TDMore logo](static/tdmore_logo.JPG)
-
 ### What's TDMore? {-}
 
 TDMore is an R package that attemps to provide a global framework for making Therapeutic Drug Monitoring software. It is designed not only for the pharmacometricians but also for the physicians.

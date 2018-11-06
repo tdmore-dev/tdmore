@@ -4,6 +4,6 @@
 ```{r child='./../../vignettes/running_tdmore.Rmd'}
 ```
 
-## Multiple endpoints example
+## Multiple endpoints
 ```{r child='./../../vignettes/tdmore_multiple_endpoints.Rmd'}
 ```

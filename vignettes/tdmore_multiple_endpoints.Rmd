@@ -9,8 +9,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-![TDMore logo](static/tdmore_logo.JPG)
-
 ### Writing and testing the PK model {-}
 
 In this vignette, we will learn how TDMore can deal with multiple endpoints. The PK/PD models chosen to illustrate this section are based on the following paper: "Population PK/PD modeling of Sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor.". PDF file is available here. Let's start writing the Sunitinib PK model.  
