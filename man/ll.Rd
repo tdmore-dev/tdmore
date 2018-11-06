@@ -4,10 +4,10 @@
 \alias{ll}
 \title{Calculate the log likelihood as the sum of the population likelihood and the prediction likelihood.}
 \usage{
-ll(estimate, tdmore, observed, regimen, covariates)
+ll(par, tdmore, observed, regimen, covariates)
 }
 \arguments{
-\item{estimate}{the current estimate of the parameters}
+\item{par}{the current estimate of the parameters}
 
 \item{tdmore}{the tdmore object}
 

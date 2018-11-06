@@ -8,7 +8,7 @@
 #' @param .progress either "none" or "text" to see calculation progress of monte carlo simulations
 #' @param ... ignored
 #'
-#' @return a ggplot object with the fitted individual curve, the 95% ci of this curve, the population prediction, the observed data and the residual error around the observed data
+#' @return a ggplot object with the fitted individual curve, the 95% CI of this curve, the population prediction (with between-subject variability) and the observed data
 #' @importFrom magrittr "%>%"
 #' @importFrom ggplot2 ggplot aes_string geom_line geom_ribbon geom_point geom_errorbar labs
 #' @importFrom stats predict
@@ -39,7 +39,7 @@ plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progres
     }
 
     obs <- model.frame.tdmorefit(tdmorefit) %>% meltPredictions()
-    obs <- subset(obs, variable %in% yVars & !is.na(value))
+    obs <- subset(obs, obs$variable %in% yVars & !is.na(obs$value))
 
     plot <- ggplot(mapping=aes_string(x="TIME", y="value", group="variable"))
     plot <- plot + geom_line(color=blue(), data=pred) + geom_point(data=obs)
@@ -52,18 +52,18 @@ plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progres
   return(plot)
 }
 
-#' Plot a tdmore object (typical profile (population) + between subject variability).
+#' Plot a tdmore object (typical profile of the population and between subject variability).
 #'
 #' @param x the tdmore object
 #' @param regimen the regimen to be predicted
 #' @param covariates covariates
 #' @param newdata a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times
-#' @param bsv add between subject variability
+#' @param bsv add between subject variability, enabled by default
 #' @param mc.subjects number of subjects in the monte carlo simulation
 #' @param .progress either "none" or "text" to see calculation progress of monte carlo simulations
 #' @param ... ignored
 #'
-#' @return a ggplot object with the fitted individual curve, the 95% ci of this curve, the population prediction, the observed data and the residual error around the observed data
+#' @return a ggplot object with the the population prediction
 #' @importFrom magrittr "%>%"
 #' @importFrom ggplot2 ggplot aes_string geom_line geom_ribbon geom_point geom_errorbar labs
 #' @importFrom stats predict
@@ -71,7 +71,8 @@ plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progres
 plot.tdmore <- function(x, regimen, covariates=NULL, newdata=NULL, bsv=TRUE, mc.subjects=100, .progress="none", ...) {
   tdmore <- x
   tdmorefit <- estimate(tdmore = tdmore, regimen = regimen, covariates = covariates)
-  return(plot(tdmorefit, newdata=newdata, se.fit=bsv, mc.maxpts=mc.subjects, .progress=.progress, population=TRUE))
+  plot <- plot(tdmorefit, newdata=newdata, se.fit=bsv, mc.maxpts=mc.subjects, .progress=.progress, population=TRUE)
+  return(plot)
 }
 
 processNewData <- function(newdata, tdmorefit) {

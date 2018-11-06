@@ -21,15 +21,15 @@ tdmore.nlmixrUI <- function(model, ...) {
 
   # Summarising the error models
   errorDf <- data.frame(cond=model$condition, errorType=model$err, value=model$est)
-  errorDf <- errorDf %>% subset(errorType %in% c("add", "prop", "exp"))
+  errorDf <- errorDf %>% subset(errorDf$errorType %in% c("add", "prop", "exp"))
   predDf <- model$predDf
   assert_that(nrow(predDf) >= 1, msg = "No error model defined, please define one")
   errorModels <- list()
   for (index in 1:nrow(predDf)) {
     row <- predDf[index,]
-    add <- errorDf %>% subset(cond==as.character(row$cond) & errorType=="add")
-    prop <- errorDf %>% subset(cond==as.character(row$cond) & errorType=="prop")
-    exp <- errorDf %>% subset(cond==as.character(row$cond) & errorType=="exp")
+    add <- errorDf %>% subset(errorDf$cond==as.character(row$cond) & errorDf$errorType=="add")
+    prop <- errorDf %>% subset(errorDf$cond==as.character(row$cond) & errorDf$errorType=="prop")
+    exp <- errorDf %>% subset(errorDf$cond==as.character(row$cond) & errorDf$errorType=="exp")
     err <- errorModel(var = as.character(row$var),
                       add = if(nrow(add) > 0) as.numeric(add$value) else 0,
                       prop = if(nrow(prop) > 0) as.numeric(prop$value) else 0,

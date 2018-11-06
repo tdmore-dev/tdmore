@@ -4,18 +4,18 @@
 \alias{pop_ll}
 \title{Calculate the population log likelihood.}
 \usage{
-pop_ll(estimate, tdmore, observed, regimen, covariates)
+pop_ll(par, tdmore, observed, regimen, covariates)
 }
 \arguments{
-\item{estimate}{the current estimate of the parameters}
+\item{par}{the current estimate of the parameters}
 
 \item{tdmore}{the tdmore object}
 
-\item{observed}{the observed data, not used in the population log likelihoold}
+\item{observed}{the observed data, not used in the population log likelihood}
 
 \item{regimen}{data frame describing the treatment regimen}
 
-\item{covariates}{the model covariates, not used in the population log likelihoold}
+\item{covariates}{the model covariates, not used in the population log likelihood}
 }
 \value{
 the population log likelihood

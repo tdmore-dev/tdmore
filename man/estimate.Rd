@@ -6,7 +6,7 @@
 a given dataset using the model}
 \usage{
 estimate(tdmore, observed = NULL, regimen, covariates = NULL,
-  p = NULL, ...)
+  par = NULL, ...)
 }
 \arguments{
 \item{tdmore}{a tdmore object}
@@ -18,9 +18,9 @@ If not specified, we estimate the population prediction}
 
 \item{covariates}{the model covariates}
 
-\item{p}{optional starting parameter for the MLE minimization}
+\item{par}{optional starting parameter for the MLE minimization}
 
-\item{...}{Extra parameters to pass to nlm}
+\item{...}{extra parameters to pass to the optim function}
 }
 \value{
 A tdmorefit object

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot.tdmore}
 \alias{plot.tdmore}
-\title{Plot a tdmore object (typical profile (population) + between subject variability).}
+\title{Plot a tdmore object (typical profile of the population and between subject variability).}
 \usage{
 \method{plot}{tdmore}(x, regimen, covariates = NULL, newdata = NULL,
   bsv = TRUE, mc.subjects = 100, .progress = "none", ...)
@@ -16,7 +16,7 @@
 
 \item{newdata}{a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times}
 
-\item{bsv}{add between subject variability}
+\item{bsv}{add between subject variability, enabled by default}
 
 \item{mc.subjects}{number of subjects in the monte carlo simulation}
 
@@ -25,8 +25,8 @@
 \item{...}{ignored}
 }
 \value{
-a ggplot object with the fitted individual curve, the 95% ci of this curve, the population prediction, the observed data and the residual error around the observed data
+a ggplot object with the the population prediction
 }
 \description{
-Plot a tdmore object (typical profile (population) + between subject variability).
+Plot a tdmore object (typical profile of the population and between subject variability).
 }

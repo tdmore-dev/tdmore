@@ -4,10 +4,10 @@
 \alias{pred_ll}
 \title{Calculate the prediction log likelihood.}
 \usage{
-pred_ll(estimate, tdmore, observed, regimen, covariates)
+pred_ll(par, tdmore, observed, regimen, covariates)
 }
 \arguments{
-\item{estimate}{the current estimate of the parameters}
+\item{par}{the current estimate of the parameters}
 
 \item{tdmore}{the tdmore object}
 
