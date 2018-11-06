@@ -149,8 +149,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="install" class="section level1">
 <h1><span class="header-section-number">Chapter 2</span> Installation</h1>
+<p>TDMore depends on package <code>RxODE</code>, which requires a working C and fortran compiler to work. Installation procedure can be found <a href="https://github.com/nlmixrdevelopment/RxODE">here</a>. Once <code>RxODE</code> installed, simply execute the following command in the R console:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;tdmore-dev/tdmore&quot;</span>)</code></pre></div>
-<p>TDMore depends on package <code>RxODE</code>, which requires a working C and fortran compiler to work. Installation procedure can be found <a href="https://cran.r-project.org/package=RxODE">here</a>.</p>
+<p>If you would like to install the package with all its vignettes, please run the following command instead:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;tdmore-dev/tdmore&quot;</span>, <span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>)</code></pre></div>
 
 </div>
             </section>

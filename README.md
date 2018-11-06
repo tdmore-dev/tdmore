@@ -28,11 +28,19 @@ This software is a research project, and cannot be considered as a medical devic
 How to install
 ==============
 
+TDMore depends on package `RxODE`, which requires a working C and fortran compiler to work. Installation procedure can be found [here](https://github.com/nlmixrdevelopment/RxODE). Once `RxODE` installed, simply execute the following command in the R console:
+
 ``` r
 devtools::install_github("tdmore-dev/tdmore")
 ```
 
-TDMore depends on package `RxODE`, which requires a working C and fortran compiler to work. Installation procedure can be found [here](https://cran.r-project.org/package=RxODE).
+If you would like to install the package with all its vignettes, please run the following command instead:
+
+``` r
+devtools::install_github("tdmore-dev/tdmore", build_vignettes = TRUE)
+```
+
+Note that these vignettes can also be browsed on the [TDMore bookdown](https://tdmore-dev.github.io/tdmore).
 
 How to use
 ==========
