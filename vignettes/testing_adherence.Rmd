@@ -11,8 +11,6 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 ---
-![TDMore logo](static/tdmore_logo.JPG)
-
 # About this example
 
 Non-compliance is an important issue endangering the effectiveness of treatments. In COPD, it is estimated that there is a non-compliance of more than 98% for inhaled treatments.
