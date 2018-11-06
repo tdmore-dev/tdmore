@@ -1,0 +1,126 @@
+---
+title: "Testing adherence using TDMore"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    keep_md: true
+vignette: >
+  %\VignetteIndexEntry{TDMore, a global framework for Therapeutic Drug Monitoring (TDM)}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+![TDMore logo](static/tdmore_logo.JPG)
+
+# About this example
+
+Non-compliance is an important issue endangering the effectiveness of treatments. In COPD, it is estimated that there is a non-compliance of more than 98% for inhaled treatments.
+
+In this example, we use TDMore to compare the systemic concentrations of inhaled fluticasone propionate with the population predictions. We show that TDMore can be used to detect severe non-adherence, and to propose corrective action.
+
+# The model
+
+Model taken from literature: Soulele, K., et al. "Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers." European Journal of Pharmaceutical Sciences 80 (2015): 33-42.
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+set.seed(0) 
+```
+
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
+library(nlmixr)
+
+modelCode <- function(){
+  ini({
+    TVKa <- 3.87
+    TVCL <- 659 #L/h
+    TVV1 <- 56900 #L
+    TVV2 <- 5550 #L
+    TVQ <- 259 #L/h
+    
+    EKa ~ 0.04507129 #0.2123**2
+    ECL ~ 0.1535856 #0.3919**2
+    EV1 ~ 0.09223369 #0.3037**2
+    EV2 ~ 0.208301 #0.4564**2
+    EQ ~ 0.1015697# 0.3187**2
+    
+    EPS_ADD <- 1.91 #
+    EPS_PROP <- 0.117
+  })
+  model({
+    Ka <- TVKa * exp(EKa)
+    CL <- TVCL * exp(ECL)
+    V1 <- TVV1 * exp(EV1)
+    V2 <- TVV2 * exp(EV2)
+    Q <- TVQ * exp(EQ)
+    K12 <- Q/V1
+    K21 <- Q/V2
+
+    d/dt(center) = - CL/V1 * center - K12*center + K21 * periph
+    d/dt(periph) = K12*center - K21 * periph
+
+    CONC = center / V1 * 1000
+    CONC ~ prop(EPS_PROP) + add(EPS_ADD)
+  })
+}
+nlmixrModel <- nlmixrUI(modelCode)
+
+library(tdmore)
+m1 <- tdmore(nlmixrModel)
+```
+
+
+We now define the treatment regimen
+
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
+regimen <- data.frame(
+  TIME=seq(0, by=24, length.out=30),
+  AMT=500 # 500ug standard dose
+)
+
+adhering <- predict(m1, regimen=regimen, newdata=seq(0, 30*24))
+
+actual <- data.frame(
+  TIME=seq(0, by=24, length.out=30),
+  AMT=500*sample(c(0,1), 30, replace=TRUE) # probability of 50% to not take the dose
+)
+nonAdhering <- predict(m1, regimen=actual, newdata=seq(0, 30*24))
+
+pred <- estimate(m1, regimen=regimen)
+ggplot(pred, newdata=seq(0, 30*24)) +
+  ipred(mapping=aes(x=TIME, y=CONC))
+#  labs(x="Time (hours)", y="Concentration (mg/L)")
+```
+
+# Is the patient taking his/her medication?
+We can now take a serum sample and evaluate if there is non-adherence.
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+# Take a blood sample
+observed <- predict(m1, regimen=actual, newdata=data.frame(TIME=30*24+c(-16, 0), CONC=NA))
+observed
+
+# We estimate individual parameters
+# as if the patient took his medication
+# properly
+ipred <- estimate(m1, observed, regimen)
+coef(ipred)
+
+ggplot(mapping=aes(x=TIME, y=CONC)) +
+  geom_line(aes(color="Reality"), data=nonAdhering) +
+  geom_point(data=observed) +
+  geom_line(aes(color="Population"), data=adhering) +
+#  geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), 
+#    data=predict(m1, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA), se.fit=TRUE), alpha=0.1) +
+  geom_line(aes(color="Prediction"), 
+    data=predict(ipred, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA)))
+
+
+
+standardDeviations <- coef(ipred) / sqrt(diag(m1$omega))
+standardDeviations
+
+i <- which(pnorm(abs(standardDeviations)) > 0.975)
+if(length(i) > 0) {
+  cat("This patient has unlikely (outside 95% CI) parameter estimates for ", names(i),". There may be a treatment adherence issue.")
+}
+```
