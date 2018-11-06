@@ -21,7 +21,7 @@
 \item{...}{ignored}
 }
 \value{
-a ggplot object with the fitted individual curve, the 95% ci of this curve, the population prediction, the observed data and the residual error around the observed data
+a ggplot object with the fitted individual curve, the 95% CI of this curve, the population prediction (with between-subject variability) and the observed data
 }
 \description{
 Plot a tdmorefit object.

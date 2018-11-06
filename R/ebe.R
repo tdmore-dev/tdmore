@@ -1,20 +1,20 @@
 #' Calculate the population log likelihood.
 #'
-#' @param estimate the current estimate of the parameters
+#' @param par the current estimate of the parameters
 #' @param tdmore the tdmore object
-#' @param observed the observed data, not used in the population log likelihoold
+#' @param observed the observed data, not used in the population log likelihood
 #' @param regimen data frame describing the treatment regimen
-#' @param covariates the model covariates, not used in the population log likelihoold
+#' @param covariates the model covariates, not used in the population log likelihood
 #'
 #' @return the population log likelihood
-pop_ll <- function(estimate, tdmore, observed, regimen, covariates) {
+pop_ll <- function(par, tdmore, observed, regimen, covariates) {
   omega <- tdmore$omega
-  sum( mvtnorm::dmvnorm(estimate, sigma=omega, log=TRUE) )
+  sum( mvtnorm::dmvnorm(par, sigma=omega, log=TRUE) )
 }
 
 #' Calculate the prediction log likelihood.
 #'
-#' @param estimate the current estimate of the parameters
+#' @param par the current estimate of the parameters
 #' @param tdmore the tdmore object
 #' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
@@ -22,16 +22,16 @@ pop_ll <- function(estimate, tdmore, observed, regimen, covariates) {
 #' @param covariates the model covariates
 #'
 #' @return the prediction log likelihood
-pred_ll <- function(estimate, tdmore, observed, regimen, covariates) {
+pred_ll <- function(par, tdmore, observed, regimen, covariates) {
   if(is.null(observed) || nrow(observed) == 0) return(0)
-  pred <- predict.tdmore(object=tdmore, newdata=observed, regimen=regimen, parameters=estimate, covariates=covariates)
+  pred <- predict.tdmore(object=tdmore, newdata=observed, regimen=regimen, parameters=par, covariates=covariates)
   res <- residuals.tdmore(tdmore, observed, pred, log=TRUE)
   sum(res)
 }
 
 #' Calculate the log likelihood as the sum of the population likelihood and the prediction likelihood.
 #'
-#' @param estimate the current estimate of the parameters
+#' @param par the current estimate of the parameters
 #' @param tdmore the tdmore object
 #' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
@@ -39,9 +39,9 @@ pred_ll <- function(estimate, tdmore, observed, regimen, covariates) {
 #' @param covariates the model covariates
 #'
 #' @return the log likelihood
-ll <- function(estimate, tdmore, observed, regimen, covariates) {
-  if(is.null(names(estimate))) names(estimate) <- tdmore$parameters #you should support named parameters as well!
-  res <- pop_ll(estimate, tdmore, observed, regimen, covariates) + pred_ll(estimate, tdmore, observed, regimen, covariates)
+ll <- function(par, tdmore, observed, regimen, covariates) {
+  if(is.null(names(par))) names(par) <- tdmore$parameters #you should support named parameters as well!
+  res <- pop_ll(par, tdmore, observed, regimen, covariates) + pred_ll(par, tdmore, observed, regimen, covariates)
   res
 }
 
@@ -54,49 +54,50 @@ ll <- function(estimate, tdmore, observed, regimen, covariates) {
 #' If not specified, we estimate the population prediction
 #' @param regimen data frame describing the treatment regimen.
 #' @param covariates the model covariates
-#' @param p optional starting parameter for the MLE minimization
-#' @param ... Extra parameters to pass to nlm
+#' @param par optional starting parameter for the MLE minimization
+#' @param ... extra parameters to pass to the optim function
 #'
 #' @return A tdmorefit object
-#' @importFrom stats nlm
+#' @importFrom stats optim
 #' @export
-estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, p=NULL, ...) {
+estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, ...) {
   assert_that(class(tdmore) == "tdmore")
-  if(is.null(p)) p<-rep(0, length(tdmore$parameters))
+  if(is.null(par)) par <- rep(0, length(tdmore$parameters))
 
   # First try to estimate at starting values, as a precaution
-  ll(estimate=p,
-     tdmore=tdmore,
-     observed=observed,
-     regimen=regimen,
-     covariates=covariates)
+  ll(par=par, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)
 
-  # Max omega value
-  maxOmega <- max(diag(tdmore$omega))
-
-  # Then do the full nlm
-  pointEstimate <- stats::nlm(f=function(...) {
+  # Function to optimise
+  fn <- function(par, ...) {
     tryCatch({
-      -2*ll(...)
-    }, error=function(e){ 999999 })
-    },
-                       p=p,
-                       stepmax=sqrt(maxOmega)*4, # 99.99%
-                       tdmore,
-                       observed,
-                       regimen,
-                       covariates,
-                       ...)
-  res <- pointEstimate$estimate
-  names(res) <- tdmore$parameters
+      -2 * ll(par = par, ...)
+    }, error = function(e) {
+      999999
+    })
+  }
 
-  #OFIM <- pointEstimate$hessian ##!!! Wrong hessian!?
-  # Observed fisher information matrix is -1*hessian(ll)
-  OFIM <- numDeriv::hessian(ll, res, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)
+  # Then do the full optimisation
+  pointEstimate <- stats::optim(
+    par = par,
+    fn = fn,
+    method = "L-BFGS-B",
+    lower = -5 * sqrt(diag(tdmore$omega)),
+    upper = +5 * sqrt(diag(tdmore$omega)),
+    hessian = TRUE,
+    tdmore = tdmore,
+    observed = observed,
+    regimen = regimen,
+    covariates = covariates,
+    ...
+  )
+  res <- pointEstimate$par
+  names(res) <- tdmore$parameters
+  # Observed fisher information matrix = -hessian(ll)
+  OFIM <- pointEstimate$hessian * 1/2
   varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
-  if(all(diag(varcov) <= 0)) varcov <- -1 * varcov
+  #if(all(diag(varcov) >= 0)) varcov <- -1 * varcov # Still pertinent?
   dimnames(varcov) = list(tdmore$parameters, tdmore$parameters)
-  ofv <- pointEstimate$minimum
+  ofv <- pointEstimate$value
   tdmorefit(tdmore, observed, regimen, covariates, ofv, res, varcov, nlmresult=pointEstimate)
 }
 
@@ -131,7 +132,7 @@ tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, r
       regimen=regimen,
       covariates=covariates,
       ofv=ofv,
-      logLik=ofv / -2,
+      logLik=ofv/-2,
       res=res,
       varcov=varcov,
       nlmresult=nlmresult
@@ -302,7 +303,7 @@ logLik.tdmorefit <- function(object, ...) {
   observed <- model.frame(object)
   regimen <- object$regimen
   covariates <- object$covariates
-  ll(estimate=estimate,
+  ll(par=estimate,
      tdmore=tdmore,
      observed=observed,
      regimen=regimen,

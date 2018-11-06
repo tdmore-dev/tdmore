@@ -1,6 +1,12 @@
 # Installation  {#install}
 
-```R
+TDMore depends on package `RxODE`, which requires a working C and fortran compiler to work. Installation procedure can be found [here](https://github.com/nlmixrdevelopment/RxODE). Once `RxODE` installed, simply execute the following command in the R console:
+
+```{r, eval=F}
 devtools::install_github("tdmore-dev/tdmore")
 ```
-We suggest you also install `tidyverse` and `RxODE`. The latter requires a working C and fortran compiler to work.
+
+If you would like to install the package with all its vignettes, please run the following command instead:
+```{r, eval=F}
+devtools::install_github("tdmore-dev/tdmore", build_vignettes = TRUE)
+```

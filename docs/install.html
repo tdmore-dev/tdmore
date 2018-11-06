@@ -25,7 +25,7 @@
 <meta name="author" content="Ruben Faelens, Thomas Bouillon, Nicolas Luyckx and Quentin Leirens">
 
 
-<meta name="date" content="2018-10-29">
+<meta name="date" content="2018-11-06">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -113,6 +113,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="2" data-path="install.html"><a href="install.html"><i class="fa fa-check"></i><b>2</b> Installation</a></li>
 <li class="chapter" data-level="3" data-path="license.html"><a href="license.html"><i class="fa fa-check"></i><b>3</b> License</a></li>
+<li class="chapter" data-level="4" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>4</b> Vignettes</a><ul>
+<li class="chapter" data-level="4.1" data-path="vignettes.html"><a href="vignettes.html#running-tdmore"><i class="fa fa-check"></i><b>4.1</b> Running TDMore</a><ul>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#whats-tdmore"><i class="fa fa-check"></i>What’s TDMore?</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#creating-your-model"><i class="fa fa-check"></i>Creating your model</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#predicting-new-data"><i class="fa fa-check"></i>Predicting new data</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#finding-the-right-dose-to-give"><i class="fa fa-check"></i>Finding the right dose to give</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="vignettes.html"><a href="vignettes.html#multiple-endpoints"><i class="fa fa-check"></i><b>4.2</b> Multiple endpoints</a><ul>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#writing-and-testing-the-pk-model"><i class="fa fa-check"></i>Writing and testing the PK model</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#adding-a-pd-model"><i class="fa fa-check"></i>Adding a PD model</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters-1"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
+</ul></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -135,8 +149,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="install" class="section level1">
 <h1><span class="header-section-number">Chapter 2</span> Installation</h1>
+<p>TDMore depends on package <code>RxODE</code>, which requires a working C and fortran compiler to work. Installation procedure can be found <a href="https://github.com/nlmixrdevelopment/RxODE">here</a>. Once <code>RxODE</code> installed, simply execute the following command in the R console:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;tdmore-dev/tdmore&quot;</span>)</code></pre></div>
-<p>We suggest you also install <code>tidyverse</code> and <code>RxODE</code>. The latter requires a working C and fortran compiler to work.</p>
+<p>If you would like to install the package with all its vignettes, please run the following command instead:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;tdmore-dev/tdmore&quot;</span>, <span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>)</code></pre></div>
 
 </div>
             </section>
