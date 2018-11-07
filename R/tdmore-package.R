@@ -5,5 +5,6 @@
 #' @docType package
 NULL
 
-# We need to import generic functions package-wide. See http://r-pkgs.had.co.nz/namespace.html#export-s3
-# > A method for a generic in a required package. You’ll need to import the generic (see below), and export the method.
+.onAttach <- function(libname, pkgname) {
+  packageStartupMessage("Welcome to TDMore, more info on https://tdmore-dev.github.io/tdmore.")
+}
