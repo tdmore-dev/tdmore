@@ -55,12 +55,15 @@ ll <- function(par, tdmore, observed, regimen, covariates) {
 #' @param regimen data frame describing the treatment regimen.
 #' @param covariates the model covariates
 #' @param par optional starting parameter for the MLE minimization
+#' @param method the optimisation method, by default, method "L-BFGS-B" is used
+#' @param lower the lower bounds of the parameters, by default, -5 * sqrt(diag(tdmore$omega)) is used
+#' @param upper the upper bounds of the parameters, by default, +5 * sqrt(diag(tdmore$omega)) is used
 #' @param ... extra parameters to pass to the optim function
 #'
 #' @return A tdmorefit object
 #' @importFrom stats optim
 #' @export
-estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, ...) {
+estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", lower = -5 * sqrt(diag(tdmore$omega)), upper = +5 * sqrt(diag(tdmore$omega)), ...) {
   assert_that(class(tdmore) == "tdmore")
   if(is.null(par)) par <- rep(0, length(tdmore$parameters))
 
@@ -80,9 +83,9 @@ estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, 
   pointEstimate <- stats::optim(
     par = par,
     fn = fn,
-    method = "L-BFGS-B",
-    lower = -5 * sqrt(diag(tdmore$omega)),
-    upper = +5 * sqrt(diag(tdmore$omega)),
+    method = method,
+    lower = lower,
+    upper = upper,
     hessian = TRUE,
     tdmore = tdmore,
     observed = observed,
