@@ -126,9 +126,9 @@ red <- function() {
 #' @export
 autoplot.tdmorefit <- function(x, newdata=NULL, ...) {
   ggplot(data=x, newdata=newdata) +
-    pred_se(aes(fill="A priori")) +
-    ipred_se(aes(fill="A posteriori")) +
-    pred(aes(color="A priori")) +
+    #TODO pred_se(aes(fill="A priori")) +
+    #TODO ipred_se(aes(fill="A posteriori")) +
+    #TODO pred(aes(color="A priori")) +
     ipred(aes(fill="A posteriori")) +
     labs(x="Time", y="Value", color="Prediction", fill="Prediction")
 }
@@ -154,8 +154,8 @@ autoplot.tdmore <- function(x, regimen, covariates=NULL, newdata=NULL, ...) {
   tdmore <- x
   tdmorefit <- estimate(tdmore = tdmore, regimen = regimen, covariates = covariates)
   ggplot(data=tdmorefit, newdata=newdata) +
-    pred_se(aes(fill="A priori")) +
-    pred(aes(color="A priori")) +
+    #TODO pred_se(aes(fill="A priori")) +
+    #TODO pred(aes(color="A priori")) +
     labs(x="Time", y="Value", color="Prediction", fill="Prediction")
 }
 
@@ -277,10 +277,11 @@ ggplot_add.IPred <- function(object, plot, object_name) {
 ## How can we guess the y variable as well?
 ## We need the model for that ?
 StatIPred <- ggplot2::ggproto("StatIPred", ggplot2::StatIdentity,
-                              default_aes=aes(x=TIME),
+                              default_aes=ggplot2::aes_(x=~TIME),
                               required_aes = c("y")
 )
 
+is.tdmorefit <- function(a) {inherits(a, "tdmorefit")}
 is.ggtdmore <- function(a) {inherits(a, "ggtdmore")}
 "%||%" <- function(a, b) {
   if (!is.null(a)) a else b
@@ -289,7 +290,7 @@ is.ggtdmore <- function(a) {inherits(a, "ggtdmore")}
 
 ## TODO: Get inspired by the code below when creating ipred_se and pred_se
 ## Afterwards, you can remove it.
-#' @importFrom ggplot2 ggplot_add aes
+#' @importFrom ggplot2 ggplot_add aes_ aes_string
 #' @export
 ggplot_add.GeomPred <- function(object, plot, object_name) {
   if(!is.ggtdmore(plot)) stop("Can only add GeomPred to a ggtdmore object. Did you call ggplot() with a tdmore object?")
@@ -307,7 +308,7 @@ ggplot_add.GeomPred <- function(object, plot, object_name) {
                    se.fit=T, level=object$level)
     # TODO: guess the output, or use tidybayes
 
-    mapping <- object$mapping %||% aes(x=TIME, ymin=CONC.lower, ymax=CONC.upper)
+    mapping <- object$mapping %||% aes_(x=~TIME, ymin=~CONC.lower, ymax=~CONC.upper)
     # TODO: how do we work with color if it is also specified as an aesthetic?
     # TODO: What happens if
     args <- list(data=data, mapping=mapping, fill="red", alpha=0.2)
@@ -318,7 +319,7 @@ ggplot_add.GeomPred <- function(object, plot, object_name) {
   }
 
   data <- predict(tdmorefit, newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates)
-  mapping <- object$mapping  %||% aes(x=TIME, y=CONC)# TODO: guess the output, or use tidybayes
+  mapping <- object$mapping  %||% aes_(x=~TIME, y=~CONC)# TODO: guess the output, or use tidybayes
   args <- list(data=data, mapping=mapping, color="red")
   args <- c(object$lineArgs, args)
   args <- args[!duplicated(names(args))] #drop duplicates
