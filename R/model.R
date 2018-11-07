@@ -170,3 +170,44 @@ model.frame.tdmore <- function(formula, observed, se=FALSE, level=0.95, ...) {
 #' @return The original model used when defining the TDMore object
 #' @export
 formula.tdmore <- function(x, ...) {x$model}
+
+#' Print a tdmore object.
+#'
+#' @param x a tdmore object
+#' @param ... ignored
+#'
+#' @export
+print.tdmore <- function(x, ...) {
+  cat("Structural model:", class(x$model), "\n")
+  cat("Parameters:", x$parameters, "\n")
+  cat("Covariates:", if(length(x$covariates)==0) "/" else x$covariates, "\n")
+  vars <- c()
+  for (err in x$res_var) {
+    vars <- c(vars, err$var)
+  }
+  cat("Output(s):", vars, "\n")
+}
+
+#' Summarise a tdmore object.
+#'
+#' @param object a tdmore object
+#' @param ... ignored
+#'
+#' @export
+summary.tdmore <- function(object, ...) {
+  x <- object
+  cat("Structural model:", class(x$model), "\n\n")
+  parameters <- data.frame(name=x$parameters, var=diag(x$omega), cv=sqrt(diag(x$omega)))
+  cat("Parameters:\n")
+  print(parameters, row.names = FALSE)
+  cat("\n")
+  cat("Covariates:", if(length(x$covariates)==0) "/" else x$covariates, "\n\n")
+  errorDf <- data.frame(name=character(0), additiveError=numeric(0), proportionalError=numeric(0), exponentialError=numeric(0))
+  for (index in 1:length(x$res_var)) {
+    err <- x$res_var[[index]]
+    errDf <- data.frame(name=err$var, additiveError=err$add, proportionalError=err$prop, exponentialError=err$exp)
+    errorDf <- rbind(errorDf, errDf)
+  }
+  cat("Residual error model:\n")
+  print(errorDf, row.names = FALSE)
+}

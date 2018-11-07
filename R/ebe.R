@@ -55,12 +55,15 @@ ll <- function(par, tdmore, observed, regimen, covariates) {
 #' @param regimen data frame describing the treatment regimen.
 #' @param covariates the model covariates
 #' @param par optional starting parameter for the MLE minimization
+#' @param method the optimisation method, by default, method "L-BFGS-B" is used
+#' @param lower the lower bounds of the parameters, by default, -5 * sqrt(diag(tdmore$omega)) is used
+#' @param upper the upper bounds of the parameters, by default, +5 * sqrt(diag(tdmore$omega)) is used
 #' @param ... extra parameters to pass to the optim function
 #'
 #' @return A tdmorefit object
 #' @importFrom stats optim
 #' @export
-estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, ...) {
+estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", lower = -5 * sqrt(diag(tdmore$omega)), upper = +5 * sqrt(diag(tdmore$omega)), ...) {
   assert_that(class(tdmore) == "tdmore")
   if(is.null(par)) par <- rep(0, length(tdmore$parameters))
 
@@ -80,9 +83,9 @@ estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, 
   pointEstimate <- stats::optim(
     par = par,
     fn = fn,
-    method = "L-BFGS-B",
-    lower = -5 * sqrt(diag(tdmore$omega)),
-    upper = +5 * sqrt(diag(tdmore$omega)),
+    method = method,
+    lower = lower,
+    upper = upper,
     hessian = TRUE,
     tdmore = tdmore,
     observed = observed,
@@ -95,10 +98,9 @@ estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, 
   # Observed fisher information matrix = -hessian(ll)
   OFIM <- pointEstimate$hessian * 1/2
   varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
-  #if(all(diag(varcov) >= 0)) varcov <- -1 * varcov # Still pertinent?
   dimnames(varcov) = list(tdmore$parameters, tdmore$parameters)
   ofv <- pointEstimate$value
-  tdmorefit(tdmore, observed, regimen, covariates, ofv, res, varcov, nlmresult=pointEstimate)
+  tdmorefit(tdmore, observed, regimen, covariates, ofv, res, varcov, nlmresult=pointEstimate, call=match.call())
 }
 
 #' Create a tdmorefit object manually
@@ -111,10 +113,11 @@ estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, 
 #' @param res the found parameter values, as a named vector, or NULL to use 0
 #' @param varcov the found varcov matrix, or NULL to use a diagonal matrix
 #' @param nlmresult the result of the non-linear minimization
+#' @param call a informative string that gives the arguments that were used in estimate()
 #'
 #' @return A tdmorefit object, manually created
 #' @export
-tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, res=NULL, varcov=NULL, nlmresult=NULL) {
+tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, res=NULL, varcov=NULL, nlmresult=NULL, call=NULL) {
   N <- length(tdmore$parameters)
   if(is.null(res)) {
     res <- rep(0, N) #population prediction
@@ -135,23 +138,69 @@ tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, r
       logLik=ofv/-2,
       res=res,
       varcov=varcov,
-      nlmresult=nlmresult
+      nlmresult=nlmresult,
+      call=call
     ), class=c("tdmorefit"))
 }
 
-#' Summary of an EBE fit
+#' Print an EBE fit.
 #'
-#' @param object A tdmorefit object
-#' @param ... Additional parameters ignored
+#' @param x a tdmorefit object
+#' @param ... ignored
 #'
-#' @return Nothing
+#' @export
+print.tdmorefit <- function(x, ...) {
+  cat("Call:\n")
+  print(x$call)
+  cat("Coef:\n")
+  print(x$res)
+}
+
+
+#' Summary of a tdmorefit object.
+#'
+#' @param object a tdmorefit object
+#' @param ... additional parameters ignored
+#'
 #' @export
 summary.tdmorefit <- function(object, ...) {
-  tdmorefit <- object
-  cat("Fit of model to ", nrow(tdmorefit$observed), " points of data\n")
-  cat("LogLikelihood = ", logLik.tdmorefit(tdmorefit), "\n")
-  cat("Point estimate: ", coef.tdmorefit(tdmorefit), "\n")
-  cat("Variance/covariance matrix: ", vcov.tdmorefit(tdmorefit), "\n")
+  x <- object
+  cat("Call:\n")
+  print(x$call)
+  cat("Coef:\n")
+  print(x$res)
+  cat("\n")
+  cat(paste0(
+    "OFV: ",
+    signif(logLik(object, "ll") * -2, digits=3),
+    " (pop=",
+    signif(logLik(object, "pop") * -2, digits=3),
+    ", pred=",
+    signif(logLik(object, "pred") * -2, digits=3),
+    ")\n"
+  ))
+  cat("\n")
+  cat("Observations:\n")
+  print(x$observed, row.names=F)
+  cat("\n")
+  cat("Regimen:\n")
+  print(x$regimen, row.names=F)
+  cat("\n")
+  cat("Covariates:", if(is.null(x$covariates)) "/\n" else "\n")
+  if(!is.null(x$covariates)) {
+    print(x$covariates, row.names=F)
+  }
+  cat("\n")
+  cat("Coefficients:\n")
+  coefDf <- data.frame(name=names(x$res), value=signif(x$res, digits=3), se=signif(sqrt(diag(x$varcov)), digits=3))
+  coefDf$value.low <- signif(coefDf$value - 1.96*coefDf$se, digits=3)
+  coefDf$value.up <- signif(coefDf$value + 1.96*coefDf$se, digits=3)
+  coefDf$ci <- paste0('(', coefDf$value.low, ', ', coefDf$value.up, ')')
+  coefDf$value.low <- NULL
+  coefDf$value.up <- NULL
+  colnames(coefDf) <- c('name', 'value', 'se', '(95% CI)')
+  coefDf <- coefDf[,c(1,2,4,3)]
+  print(coefDf, row.names=F)
 }
 
 #' The obtained parameter values for the fit
@@ -284,26 +333,23 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
   }
 }
 
-#' Get the log-likelihood of the predicted values,
-#' or try to calculate it
+#' Get the log-likelihood of the predicted values.
 #'
 #' @param object A tdmorefit object
+#' @param type log-lokelihood function type, 3 possible values: 'pop', 'pred' or 'll' (= pop + pred)
 #' @param ... ignored
 #'
 #' @return A numeric value
 #' @export
 #' @importFrom stats formula model.frame
-logLik.tdmorefit <- function(object, ...) {
-  res <- object$logLik
-  if(is.finite(res))
-    return(res)
-  # Damn, it was not previously calculated
+logLik.tdmorefit <- function(object, type=c('ll', 'pop', 'pred'), ...) {
   estimate <- coef(object)
   tdmore <- formula(object)
   observed <- model.frame(object)
   regimen <- object$regimen
   covariates <- object$covariates
-  ll(par=estimate,
+  fun <- getLikelihoodFun(type)
+  fun(par=estimate,
      tdmore=tdmore,
      observed=observed,
      regimen=regimen,
@@ -336,11 +382,7 @@ profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c
   limitsAsNumeric <- !is.null(limits) && is.numeric(limits)
   if(limitsAsNumeric) assert_that(length(limits)==2)
 
-  type <- match.arg(type, c('ll', 'pop', 'pred'))
-  if(type == "ll") fun <- ll
-  else if (type == "pop") fun <- pop_ll
-  else if (type == "pred") fun <- pred_ll
-  else stop("Unknown log-likelihood function")
+  fun <- getLikelihoodFun(type)
 
   list <- lapply(
     profiledParameters,
@@ -404,4 +446,17 @@ model.frame.tdmorefit <- function(formula, se=FALSE, level=0.95, ...) {
   if(is.null(tdmorefit$observed)) return(NULL)
   result <- model.frame.tdmore(tdmorefit$tdmore, tdmorefit$observed, se=se, level=level)
   result
+}
+
+#' Get the right likelihood function for the specified type.
+#'
+#' @param type likelihood type, ll, pop or pred
+#'
+#' @return the correct tdmore function
+getLikelihoodFun <- function(type) {
+  type <- match.arg(type, c('ll', 'pop', 'pred'))
+  if(type == "ll") fun <- ll
+  else if (type == "pop") fun <- pop_ll
+  else if (type == "pred") fun <- pred_ll
+  else stop("Unknown log-likelihood function")
 }
