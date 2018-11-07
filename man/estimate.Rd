@@ -6,7 +6,8 @@
 a given dataset using the model}
 \usage{
 estimate(tdmore, observed = NULL, regimen, covariates = NULL,
-  par = NULL, ...)
+  par = NULL, method = "L-BFGS-B", lower = -5 *
+  sqrt(diag(tdmore$omega)), upper = +5 * sqrt(diag(tdmore$omega)), ...)
 }
 \arguments{
 \item{tdmore}{a tdmore object}
@@ -19,6 +20,12 @@ If not specified, we estimate the population prediction}
 \item{covariates}{the model covariates}
 
 \item{par}{optional starting parameter for the MLE minimization}
+
+\item{method}{the optimisation method, by default, method "L-BFGS-B" is used}
+
+\item{lower}{the lower bounds of the parameters, by default, -5 * sqrt(diag(tdmore$omega)) is used}
+
+\item{upper}{the upper bounds of the parameters, by default, +5 * sqrt(diag(tdmore$omega)) is used}
 
 \item{...}{extra parameters to pass to the optim function}
 }

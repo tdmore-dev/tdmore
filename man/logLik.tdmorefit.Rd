@@ -2,13 +2,14 @@
 % Please edit documentation in R/ebe.R
 \name{logLik.tdmorefit}
 \alias{logLik.tdmorefit}
-\title{Get the log-likelihood of the predicted values,
-or try to calculate it}
+\title{Get the log-likelihood of the predicted values.}
 \usage{
-\method{logLik}{tdmorefit}(object, ...)
+\method{logLik}{tdmorefit}(object, type = c("ll", "pop", "pred"), ...)
 }
 \arguments{
 \item{object}{A tdmorefit object}
+
+\item{type}{log-lokelihood function type, 3 possible values: 'pop', 'pred' or 'll' (= pop + pred)}
 
 \item{...}{ignored}
 }
@@ -16,6 +17,5 @@ or try to calculate it}
 A numeric value
 }
 \description{
-Get the log-likelihood of the predicted values,
-or try to calculate it
+Get the log-likelihood of the predicted values.
 }

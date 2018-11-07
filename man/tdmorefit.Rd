@@ -5,7 +5,8 @@
 \title{Create a tdmorefit object manually}
 \usage{
 tdmorefit(tdmore, observed = NULL, regimen, covariates = NULL,
-  ofv = NA, res = NULL, varcov = NULL, nlmresult = NULL)
+  ofv = NA, res = NULL, varcov = NULL, nlmresult = NULL,
+  call = NULL)
 }
 \arguments{
 \item{tdmore}{the tdmore object}
@@ -23,6 +24,8 @@ tdmorefit(tdmore, observed = NULL, regimen, covariates = NULL,
 \item{varcov}{the found varcov matrix, or NULL to use a diagonal matrix}
 
 \item{nlmresult}{the result of the non-linear minimization}
+
+\item{call}{a informative string that gives the arguments that were used in estimate()}
 }
 \value{
 A tdmorefit object, manually created

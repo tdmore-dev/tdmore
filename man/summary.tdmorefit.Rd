@@ -2,18 +2,15 @@
 % Please edit documentation in R/ebe.R
 \name{summary.tdmorefit}
 \alias{summary.tdmorefit}
-\title{Summary of an EBE fit}
+\title{Summary of a tdmorefit object.}
 \usage{
 \method{summary}{tdmorefit}(object, ...)
 }
 \arguments{
-\item{object}{A tdmorefit object}
+\item{object}{a tdmorefit object}
 
-\item{...}{Additional parameters ignored}
-}
-\value{
-Nothing
+\item{...}{additional parameters ignored}
 }
 \description{
-Summary of an EBE fit
+Summary of a tdmorefit object.
 }

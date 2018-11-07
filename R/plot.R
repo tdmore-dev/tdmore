@@ -147,7 +147,7 @@ autoplot.tdmorefit <- function(x, newdata=NULL, ...) {
 #'
 #' @return a ggplot object with the fitted individual curve, the 95% ci of this curve, the population prediction, the observed data and the residual error around the observed data
 #' @importFrom magrittr "%>%"
-#' @importFrom ggplot2 ggplot aes_string geom_line geom_ribbon geom_point geom_errorbar labs
+#' @importFrom ggplot2 ggplot aes_string geom_line geom_ribbon geom_point geom_errorbar labs autoplot
 #' @importFrom stats predict
 #' @export
 autoplot.tdmore <- function(x, regimen, covariates=NULL, newdata=NULL, ...) {
