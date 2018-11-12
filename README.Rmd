@@ -4,6 +4,15 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+<div align="center">
+  <a href="https://travis-ci.com/tdmore-dev/tdmore">
+    <img src="https://travis-ci.com/tdmore-dev/tdmore.svg?branch=master" alt="Build status" />
+  </a>
+  <a href="http://codecov.io/github/tdmore-dev/tdmore?branch=master">
+    <img src="http://codecov.io/github/tdmore-dev/tdmore/coverage.svg?branch=master" alt="Codecov" />
+  </a>
+</div>
+
 # This project
 `tdmore` provides an easy interface to execute post-hoc bayesian estimation of individual profiles, and to find the best dose to put the patient on target.
 
