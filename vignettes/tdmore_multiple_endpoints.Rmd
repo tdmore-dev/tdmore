@@ -6,12 +6,16 @@ output:
     keep_md: true
 vignette: >
   %\VignetteIndexEntry{Multiple endpoints in TDMore}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 ### Writing and testing the PK model {-}
 
-In this vignette, we will learn how TDMore can deal with multiple endpoints. The PK/PD models chosen to illustrate this section are based on the following paper: "Population PK/PD modeling of Sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor.". PDF file is available here. Let's start writing the Sunitinib PK model.  
+In this vignette, we will learn how TDMore can deal with multiple endpoints. The PK/PD models chosen to illustrate this section are based on the following paper: "Population PK/PD modeling of Sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor.". 
+
+Let's start writing the Sunitinib PK model.  
   
 ```{r, echo=FALSE}
 set.seed(0) 
@@ -60,32 +64,34 @@ The TDMore object is instantiated as follows:
 ```{r, message=FALSE, results='hide'}
 library(tdmore)
 
-nlmixrUI <- nlmixrUI(modelCode)
-tdmore <- tdmore(nlmixrUI)
+nlmixrModel <- nlmixrUI(modelCode)
+m1 <- tdmore(nlmixrModel)
 ```
 
-A basic regimen can be created to test that the model is properly running. 50 mg Sunitinib is given for a week.
+A basic regimen can be created to test that the model is running properly. The standard regimen of Sunitinib is 50mg daily for 4 weeks.
 
 ```{r}
 regimen <- data.frame(
-  TIME=0,   # First dose time: t=0h
-  AMT=50,   # Dose amount: 50 mg
-  II=24,    # Dose interval: 24h
-  ADDL=7  # Additional doses: 7
+  TIME=0,     # First dose time: t=0h
+  AMT=50,     # Dose amount: 50 mg
+  II=24,      # Dose interval: 24h
+  ADDL=4*7-1  # Additional doses: 4 weeks
 )
 
-times <- seq(0, 1*7*24, by=1) # Observation times
+times <- seq(0, 6*7*24) # Observation times
 ```
 
 This regimen can be plotted using the default TDMore plotting function. It shows the typical value of the population and the between-subject variability (95% confidence interval).
 
 ```{r sunitinib_pk_model, fig.align='center', fig.height = 3, fig.width = 8}
-plot(tdmore, regimen, newdata=times)
+plot(m1, regimen, newdata=times)
 ```
 
 ### Adding a PD model {-}
 
-Many different PD models are described in the paper mentionned above. We will focus on the simplest one: a PD model related to the target tumor's sum of the longest diameters (abbreviated SLD), which corresponds to the main efficacy endpoint of Sunitinib. Adding this PD model to the existing PK model is done as follows. Please note the mandatory '|' nlmixr syntax used to describe the residual variability of both endpoints (CONC and SLD).
+Suppose we received a full blood workup: Sunitinib concentration, Alanine aminotransferase (ALT), Aspartate aminotransferase (AST), Absolute neutrophil count (ANC), Platelet count (PC) and Lymphocyte count (LC). We also measured the patient's diastolic blood pressure (DBP).
+
+We can create a single model to predict all of these aspects. In the example below, we will focus on ALT and AST. Please note the mandatory '|' nlmixr syntax used to describe the residual variability of different endpoints.
 
 ```{r, message=FALSE, results='hide'}
 modelCode <- function(){
@@ -103,21 +109,30 @@ modelCode <- function(){
 
     EPS_Prop <- 0.417 # Proportional error 1 (related to CONC)
 
-    # PD model SLD (Tumor sum of longest diameters)
-    TVBASE <- 14.3 #cm
-    TVKout <- 0.000267
-    TVEMax <- 1
-    TVEC50 <- 30.5
-    TVKtol <- 0.0000141
+    # PD model ALT
+    TVBASE_AST <- 21.5
+    TVKout_AST <- 0.0142
+    TVKpd_AST <- 0.00572
+    
+    EPS_Prop_AST = 0.257 #25.7%
 
-    EBASE ~ 0.840889 # 91.7%
-    EKout ~ 0.521284 # 72.2%
-    EEC50 ~ 3.312400 # 182%
-    EKtol ~ 0.720801 # 84.9%
+    # PD model AST
+    TVBASE_ALT <- 21.2
+    TVKout_ALT <- 0.00916
+    TVKpd_ALT <- 0.00401
+    
+    EPS_Prop_ALT = 0.373 #37.3%
 
-    EPS_Prop_SLD <- 0.143 # Proportional error 2 (related to SLD)
+    # We assume 0.5 correlations in IIV, even though they are not reported in the original paper    
+    EBASE_AST + EBASE_ALT ~ c(0.101124,
+                              0.05028021, 0.164025)  # 31.8% #40.5%
+    EKout_AST + EKout_ALT ~ c(1.440000,
+                  0.1897367, 1.638400)#120%  #128%
+    EKpd_AST + EKpd_ALT ~ c(0.114244,
+                  0.05344249, 0.324900) #33.8% #57.0%
   })
   model({
+    # PK parameters
     CL <- TVCL * exp(ECL)
     Vc <- TVVc * exp(EVc)
     Vp <- TVVp
@@ -126,63 +141,78 @@ modelCode <- function(){
     K21 <- Q/Vp
     Ke <- CL/Vc
     Ka <- TVKa*exp(EKa)
-    BASE <- TVBASE * exp(EBASE)
-    Kout <- TVKout * exp(EKout)
-    EMax <- TVEMax
-    EC50 <- TVEC50 * exp(EEC50)
-    Ktol <- TVKtol * exp(EKtol)
-    Kin <- Kout*BASE
 
+    # AST parameters    
+    BASE_AST <- TVBASE_AST * exp(EBASE_AST)
+    Kout_AST <- TVKout_AST * exp(EKout_AST)
+    Kpd_AST <- TVKpd_AST * exp(EKpd_AST) #mL/ng
+    Kin_AST <- Kout_AST * BASE_AST
+    
+    # ALT parameters
+    BASE_ALT <- TVBASE_ALT * exp(EBASE_ALT)
+    Kout_ALT <- TVKout_ALT * exp(EKout_ALT)
+    Kpd_ALT <- TVKpd_ALT * exp(EKpd_ALT) #mL/ng
+    Kin_ALT <- Kout_ALT * BASE_ALT
+
+    # PK model
     d/dt(depot) = -Ka*depot
     d/dt(center) = Ka*depot - Ke*center - K12*center + K21*periph
     d/dt(periph) = K12*center - K21*periph
-    DRUG = EMax*(center/Vc) / (EC50 + center/Vc)
-    d/dt(SLD) = Kin*(1-DRUG) - Kout*SLD*(1+exp(-Ktol*t)) # PD model ode
-
-    CONC = center/Vc
+    CONC = center/Vc * 1000 #ng/mL
+        
+    # AST model
+    AST(0) = BASE_AST
+    d/dt(AST) = Kin_AST - Kout_AST*AST*(1-Kpd_AST*CONC)
+    
+    # ALT model
+    ALT(0) = BASE_ALT
+    d/dt(ALT) = Kin_ALT - Kout_ALT*ALT*(1-Kpd_ALT*CONC)
+    
+    # Residual error models
     CONC ~ prop(EPS_Prop) | center # Define error model 1
-
-    SLD(0) = BASE                  # Set SLD initial value at time t=0
-    SLD ~ prop(EPS_Prop_SLD) | SLD # Define error model 2
+    AST ~ prop(EPS_Prop_AST) | AST # error model 2
+    ALT ~ prop(EPS_Prop_ALT) | ALT # error model 3
   })
 }
-nlmixrUI <- nlmixrUI(modelCode)
-tdmore <- tdmore(nlmixrUI, maxsteps=1E3*500) # Old tdmore object is overridden
+nlmixrModel <- nlmixrUI(modelCode)
+m2 <- tdmore(nlmixrModel, maxsteps=1E3*500)
 ```
 
-Let's now have a look at the evolution of SLD over time. To have a good overview, we'll observe SLD for 40 weeks. The default plot shows once again the typical value and the between-subject variability (95% CI).
+Let's now have a look at the evolution of these safety signals over time. To have a good overview, we will observe ALT/AST for 4 weeks treatment. The default plot shows once again the typical value and the between-subject variability (95% CI).
 
 ```{r sunitinib_pd_model, fig.align='center', fig.height = 3, fig.width = 8}
 regimen <- data.frame(
   TIME=0,
   AMT=50,
   II=24,
-  ADDL=40*7
+  ADDL=4*7
 )
-times <- seq(0, 40*7*24, by=1)
+times <- seq(0, 6*7*24, by=1)
 
-# Note that 'SLD' is specified in the newdata dataframe to select the right endpoint
-# If not specified, both endpoints are printed
-plot(tdmore, regimen, newdata=data.frame(TIME=times, SLD=NA))
+plot(m2, regimen, newdata=data.frame(TIME=times, CONC=NA))
+plot(m2, regimen, newdata=data.frame(TIME=times, ALT=NA))
+plot(m2, regimen, newdata=data.frame(TIME=times, AST=NA))
 ```
 
 ### Estimating individual parameters {-}
+We get the values for ALT/AST for a specific individual. These are quite high!
 
-Assume SLD is measured at week 0 and week 30 for a certain individual. Model parameters can be estimated and visualised as follows:
 ```{r sunitinib_pd_ipred_sld, fig.align='center', fig.height = 3, fig.width = 8}
-observed <- data.frame(TIME=c(0, 30*7*24), CONC=NA, SLD=c(25, 14))
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
-plot(ipred, newdata=data.frame(TIME=times, SLD=NA))
+observed <- data.frame(
+  TIME=c(0, 2,3,4)*7*24, 
+  CONC=NA,
+  ALT=c(21, 40, 42, 43),
+  AST=c(21, 45, 47, 49))
+ipred <- estimate(tdmore = m2, observed = observed, regimen = regimen)
+
+plot(ipred, newdata=data.frame(TIME=times, CONC=NA))
+plot(ipred, newdata=data.frame(TIME=times, ALT=NA))
+plot(ipred, newdata=data.frame(TIME=times, AST=NA))
 ```
 
-Coefficients show that the PD model could be estimated correctly. 
+Based on only ALT/AST values, we managed to define the PK inter-individual variability a little better. Indeed, these high ALT/AST values can be best explained through a combination of high sensitivity (EKpd), and a lower clearance (ECL) of the drug.
 ```{r}
 coef(ipred)
-vcov(ipred)
+coef(ipred) / sqrt(diag(m2$omega))
 ```
 
-However, TDMore is not able to estimated PK parameters because no data was provided, as confirmed by the following plot (IPRED strictly equal to PRED, only the last week is shown).
-
-```{r sunitinib_pd_ipred_conc, fig.align='center', fig.height = 3, fig.width = 8}
-plot(ipred, newdata=data.frame(TIME=seq(29*7*24, 30*7*24, by=1), CONC=NA), se.fit=F)
-```
