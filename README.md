@@ -1,49 +1,71 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-This project
-============
 
-`tdmore` provides an easy interface to execute post-hoc bayesian estimation of individual profiles, and to find the best dose to put the patient on target.
+<div data-align="center">
 
-The package is intended to make it easy to define your own models, and easily create a dose decision support tool for physicians.
+<a href="https://travis-ci.com/tdmore-dev/tdmore">
+<img src="https://travis-ci.com/tdmore-dev/tdmore.svg?branch=master" alt="Build status" />
+</a> <a href="http://codecov.io/github/tdmore-dev/tdmore?branch=master">
+<img src="http://codecov.io/github/tdmore-dev/tdmore/coverage.svg?branch=master" alt="Codecov" />
+</a>
 
-License
-=======
+</div>
 
-This project does not include a license. This means that all work is under exclusive copyright. Nobody else can use, copy, distribute or modify this work.
+# This project
 
-The Github terms of service apply. We allow others to view and fork the repository. Please note that this is not sufficient to then copy, distribute or modify this work further.
+`tdmore` provides an easy interface to execute post-hoc bayesian
+estimation of individual profiles, and to find the best dose to put the
+patient on target.
 
-Please see <https://choosealicense.com/no-permission/> for more information.
+The package is intended to make it easy to define your own models, and
+easily create a dose decision support tool for physicians.
 
-Through publishing, we allow others to use this R package and to perform dose adaptation. Installing this package using `devtools::install_github` is allowed.
+# License
+
+This project does not include a license. This means that all work is
+under exclusive copyright. Nobody else can use, copy, distribute or
+modify this work.
+
+The Github terms of service apply. We allow others to view and fork the
+repository. Please note that this is not sufficient to then copy,
+distribute or modify this work further.
+
+Please see <https://choosealicense.com/no-permission/> for more
+information.
+
+Through publishing, we allow others to use this R package and to perform
+dose adaptation. Installing this package using
+`devtools::install_github` is allowed.
 
 The official copyright holder of this work is the KU Leuven university.
 
-Limitations
-===========
+# Limitations
 
-This software is a research project, and cannot be considered as a medical device. It is not a substitute for clinical reasoning.
+This software is a research project, and cannot be considered as a
+medical device. It is not a substitute for clinical reasoning.
 
-How to install
-==============
+# How to install
 
-TDMore depends on package `RxODE`, which requires a working C and fortran compiler to work. Installation procedure can be found [here](https://github.com/nlmixrdevelopment/RxODE). Once `RxODE` installed, simply execute the following command in the R console:
+TDMore depends on package `RxODE`, which requires a working C and
+fortran compiler to work. Installation procedure can be found
+[here](https://github.com/nlmixrdevelopment/RxODE). Once `RxODE`
+installed, simply execute the following command in the R console:
 
 ``` r
 devtools::install_github("tdmore-dev/tdmore")
 ```
 
-If you would like to install the package with all its vignettes, please run the following command instead:
+If you would like to install the package with all its vignettes, please
+run the following command instead:
 
 ``` r
 devtools::install_github("tdmore-dev/tdmore", build_vignettes = TRUE)
 ```
 
-Note that these vignettes can also be browsed on the [TDMore bookdown](https://tdmore-dev.github.io/tdmore).
+Note that these vignettes can also be browsed on the [TDMore
+bookdown](https://tdmore-dev.github.io/tdmore).
 
-How to use
-==========
+# How to use
 
 This example code uses `nlmixr` to define the model.
 
@@ -104,7 +126,10 @@ vcov(ipred)
     ## ECL 0.011750224 0.009337667
     ## EV1 0.009337667 0.030952575
 
-More information
-================
+# More information
 
-Interested in TDMore and eager to learn more about it? Visit our bookdown by clicking [here](https://tdmore-dev.github.io/tdmore). The bookdown also contains the R [vignettes](https://tdmore-dev.github.io/tdmore/vignettes.html). These are great examples to start with.
+Interested in TDMore and eager to learn more about it? Visit our
+bookdown by clicking [here](https://tdmore-dev.github.io/tdmore). The
+bookdown also contains the R
+[vignettes](https://tdmore-dev.github.io/tdmore/vignettes.html). These
+are great examples to start with.
