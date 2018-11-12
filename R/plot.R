@@ -121,17 +121,17 @@ red <- function() {
 #'
 #' @return a ggplot object with the fitted individual curve, the 95% ci of this curve, the population prediction, the observed data and the residual error around the observed data
 #' @importFrom magrittr "%>%"
-#' @importFrom ggplot2 ggplot aes_string geom_line geom_ribbon geom_point geom_errorbar labs
+#' @importFrom ggplot2 ggplot aes aes_string geom_line geom_ribbon geom_point geom_errorbar labs
 #' @importFrom stats predict
 #' @export
 autoplot.tdmorefit <- function(x, newdata=NULL, ...) {
   ggplot(data=x, newdata=newdata) +
-    #TODO pred_se(aes(fill="A priori")) +
-    #TODO ipred_se(aes(fill="A posteriori")) +
-    #TODO pred(aes(color="A priori")) +
     ipred(aes(fill="A posteriori")) +
     labs(x="Time", y="Value", color="Prediction", fill="Prediction")
 }
+#TODO pred_se(aes(fill="A priori")) +
+#TODO ipred_se(aes(fill="A posteriori")) +
+#TODO pred(aes(color="A priori")) +
 
 #' Plot a tdmore object (typical profile (population) + between subject variability).
 #'
@@ -139,10 +139,6 @@ autoplot.tdmorefit <- function(x, newdata=NULL, ...) {
 #' @param regimen the regimen to be predicted
 #' @param covariates covariates
 #' @param newdata a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times
-#' @param bsv add between subject variability
-#' @param mc.subjects number of subjects in the monte carlo simulation
-#' @param .progress either "none" or "text" to see calculation progress of monte carlo simulations
-#' @param se add residual error bounds, currently not compatible with bsv
 #' @param ... ignored
 #'
 #' @return a ggplot object with the fitted individual curve, the 95% ci of this curve, the population prediction, the observed data and the residual error around the observed data
@@ -154,10 +150,11 @@ autoplot.tdmore <- function(x, regimen, covariates=NULL, newdata=NULL, ...) {
   tdmore <- x
   tdmorefit <- estimate(tdmore = tdmore, regimen = regimen, covariates = covariates)
   ggplot(data=tdmorefit, newdata=newdata) +
-    #TODO pred_se(aes(fill="A priori")) +
-    #TODO pred(aes(color="A priori")) +
     labs(x="Time", y="Value", color="Prediction", fill="Prediction")
 }
+#TODO pred_se(aes(fill="A priori")) +
+#TODO pred(aes(color="A priori")) +
+
 
 ## Design considerations
 ## Author: Ruben Faelens
@@ -186,6 +183,7 @@ autoplot.tdmore <- function(x, regimen, covariates=NULL, newdata=NULL, ...) {
 ## However, as long as the data was created during ggplot_add, later facetting can happily split up that data.frame further!
 
 #' @export
+#' @importFrom ggplot2 aes
 ggplot.tdmorefit <- function(data=NULL, mapping=aes(),
                              newdata=NULL, regimen=NULL, parameters=NULL, covariates=NULL,
                              ...,
@@ -212,6 +210,12 @@ ggplot.tdmorefit <- function(data=NULL, mapping=aes(),
 ##
 
 #' Create a population prediction.
+#'
+#' @inheritParams ggplot2::stat_identity
+#' @inheritParams predict.tdmorefit
+#' @param data A tdmorefit object, or NULL to use the tdmorefit object specified in `ggplot()``
+#' @param color By default, `ipred` is shown in steelblue2
+#'
 #' @export
 ipred <- function(mapping = NULL, data = NULL,
                   geom = "line", position = "identity",
@@ -248,6 +252,7 @@ ipred <- function(mapping = NULL, data = NULL,
 
 #' @export
 ggplot_add.IPred <- function(object, plot, object_name) {
+  ## TODO: we do not need a ggtdmore object if all arguments were specified in the ipred() call!
   if(!is.ggtdmore(plot)) stop(object_name, " can only be used with tdmorefit ggplot objects. Did you remember to pass a tdmorefit object to ggplot() ?")
 
   tdmorefit <-  object$data$tdmorefit %||% plot$tdmore$tdmorefit
@@ -277,16 +282,21 @@ ggplot_add.IPred <- function(object, plot, object_name) {
 ## How can we guess the y variable as well?
 ## We need the model for that ?
 StatIPred <- ggplot2::ggproto("StatIPred", ggplot2::StatIdentity,
-                              default_aes=ggplot2::aes_(x=~TIME),
+                              default_aes=ggplot2::aes_(x=~TIME), #TODO: does not work??
                               required_aes = c("y")
 )
 
-is.tdmorefit <- function(a) {inherits(a, "tdmorefit")}
 is.ggtdmore <- function(a) {inherits(a, "ggtdmore")}
 "%||%" <- function(a, b) {
   if (!is.null(a)) a else b
 }
 
+geom_pred <- function(...) {
+  structure(
+    list(...),
+    class="GeomPred"
+  )
+}
 
 ## TODO: Get inspired by the code below when creating ipred_se and pred_se
 ## Afterwards, you can remove it.
@@ -308,7 +318,7 @@ ggplot_add.GeomPred <- function(object, plot, object_name) {
                    se.fit=T, level=object$level)
     # TODO: guess the output, or use tidybayes
 
-    mapping <- object$mapping %||% aes_(x=~TIME, ymin=~CONC.lower, ymax=~CONC.upper)
+    mapping <- object$mapping %||% aes_string(x="TIME", ymin="CONC.lower", ymax="CONC.upper")
     # TODO: how do we work with color if it is also specified as an aesthetic?
     # TODO: What happens if
     args <- list(data=data, mapping=mapping, fill="red", alpha=0.2)
@@ -319,7 +329,7 @@ ggplot_add.GeomPred <- function(object, plot, object_name) {
   }
 
   data <- predict(tdmorefit, newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates)
-  mapping <- object$mapping  %||% aes_(x=~TIME, y=~CONC)# TODO: guess the output, or use tidybayes
+  mapping <- object$mapping  %||% aes_string(x="TIME", y="CONC")# TODO: guess the output, or use tidybayes
   args <- list(data=data, mapping=mapping, color="red")
   args <- c(object$lineArgs, args)
   args <- args[!duplicated(names(args))] #drop duplicates

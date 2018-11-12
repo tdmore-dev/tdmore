@@ -61,8 +61,6 @@ tdmore.nlmixrUI <- function(model, ...) {
   modelCode <- paste("   ", modelCode, collapse = "\n")
   rxOdeModelCode <- paste(modelCode, model$rxode, collapse = "\n")
 
-  cat(rxOdeModelCode)
-
   # Create RxODE object
   rxModel <- RxODE::RxODE(rxOdeModelCode)
 

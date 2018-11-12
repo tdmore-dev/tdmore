@@ -161,6 +161,7 @@ print.tdmorefit <- function(x, ...) {
 #'
 #' @param object a tdmorefit object
 #' @param ... additional parameters ignored
+#' @importFrom stats logLik
 #'
 #' @export
 summary.tdmorefit <- function(object, ...) {
@@ -460,3 +461,9 @@ getLikelihoodFun <- function(type) {
   else if (type == "pred") fun <- pred_ll
   else stop("Unknown log-likelihood function")
 }
+
+#' Check if the given argument is of class `tdmorefit`
+#' @param a
+#'
+#' @export
+is.tdmorefit <- function(a) {inherits(a, "tdmorefit")}
