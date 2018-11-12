@@ -246,7 +246,9 @@ The plot above demonstrates that the individual is reaching the trough concentra
 
 ### Writing and testing the PK model {-}
 
-In this vignette, we will learn how TDMore can deal with multiple endpoints. The PK/PD models chosen to illustrate this section are based on the following paper: "Population PK/PD modeling of Sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor.". PDF file is available here. Let's start writing the Sunitinib PK model.  
+In this vignette, we will learn how TDMore can deal with multiple endpoints. The PK/PD models chosen to illustrate this section are based on the following paper: "Population PK/PD modeling of Sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor.". 
+
+Let's start writing the Sunitinib PK model.  
   
 
 
@@ -294,36 +296,38 @@ The TDMore object is instantiated as follows:
 ```r
 library(tdmore)
 
-nlmixrUI <- nlmixrUI(modelCode)
-tdmore <- tdmore(nlmixrUI)
+nlmixrModel <- nlmixrUI(modelCode)
+m1 <- tdmore(nlmixrModel)
 ```
 
-A basic regimen can be created to test that the model is properly running. 50 mg Sunitinib is given for a week.
+A basic regimen can be created to test that the model is running properly. The standard regimen of Sunitinib is 50mg daily for 4 weeks.
 
 
 ```r
 regimen <- data.frame(
-  TIME=0,   # First dose time: t=0h
-  AMT=50,   # Dose amount: 50 mg
-  II=24,    # Dose interval: 24h
-  ADDL=7  # Additional doses: 7
+  TIME=0,     # First dose time: t=0h
+  AMT=50,     # Dose amount: 50 mg
+  II=24,      # Dose interval: 24h
+  ADDL=4*7-1  # Additional doses: 4 weeks
 )
 
-times <- seq(0, 1*7*24, by=1) # Observation times
+times <- seq(0, 6*7*24) # Observation times
 ```
 
 This regimen can be plotted using the default TDMore plotting function. It shows the typical value of the population and the between-subject variability (95% confidence interval).
 
 
 ```r
-plot(tdmore, regimen, newdata=times)
+plot(m1, regimen, newdata=times)
 ```
 
 <img src="Vignettes_files/figure-html/sunitinib_pk_model-1.png" width="768" style="display: block; margin: auto;" />
 
 ### Adding a PD model {-}
 
-Many different PD models are described in the paper mentionned above. We will focus on the simplest one: a PD model related to the target tumor's sum of the longest diameters (abbreviated SLD), which corresponds to the main efficacy endpoint of Sunitinib. Adding this PD model to the existing PK model is done as follows. Please note the mandatory '|' nlmixr syntax used to describe the residual variability of both endpoints (CONC and SLD).
+Suppose we received a full blood workup: Sunitinib concentration, Alanine aminotransferase (ALT), Aspartate aminotransferase (AST), Absolute neutrophil count (ANC), Platelet count (PC) and Lymphocyte count (LC). We also measured the patient's diastolic blood pressure (DBP).
+
+We can create a single model to predict all of these aspects. In the example below, we will focus on ALT and AST. Please note the mandatory '|' nlmixr syntax used to describe the residual variability of different endpoints.
 
 
 ```r
@@ -342,21 +346,30 @@ modelCode <- function(){
 
     EPS_Prop <- 0.417 # Proportional error 1 (related to CONC)
 
-    # PD model SLD (Tumor sum of longest diameters)
-    TVBASE <- 14.3 #cm
-    TVKout <- 0.000267
-    TVEMax <- 1
-    TVEC50 <- 30.5
-    TVKtol <- 0.0000141
+    # PD model ALT
+    TVBASE_AST <- 21.5
+    TVKout_AST <- 0.0142
+    TVKpd_AST <- 0.00572
+    
+    EPS_Prop_AST = 0.257 #25.7%
 
-    EBASE ~ 0.840889 # 91.7%
-    EKout ~ 0.521284 # 72.2%
-    EEC50 ~ 3.312400 # 182%
-    EKtol ~ 0.720801 # 84.9%
+    # PD model AST
+    TVBASE_ALT <- 21.2
+    TVKout_ALT <- 0.00916
+    TVKpd_ALT <- 0.00401
+    
+    EPS_Prop_ALT = 0.373 #37.3%
 
-    EPS_Prop_SLD <- 0.143 # Proportional error 2 (related to SLD)
+    # We assume 0.5 correlations in IIV, even though they are not reported in the original paper    
+    EBASE_AST + EBASE_ALT ~ c(0.101124,
+                              0.05028021, 0.164025)  # 31.8% #40.5%
+    EKout_AST + EKout_ALT ~ c(1.440000,
+                  0.1897367, 1.638400)#120%  #128%
+    EKpd_AST + EKpd_ALT ~ c(0.114244,
+                  0.05344249, 0.324900) #33.8% #57.0%
   })
   model({
+    # PK parameters
     CL <- TVCL * exp(ECL)
     Vc <- TVVc * exp(EVc)
     Vp <- TVVp
@@ -365,31 +378,44 @@ modelCode <- function(){
     K21 <- Q/Vp
     Ke <- CL/Vc
     Ka <- TVKa*exp(EKa)
-    BASE <- TVBASE * exp(EBASE)
-    Kout <- TVKout * exp(EKout)
-    EMax <- TVEMax
-    EC50 <- TVEC50 * exp(EEC50)
-    Ktol <- TVKtol * exp(EKtol)
-    Kin <- Kout*BASE
 
+    # AST parameters    
+    BASE_AST <- TVBASE_AST * exp(EBASE_AST)
+    Kout_AST <- TVKout_AST * exp(EKout_AST)
+    Kpd_AST <- TVKpd_AST * exp(EKpd_AST) #mL/ng
+    Kin_AST <- Kout_AST * BASE_AST
+    
+    # ALT parameters
+    BASE_ALT <- TVBASE_ALT * exp(EBASE_ALT)
+    Kout_ALT <- TVKout_ALT * exp(EKout_ALT)
+    Kpd_ALT <- TVKpd_ALT * exp(EKpd_ALT) #mL/ng
+    Kin_ALT <- Kout_ALT * BASE_ALT
+
+    # PK model
     d/dt(depot) = -Ka*depot
     d/dt(center) = Ka*depot - Ke*center - K12*center + K21*periph
     d/dt(periph) = K12*center - K21*periph
-    DRUG = EMax*(center/Vc) / (EC50 + center/Vc)
-    d/dt(SLD) = Kin*(1-DRUG) - Kout*SLD*(1+exp(-Ktol*t)) # PD model ode
-
-    CONC = center/Vc
+    CONC = center/Vc * 1000 #ng/mL
+        
+    # AST model
+    AST(0) = BASE_AST
+    d/dt(AST) = Kin_AST - Kout_AST*AST*(1-Kpd_AST*CONC)
+    
+    # ALT model
+    ALT(0) = BASE_ALT
+    d/dt(ALT) = Kin_ALT - Kout_ALT*ALT*(1-Kpd_ALT*CONC)
+    
+    # Residual error models
     CONC ~ prop(EPS_Prop) | center # Define error model 1
-
-    SLD(0) = BASE                  # Set SLD initial value at time t=0
-    SLD ~ prop(EPS_Prop_SLD) | SLD # Define error model 2
+    AST ~ prop(EPS_Prop_AST) | AST # error model 2
+    ALT ~ prop(EPS_Prop_ALT) | ALT # error model 3
   })
 }
-nlmixrUI <- nlmixrUI(modelCode)
-tdmore <- tdmore(nlmixrUI, maxsteps=1E3*500) # Old tdmore object is overridden
+nlmixrModel <- nlmixrUI(modelCode)
+m2 <- tdmore(nlmixrModel, maxsteps=1E3*500)
 ```
 
-Let's now have a look at the evolution of SLD over time. To have a good overview, we'll observe SLD for 40 weeks. The default plot shows once again the typical value and the between-subject variability (95% CI).
+Let's now have a look at the evolution of these safety signals over time. To have a good overview, we will observe ALT/AST for 4 weeks treatment. The default plot shows once again the typical value and the between-subject variability (95% CI).
 
 
 ```r
@@ -397,70 +423,225 @@ regimen <- data.frame(
   TIME=0,
   AMT=50,
   II=24,
-  ADDL=40*7
+  ADDL=4*7
 )
-times <- seq(0, 40*7*24, by=1)
+times <- seq(0, 6*7*24, by=1)
 
-# Note that 'SLD' is specified in the newdata dataframe to select the right endpoint
-# If not specified, both endpoints are printed
-plot(tdmore, regimen, newdata=data.frame(TIME=times, SLD=NA))
+plot(m2, regimen, newdata=data.frame(TIME=times, CONC=NA))
 ```
 
 <img src="Vignettes_files/figure-html/sunitinib_pd_model-1.png" width="768" style="display: block; margin: auto;" />
 
-### Estimating individual parameters {-}
+```r
+plot(m2, regimen, newdata=data.frame(TIME=times, ALT=NA))
+```
 
-Assume SLD is measured at week 0 and week 30 for a certain individual. Model parameters can be estimated and visualised as follows:
+<img src="Vignettes_files/figure-html/sunitinib_pd_model-2.png" width="768" style="display: block; margin: auto;" />
 
 ```r
-observed <- data.frame(TIME=c(0, 30*7*24), CONC=NA, SLD=c(25, 14))
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
-plot(ipred, newdata=data.frame(TIME=times, SLD=NA))
+plot(m2, regimen, newdata=data.frame(TIME=times, AST=NA))
+```
+
+<img src="Vignettes_files/figure-html/sunitinib_pd_model-3.png" width="768" style="display: block; margin: auto;" />
+
+### Estimating individual parameters {-}
+We get the values for ALT/AST for a specific individual. These are quite high!
+
+
+```r
+observed <- data.frame(
+  TIME=c(0, 2,3,4)*7*24, 
+  CONC=NA,
+  ALT=c(21, 40, 42, 43),
+  AST=c(21, 45, 47, 49))
+ipred <- estimate(tdmore = m2, observed = observed, regimen = regimen)
+
+plot(ipred, newdata=data.frame(TIME=times, CONC=NA))
 ```
 
 <img src="Vignettes_files/figure-html/sunitinib_pd_ipred_sld-1.png" width="768" style="display: block; margin: auto;" />
 
-Coefficients show that the PD model could be estimated correctly. 
+```r
+plot(ipred, newdata=data.frame(TIME=times, ALT=NA))
+```
+
+<img src="Vignettes_files/figure-html/sunitinib_pd_ipred_sld-2.png" width="768" style="display: block; margin: auto;" />
+
+```r
+plot(ipred, newdata=data.frame(TIME=times, AST=NA))
+```
+
+<img src="Vignettes_files/figure-html/sunitinib_pd_ipred_sld-3.png" width="768" style="display: block; margin: auto;" />
+
+Based on only ALT/AST values, we managed to define the PK inter-individual variability a little better. Indeed, these high ALT/AST values can be best explained through a combination of high sensitivity (EKpd), and a lower clearance (ECL) of the drug.
 
 ```r
 coef(ipred)
 ```
 
 ```
-##           ECL           EVc           EKa         EBASE         EKout 
-##  6.762903e-05  9.882637e-07 -7.529206e-07  5.396754e-01 -6.433377e-02 
-##         EEC50         EKtol 
-##  3.814871e-03  1.165208e-02
+##         ECL         EVc         EKa   EBASE_AST   EBASE_ALT   EKout_AST 
+## -0.13927141 -0.01279161  0.02257760  0.03233717  0.04497159  0.22456560 
+##   EKout_ALT    EKpd_AST    EKpd_ALT 
+##  0.22778905  0.24279322  0.37291944
 ```
 
 ```r
-vcov(ipred)
+coef(ipred) / sqrt(diag(m2$omega))
 ```
 
 ```
-##                 ECL           EVc           EKa         EBASE
-## ECL    6.051170e-02 -3.202960e-08  7.977322e-08 -3.281933e-05
-## EVc   -3.202960e-08  5.290001e-02 -1.574797e-08 -1.274422e-07
-## EKa    7.977322e-08 -1.574797e-08  2.755604e+00  5.372490e-07
-## EBASE -3.281933e-05 -1.274422e-07  5.372490e-07  1.253910e-02
-## EKout  1.947017e-04  5.265617e-07 -1.905303e-06  3.441526e-02
-## EEC50 -2.383770e-04 -8.312489e-07  3.327081e-06 -1.808524e-03
-## EKtol -2.901414e-05 -1.094317e-07  4.564505e-07 -5.593560e-03
-##               EKout         EEC50         EKtol
-## ECL    1.947017e-04 -2.383770e-04 -2.901414e-05
-## EVc    5.265617e-07 -8.312489e-07 -1.094317e-07
-## EKa   -1.905303e-06  3.327081e-06  4.564505e-07
-## EBASE  3.441526e-02 -1.808524e-03 -5.593560e-03
-## EKout  3.849601e-01  1.071095e-02  3.278036e-02
-## EEC50  1.071095e-02  3.299272e+00 -1.598567e-03
-## EKtol  3.278036e-02 -1.598567e-03  7.239781e-01
+##         ECL         EVc         EKa   EBASE_AST   EBASE_ALT   EKout_AST 
+## -0.56614395 -0.05561569  0.01360096  0.10168920  0.11104095  0.18713800 
+##   EKout_ALT    EKpd_AST    EKpd_ALT 
+##  0.17796020  0.71832312  0.65424462
 ```
 
-However, TDMore is not able to estimated PK parameters because no data was provided, as confirmed by the following plot (IPRED strictly equal to PRED, only the last week is shown).
+
+## Example: Detecting non-adherence
+
+# About this example
+
+Non-compliance is an important issue endangering the effectiveness of treatments. In COPD, it is estimated that there is a non-compliance of more than 98% for inhaled treatments.
+
+In this example, we use TDMore to compare the systemic concentrations of inhaled fluticasone propionate with the population predictions. We show that TDMore can be used to detect severe non-adherence, and to propose corrective action.
+
+# The model
+
+Model taken from literature: Soulele, K., et al. "Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers." European Journal of Pharmaceutical Sciences 80 (2015): 33-42.
+
 
 
 ```r
-plot(ipred, newdata=data.frame(TIME=seq(29*7*24, 30*7*24, by=1), CONC=NA), se.fit=F)
+library(nlmixr)
+
+modelCode <- function(){
+  ini({
+    TVKa <- 3.87
+    TVCL <- 659 #L/h
+    TVV1 <- 56900 #L
+    TVV2 <- 5550 #L
+    TVQ <- 259 #L/h
+    
+    EKa ~ 0.04507129 #0.2123**2
+    ECL ~ 0.1535856 #0.3919**2
+    EV1 ~ 0.09223369 #0.3037**2
+    EV2 ~ 0.208301 #0.4564**2
+    EQ ~ 0.1015697# 0.3187**2
+    
+    EPS_ADD <- 1.91 #
+    EPS_PROP <- 0.117
+  })
+  model({
+    Ka <- TVKa * exp(EKa)
+    CL <- TVCL * exp(ECL)
+    V1 <- TVV1 * exp(EV1)
+    V2 <- TVV2 * exp(EV2)
+    Q <- TVQ * exp(EQ)
+    K12 <- Q/V1
+    K21 <- Q/V2
+
+    d/dt(center) = - CL/V1 * center - K12*center + K21 * periph
+    d/dt(periph) = K12*center - K21 * periph
+
+    CONC = center / V1 * 1000
+    CONC ~ prop(EPS_PROP) + add(EPS_ADD)
+  })
+}
+nlmixrModel <- nlmixrUI(modelCode)
+
+library(tdmore)
+m1 <- tdmore(nlmixrModel)
 ```
 
-<img src="Vignettes_files/figure-html/sunitinib_pd_ipred_conc-1.png" width="768" style="display: block; margin: auto;" />
+
+We now define the treatment regimen
+
+
+```r
+regimen <- data.frame(
+  TIME=seq(0, by=24, length.out=30),
+  AMT=500 # 500ug standard dose
+)
+
+adhering <- predict(m1, regimen=regimen, newdata=seq(0, 30*24))
+
+actual <- data.frame(
+  TIME=seq(0, by=24, length.out=30),
+  AMT=500*sample(c(0,1), 30, replace=TRUE) # probability of 50% to not take the dose
+)
+nonAdhering <- predict(m1, regimen=actual, newdata=seq(0, 30*24))
+
+pred <- estimate(m1, regimen=regimen)
+ggplot(pred, newdata=seq(0, 30*24)) +
+  ipred(mapping=aes(x=TIME, y=CONC))
+```
+
+<img src="Vignettes_files/figure-html/unnamed-chunk-24-1.png" width="672" />
+
+```r
+#  labs(x="Time (hours)", y="Concentration (mg/L)")
+```
+
+# Is the patient taking his/her medication?
+We can now take a serum sample and evaluate if there is non-adherence.
+
+
+```r
+# Take a blood sample
+observed <- predict(m1, regimen=actual, newdata=data.frame(TIME=30*24+c(-16, 0), CONC=NA))
+observed
+```
+
+```
+##   TIME     CONC
+## 1  704 12.42485
+## 2  720 10.20530
+```
+
+```r
+# We estimate individual parameters
+# as if the patient took his medication
+# properly
+ipred <- estimate(m1, observed, regimen)
+coef(ipred)
+```
+
+```
+##          EKa          ECL          EV1          EV2           EQ 
+##  0.000000000  0.828384249  0.035455547 -0.000201276  0.001489463
+```
+
+```r
+ggplot(mapping=aes(x=TIME, y=CONC)) +
+  geom_line(aes(color="Reality"), data=nonAdhering) +
+  geom_point(data=observed) +
+  geom_line(aes(color="Population"), data=adhering) +
+#  geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), 
+#    data=predict(m1, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA), se.fit=TRUE), alpha=0.1) +
+  geom_line(aes(color="Prediction"), 
+    data=predict(ipred, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA)))
+```
+
+<img src="Vignettes_files/figure-html/unnamed-chunk-25-1.png" width="672" />
+
+```r
+standardDeviations <- coef(ipred) / sqrt(diag(m1$omega))
+standardDeviations
+```
+
+```
+##           EKa           ECL           EV1           EV2            EQ 
+##  0.0000000000  2.1137644184  0.1167452994 -0.0004410079  0.0046735564
+```
+
+```r
+i <- which(pnorm(abs(standardDeviations)) > 0.975)
+if(length(i) > 0) {
+  cat("This patient has unlikely (outside 95% CI) parameter estimates for ", names(i),". There may be a treatment adherence issue.")
+}
+```
+
+```
+## This patient has unlikely (outside 95% CI) parameter estimates for  ECL . There may be a treatment adherence issue.
+```

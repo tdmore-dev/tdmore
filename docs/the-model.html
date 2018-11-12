@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="index.html">
-<link rel="next" href="intro.html">
+<link rel="prev" href="about-this-example.html">
+<link rel="next" href="is-the-patient-taking-hisher-medication.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -165,27 +165,75 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="preface" class="section level1 unnumbered">
-<h1>Preface</h1>
-<p><code>TDMore</code> provides an easy interface to execute post-hoc bayesian estimation of individual profiles, and to find the best dose to put the patient on target.</p>
-<p>The package is intended to make it easy to define your own models, and easily create a dose decision support tool for physicians.</p>
-<div id="about-this-book" class="section level2 unnumbered">
-<h2>About this book</h2>
-<p>This book provides guidance on the use of <code>TDMore</code> and serves as a basic reference manual.</p>
-<p>We assume that users have some notions in PK/PD modeling and simulation and are familiar with the R language. The installation of <code>TDMore</code> and related software and packages is described in Chapter <a href="install.html#install">2</a>.</p>
-</div>
-<div id="acknowledgements" class="section level2 unnumbered">
-<h2>Acknowledgements</h2>
-<p>We would like to thank all the people who are contributing to this project.</p>
-</div>
+<div id="the-model" class="section level1">
+<h1><span class="header-section-number">Chapter 7</span> The model</h1>
+<p>Model taken from literature: Soulele, K., et al. “Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.” European Journal of Pharmaceutical Sciences 80 (2015): 33-42.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlmixr)
+
+modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
+  <span class="kw">ini</span>({
+    TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span>
+    TVCL &lt;-<span class="st"> </span><span class="dv">659</span> <span class="co">#L/h</span>
+    TVV1 &lt;-<span class="st"> </span><span class="dv">56900</span> <span class="co">#L</span>
+    TVV2 &lt;-<span class="st"> </span><span class="dv">5550</span> <span class="co">#L</span>
+    TVQ &lt;-<span class="st"> </span><span class="dv">259</span> <span class="co">#L/h</span>
+    
+    EKa <span class="op">~</span><span class="st"> </span><span class="fl">0.04507129</span> <span class="co">#0.2123**2</span>
+    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.1535856</span> <span class="co">#0.3919**2</span>
+    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.09223369</span> <span class="co">#0.3037**2</span>
+    EV2 <span class="op">~</span><span class="st"> </span><span class="fl">0.208301</span> <span class="co">#0.4564**2</span>
+    EQ <span class="op">~</span><span class="st"> </span><span class="fl">0.1015697</span><span class="co"># 0.3187**2</span>
+    
+    EPS_ADD &lt;-<span class="st"> </span><span class="fl">1.91</span> <span class="co">#</span>
+    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span>
+  })
+  <span class="kw">model</span>({
+    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EKa)
+    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(ECL)
+    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EV1)
+    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EV2)
+    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EQ)
+    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1
+    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2
+
+    d<span class="op">/</span><span class="kw">dt</span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
+    d<span class="op">/</span><span class="kw">dt</span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
+
+    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span>
+    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)
+  })
+}
+nlmixrModel &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)
+
+<span class="kw">library</span>(tdmore)
+m1 &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrModel)</code></pre></div>
+<p>We now define the treatment regimen</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+  <span class="dt">TIME=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dt">by=</span><span class="dv">24</span>, <span class="dt">length.out=</span><span class="dv">30</span>),
+  <span class="dt">AMT=</span><span class="dv">500</span> <span class="co"># 500ug standard dose</span>
+)
+
+adhering &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>))
+
+actual &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+  <span class="dt">TIME=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dt">by=</span><span class="dv">24</span>, <span class="dt">length.out=</span><span class="dv">30</span>),
+  <span class="dt">AMT=</span><span class="dv">500</span><span class="op">*</span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="dv">30</span>, <span class="dt">replace=</span><span class="ot">TRUE</span>) <span class="co"># probability of 50% to not take the dose</span>
+)
+nonAdhering &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>))
+
+pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m1, <span class="dt">regimen=</span>regimen)
+<span class="kw">ggplot</span>(pred, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ipred</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC))</code></pre></div>
+<p><img src="Vignettes_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#  labs(x=&quot;Time (hours)&quot;, y=&quot;Concentration (mg/L)&quot;)</span></code></pre></div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="intro.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="about-this-example.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="is-the-patient-taking-hisher-medication.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

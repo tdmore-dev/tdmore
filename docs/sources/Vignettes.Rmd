@@ -7,3 +7,7 @@
 ## Multiple endpoints
 ```{r child='./../../vignettes/tdmore_multiple_endpoints.Rmd'}
 ```
+
+## Example: Detecting non-adherence
+```{r child='./../../vignettes/testing_adherence.Rmd'}
+```

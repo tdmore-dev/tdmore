@@ -1,7 +1,7 @@
 --- 
 title: "`TDMore`: an R package for therapeutic drug monitoring"
-author: "Ruben Faelens, Thomas Bouillon,  Nicolas Luyckx and Quentin Leirens"
-date: "2018-11-06"
+author: "Ruben Faelens, Nicolas Luyckx, Quentin Leirens, Thomas Bouillon"
+date: "2018-11-12"
 bibliography: [book.bib, packages.bib]
 description: "TDMore reference manual"
 documentclass: book

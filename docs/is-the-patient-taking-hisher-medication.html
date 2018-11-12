@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="index.html">
-<link rel="next" href="intro.html">
+<link rel="prev" href="the-model.html">
+
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -165,27 +165,49 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="preface" class="section level1 unnumbered">
-<h1>Preface</h1>
-<p><code>TDMore</code> provides an easy interface to execute post-hoc bayesian estimation of individual profiles, and to find the best dose to put the patient on target.</p>
-<p>The package is intended to make it easy to define your own models, and easily create a dose decision support tool for physicians.</p>
-<div id="about-this-book" class="section level2 unnumbered">
-<h2>About this book</h2>
-<p>This book provides guidance on the use of <code>TDMore</code> and serves as a basic reference manual.</p>
-<p>We assume that users have some notions in PK/PD modeling and simulation and are familiar with the R language. The installation of <code>TDMore</code> and related software and packages is described in Chapter <a href="install.html#install">2</a>.</p>
-</div>
-<div id="acknowledgements" class="section level2 unnumbered">
-<h2>Acknowledgements</h2>
-<p>We would like to thank all the people who are contributing to this project.</p>
-</div>
+<div id="is-the-patient-taking-hisher-medication" class="section level1">
+<h1><span class="header-section-number">Chapter 8</span> Is the patient taking his/her medication?</h1>
+<p>We can now take a serum sample and evaluate if there is non-adherence.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Take a blood sample</span>
+observed &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">30</span><span class="op">*</span><span class="dv">24</span><span class="op">+</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">16</span>, <span class="dv">0</span>), <span class="dt">CONC=</span><span class="ot">NA</span>))
+observed</code></pre></div>
+<pre><code>##   TIME     CONC
+## 1  704 12.42485
+## 2  720 10.20530</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># We estimate individual parameters</span>
+<span class="co"># as if the patient took his medication</span>
+<span class="co"># properly</span>
+ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m1, observed, regimen)
+<span class="kw">coef</span>(ipred)</code></pre></div>
+<pre><code>##          EKa          ECL          EV1          EV2           EQ 
+##  0.000000000  0.828384249  0.035455547 -0.000201276  0.001489463</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Reality&quot;</span>), <span class="dt">data=</span>nonAdhering) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>observed) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Population&quot;</span>), <span class="dt">data=</span>adhering) <span class="op">+</span>
+<span class="co">#  geom_ribbon(aes(fill=&quot;Population&quot;, ymin=CONC.lower, ymax=CONC.upper), </span>
+<span class="co">#    data=predict(m1, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA), se.fit=TRUE), alpha=0.1) +</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Prediction&quot;</span>), 
+    <span class="dt">data=</span><span class="kw">predict</span>(ipred, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)))</code></pre></div>
+<p><img src="Vignettes_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">standardDeviations &lt;-<span class="st"> </span><span class="kw">coef</span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(m1<span class="op">$</span>omega))
+standardDeviations</code></pre></div>
+<pre><code>##           EKa           ECL           EV1           EV2            EQ 
+##  0.0000000000  2.1137644184  0.1167452994 -0.0004410079  0.0046735564</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">i &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">pnorm</span>(<span class="kw">abs</span>(standardDeviations)) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.975</span>)
+<span class="cf">if</span>(<span class="kw">length</span>(i) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {
+  <span class="kw">cat</span>(<span class="st">&quot;This patient has unlikely (outside 95% CI) parameter estimates for &quot;</span>, <span class="kw">names</span>(i),<span class="st">&quot;. There may be a treatment adherence issue.&quot;</span>)
+}</code></pre></div>
+<pre><code>## This patient has unlikely (outside 95% CI) parameter estimates for  ECL . There may be a treatment adherence issue.</code></pre>
+
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="intro.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="the-model.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
