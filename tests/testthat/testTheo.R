@@ -167,4 +167,4 @@ expected_results_m1 <- data.frame(
   check.names=F
 )
 
-expect_equal(results_m1, expected_results_m1)
+expect_equal(results_m1, expected_results_m1, tolerance=1E-7)
