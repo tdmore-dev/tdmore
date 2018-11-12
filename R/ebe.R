@@ -463,7 +463,7 @@ getLikelihoodFun <- function(type) {
 }
 
 #' Check if the given argument is of class `tdmorefit`
-#' @param a
-#'
+#' @param x An object to test
+#' @keywords internal
 #' @export
 is.tdmorefit <- function(a) {inherits(a, "tdmorefit")}

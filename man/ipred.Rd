@@ -9,6 +9,48 @@ ipred(mapping = NULL, data = NULL, geom = "line",
   regimen = NULL, parameters = NULL, covariates = NULL,
   show.legend = NA, inherit.aes = TRUE)
 }
+\arguments{
+\item{mapping}{Set of aesthetic mappings created by \code{\link[=aes]{aes()}} or
+\code{\link[=aes_]{aes_()}}. If specified and \code{inherit.aes = TRUE} (the
+default), it is combined with the default mapping at the top level of the
+plot. You must supply \code{mapping} if there is no plot mapping.}
+
+\item{data}{A tdmorefit object, or NULL to use the tdmorefit object specified in `ggplot()``}
+
+\item{geom}{The geometric object to use display the data}
+
+\item{position}{Position adjustment, either as a string, or the result of
+a call to a position adjustment function.}
+
+\item{color}{By default, `ipred` is shown in steelblue2}
+
+\item{...}{Other arguments passed on to \code{\link[=layer]{layer()}}. These are
+often aesthetics, used to set an aesthetic to a fixed value, like
+\code{colour = "red"} or \code{size = 3}. They may also be parameters
+to the paired geom/stat.}
+
+\item{newdata}{A data.frame with new data and the columns to predict,
+or a numeric vector to specify times, and predict all model output
+or NULL to interpolate between 0 and the maximum known times}
+
+\item{regimen}{Treatment regimen}
+
+\item{parameters}{Set parameters. If missing, or if only part of the parameters are specified,
+the other parameters are taken from the tdmorefit object}
+
+\item{covariates}{the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0}
+
+\item{show.legend}{logical. Should this layer be included in the legends?
+\code{NA}, the default, includes if any aesthetics are mapped.
+\code{FALSE} never includes, and \code{TRUE} always includes.
+It can also be a named logical vector to finely select the aesthetics to
+display.}
+
+\item{inherit.aes}{If \code{FALSE}, overrides the default aesthetics,
+rather than combining with them. This is most useful for helper functions
+that define both data and aesthetics and shouldn't inherit behaviour from
+the default plot specification, e.g. \code{\link[=borders]{borders()}}.}
+}
 \description{
 Create a population prediction.
 }

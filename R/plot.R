@@ -113,10 +113,6 @@ red <- function() {
 #'
 #' @param x the tdmorefit object
 #' @param newdata a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times
-#' @param se.fit add a curve for the confidence interval around the fit
-#' @param mc.maxpts maximum number of points to use for the monte carlo fit
-#' @param .progress either "none" or "text" to see calculation progress of monte carlo simulations
-#' @param se add residual error bounds, currently not compatible with se.fit
 #' @param ... ignored
 #'
 #' @return a ggplot object with the fitted individual curve, the 95% ci of this curve, the population prediction, the observed data and the residual error around the observed data
