@@ -87,7 +87,7 @@ ipred <- model %>% estimate(observed, regimen)
 plot(ipred)
 ```
 
-<img src="README_files/figure-markdown_github/readme_plot_ipred-1.png" style="display: block; margin: auto;" />
+<img src="docs/figures/readme_plot_ipred-1.png" style="display: block; margin: auto;" />
 
 ``` r
 coef(ipred)

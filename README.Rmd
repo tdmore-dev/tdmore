@@ -39,7 +39,8 @@ Note that these vignettes can also be browsed on the [TDMore bookdown](https://t
 # How to use
 This example code uses `nlmixr` to define the model. 
 ```{r, echo=FALSE}
-set.seed(0) 
+set.seed(0)
+knitr::opts_chunk$set(fig.path="docs/figures/") #set a nice path
 ```
 ```{r, message=FALSE, results='hide'}
 library(nlmixr)
