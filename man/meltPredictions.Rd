@@ -9,7 +9,9 @@ meltPredictions(x, se = FALSE)
 \arguments{
 \item{x}{dataframe returned by the predict function}
 
-\item{se}{standard error in input dataframe, logical value}
+\item{se}{if FALSE, melts the data.frame as expected
+if TRUE, assumes every output has 4 columns in the data.frame: XXX1, XXX1.median, XXX1.lower, XXX1.upper
+And melts these into a variable (with values XXX1, XXX2, ...) and 4 columns: value, value.median, value.lower and value.upper}
 }
 \value{
 the melted dataframe
