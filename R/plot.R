@@ -51,7 +51,7 @@ plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progres
   }
 
   plot <- plot +
-    facet_wrap(~variable)
+    ggplot2::facet_wrap(~variable)
   return(plot)
 }
 
