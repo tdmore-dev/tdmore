@@ -40,16 +40,18 @@ plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progres
     }
 
     obs <- model.frame.tdmorefit(tdmorefit) %>% meltPredictions()
-    obs <- subset(obs, obs$variable %in% yVars & !is.na(obs$value))
+    if(nrow(obs) > 0) obs <- subset(obs, obs$variable %in% yVars & !is.na(obs$value))
 
-    plot <- ggplot(mapping=aes_string(x="TIME", y="value", group="variable"))
-    plot <- plot + geom_line(color=blue(), data=pred) + geom_point(data=obs)
-    plot <- plot + geom_line(color=red(), data=ipred) + geom_point(data=obs)
-    if (se.fit) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=predre, alpha=0.05)
-    if (se.fit) plot <- plot + geom_ribbon(fill=red(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.04)
+    plot <- ggplot(mapping=aes_string(x="TIME", y="value"))
+    plot <- plot + geom_line(color=blue(), data=pred)
+    plot <- plot + geom_line(color=red(), data=ipred)
+    if(nrow(obs) > 0) plot <- plot + geom_point(data=obs)
+    if (se.fit) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=predre, alpha=0.1)
+    if (se.fit) plot <- plot + geom_ribbon(fill=red(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.15)
   }
 
-  plot <- plot + labs(y=paste(yVars, collapse = " / "))
+  plot <- plot +
+    facet_wrap(~variable)
   return(plot)
 }
 

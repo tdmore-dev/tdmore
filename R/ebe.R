@@ -46,7 +46,7 @@ ll <- function(par, tdmore, observed, regimen, covariates) {
 }
 
 
-#' Calculate the Emperical Bayesian Estimated parameters that predict
+#' Calculate the Empirical Bayesian Estimate parameters that predict
 #' a given dataset using the model
 #'
 #' @param tdmore a tdmore object
