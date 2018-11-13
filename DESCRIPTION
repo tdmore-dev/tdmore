@@ -8,7 +8,8 @@ Authors@R: c(
   person("Thomas", "Bouillon", role="dgs"),
   person("Pieter", "Annaert", role="dgs"),
   person("Daniel", "Roshammar", role="dgs"),
-  person("KULeuven", role="cph")
+  person("KULeuven", role="cph"),
+  person("FWO TBM Grant", role="fnd")
   )
 Description: Easily define a Nonlinear Mixed-Effects Model,
     predict individual posthoc parameters with uncertainty, and
