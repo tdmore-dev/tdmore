@@ -2,7 +2,7 @@
 % Please edit documentation in R/ebe.R
 \name{estimate}
 \alias{estimate}
-\title{Calculate the Emperical Bayesian Estimated parameters that predict
+\title{Calculate the Empirical Bayesian Estimate parameters that predict
 a given dataset using the model}
 \usage{
 estimate(tdmore, observed = NULL, regimen, covariates = NULL,
@@ -33,6 +33,6 @@ If not specified, we estimate the population prediction}
 A tdmorefit object
 }
 \description{
-Calculate the Emperical Bayesian Estimated parameters that predict
+Calculate the Empirical Bayesian Estimate parameters that predict
 a given dataset using the model
 }
