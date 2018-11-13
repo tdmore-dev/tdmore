@@ -2,8 +2,14 @@ Package: tdmore
 Type: Package
 Title: Bayesian Therapeutic Drug Monitoring Framework
 Version: 0.1.0
-Author: Ruben Faelens <ruben.faelens@sgs.com>
-Maintainer: Ruben Faelens <ruben.faelens@sgs.com>
+Authors@R: c(
+  person("Ruben", "Faelens", role = c("aut", "cre"), email = "ruben.faelens@kuleuven.be"),
+  person("Nicolas", "Luyckx", role=c("aut", "csl")),
+  person("Thomas", "Bouillon", role="dgs"),
+  person("Pieter", "Annaert", role="dgs"),
+  person("Daniel", "Roshammar", role="dgs"),
+  person("KULeuven", role="cph")
+  )
 Description: Easily define a Nonlinear Mixed-Effects Model,
     predict individual posthoc parameters with uncertainty, and
     explore new dosing regimen in a user-defined search space. 
@@ -14,7 +20,10 @@ Imports: assertthat, mnormt, plyr, dplyr, numDeriv, reshape, stats, RxODE, nlmix
  gridExtra, mvtnorm, zoo, tidybayes
 License: file LICENSE
 Encoding: UTF-8
+Language: en-US
 LazyData: true
-Suggests: knitr, rmarkdown, testthat, roxygen2, devtools
-RoxygenNote: 6.1.0
+Suggests: knitr, rmarkdown, testthat, roxygen2, devtools, vdiffr
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
+URL: https://github.com/tdmore-dev/tdmore, https://tdmore-dev.github.io/tdmore/
+BugReports: https://github.com/tdmore-dev/tdmore/issues

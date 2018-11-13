@@ -33,9 +33,7 @@ p2 <- plot(ipred2, newdata=data.frame(TIME=seq(0, 34, length.out=100), CONC=NA))
 
 # Check resuls are same (rxode vs algebraic)
 expect_equal(round(ipred1$res, digits=4), round(ipred2$res, digits=4))
+vdiffr::expect_doppelganger("Algebraic", p1)
+vdiffr::expect_doppelganger("RxODE", p2)
 
-gridExtra::grid.arrange(p1 + ggtitle("Algebraic"), p2 + ggtitle("RxODE"))
-cat("Algebraic method:\n")
-print(summary(ipred1))
-cat("RxODE method:\n")
-print(summary(ipred2))
+# TODO: test the summary() functions as well?

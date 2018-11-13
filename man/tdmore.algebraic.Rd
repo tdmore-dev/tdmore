@@ -12,7 +12,7 @@
 
 \item{res_var}{the residual variability}
 
-\item{parameters}{Lits of parameters, should be NULL}
+\item{parameters}{List of parameters, should be NULL}
 
 \item{omega}{the omega matrix of the model}
 

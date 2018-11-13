@@ -178,7 +178,7 @@ model_predict.algebraic <- function(model, newdata, regimen=data.frame(TIME=c())
 #'
 #' @param model The algebraic model
 #' @param res_var the residual variability
-#' @param parameters Lits of parameters, should be NULL
+#' @param parameters List of parameters, should be NULL
 #' @param omega the omega matrix of the model
 #' @param ... extra arguments will be passed to the model_predict call
 #'

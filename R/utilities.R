@@ -17,23 +17,30 @@ vectorToDiagonalMatrix <- function(vector) {
 #' Melt prediction results.
 #'
 #' @param x dataframe returned by the predict function
-#' @param se standard error in input dataframe, logical value
+#' @param se if FALSE, melts the data.frame as expected
+#' if TRUE, assumes every output has 4 columns in the data.frame: XXX1, XXX1.median, XXX1.lower, XXX1.upper
+#' And melts these into a variable (with values XXX1, XXX2, ...) and 4 columns: value, value.median, value.lower and value.upper
 #'
 #' @return the melted dataframe
 meltPredictions <- function(x, se=FALSE) {
-  measure.vars <- colnames(x)
-  measure.vars <- measure.vars[measure.vars != "TIME"]
-  vars <- measure.vars
+  #tmp <- reshape::melt(x, id.vars="TIME")
   if(se) {
-    for(i in c(".upper", ".lower")) vars <-c(vars, paste0(measure.vars, i))
-  }
-  tmp <- reshape::melt(x, id.vars="TIME")
-  if(se) {
-    result <- tmp[ tmp$variable %in% measure.vars , ]
-    result$value.upper <- tmp$value[ tmp$variable %in% paste0(measure.vars, ".upper") ]
-    result$value.lower <- tmp$value[ tmp$variable %in% paste0(measure.vars, ".lower") ]
+    vars <- colnames(x)
+    vars <- vars[vars != "TIME"]
+
+    trueVars <- paste0(vars, ".median") %in% vars &
+      paste0(vars, ".lower") %in% vars &
+      paste0(vars, ".upper") %in% vars
+    trueVars <- vars[trueVars]
+
+    tmp <- reshape::melt(x, id.vars="TIME")
+
+    result <- tmp[ tmp$variable %in% trueVars, ]
+    result$value.median <- tmp$value[ tmp$variable %in% paste0(trueVars, ".lower") ]
+    result$value.lower <- tmp$value[ tmp$variable %in% paste0(trueVars, ".lower") ]
+    result$value.upper <- tmp$value[ tmp$variable %in% paste0(trueVars, ".upper") ]
   } else {
-    result <- tmp
+    result <- reshape::melt(x, id.vars="TIME")
   }
   return(result)
 }
