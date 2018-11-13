@@ -83,6 +83,7 @@ actual <- data.frame(
 )
 nonAdhering <- predict(m1, regimen=actual, newdata=seq(0, 30*24))
 
+library(ggplot2)
 pred <- estimate(m1, regimen=regimen)
 ggplot(pred, newdata=seq(0, 30*24)) +
   ipred(mapping=aes(x=TIME, y=CONC))
