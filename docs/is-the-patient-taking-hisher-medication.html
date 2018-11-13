@@ -25,7 +25,7 @@
 <meta name="author" content="Ruben Faelens, Nicolas Luyckx, Quentin Leirens, Thomas Bouillon">
 
 
-<meta name="date" content="2018-11-12">
+<meta name="date" content="2018-11-13">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -114,15 +114,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2" data-path="install.html"><a href="install.html"><i class="fa fa-check"></i><b>2</b> Installation</a></li>
 <li class="chapter" data-level="3" data-path="license.html"><a href="license.html"><i class="fa fa-check"></i><b>3</b> License</a></li>
 <li class="chapter" data-level="4" data-path="tdmore-api.html"><a href="tdmore-api.html"><i class="fa fa-check"></i><b>4</b> TDMore API</a><ul>
-<li class="chapter" data-level="4.1" data-path="tdmore-api.html"><a href="tdmore-api.html#model-definition"><i class="fa fa-check"></i><b>4.1</b> Model definition</a><ul>
+<li class="chapter" data-level="4.1" data-path="tdmore-api.html"><a href="tdmore-api.html#model"><i class="fa fa-check"></i><b>4.1</b> Model definition</a><ul>
 <li class="chapter" data-level="4.1.1" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-a-nlxmir-model"><i class="fa fa-check"></i><b>4.1.1</b> Build a TDMore object from a nlxmir model</a></li>
 <li class="chapter" data-level="4.1.2" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-an-rxode-model"><i class="fa fa-check"></i><b>4.1.2</b> Build a TDMore object from an RxODE model</a></li>
 <li class="chapter" data-level="4.1.3" data-path="tdmore-api.html"><a href="tdmore-api.html#build-your-own-algebraic-model"><i class="fa fa-check"></i><b>4.1.3</b> Build your own algebraic model</a></li>
-<li class="chapter" data-level="4.1.4" data-path="tdmore-api.html"><a href="tdmore-api.html#add-covariates-to-the-model"><i class="fa fa-check"></i><b>4.1.4</b> Add covariates to the model</a></li>
+<li class="chapter" data-level="4.1.4" data-path="tdmore-api.html"><a href="tdmore-api.html#add-model-covariates"><i class="fa fa-check"></i><b>4.1.4</b> Add model covariates</a></li>
 </ul></li>
-<li class="chapter" data-level="4.2" data-path="tdmore-api.html"><a href="tdmore-api.html#regimen-object"><i class="fa fa-check"></i><b>4.2</b> Regimen object</a></li>
-<li class="chapter" data-level="4.3" data-path="tdmore-api.html"><a href="tdmore-api.html#simulation-a-model"><i class="fa fa-check"></i><b>4.3</b> Simulation a model</a></li>
-<li class="chapter" data-level="4.4" data-path="tdmore-api.html"><a href="tdmore-api.html#parameter-estimation"><i class="fa fa-check"></i><b>4.4</b> Parameter estimation</a></li>
+<li class="chapter" data-level="4.2" data-path="tdmore-api.html"><a href="tdmore-api.html#regimen"><i class="fa fa-check"></i><b>4.2</b> Regimen definition</a></li>
+<li class="chapter" data-level="4.3" data-path="tdmore-api.html"><a href="tdmore-api.html#model-simulation"><i class="fa fa-check"></i><b>4.3</b> Model simulation</a></li>
+<li class="chapter" data-level="4.4" data-path="tdmore-api.html"><a href="tdmore-api.html#estimation"><i class="fa fa-check"></i><b>4.4</b> Parameter estimation</a></li>
 <li class="chapter" data-level="4.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>4.5</b> Dose recommendation</a></li>
 <li class="chapter" data-level="4.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>4.6</b> Plotting the intermediate steps</a></li>
 <li class="chapter" data-level="4.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>4.7</b> Extending TDMore</a></li>
@@ -169,7 +169,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1><span class="header-section-number">Chapter 8</span> Is the patient taking his/her medication?</h1>
 <p>We can now take a serum sample and evaluate if there is non-adherence.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Take a blood sample</span>
-observed &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">30</span><span class="op">*</span><span class="dv">24</span><span class="op">+</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">16</span>, <span class="dv">0</span>), <span class="dt">CONC=</span><span class="ot">NA</span>))
+observed &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">30</span>*<span class="dv">24</span>+<span class="kw">c</span>(-<span class="dv">16</span>, <span class="dv">0</span>), <span class="dt">CONC=</span><span class="ot">NA</span>))
 observed</code></pre></div>
 <pre><code>##   TIME     CONC
 ## 1  704 12.42485
@@ -181,21 +181,21 @@ ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m1, observe
 <span class="kw">coef</span>(ipred)</code></pre></div>
 <pre><code>##          EKa          ECL          EV1          EV2           EQ 
 ##  0.000000000  0.828384249  0.035455547 -0.000201276  0.001489463</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Reality&quot;</span>), <span class="dt">data=</span>nonAdhering) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>observed) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Population&quot;</span>), <span class="dt">data=</span>adhering) <span class="op">+</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) +
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Reality&quot;</span>), <span class="dt">data=</span>nonAdhering) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>observed) +
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Population&quot;</span>), <span class="dt">data=</span>adhering) +
 <span class="co">#  geom_ribbon(aes(fill=&quot;Population&quot;, ymin=CONC.lower, ymax=CONC.upper), </span>
 <span class="co">#    data=predict(m1, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA), se.fit=TRUE), alpha=0.1) +</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Prediction&quot;</span>), 
-    <span class="dt">data=</span><span class="kw">predict</span>(ipred, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)))</code></pre></div>
+    <span class="dt">data=</span><span class="kw">predict</span>(ipred, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span>*<span class="dv">24</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)))</code></pre></div>
 <p><img src="Vignettes_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">standardDeviations &lt;-<span class="st"> </span><span class="kw">coef</span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(m1<span class="op">$</span>omega))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">standardDeviations &lt;-<span class="st"> </span><span class="kw">coef</span>(ipred) /<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(m1$omega))
 standardDeviations</code></pre></div>
 <pre><code>##           EKa           ECL           EV1           EV2            EQ 
 ##  0.0000000000  2.1137644184  0.1167452994 -0.0004410079  0.0046735564</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">i &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">pnorm</span>(<span class="kw">abs</span>(standardDeviations)) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.975</span>)
-<span class="cf">if</span>(<span class="kw">length</span>(i) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">i &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">pnorm</span>(<span class="kw">abs</span>(standardDeviations)) &gt;<span class="st"> </span><span class="fl">0.975</span>)
+if(<span class="kw">length</span>(i) &gt;<span class="st"> </span><span class="dv">0</span>) {
   <span class="kw">cat</span>(<span class="st">&quot;This patient has unlikely (outside 95% CI) parameter estimates for &quot;</span>, <span class="kw">names</span>(i),<span class="st">&quot;. There may be a treatment adherence issue.&quot;</span>)
 }</code></pre></div>
 <pre><code>## This patient has unlikely (outside 95% CI) parameter estimates for  ECL . There may be a treatment adherence issue.</code></pre>

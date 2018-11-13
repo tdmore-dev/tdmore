@@ -2,7 +2,7 @@
 
 The following section shows an overview of the main methods from the TDMore API and tells you how to use them.
 
-## Model definition
+## Model definition {#model}
 
 The TDMore model can be built using 3 different ways. Its model definition can be:
 
@@ -201,37 +201,196 @@ summary(tdmore3)
 ##  name additiveError proportionalError exponentialError
 ##  CONC             0               0.1                0
 ```
-### Add covariates to the model
+### Add model covariates
 
-## Regimen object
-
-
-```r
-regimen <- data.frame(TIME=c(0,24,48), AMT=c(50,50,0))
-```
-
-## Simulation a model
+Let's assume the weight is a covariate in the previous 1-compartment model. It can be added in the model as follows:
 
 
 ```r
-plot(tdmore1, regimen=regimen)
+modelCode1_WT <- function() {
+  ini({
+    TVKA <- 1 # THETA on KA
+    TVV <- 70 # THETA on V
+    TVCL <- 4 # THETA on CL
+    
+    EKA ~ 0.3 # ETA on KA (OMEGA, variance)
+    EV ~ 0.3  # ETA on V (OMEGA, variance)
+    ECL ~ 0.3 # ETA on CL (OMEGA, variance)
+    
+    SIGMA <- 0.1 # 10% CV proportional error
+  })
+  model({
+    KA <- TVKA*exp(EKA)
+    V <- TVV*(WT/70)*exp(EV)
+    CL <- TVCL*((WT/70)**0.75)*exp(ECL)
+
+    d/dt(depot) = -KA*depot
+    d/dt(center) = KA*depot - CL/V*center
+
+    CONC = center/V
+    CONC ~ prop(SIGMA)
+  })
+}
 ```
 
-<img src="API_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+Now, the TDMore object can be created and printed.
+
 
 ```r
-plot(tdmore2, regimen=regimen)
+library(tdmore)
+library(nlmixr)
+tdmore1_WT <- nlmixrUI(modelCode1_WT) %>% tdmore()
 ```
 
-<img src="API_files/figure-html/unnamed-chunk-11-2.png" width="672" />
 
 ```r
-plot(tdmore3, regimen=regimen)
+print(tdmore1_WT) # Print may be seen as a short 'summary'
 ```
 
-<img src="API_files/figure-html/unnamed-chunk-11-3.png" width="672" />
+```
+## Structural model: RxODE 
+## Parameters: EKA EV ECL 
+## Covariates: WT 
+## Output(s): CONC
+```
 
-## Parameter estimation
+Weight covariate has been well detected by TDMore!
+
+## Regimen definition {#regimen}
+
+The regimen definition in TDMore is relatively close to the NONMEM definition. In TDMore, the regimen is defined as a dataframe. Each row indicates a new dosing scheme. Supported column types are:
+
+- TIME: time of first dose
+- AMT: amount of the dose
+- II (optional): dose interval between multiple doses
+- ADDL (optional): additional doses, to be used in combination with II
+- RATE (optional): defines the infusion time, if not specified, dose is a bolus given at once at t=`TIME`
+- CMT (optional): the compartment number (1=depot, 2=center, 3=periph)
+
+**Example 1**: the following snippet will give a 150mg dose every day for a week.
+
+
+```r
+regimen1 <- data.frame(TIME=0, AMT=150, II=24, ADDL=7)
+```
+
+This is strictly equivalent to the following form:
+
+
+```r
+regimen1 <- data.frame(TIME=c(0,1,2,3,4,5,6)*24, AMT=150)
+```
+
+**Example 2**: let's now infuse this dose in the central compartment instead (CMT=2), for a week. This is translated into the following dataframe:
+
+
+```r
+regimen2 <- data.frame(TIME=0, AMT=150, II=24, ADDL=7, CMT=2)
+```
+
+Note that infusions (defined with `RATE`) are injected into the central compartment by default.
+In the next section, you will learn how to check your model and regimen are well implemented by running simulations.
+
+## Model simulation
+
+Simulations in TDMore are done using the `predict()` function. Let's have a closer look to its arguments:
+
+- object: this can be a `tdmore` or a `tdmorefit` (see section \@ref(estimation)) object
+- newdata: numeric vector with all times or a dataframe with a `TIME` column and all the needed output variables
+- regimen: the treatment regimen (as defined in section \@ref(regimen))
+- parameters: the parameter values to use, missing values are taken from the population
+- covariates: the covariates values. They can be time-varying (see section X).
+- se: whether to add residual error
+- level: how much residual error to add, e.g. 0.95
+
+**Example 1a**: Simulate the first model for a week without residual error
+
+
+```r
+times <- seq(0, 24*7-1, by=1)
+data1a <- predict(tdmore1, newdata=times, regimen=regimen1)
+head(data1a)
+```
+
+```
+##   time KA  V CL     CONC      depot    center TIME
+## 1    0  1 70  4 0.000000 150.000000   0.00000    0
+## 2    1  1 70  4 1.310408  55.181934  91.72857    1
+## 3    2  1 70  4 1.719699  20.300319 120.37894    2
+## 4    3  1 70  4 1.801530   7.468069 126.10712    3
+## 5    4  1 70  4 1.766713   2.747346 123.66993    4
+## 6    5  1 70  4 1.692589   1.010691 118.48126    5
+```
+
+Because `newdata` is provided as numeric (with no specified output column), all variables are output.
+
+**Example 1b**: Simulate the first model for a week with residual error
+
+
+```r
+data1b <- predict(tdmore1, newdata=times, regimen=regimen1, se=T, level=0.95)
+head(data1b)
+```
+
+```
+##   time KA  V CL     CONC      depot    center TIME CONC.upper CONC.lower
+## 1    0  1 70  4 0.000000 150.000000   0.00000    0   0.000000   0.000000
+## 2    1  1 70  4 1.310408  55.181934  91.72857    1   1.053573   1.567243
+## 3    2  1 70  4 1.719699  20.300319 120.37894    2   1.382644   2.056754
+## 4    3  1 70  4 1.801530   7.468069 126.10712    3   1.448437   2.154624
+## 5    4  1 70  4 1.766713   2.747346 123.66993    4   1.420444   2.112983
+## 6    5  1 70  4 1.692589   1.010691 118.48126    5   1.360848   2.024331
+```
+
+As you can see, lower and upper bounds on the concentration are provided.
+
+**Example 1c**: Simulate the first model for a week with residual error and output selection
+
+
+```r
+data1c <- predict(tdmore1, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1, se=T, level=0.95)
+head(data1c)
+```
+
+```
+##   TIME     CONC CONC.upper CONC.lower
+## 1    0 0.000000   0.000000   0.000000
+## 2    1 1.310408   1.053573   1.567243
+## 3    2 1.719699   1.382644   2.056754
+## 4    3 1.801530   1.448437   2.154624
+## 5    4 1.766713   1.420444   2.112983
+## 6    5 1.692589   1.360848   2.024331
+```
+
+Only the concentration is returned in the previous dataframe.
+
+**Example 2**: Compare the 4 models previously described in section \@ref(model)
+
+
+```r
+data1 <- predict(tdmore1, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1)
+data1$model <- factor("nlmixr model")
+
+data2 <- predict(tdmore2, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1)
+data2$model <- factor("RxODE model")
+
+data3 <- predict(tdmore3, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1)
+data3$model <- factor("algebraic model")
+
+data4 <- predict(tdmore1_WT, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1, covariates=c(WT=50))
+data4$model <- factor("nlxmir model with WT covariate")
+
+library(ggplot2)
+ggplot(data=rbind(data1, data2, data3, data4), aes(x=TIME, y=CONC, group=model)) + geom_line(aes(color=model))
+```
+
+<img src="API_files/figure-html/api_model_comparison-1.png" width="768" style="display: block; margin: auto;" />
+
+The plot above shows that the first 3 models are equivalent. The last model with the covariate is different because a covariate of WT=50 is used (this implies a lower clearance).
+
+## Parameter estimation {#estimation}
+
+Parameter estimation section.
 
 ## Dose recommendation
 

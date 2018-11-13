@@ -25,7 +25,7 @@
 <meta name="author" content="Ruben Faelens, Nicolas Luyckx, Quentin Leirens, Thomas Bouillon">
 
 
-<meta name="date" content="2018-11-12">
+<meta name="date" content="2018-11-13">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -114,15 +114,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2" data-path="install.html"><a href="install.html"><i class="fa fa-check"></i><b>2</b> Installation</a></li>
 <li class="chapter" data-level="3" data-path="license.html"><a href="license.html"><i class="fa fa-check"></i><b>3</b> License</a></li>
 <li class="chapter" data-level="4" data-path="tdmore-api.html"><a href="tdmore-api.html"><i class="fa fa-check"></i><b>4</b> TDMore API</a><ul>
-<li class="chapter" data-level="4.1" data-path="tdmore-api.html"><a href="tdmore-api.html#model-definition"><i class="fa fa-check"></i><b>4.1</b> Model definition</a><ul>
+<li class="chapter" data-level="4.1" data-path="tdmore-api.html"><a href="tdmore-api.html#model"><i class="fa fa-check"></i><b>4.1</b> Model definition</a><ul>
 <li class="chapter" data-level="4.1.1" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-a-nlxmir-model"><i class="fa fa-check"></i><b>4.1.1</b> Build a TDMore object from a nlxmir model</a></li>
 <li class="chapter" data-level="4.1.2" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-an-rxode-model"><i class="fa fa-check"></i><b>4.1.2</b> Build a TDMore object from an RxODE model</a></li>
 <li class="chapter" data-level="4.1.3" data-path="tdmore-api.html"><a href="tdmore-api.html#build-your-own-algebraic-model"><i class="fa fa-check"></i><b>4.1.3</b> Build your own algebraic model</a></li>
-<li class="chapter" data-level="4.1.4" data-path="tdmore-api.html"><a href="tdmore-api.html#add-covariates-to-the-model"><i class="fa fa-check"></i><b>4.1.4</b> Add covariates to the model</a></li>
+<li class="chapter" data-level="4.1.4" data-path="tdmore-api.html"><a href="tdmore-api.html#add-model-covariates"><i class="fa fa-check"></i><b>4.1.4</b> Add model covariates</a></li>
 </ul></li>
-<li class="chapter" data-level="4.2" data-path="tdmore-api.html"><a href="tdmore-api.html#regimen-object"><i class="fa fa-check"></i><b>4.2</b> Regimen object</a></li>
-<li class="chapter" data-level="4.3" data-path="tdmore-api.html"><a href="tdmore-api.html#simulation-a-model"><i class="fa fa-check"></i><b>4.3</b> Simulation a model</a></li>
-<li class="chapter" data-level="4.4" data-path="tdmore-api.html"><a href="tdmore-api.html#parameter-estimation"><i class="fa fa-check"></i><b>4.4</b> Parameter estimation</a></li>
+<li class="chapter" data-level="4.2" data-path="tdmore-api.html"><a href="tdmore-api.html#regimen"><i class="fa fa-check"></i><b>4.2</b> Regimen definition</a></li>
+<li class="chapter" data-level="4.3" data-path="tdmore-api.html"><a href="tdmore-api.html#model-simulation"><i class="fa fa-check"></i><b>4.3</b> Model simulation</a></li>
+<li class="chapter" data-level="4.4" data-path="tdmore-api.html"><a href="tdmore-api.html#estimation"><i class="fa fa-check"></i><b>4.4</b> Parameter estimation</a></li>
 <li class="chapter" data-level="4.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>4.5</b> Dose recommendation</a></li>
 <li class="chapter" data-level="4.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>4.6</b> Plotting the intermediate steps</a></li>
 <li class="chapter" data-level="4.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>4.7</b> Extending TDMore</a></li>
@@ -168,7 +168,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="tdmore-api" class="section level1">
 <h1><span class="header-section-number">Chapter 4</span> TDMore API</h1>
 <p>The following section shows an overview of the main methods from the TDMore API and tells you how to use them.</p>
-<div id="model-definition" class="section level2">
+<div id="model" class="section level2">
 <h2><span class="header-section-number">4.1</span> Model definition</h2>
 <p>The TDMore model can be built using 3 different ways. Its model definition can be:</p>
 <ul>
@@ -180,34 +180,34 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="build-a-tdmore-object-from-a-nlxmir-model" class="section level3">
 <h3><span class="header-section-number">4.1.1</span> Build a TDMore object from a nlxmir model</h3>
 <p>Let’s implement a basic 1-compartment PK model in <code>nlmixr</code>. The model code is divided in two different blocks. The ‘ini’ block is used to define all the model parameter values (commonly called theta’s, omega’s and sigma’s in PK/PD modelling language) while the ‘model’ blocks defines all the equations of the model. The <code>nlmixr</code> function is implemented as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelCode1 &lt;-<span class="st"> </span><span class="cf">function</span>() {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelCode1 &lt;-<span class="st"> </span>function() {
   <span class="kw">ini</span>({
     TVKA &lt;-<span class="st"> </span><span class="dv">1</span> <span class="co"># THETA on KA</span>
     TVV &lt;-<span class="st"> </span><span class="dv">70</span> <span class="co"># THETA on V</span>
     TVCL &lt;-<span class="st"> </span><span class="dv">4</span> <span class="co"># THETA on CL</span>
     
-    EKA <span class="op">~</span><span class="st"> </span><span class="fl">0.3</span> <span class="co"># ETA on KA (OMEGA, variance)</span>
-    EV <span class="op">~</span><span class="st"> </span><span class="fl">0.3</span>  <span class="co"># ETA on V (OMEGA, variance)</span>
-    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.3</span> <span class="co"># ETA on CL (OMEGA, variance)</span>
+    EKA ~<span class="st"> </span><span class="fl">0.3</span> <span class="co"># ETA on KA (OMEGA, variance)</span>
+    EV ~<span class="st"> </span><span class="fl">0.3</span>  <span class="co"># ETA on V (OMEGA, variance)</span>
+    ECL ~<span class="st"> </span><span class="fl">0.3</span> <span class="co"># ETA on CL (OMEGA, variance)</span>
     
     SIGMA &lt;-<span class="st"> </span><span class="fl">0.1</span> <span class="co"># 10% CV proportional error</span>
   })
   <span class="kw">model</span>({
-    KA &lt;-<span class="st"> </span>TVKA<span class="op">*</span><span class="kw">exp</span>(EKA)
-    V &lt;-<span class="st"> </span>TVV<span class="op">*</span><span class="kw">exp</span>(EV)
-    CL &lt;-<span class="st"> </span>TVCL<span class="op">*</span><span class="kw">exp</span>(ECL)
+    KA &lt;-<span class="st"> </span>TVKA*<span class="kw">exp</span>(EKA)
+    V &lt;-<span class="st"> </span>TVV*<span class="kw">exp</span>(EV)
+    CL &lt;-<span class="st"> </span>TVCL*<span class="kw">exp</span>(ECL)
 
-    d<span class="op">/</span><span class="kw">dt</span>(depot) =<span class="st"> </span><span class="op">-</span>KA<span class="op">*</span>depot
-    d<span class="op">/</span><span class="kw">dt</span>(center) =<span class="st"> </span>KA<span class="op">*</span>depot <span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V<span class="op">*</span>center
+    d/<span class="kw">dt</span>(depot) =<span class="st"> </span>-KA*depot
+    d/<span class="kw">dt</span>(center) =<span class="st"> </span>KA*depot -<span class="st"> </span>CL/V*center
 
-    CONC =<span class="st"> </span>center<span class="op">/</span>V
-    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(SIGMA)
+    CONC =<span class="st"> </span>center/V
+    CONC ~<span class="st"> </span><span class="kw">prop</span>(SIGMA)
   })
 }</code></pre></div>
 <p>A TDMore object can then be instantiated by running the following snippet:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
 <span class="kw">library</span>(nlmixr)
-tdmore1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>()</code></pre></div>
+tdmore1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) %&gt;%<span class="st"> </span><span class="kw">tdmore</span>()</code></pre></div>
 <p>Your model is ready to use. Have a look at the content by calling:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(tdmore1)</code></pre></div>
 <pre><code>## Structural model: RxODE 
@@ -244,7 +244,7 @@ tdmore1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode
 <span class="kw">library</span>(RxODE)
 omegaMatrix &lt;-<span class="st"> </span><span class="kw">vectorToDiagonalMatrix</span>(<span class="kw">c</span>(<span class="dt">EKA=</span><span class="fl">0.3</span>, <span class="dt">EV=</span><span class="fl">0.3</span>, <span class="dt">ECL=</span><span class="fl">0.3</span>))
 errorModel &lt;-<span class="st"> </span><span class="kw">errorModel</span>(<span class="st">&quot;CONC&quot;</span>, <span class="dt">prop=</span><span class="fl">0.1</span>)
-tdmore2 &lt;-<span class="st"> </span><span class="kw">RxODE</span>(modelCode2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>(<span class="dt">omega=</span>omegaMatrix, <span class="dt">res_var=</span><span class="kw">list</span>(errorModel))</code></pre></div>
+tdmore2 &lt;-<span class="st"> </span><span class="kw">RxODE</span>(modelCode2) %&gt;%<span class="st"> </span><span class="kw">tdmore</span>(<span class="dt">omega=</span>omegaMatrix, <span class="dt">res_var=</span><span class="kw">list</span>(errorModel))</code></pre></div>
 <p>The omega matrix is a 3x3 matrix. Only the diagonal is used as you can see. However, correlations can be added if needed. Your model is now ready to use. It can be summarised this way:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(tdmore2)</code></pre></div>
 <pre><code>## Structural model: RxODE 
@@ -265,41 +265,41 @@ tdmore2 &lt;-<span class="st"> </span><span class="kw">RxODE</span>(modelCode2) 
 <div id="build-your-own-algebraic-model" class="section level3">
 <h3><span class="header-section-number">4.1.3</span> Build your own algebraic model</h3>
 <p>Finally, <code>TDMore</code> can also work with algebraic models. To do so, the model definition function must return a object of class <code>algebraic_definition</code>. In particular, it must override the <code>predictFunction(times, regimen, ...)</code> which returns the output variable according to the <code>times</code> vector and specified <code>regimen</code>. The following code shows how the algebraic model can be implemented:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelCode3 &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">THETA=</span><span class="kw">list</span>(<span class="dt">KA=</span><span class="dv">1</span>, <span class="dt">V=</span><span class="dv">70</span>, <span class="dt">CL=</span><span class="dv">4</span>), <span class="dt">OMEGA=</span><span class="kw">list</span>(<span class="dt">KA=</span><span class="fl">0.3</span>, <span class="dt">V=</span><span class="fl">0.3</span>, <span class="dt">CL=</span><span class="fl">0.3</span>)) {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelCode3 &lt;-<span class="st"> </span>function(<span class="dt">THETA=</span><span class="kw">list</span>(<span class="dt">KA=</span><span class="dv">1</span>, <span class="dt">V=</span><span class="dv">70</span>, <span class="dt">CL=</span><span class="dv">4</span>), <span class="dt">OMEGA=</span><span class="kw">list</span>(<span class="dt">KA=</span><span class="fl">0.3</span>, <span class="dt">V=</span><span class="fl">0.3</span>, <span class="dt">CL=</span><span class="fl">0.3</span>)) {
   <span class="kw">return</span>(<span class="kw">structure</span>(<span class="kw">list</span>(
-    <span class="dt">predictFunction =</span> <span class="cf">function</span>(times, regimen, EKA, EV, ECL) {
-      V =<span class="st"> </span>THETA<span class="op">$</span>V <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EV)
-      CL =<span class="st"> </span>THETA<span class="op">$</span>CL <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(ECL)
-      KA =<span class="st"> </span>THETA<span class="op">$</span>KA <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EKA)
-      k =<span class="st"> </span>CL <span class="op">/</span><span class="st"> </span>V
+    <span class="dt">predictFunction =</span> function(times, regimen, EKA, EV, ECL) {
+      V =<span class="st"> </span>THETA$V *<span class="st"> </span><span class="kw">exp</span>(EV)
+      CL =<span class="st"> </span>THETA$CL *<span class="st"> </span><span class="kw">exp</span>(ECL)
+      KA =<span class="st"> </span>THETA$KA *<span class="st"> </span><span class="kw">exp</span>(EKA)
+      k =<span class="st"> </span>CL /<span class="st"> </span>V
       t =<span class="st"> </span>times
       
       CONC &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(times))
-      <span class="cf">for</span>(i <span class="cf">in</span> <span class="kw">seq</span>(<span class="dv">1</span>, <span class="kw">nrow</span>(regimen))) { <span class="co"># Iterate over all regimen rows</span>
-        tD =<span class="st"> </span>regimen<span class="op">$</span>TIME[i]
-        D =<span class="st"> </span>regimen<span class="op">$</span>AMT[i]
-        II =<span class="st"> </span>regimen<span class="op">$</span>II[i] <span class="co"># A number, 0, or NULL</span>
-        <span class="cf">if</span>(<span class="op">!</span><span class="kw">is.null</span>(II) <span class="op">&amp;&amp;</span><span class="st"> </span>II <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) { <span class="co"># Keep repeating the dose until we are past the last observation time</span>
-          nbrDoses &lt;-<span class="st"> </span>row<span class="op">$</span>ADDL
-          <span class="cf">while</span>(tD <span class="op">&lt;=</span><span class="st"> </span><span class="kw">max</span>(t) <span class="op">&amp;&amp;</span><span class="st"> </span>nbrDoses <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {
-            CONC &lt;-<span class="st"> </span>CONC <span class="op">+</span><span class="st"> </span><span class="kw">ifelse</span>(t <span class="op">&gt;=</span><span class="st"> </span>tD, D<span class="op">/</span>V <span class="op">*</span><span class="st"> </span>(KA<span class="op">/</span>(KA<span class="op">-</span>k)) <span class="op">*</span><span class="st"> </span>(<span class="kw">exp</span>(<span class="op">-</span>k<span class="op">*</span>(t<span class="op">-</span>tD)) <span class="op">-</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>KA<span class="op">*</span>(t<span class="op">-</span>tD))), <span class="dv">0</span>) <span class="co"># Algebraic solution of 1-cpt-model</span>
-            tD &lt;-<span class="st"> </span>tD <span class="op">+</span><span class="st"> </span>II
-            nbrDoses &lt;-<span class="st"> </span>nbrDoses <span class="op">-</span><span class="st"> </span><span class="dv">1</span>
+      for(i in <span class="kw">seq</span>(<span class="dv">1</span>, <span class="kw">nrow</span>(regimen))) { <span class="co"># Iterate over all regimen rows</span>
+        tD =<span class="st"> </span>regimen$TIME[i]
+        D =<span class="st"> </span>regimen$AMT[i]
+        II =<span class="st"> </span>regimen$II[i] <span class="co"># A number, 0, or NULL</span>
+        if(!<span class="kw">is.null</span>(II) &amp;&amp;<span class="st"> </span>II &gt;<span class="st"> </span><span class="dv">0</span>) { <span class="co"># Keep repeating the dose until we are past the last observation time</span>
+          nbrDoses &lt;-<span class="st"> </span>row$ADDL
+          while(tD &lt;=<span class="st"> </span><span class="kw">max</span>(t) &amp;&amp;<span class="st"> </span>nbrDoses &gt;<span class="st"> </span><span class="dv">0</span>) {
+            CONC &lt;-<span class="st"> </span>CONC +<span class="st"> </span><span class="kw">ifelse</span>(t &gt;=<span class="st"> </span>tD, D/V *<span class="st"> </span>(KA/(KA-k)) *<span class="st"> </span>(<span class="kw">exp</span>(-k*(t-tD)) -<span class="st"> </span><span class="kw">exp</span>(-KA*(t-tD))), <span class="dv">0</span>) <span class="co"># Algebraic solution of 1-cpt-model</span>
+            tD &lt;-<span class="st"> </span>tD +<span class="st"> </span>II
+            nbrDoses &lt;-<span class="st"> </span>nbrDoses -<span class="st"> </span><span class="dv">1</span>
           }
-        } <span class="cf">else</span> {
+        } else {
           <span class="co"># Single administration</span>
-          CONC &lt;-<span class="st"> </span>CONC <span class="op">+</span><span class="st"> </span><span class="kw">ifelse</span>(t <span class="op">&gt;=</span><span class="st"> </span>tD, D<span class="op">/</span>V <span class="op">*</span><span class="st"> </span>(KA<span class="op">/</span>(KA<span class="op">-</span>k)) <span class="op">*</span><span class="st"> </span>(<span class="kw">exp</span>(<span class="op">-</span>k<span class="op">*</span>(t<span class="op">-</span>tD)) <span class="op">-</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>KA<span class="op">*</span>(t<span class="op">-</span>tD))), <span class="dv">0</span>) <span class="co"># Algebraic solution of 1-cpt-model</span>
+          CONC &lt;-<span class="st"> </span>CONC +<span class="st"> </span><span class="kw">ifelse</span>(t &gt;=<span class="st"> </span>tD, D/V *<span class="st"> </span>(KA/(KA-k)) *<span class="st"> </span>(<span class="kw">exp</span>(-k*(t-tD)) -<span class="st"> </span><span class="kw">exp</span>(-KA*(t-tD))), <span class="dv">0</span>) <span class="co"># Algebraic solution of 1-cpt-model</span>
         }
       }
       <span class="kw">return</span>(CONC)
     },
-    <span class="dt">omega =</span> <span class="kw">vectorToDiagonalMatrix</span>(<span class="kw">list</span>(<span class="dt">EKA=</span>OMEGA<span class="op">$</span>KA, <span class="dt">EV=</span>OMEGA<span class="op">$</span>V, <span class="dt">ECL=</span>OMEGA<span class="op">$</span>CL))),
+    <span class="dt">omega =</span> <span class="kw">vectorToDiagonalMatrix</span>(<span class="kw">list</span>(<span class="dt">EKA=</span>OMEGA$KA, <span class="dt">EV=</span>OMEGA$V, <span class="dt">ECL=</span>OMEGA$CL))),
     <span class="dt">class =</span> <span class="st">&quot;algebraic_definition&quot;</span>))
 }</code></pre></div>
 <p>The algebraic function definition needs to be passed to the <code>algebraic</code> function. This creates an <code>algebraic</code> model compatible with TDMore.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
 errorModel &lt;-<span class="st"> </span><span class="kw">errorModel</span>(<span class="st">&quot;CONC&quot;</span>, <span class="dt">prop=</span><span class="fl">0.1</span>)
-tdmore3 &lt;-<span class="st"> </span><span class="kw">algebraic</span>(<span class="kw">modelCode3</span>()) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>(<span class="dt">res_var=</span><span class="kw">list</span>(errorModel))</code></pre></div>
+tdmore3 &lt;-<span class="st"> </span><span class="kw">algebraic</span>(<span class="kw">modelCode3</span>()) %&gt;%<span class="st"> </span><span class="kw">tdmore</span>(<span class="dt">res_var=</span><span class="kw">list</span>(errorModel))</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(tdmore3)</code></pre></div>
 <pre><code>## Structural model: algebraic 
 ## 
@@ -315,25 +315,131 @@ tdmore3 &lt;-<span class="st"> </span><span class="kw">algebraic</span>(<span cl
 ##  name additiveError proportionalError exponentialError
 ##  CONC             0               0.1                0</code></pre>
 </div>
-<div id="add-covariates-to-the-model" class="section level3">
-<h3><span class="header-section-number">4.1.4</span> Add covariates to the model</h3>
+<div id="add-model-covariates" class="section level3">
+<h3><span class="header-section-number">4.1.4</span> Add model covariates</h3>
+<p>Let’s assume the weight is a covariate in the previous 1-compartment model. It can be added in the model as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelCode1_WT &lt;-<span class="st"> </span>function() {
+  <span class="kw">ini</span>({
+    TVKA &lt;-<span class="st"> </span><span class="dv">1</span> <span class="co"># THETA on KA</span>
+    TVV &lt;-<span class="st"> </span><span class="dv">70</span> <span class="co"># THETA on V</span>
+    TVCL &lt;-<span class="st"> </span><span class="dv">4</span> <span class="co"># THETA on CL</span>
+    
+    EKA ~<span class="st"> </span><span class="fl">0.3</span> <span class="co"># ETA on KA (OMEGA, variance)</span>
+    EV ~<span class="st"> </span><span class="fl">0.3</span>  <span class="co"># ETA on V (OMEGA, variance)</span>
+    ECL ~<span class="st"> </span><span class="fl">0.3</span> <span class="co"># ETA on CL (OMEGA, variance)</span>
+    
+    SIGMA &lt;-<span class="st"> </span><span class="fl">0.1</span> <span class="co"># 10% CV proportional error</span>
+  })
+  <span class="kw">model</span>({
+    KA &lt;-<span class="st"> </span>TVKA*<span class="kw">exp</span>(EKA)
+    V &lt;-<span class="st"> </span>TVV*(WT/<span class="dv">70</span>)*<span class="kw">exp</span>(EV)
+    CL &lt;-<span class="st"> </span>TVCL*((WT/<span class="dv">70</span>)**<span class="fl">0.75</span>)*<span class="kw">exp</span>(ECL)
+
+    d/<span class="kw">dt</span>(depot) =<span class="st"> </span>-KA*depot
+    d/<span class="kw">dt</span>(center) =<span class="st"> </span>KA*depot -<span class="st"> </span>CL/V*center
+
+    CONC =<span class="st"> </span>center/V
+    CONC ~<span class="st"> </span><span class="kw">prop</span>(SIGMA)
+  })
+}</code></pre></div>
+<p>Now, the TDMore object can be created and printed.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
+<span class="kw">library</span>(nlmixr)
+tdmore1_WT &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1_WT) %&gt;%<span class="st"> </span><span class="kw">tdmore</span>()</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(tdmore1_WT) <span class="co"># Print may be seen as a short &#39;summary&#39;</span></code></pre></div>
+<pre><code>## Structural model: RxODE 
+## Parameters: EKA EV ECL 
+## Covariates: WT 
+## Output(s): CONC</code></pre>
+<p>Weight covariate has been well detected by TDMore!</p>
 </div>
 </div>
-<div id="regimen-object" class="section level2">
-<h2><span class="header-section-number">4.2</span> Regimen object</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">24</span>,<span class="dv">48</span>), <span class="dt">AMT=</span><span class="kw">c</span>(<span class="dv">50</span>,<span class="dv">50</span>,<span class="dv">0</span>))</code></pre></div>
+<div id="regimen" class="section level2">
+<h2><span class="header-section-number">4.2</span> Regimen definition</h2>
+<p>The regimen definition in TDMore is relatively close to the NONMEM definition. In TDMore, the regimen is defined as a dataframe. Each row indicates a new dosing scheme. Supported column types are:</p>
+<ul>
+<li>TIME: time of first dose</li>
+<li>AMT: amount of the dose</li>
+<li>II (optional): dose interval between multiple doses</li>
+<li>ADDL (optional): additional doses, to be used in combination with II</li>
+<li>RATE (optional): defines the infusion time, if not specified, dose is a bolus given at once at t=<code>TIME</code></li>
+<li>CMT (optional): the compartment number (1=depot, 2=center, 3=periph)</li>
+</ul>
+<p><strong>Example 1</strong>: the following snippet will give a 150mg dose every day for a week.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">150</span>, <span class="dt">II=</span><span class="dv">24</span>, <span class="dt">ADDL=</span><span class="dv">7</span>)</code></pre></div>
+<p>This is strictly equivalent to the following form:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)*<span class="dv">24</span>, <span class="dt">AMT=</span><span class="dv">150</span>)</code></pre></div>
+<p><strong>Example 2</strong>: let’s now infuse this dose in the central compartment instead (CMT=2), for a week. This is translated into the following dataframe:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen2 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">150</span>, <span class="dt">II=</span><span class="dv">24</span>, <span class="dt">ADDL=</span><span class="dv">7</span>, <span class="dt">CMT=</span><span class="dv">2</span>)</code></pre></div>
+<p>Note that infusions (defined with <code>RATE</code>) are injected into the central compartment by default. In the next section, you will learn how to check your model and regimen are well implemented by running simulations.</p>
 </div>
-<div id="simulation-a-model" class="section level2">
-<h2><span class="header-section-number">4.3</span> Simulation a model</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(tdmore1, <span class="dt">regimen=</span>regimen)</code></pre></div>
-<p><img src="API_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(tdmore2, <span class="dt">regimen=</span>regimen)</code></pre></div>
-<p><img src="API_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(tdmore3, <span class="dt">regimen=</span>regimen)</code></pre></div>
-<p><img src="API_files/figure-html/unnamed-chunk-11-3.png" width="672" /></p>
+<div id="model-simulation" class="section level2">
+<h2><span class="header-section-number">4.3</span> Model simulation</h2>
+<p>Simulations in TDMore are done using the <code>predict()</code> function. Let’s have a closer look to its arguments:</p>
+<ul>
+<li>object: this can be a <code>tdmore</code> or a <code>tdmorefit</code> (see section <a href="tdmore-api.html#estimation">4.4</a>) object</li>
+<li>newdata: numeric vector with all times or a dataframe with a <code>TIME</code> column and all the needed output variables</li>
+<li>regimen: the treatment regimen (as defined in section <a href="tdmore-api.html#regimen">4.2</a>)</li>
+<li>parameters: the parameter values to use, missing values are taken from the population</li>
+<li>covariates: the covariates values. They can be time-varying (see section X).</li>
+<li>se: whether to add residual error</li>
+<li>level: how much residual error to add, e.g. 0.95</li>
+</ul>
+<p><strong>Example 1a</strong>: Simulate the first model for a week without residual error</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">times &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">24</span>*<span class="dv">7-1</span>, <span class="dt">by=</span><span class="dv">1</span>)
+data1a &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmore1, <span class="dt">newdata=</span>times, <span class="dt">regimen=</span>regimen1)
+<span class="kw">head</span>(data1a)</code></pre></div>
+<pre><code>##   time KA  V CL     CONC      depot    center TIME
+## 1    0  1 70  4 0.000000 150.000000   0.00000    0
+## 2    1  1 70  4 1.310408  55.181934  91.72857    1
+## 3    2  1 70  4 1.719699  20.300319 120.37894    2
+## 4    3  1 70  4 1.801530   7.468069 126.10712    3
+## 5    4  1 70  4 1.766713   2.747346 123.66993    4
+## 6    5  1 70  4 1.692589   1.010691 118.48126    5</code></pre>
+<p>Because <code>newdata</code> is provided as numeric (with no specified output column), all variables are output.</p>
+<p><strong>Example 1b</strong>: Simulate the first model for a week with residual error</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data1b &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmore1, <span class="dt">newdata=</span>times, <span class="dt">regimen=</span>regimen1, <span class="dt">se=</span>T, <span class="dt">level=</span><span class="fl">0.95</span>)
+<span class="kw">head</span>(data1b)</code></pre></div>
+<pre><code>##   time KA  V CL     CONC      depot    center TIME CONC.upper CONC.lower
+## 1    0  1 70  4 0.000000 150.000000   0.00000    0   0.000000   0.000000
+## 2    1  1 70  4 1.310408  55.181934  91.72857    1   1.053573   1.567243
+## 3    2  1 70  4 1.719699  20.300319 120.37894    2   1.382644   2.056754
+## 4    3  1 70  4 1.801530   7.468069 126.10712    3   1.448437   2.154624
+## 5    4  1 70  4 1.766713   2.747346 123.66993    4   1.420444   2.112983
+## 6    5  1 70  4 1.692589   1.010691 118.48126    5   1.360848   2.024331</code></pre>
+<p>As you can see, lower and upper bounds on the concentration are provided.</p>
+<p><strong>Example 1c</strong>: Simulate the first model for a week with residual error and output selection</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data1c &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmore1, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1, <span class="dt">se=</span>T, <span class="dt">level=</span><span class="fl">0.95</span>)
+<span class="kw">head</span>(data1c)</code></pre></div>
+<pre><code>##   TIME     CONC CONC.upper CONC.lower
+## 1    0 0.000000   0.000000   0.000000
+## 2    1 1.310408   1.053573   1.567243
+## 3    2 1.719699   1.382644   2.056754
+## 4    3 1.801530   1.448437   2.154624
+## 5    4 1.766713   1.420444   2.112983
+## 6    5 1.692589   1.360848   2.024331</code></pre>
+<p>Only the concentration is returned in the previous dataframe.</p>
+<p><strong>Example 2</strong>: Compare the 4 models previously described in section <a href="tdmore-api.html#model">4.1</a></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data1 &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmore1, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1)
+data1$model &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;nlmixr model&quot;</span>)
+
+data2 &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmore2, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1)
+data2$model &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;RxODE model&quot;</span>)
+
+data3 &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmore3, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1)
+data3$model &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;algebraic model&quot;</span>)
+
+data4 &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmore1_WT, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1, <span class="dt">covariates=</span><span class="kw">c</span>(<span class="dt">WT=</span><span class="dv">50</span>))
+data4$model &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;nlxmir model with WT covariate&quot;</span>)
+
+<span class="kw">library</span>(ggplot2)
+<span class="kw">ggplot</span>(<span class="dt">data=</span><span class="kw">rbind</span>(data1, data2, data3, data4), <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC, <span class="dt">group=</span>model)) +<span class="st"> </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span>model))</code></pre></div>
+<p><img src="API_files/figure-html/api_model_comparison-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>The plot above shows that the first 3 models are equivalent. The last model with the covariate is different because a covariate of WT=50 is used (this implies a lower clearance).</p>
 </div>
-<div id="parameter-estimation" class="section level2">
+<div id="estimation" class="section level2">
 <h2><span class="header-section-number">4.4</span> Parameter estimation</h2>
+<p>Parameter estimation section.</p>
 </div>
 <div id="dose-recommendation" class="section level2">
 <h2><span class="header-section-number">4.5</span> Dose recommendation</h2>
