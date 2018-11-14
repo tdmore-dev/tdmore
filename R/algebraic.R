@@ -137,6 +137,7 @@ algebraic <- function(algebraicDefinition) {
 #' @return
 #' A data.frame similar to the newdata data frame, but with predicted values.
 #'
+#' @keywords internal
 model_predict.algebraic <- function(model, newdata, regimen=data.frame(TIME=c()), parameters=c(),
                                     covariates=NULL, extraArguments=list()) {
   # Verify arguments are good

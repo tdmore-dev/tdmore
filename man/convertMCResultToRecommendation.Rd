@@ -21,3 +21,4 @@ a recommendation object
 \description{
 Convert the Monte-Carlo uniroot results into a recommendation object.
 }
+\keyword{internal}

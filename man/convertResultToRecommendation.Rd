@@ -19,3 +19,4 @@ a recommendation object
 \description{
 Convert the result of the uniroot function into a recommendation object.
 }
+\keyword{internal}

@@ -180,6 +180,14 @@ autoplot.tdmore <- function(x, regimen, covariates=NULL, newdata=NULL, ...) {
 ## we cannot substitute data later on.
 ## However, as long as the data was created during ggplot_add, later facetting can happily split up that data.frame further!
 
+#' Create a ggplot object from a `tdmorefit` object.
+#' The plot can be used as normal, but also supports adding specific tdmore layers, such as `ipred`.
+#'
+#' @param data A tdmorefit object
+#'
+#' @inheritParams ggplot2::ggplot
+#' @inheritParams predict.tdmorefit
+#'
 #' @export
 #' @importFrom ggplot2 aes
 ggplot.tdmorefit <- function(data=NULL, mapping=aes(),

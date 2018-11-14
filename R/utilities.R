@@ -22,6 +22,7 @@ vectorToDiagonalMatrix <- function(vector) {
 #' And melts these into a variable (with values XXX1, XXX2, ...) and 4 columns: value, value.median, value.lower and value.upper
 #'
 #' @return the melted dataframe
+#' @keywords internal
 meltPredictions <- function(x, se=FALSE) {
   #tmp <- reshape::melt(x, id.vars="TIME")
   if(se) {

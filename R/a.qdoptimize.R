@@ -77,6 +77,7 @@ runUniroot <- function(rootFunction, interval, ...) {
 #' @param doseRows which rows of the regimen to adapt when searching for a new dose, or NULL to take the last one
 #'
 #' @return a recommendation object
+#' @keywords internal
 convertResultToRecommendation <- function(result, regimen, doseRows) {
   return(structure(
     list(
@@ -101,6 +102,7 @@ convertResultToRecommendation <- function(result, regimen, doseRows) {
 #'
 #' @return a recommendation object
 #' @importFrom dplyr summarise
+#' @keywords internal
 convertMCResultToRecommendation <- function(mcResult, regimen, doseRows, level) {
   ciLevel <- (1-level)/2
   dose <- c(
@@ -136,7 +138,7 @@ updateRegimen <- function(regimen, doseRows = NULL, newDose) {
 
   dose <- numeric(length = length(doseRows)) + newDose
   names(dose) <- paste0(doseRows, ".AMT")
-  updatedRegimen <- transform(regimen, dose)
+  updatedRegimen <- transformRegimen(regimen, dose)
 
   return(updatedRegimen)
 }

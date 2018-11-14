@@ -19,3 +19,4 @@ the melted dataframe
 \description{
 Melt prediction results.
 }
+\keyword{internal}

@@ -1,7 +1,0 @@
-book_filename: "tdmore"
-chapter_name: "Chapter "
-repo: https://github.com/tdmore-dev/tdmore
-output_dir: "."
-rmd_files: ["index.Rmd", "Introduction.Rmd", "Installation.Rmd", "License.Rmd", "API.Rmd", "Vignettes.Rmd"]
-clean: [packages.bib, bookdown.bbl]
-new_session: yes

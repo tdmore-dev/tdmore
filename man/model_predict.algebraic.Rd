@@ -27,3 +27,4 @@ A data.frame similar to the newdata data frame, but with predicted values.
 \description{
 We only support dosing into the default compartment, and only bolus doses
 }
+\keyword{internal}

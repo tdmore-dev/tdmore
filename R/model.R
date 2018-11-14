@@ -12,6 +12,7 @@ assert_that <- assertthat::assert_that
 #' @return
 #' A data.frame similar to the observed data frame, but with predicted values.
 #' @export
+#' @keywords internal
 #'
 model_predict <- function(model, newdata, regimen, parameters, covariates, extraArguments) {
   UseMethod("model_predict")

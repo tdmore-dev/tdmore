@@ -1,0 +1,3 @@
+chapter_name: "Chapter "
+repo: https://github.com/tdmore-dev/tdmore
+clean: [packages.bib, bookdown.bbl]

@@ -39,17 +39,6 @@ discrete.searchspace <- function(searchspace, options=NULL) {
   searchspace
 }
 
-#' Add all combinations of the given parameters
-#'
-#' @param searchspace searchspace object
-#' @param ... All named combinations
-#'
-#' @return A searchspace with all combinations of the given value added
-#' @export
-combinations.searchspace <- function(searchspace, ...) {
-  discrete.searchspace(searchspace, expand.grid(...) )
-}
-
 #' Calculate all possible regimen combinations, as rows in a data.frame
 #'
 #' @param searchspace searchspace object
@@ -80,7 +69,7 @@ possibilitygrid <- function(searchspace) {
 #'
 #' @return The modified treatment regimen
 #' @export
-transform <- function(regimen, x) {
+transformRegimen <- function(regimen, x) {
   for(j in names(x)) {
     rIndex <- as.numeric(strsplit(j, "\\.")[[1]][1]) ## Which row of the regimen
     rCol <- sub("^\\d+\\.", "", j) ## Which column
