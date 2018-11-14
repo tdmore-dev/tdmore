@@ -74,7 +74,7 @@ evaluate <- function(tdmorefit, regimen, searchspace, evaluators) {
 
   ## Main loop
   newGrid <- apply(grid, 1, function(x) {
-    myRegimen <- transform(regimen, x)
+    myRegimen <- transformRegimen(regimen, x)
     for(j in names(evaluators)) {
       evaluatorFunction <- evaluators[[j]]
       x[j] <- evaluatorFunction(tdmorefit, myRegimen)

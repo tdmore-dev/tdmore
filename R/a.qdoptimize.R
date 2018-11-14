@@ -136,7 +136,7 @@ updateRegimen <- function(regimen, doseRows = NULL, newDose) {
 
   dose <- numeric(length = length(doseRows)) + newDose
   names(dose) <- paste0(doseRows, ".AMT")
-  updatedRegimen <- transform(regimen, dose)
+  updatedRegimen <- transformRegimen(regimen, dose)
 
   return(updatedRegimen)
 }

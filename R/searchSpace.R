@@ -80,7 +80,7 @@ possibilitygrid <- function(searchspace) {
 #'
 #' @return The modified treatment regimen
 #' @export
-transform <- function(regimen, x) {
+transformRegimen <- function(regimen, x) {
   for(j in names(x)) {
     rIndex <- as.numeric(strsplit(j, "\\.")[[1]][1]) ## Which row of the regimen
     rCol <- sub("^\\d+\\.", "", j) ## Which column
