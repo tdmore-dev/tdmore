@@ -13,7 +13,8 @@ output: github_document
   </a>
 </div>
 
-# This project
+# TDMore <img src="bookdown/static/tdmore_logo.JPG" align="right" />
+ 
 `tdmore` provides an easy interface to execute post-hoc bayesian estimation of individual profiles, and to find the best dose to put the patient on target.
 
 The package is intended to make it easy to define your own models, and easily create a dose decision support tool for physicians.
