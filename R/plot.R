@@ -30,7 +30,7 @@ plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progres
   if (population) {
     # No need to compute PRED because IPRED = PRED
     plot <- ggplot(mapping=aes_string(x="TIME", y="value", group="variable")) + geom_line(color=blue(), data=ipred)
-    if (se.fit) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.05)
+    if (se.fit) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.1)
 
   } else {
     # Compute PRED
