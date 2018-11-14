@@ -4,7 +4,7 @@
 #' @param vector a numeric vector/list
 #'
 #' @return a diagonal matrix
-#' @keywords internal
+#' @export
 vectorToDiagonalMatrix <- function(vector) {
   diagMatrix <- diag(x = vector)
   if (!is.null(names(vector))) {
