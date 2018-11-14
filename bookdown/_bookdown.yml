@@ -1,6 +1,3 @@
-book_filename: "tdmore"
 chapter_name: "Chapter "
 repo: https://github.com/tdmore-dev/tdmore
-output_dir: "."
 clean: [packages.bib, bookdown.bbl]
-new_session: yes
