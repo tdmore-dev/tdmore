@@ -42,6 +42,7 @@ tdmore_deSolve <- function(parameters, add=0, prop=0, exp=0, ...) {
 #' @importFrom RxODE eventTable
 #' @importFrom deSolve ode
 #'
+#' @keywords internal
 model_predict.tdmore_deSolve <- function(model, newdata, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, extraArguments=list()) {
   if(any(parameters > 10 | parameters < -10)) {
     warning("Solver requested with highly unlikely parameters, returning NA")

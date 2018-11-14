@@ -44,6 +44,8 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, ...) {
 #' @importFrom RxODE eventTable rxSolve
 #' @importFrom dplyr transmute left_join
 #'
+#' @keywords internal
+#'
 model_predict.RxODE <- function(model, newdata, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, extraArguments=list()) {
   ### RxODE sometimes errors out...
   ### Probably not a solver issue, but rather

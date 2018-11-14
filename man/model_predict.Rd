@@ -26,3 +26,4 @@ A data.frame similar to the observed data frame, but with predicted values.
 \description{
 Prototype predict function
 }
+\keyword{internal}

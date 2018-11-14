@@ -17,3 +17,4 @@ a diagonal matrix
 Convert a numeric vector/list into a diagonal matrix.
 If the vector/list is named, names will be used as the column and row names of the resulting diagonal matrix.
 }
+\keyword{internal}
