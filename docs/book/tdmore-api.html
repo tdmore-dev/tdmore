@@ -121,10 +121,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.1.4" data-path="tdmore-api.html"><a href="tdmore-api.html#add-model-covariates"><i class="fa fa-check"></i><b>4.1.4</b> Add model covariates</a></li>
 </ul></li>
 <li class="chapter" data-level="4.2" data-path="tdmore-api.html"><a href="tdmore-api.html#regimen"><i class="fa fa-check"></i><b>4.2</b> Regimen definition</a></li>
-<li class="chapter" data-level="4.3" data-path="tdmore-api.html"><a href="tdmore-api.html#model-simulation"><i class="fa fa-check"></i><b>4.3</b> Model simulation</a></li>
+<li class="chapter" data-level="4.3" data-path="tdmore-api.html"><a href="tdmore-api.html#model-simulation"><i class="fa fa-check"></i><b>4.3</b> Model simulation</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmore"><i class="fa fa-check"></i><b>4.3.1</b> Predict a tdmore object</a></li>
+<li class="chapter" data-level="4.3.2" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmorefit"><i class="fa fa-check"></i><b>4.3.2</b> Predict a tdmorefit object</a></li>
+</ul></li>
 <li class="chapter" data-level="4.4" data-path="tdmore-api.html"><a href="tdmore-api.html#estimation"><i class="fa fa-check"></i><b>4.4</b> Parameter estimation</a></li>
 <li class="chapter" data-level="4.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>4.5</b> Dose recommendation</a></li>
-<li class="chapter" data-level="4.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>4.6</b> Plotting the intermediate steps</a></li>
+<li class="chapter" data-level="4.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>4.6</b> Plotting the intermediate steps</a><ul>
+<li class="chapter" data-level="4.6.1" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmore-object"><i class="fa fa-check"></i><b>4.6.1</b> Plotting a tdmore object</a></li>
+<li class="chapter" data-level="4.6.2" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object"><i class="fa fa-check"></i><b>4.6.2</b> Plotting a tdmorefit object</a></li>
+</ul></li>
 <li class="chapter" data-level="4.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>4.7</b> Extending TDMore</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>5</b> Vignettes</a><ul>
@@ -375,9 +381,12 @@ tdmore1_WT &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelC
 </div>
 <div id="model-simulation" class="section level2">
 <h2><span class="header-section-number">4.3</span> Model simulation</h2>
-<p>Simulations in TDMore are done using the <code>predict()</code> function. Let’s have a closer look to its arguments:</p>
+<p>Simulations in TDMore are done using the <code>predict()</code> function. This function can be applied on both <code>tdmore</code> and <code>tdmorefit</code> objects altough their arguments differ a little (see <a href="tdmore-api.html#predicttdmore">4.3.1</a> and <a href="tdmore-api.html#predicttdmorefit">4.3.2</a>)</p>
+<div id="predicttdmore" class="section level3">
+<h3><span class="header-section-number">4.3.1</span> Predict a tdmore object</h3>
+<p>Let’s have a closer look at the <code>predict.tdmore</code> arguments:</p>
 <ul>
-<li>object: this can be a <code>tdmore</code> or a <code>tdmorefit</code> (see section <a href="tdmore-api.html#estimation">4.4</a>) object</li>
+<li>object: a <code>tdmore</code> object</li>
 <li>newdata: numeric vector with all times or a dataframe with a <code>TIME</code> column and all the needed output variables</li>
 <li>regimen: the treatment regimen (as defined in section <a href="tdmore-api.html#regimen">4.2</a>)</li>
 <li>parameters: the parameter values to use, missing values are taken from the population</li>
@@ -437,15 +446,111 @@ data4<span class="op">$</span>model &lt;-<span class="st"> </span><span class="k
 <p><img src="04-API_files/figure-html/api_model_comparison-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>The plot above shows that the first 3 models are equivalent. The last model with the covariate is different because a covariate of WT=50 is used (this implies a lower clearance).</p>
 </div>
+<div id="predicttdmorefit" class="section level3">
+<h3><span class="header-section-number">4.3.2</span> Predict a tdmorefit object</h3>
+<p>Arguments of function <code>predict.tdmorefit</code> slightly differ from function <code>predict.tdmore</code>:</p>
+<ul>
+<li>object: a <code>tdmorefit</code> object</li>
+<li>newdata: numeric vector with all times or a dataframe with a <code>TIME</code> column and all the needed output variables</li>
+<li>regimen: the treatment regimen (as defined in section <a href="tdmore-api.html#regimen">4.2</a>)</li>
+<li>parameters: set parameters. If missing, or if only part of the parameters are specified, the other parameters are taken from the tdmorefit object</li>
+<li>covariates: the covariates values. They can be time-varying (see section X).</li>
+<li>se.fit: TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower</li>
+<li>level: the confidence interval, or NA to return all mc.maxpts results</li>
+<li>mc.maxpts: maximum number of points to sample in Monte Carlo simulation</li>
+<li>ip.maxpts: maximum number of points to interpolate if newdata is not given</li>
+</ul>
+<p>The main difference between <code>predict.tdmore</code> and <code>predict.tdmorefit</code> when a confidence interval is asked (respectively <code>se=T</code> or <code>se.fit=T</code>) is that the latter performs a monte-carlo simulation to build a confidence interval on the prediction while the former builds a confidence interval based on the error model.</p>
+</div>
+</div>
 <div id="estimation" class="section level2">
 <h2><span class="header-section-number">4.4</span> Parameter estimation</h2>
-<p>Parameter estimation section.</p>
+<p>Parameter estimation is done using the <code>estimate()</code> function. This function returns a <code>tdmorefit</code> object. Let’s first discuss all its main arguments in detail:</p>
+<ul>
+<li>object: this must be a <code>tdmore</code> object</li>
+<li>observed: data frame with at least a <code>TIME</code> column, and all observed data. The observed data will be compared to the model predictions. If not specified, we estimate the population prediction.</li>
+<li>covariates: the covariates values. They can be time-varying (see section X).</li>
+<li>par (optional): starting parameters for the MLE minimization. This must be a numeric vector. Parameters must be ordered.</li>
+</ul>
+<p>The <code>estimate()</code> function contains a few more arguments allowing to configure the optimisation method. These are detailled in the documentation (Try <code>?tdmore::estimate</code> in the R console).</p>
+<p><strong>Example 1</strong>: Find individual parameters knowing some observed data.</p>
+<p>Assume we have collected 2 concentrations at 24h and 48h. In the following code, we’d like to estimate the parameters for this individual.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">observed &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">24</span>,<span class="dv">48</span>), <span class="dt">CONC=</span><span class="kw">c</span>(<span class="fl">0.4</span>,<span class="fl">0.5</span>))
+tdmorefit &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span class="dt">tdmore =</span> tdmore1, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen1)
+<span class="kw">summary</span>(tdmorefit)</code></pre></div>
+<pre><code>## Call:
+## estimate(tdmore = tdmore1, observed = observed, regimen = regimen1)
+## Coef:
+##        EKA         EV        ECL 
+## 0.01971374 0.02308428 0.24015815 
+## 
+## OFV: -6.51 (pop=2.1, pred=-8.61)
+## 
+## Observations:
+##  TIME CONC
+##    24  0.4
+##    48  0.5
+## 
+## Regimen:
+##  TIME AMT
+##     0 150
+##    24 150
+##    48 150
+##    72 150
+##    96 150
+##   120 150
+##   144 150
+## 
+## Covariates: /
+## 
+## Coefficients:
+##  name  value        (95% CI)    se
+##   EKA 0.0197   (-1.04, 1.08) 0.541
+##    EV 0.0231 (-0.898, 0.944) 0.470
+##   ECL 0.2400   (-0.17, 0.65) 0.209</code></pre>
+<p>The above summary shows us how well the observed data was estimated. In particular, the objective function value (OFV) is shown. The higher this value, the better the fit. <code>pop</code> value is the population likelihood (it can be seen as how well the parameters fit the population PK model), <code>pred</code> value is the prediction likelihood (it can be seen as how well the parameters fit the observed data, knowing the population PK model). The summary also shows the coefficient values, as well as their 95% confidence interval (CI) and standard error (se). Because all ETA’s in this model have a standard deviation of <code>sqrt(0.3)=0.547</code>, we can deduce that the observed data only helped estimate ECL (standard errors of EKA and EV are too close from their original standard deviation).</p>
+<p>Predictions on the <code>tdmorefit</code> object can be done as follows (see also <a href="tdmore-api.html#predicttdmorefit">4.3.2</a>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmorefit, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se.fit=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p>Let’s now see what the individual prediction <code>tdmorefit</code> looks like on a plot.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME))  <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Individual&quot;</span>, <span class="dt">y=</span>CONC.median)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">&quot;Individual&quot;</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">&quot;tomato1&quot;</span>, <span class="dt">alpha=</span><span class="fl">0.10</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Population&quot;</span>, <span class="dt">y=</span>CONC), <span class="dt">data=</span>data1) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y=</span>CONC), <span class="dt">data=</span>observed) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw">c</span>(<span class="st">&quot;tomato1&quot;</span>, <span class="st">&quot;steelblue2&quot;</span>))</code></pre></div>
+<p><img src="04-API_files/figure-html/api_param_estimation-1.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dose-recommendation" class="section level2">
 <h2><span class="header-section-number">4.5</span> Dose recommendation</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="ot">NA</span>, <span class="dt">II=</span><span class="dv">24</span>, <span class="dt">ADDL=</span><span class="dv">7</span>)
+
+recommendation &lt;-<span class="st"> </span><span class="kw">findDose</span>(
+  tdmorefit,
+  <span class="dt">regimen =</span> newRegimen,
+  <span class="dt">interval =</span> <span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">5000</span>),
+  <span class="dt">target =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="dv">144</span>, <span class="dt">CONC =</span> <span class="fl">0.75</span>)
+  )
+
+<span class="kw">summary</span>(recommendation)</code></pre></div>
+<pre><code>## $dose
+## [1] 224.7158
+## 
+## $regimen
+##   TIME      AMT II ADDL
+## 1    0 224.7158 24    7</code></pre>
 </div>
 <div id="plotting-the-intermediate-steps" class="section level2">
 <h2><span class="header-section-number">4.6</span> Plotting the intermediate steps</h2>
+<div id="plotting-a-tdmore-object" class="section level3">
+<h3><span class="header-section-number">4.6.1</span> Plotting a tdmore object</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(tdmore1, <span class="dt">regimen=</span>regimen1)</code></pre></div>
+<p><img src="04-API_files/figure-html/plot_tdmore_object-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="plotting-a-tdmorefit-object" class="section level3">
+<h3><span class="header-section-number">4.6.2</span> Plotting a tdmorefit object</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(tdmorefit)</code></pre></div>
+<p><img src="04-API_files/figure-html/plot_tdmorefit_object-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
 </div>
 <div id="extending-tdmore" class="section level2">
 <h2><span class="header-section-number">4.7</span> Extending TDMore</h2>
