@@ -126,10 +126,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.3.2" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmorefit"><i class="fa fa-check"></i><b>4.3.2</b> Predict a tdmorefit object</a></li>
 </ul></li>
 <li class="chapter" data-level="4.4" data-path="tdmore-api.html"><a href="tdmore-api.html#estimation"><i class="fa fa-check"></i><b>4.4</b> Parameter estimation</a></li>
-<li class="chapter" data-level="4.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>4.5</b> Dose recommendation</a></li>
+<li class="chapter" data-level="4.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>4.5</b> Dose recommendation</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="tdmore-api.html"><a href="tdmore-api.html#calling-the-finddose-method"><i class="fa fa-check"></i><b>4.5.1</b> Calling the findDose method</a></li>
+<li class="chapter" data-level="4.5.2" data-path="tdmore-api.html"><a href="tdmore-api.html#visualise-a-recommendation"><i class="fa fa-check"></i><b>4.5.2</b> Visualise a recommendation</a></li>
+</ul></li>
 <li class="chapter" data-level="4.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>4.6</b> Plotting the intermediate steps</a><ul>
 <li class="chapter" data-level="4.6.1" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmore-object"><i class="fa fa-check"></i><b>4.6.1</b> Plotting a tdmore object</a></li>
 <li class="chapter" data-level="4.6.2" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object"><i class="fa fa-check"></i><b>4.6.2</b> Plotting a tdmorefit object</a></li>
+<li class="chapter" data-level="4.6.3" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmoreprofile-object"><i class="fa fa-check"></i><b>4.6.3</b> Plotting a tdmoreprofile object</a></li>
 </ul></li>
 <li class="chapter" data-level="4.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>4.7</b> Extending TDMore</a></li>
 </ul></li>
@@ -176,7 +180,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Model taken from literature: Soulele, K., et al. “Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.” European Journal of Pharmaceutical Sciences 80 (2015): 33-42.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlmixr)
 
-modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
+modelCode &lt;-<span class="st"> </span>function(){
   <span class="kw">ini</span>({
     TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span>
     TVCL &lt;-<span class="st"> </span><span class="dv">659</span> <span class="co">#L/h</span>
@@ -184,29 +188,29 @@ modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
     TVV2 &lt;-<span class="st"> </span><span class="dv">5550</span> <span class="co">#L</span>
     TVQ &lt;-<span class="st"> </span><span class="dv">259</span> <span class="co">#L/h</span>
     
-    EKa <span class="op">~</span><span class="st"> </span><span class="fl">0.04507129</span> <span class="co">#0.2123**2</span>
-    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.1535856</span> <span class="co">#0.3919**2</span>
-    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.09223369</span> <span class="co">#0.3037**2</span>
-    EV2 <span class="op">~</span><span class="st"> </span><span class="fl">0.208301</span> <span class="co">#0.4564**2</span>
-    EQ <span class="op">~</span><span class="st"> </span><span class="fl">0.1015697</span><span class="co"># 0.3187**2</span>
+    EKa ~<span class="st"> </span><span class="fl">0.04507129</span> <span class="co">#0.2123**2</span>
+    ECL ~<span class="st"> </span><span class="fl">0.1535856</span> <span class="co">#0.3919**2</span>
+    EV1 ~<span class="st"> </span><span class="fl">0.09223369</span> <span class="co">#0.3037**2</span>
+    EV2 ~<span class="st"> </span><span class="fl">0.208301</span> <span class="co">#0.4564**2</span>
+    EQ ~<span class="st"> </span><span class="fl">0.1015697</span><span class="co"># 0.3187**2</span>
     
     EPS_ADD &lt;-<span class="st"> </span><span class="fl">1.91</span> <span class="co">#</span>
     EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span>
   })
   <span class="kw">model</span>({
-    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EKa)
-    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(ECL)
-    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EV1)
-    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EV2)
-    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EQ)
-    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1
-    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2
+    Ka &lt;-<span class="st"> </span>TVKa *<span class="st"> </span><span class="kw">exp</span>(EKa)
+    CL &lt;-<span class="st"> </span>TVCL *<span class="st"> </span><span class="kw">exp</span>(ECL)
+    V1 &lt;-<span class="st"> </span>TVV1 *<span class="st"> </span><span class="kw">exp</span>(EV1)
+    V2 &lt;-<span class="st"> </span>TVV2 *<span class="st"> </span><span class="kw">exp</span>(EV2)
+    Q &lt;-<span class="st"> </span>TVQ *<span class="st"> </span><span class="kw">exp</span>(EQ)
+    K12 &lt;-<span class="st"> </span>Q/V1
+    K21 &lt;-<span class="st"> </span>Q/V2
 
-    d<span class="op">/</span><span class="kw">dt</span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
-    d<span class="op">/</span><span class="kw">dt</span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
+    d/<span class="kw">dt</span>(center) =<span class="st"> </span>-<span class="st"> </span>CL/V1 *<span class="st"> </span>center -<span class="st"> </span>K12*center +<span class="st"> </span>K21 *<span class="st"> </span>periph
+    d/<span class="kw">dt</span>(periph) =<span class="st"> </span>K12*center -<span class="st"> </span>K21 *<span class="st"> </span>periph
 
-    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span>
-    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)
+    CONC =<span class="st"> </span>center /<span class="st"> </span>V1 *<span class="st"> </span><span class="dv">1000</span>
+    CONC ~<span class="st"> </span><span class="kw">prop</span>(EPS_PROP) +<span class="st"> </span><span class="kw">add</span>(EPS_ADD)
   })
 }
 nlmixrModel &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)
@@ -219,17 +223,17 @@ m1 &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrModel)</co
   <span class="dt">AMT=</span><span class="dv">500</span> <span class="co"># 500ug standard dose</span>
 )
 
-adhering &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>))
+adhering &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span>*<span class="dv">24</span>))
 
 actual &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">TIME=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dt">by=</span><span class="dv">24</span>, <span class="dt">length.out=</span><span class="dv">30</span>),
-  <span class="dt">AMT=</span><span class="dv">500</span><span class="op">*</span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="dv">30</span>, <span class="dt">replace=</span><span class="ot">TRUE</span>) <span class="co"># probability of 50% to not take the dose</span>
+  <span class="dt">AMT=</span><span class="dv">500</span>*<span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="dv">30</span>, <span class="dt">replace=</span><span class="ot">TRUE</span>) <span class="co"># probability of 50% to not take the dose</span>
 )
-nonAdhering &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>))
+nonAdhering &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span>*<span class="dv">24</span>))
 
 <span class="kw">library</span>(ggplot2)
 pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m1, <span class="dt">regimen=</span>regimen)
-<span class="kw">ggplot</span>(pred, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>)) <span class="op">+</span>
+<span class="kw">ggplot</span>(pred, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span>*<span class="dv">24</span>)) +
 <span class="st">  </span><span class="kw">ipred</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC))</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#  labs(x=&quot;Time (hours)&quot;, y=&quot;Concentration (mg/L)&quot;)</span></code></pre></div>

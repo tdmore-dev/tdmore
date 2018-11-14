@@ -126,10 +126,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.3.2" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmorefit"><i class="fa fa-check"></i><b>4.3.2</b> Predict a tdmorefit object</a></li>
 </ul></li>
 <li class="chapter" data-level="4.4" data-path="tdmore-api.html"><a href="tdmore-api.html#estimation"><i class="fa fa-check"></i><b>4.4</b> Parameter estimation</a></li>
-<li class="chapter" data-level="4.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>4.5</b> Dose recommendation</a></li>
+<li class="chapter" data-level="4.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>4.5</b> Dose recommendation</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="tdmore-api.html"><a href="tdmore-api.html#calling-the-finddose-method"><i class="fa fa-check"></i><b>4.5.1</b> Calling the findDose method</a></li>
+<li class="chapter" data-level="4.5.2" data-path="tdmore-api.html"><a href="tdmore-api.html#visualise-a-recommendation"><i class="fa fa-check"></i><b>4.5.2</b> Visualise a recommendation</a></li>
+</ul></li>
 <li class="chapter" data-level="4.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>4.6</b> Plotting the intermediate steps</a><ul>
 <li class="chapter" data-level="4.6.1" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmore-object"><i class="fa fa-check"></i><b>4.6.1</b> Plotting a tdmore object</a></li>
 <li class="chapter" data-level="4.6.2" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object"><i class="fa fa-check"></i><b>4.6.2</b> Plotting a tdmorefit object</a></li>
+<li class="chapter" data-level="4.6.3" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmoreprofile-object"><i class="fa fa-check"></i><b>4.6.3</b> Plotting a tdmoreprofile object</a></li>
 </ul></li>
 <li class="chapter" data-level="4.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>4.7</b> Extending TDMore</a></li>
 </ul></li>
@@ -174,9 +178,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="install" class="section level1">
 <h1><span class="header-section-number">Chapter 2</span> Installation</h1>
 <p>TDMore depends on package <code>RxODE</code>, which requires a working C and fortran compiler to work. Installation procedure can be found <a href="https://github.com/nlmixrdevelopment/RxODE">here</a>. Once <code>RxODE</code> installed, simply execute the following command in the R console:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;tdmore-dev/tdmore&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;tdmore-dev/tdmore&quot;</span>)</code></pre></div>
 <p>If you would like to install the package with all its vignettes, please run the following command instead:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;tdmore-dev/tdmore&quot;</span>, <span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;tdmore-dev/tdmore&quot;</span>, <span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>)</code></pre></div>
 
 </div>
             </section>

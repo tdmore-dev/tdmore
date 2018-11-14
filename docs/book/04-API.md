@@ -1,6 +1,6 @@
 # TDMore API
 
-The following section shows an overview of the main methods from the TDMore API and tells you how to use them.
+The following section shows an overview of the main methods of the TDMore API and tells you how to use them.
 
 ## Model definition {#model}
 
@@ -53,7 +53,7 @@ library(nlmixr)
 tdmore1 <- nlmixrUI(modelCode1) %>% tdmore()
 ```
 
-Your model is ready to use. Have a look at the content by calling:
+Your model is ready to use. Have a look at its content by calling:
 
 
 ```r
@@ -76,7 +76,7 @@ summary(tdmore1)
 ##  CONC             0               0.1                0
 ```
 
-This summary tells you the model contains 3 parameters: EKA, EV and ECL. These parameters will be estimated by TDMore to fit individual observations as best as possible. The model does not have any covariates (to see how covariates are included, go to section X). Output variable is the 'CONC' variable. The residual error model on this variable is proportional. Please note that the underlying structural model is `RxODE`, not `nlxmir`. This is because the `nlxmir` model is automatically converted into a RxODE model. The `RxODE` package is used extensively in TDMore to simulate data. 
+This summary tells you the model contains 3 parameters: EKA, EV and ECL. These parameters will be estimated by TDMore to fit individual observations as best as possible. The model does not have any covariates (to see how covariates are included, go to section X). Output variable is the `CONC` variable. The residual error model on this variable is proportional. Please note that the underlying structural model is `RxODE`, not `nlxmir`. This is because the `nlxmir` model is automatically converted into a RxODE model. The `RxODE` package is used extensively in TDMore to simulate data. 
 
 ### Build a TDMore object from an RxODE model
 
@@ -311,7 +311,7 @@ Let's have a closer look at the `predict.tdmore` arguments:
 
 
 ```r
-times <- seq(0, 24*7-1, by=1)
+times <- seq(0, 24*7, by=1)
 data1a <- predict(tdmore1, newdata=times, regimen=regimen1)
 head(data1a)
 ```
@@ -417,9 +417,9 @@ Parameter estimation is done using the `estimate()` function. This function retu
 - covariates: the covariates values. They can be time-varying (see section X).
 - par (optional): starting parameters for the MLE minimization. This must be a numeric vector. Parameters must be ordered.
 
-The `estimate()` function contains a few more arguments allowing to configure the optimisation method. These are detailled in the documentation (Try `?tdmore::estimate` in the R console).
+The `estimate()` function contains a few more arguments allowing to configure the optimisation method. These are detailled in the documentation (try `?tdmore::estimate` in the R console).
 
-**Example 1**: Find individual parameters knowing some observed data.
+**Example**: Find individual parameters knowing some observed data.
 
 Assume we have collected 2 concentrations at 24h and 48h. In the following code, we'd like to estimate the parameters for this individual.
 
@@ -488,28 +488,142 @@ ggplot(data, aes(x=TIME))  +
 
 ## Dose recommendation
 
+### Calling the findDose method
+
+The `findDose()` method allows you to find the right dose to use according to one or multiple targets. Its main arguments are:
+
+- tdmorefit: the `tdmorefit` object
+- regimen: the regimen (see section \@ref(regimen))
+- doseRows (optional): which rows of the regimen to adapt when searching for a new dose, or NULL to take the last one
+- interval (optional): which interval to search a dose in
+- target: target value, as a data.frame
+
+The `findDose()` function contains a few more arguments, namely, to build a confidence interval on the returned dose using Monte-Carlo simulation. These are detailled in the documentation (try `?tdmore::findDose` in the R console).
+
+**Example 1**: Reach the population trough concentration (first solution)
+
+Assume your indidual needs to reach a concentration of 0.75 after 1 week. A first solution is to find a daily dose that will achieve this. This can be done as follows: 
+
 
 ```r
 newRegimen <- data.frame(TIME=0, AMT=NA, II=24, ADDL=7)
 
-recommendation <- findDose(
+recommendation1 <- findDose(
   tdmorefit,
   regimen = newRegimen,
-  interval = c(10, 5000),
-  target = data.frame(TIME = 144, CONC = 0.75)
+  interval = c(1, 1000),
+  target = data.frame(TIME = 168, CONC = 0.75)
   )
 
-summary(recommendation)
+summary(recommendation1)
 ```
 
 ```
 ## $dose
-## [1] 224.7158
+## [1] 224.7092
 ## 
 ## $regimen
 ##   TIME      AMT II ADDL
-## 1    0 224.7158 24    7
+## 1    0 224.7092 24    7
 ```
+
+A daily dose of 225mg is recommended for this specific subject.
+
+**Example 2**: Reach the population trough concentration (second solution)
+
+Another possible way is to adapt the last dose only. This can be specified using the following regimen:
+
+
+```r
+newRegimen <- data.frame(TIME=c(0,1,2,3,4,5,6)*24, AMT=c(150,150,150,150,150,150,NA))
+
+recommendation2 <- findDose(
+  tdmorefit,
+  regimen = newRegimen,
+  interval = c(1, 1000),
+  target = data.frame(TIME = 168, CONC = 0.75)
+  )
+
+summary(recommendation2)
+```
+
+```
+## $dose
+## [1] 241.3276
+## 
+## $regimen
+##   TIME      AMT
+## 1    0 150.0000
+## 2   24 150.0000
+## 3   48 150.0000
+## 4   72 150.0000
+## 5   96 150.0000
+## 6  120 150.0000
+## 7  144 241.3276
+```
+
+A last dose of 241mg is recommended for this specific subject.
+
+**Example 3**: Ask for a confidence interval around the dose
+
+Use argument `se.fit` as follows:
+
+
+```r
+newRegimen <- data.frame(TIME=c(0,1,2,3,4,5,6)*24, AMT=c(150,150,150,150,150,150,NA))
+
+recommendation3 <- findDose(
+  tdmorefit,
+  regimen = newRegimen,
+  interval = c(1, 1000),
+  target = data.frame(TIME = 168, CONC = 0.75),
+  se.fit = T
+  )
+
+summary(recommendation3)
+```
+
+```
+## $dose
+## dose.median  dose.lower  dose.upper 
+##    245.7906    209.8335    362.3627 
+## 
+## $regimen
+##   TIME      AMT
+## 1    0 150.0000
+## 2   24 150.0000
+## 3   48 150.0000
+## 4   72 150.0000
+## 5   96 150.0000
+## 6  120 150.0000
+## 7  144 245.7906
+```
+
+A 95% confidence interval is returned.
+
+### Visualise a recommendation
+
+Let's compare the first and second examples.
+
+
+```r
+tdmorefit$regimen <- recommendation1$regimen
+data1 <- predict(tdmorefit, newdata=data.frame(TIME=times, CONC=NA), se.fit=F)
+data1$solution <- factor("Solution 1")
+
+tdmorefit$regimen <- recommendation2$regimen
+data2 <- predict(tdmorefit, newdata=data.frame(TIME=times, CONC=NA), se.fit=F)
+data2$solution <- factor("Solution 2")
+
+ggplot(rbind(data1, data2), aes(x=TIME, group=solution))  +
+  geom_line(aes(color=solution, y=CONC)) +
+  geom_hline(yintercept=0.75, linetype = "dashed") +
+  geom_point(aes(x=168, y=0.75), shape=1, size=3)
+```
+
+<img src="04-API_files/figure-html/plot_tdmorefit_recommendation-1.png" width="768" style="display: block; margin: auto;" />
+
+Both solutions achieve the target at the right time.
 
 ## Plotting the intermediate steps
 
@@ -530,5 +644,15 @@ plot(tdmorefit)
 ```
 
 <img src="04-API_files/figure-html/plot_tdmorefit_object-1.png" width="768" style="display: block; margin: auto;" />
+
+### Plotting a tdmoreprofile object
+
+```r
+profile <- profile(tdmorefit, maxpts=50, limits = list(ECL=c(0,0.7)), fix=c(EKA=0))
+plot(profile)
+```
+
+<img src="04-API_files/figure-html/plot_tdmoreprofile_object-1.png" width="768" style="display: block; margin: auto;" />
+
 
 ## Extending TDMore
