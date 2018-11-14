@@ -1,0 +1,135 @@
+## This file configures the building process for devtools::build_site()
+home:
+  strip_header: true
+links:
+  - text: The TDMore book
+    href: book/index.html
+
+development:
+  mode: auto  # detect based on version number
+  version_label: warning
+  version_tooltip: "Parameter estimation is stable, but dose recommendation API is subject to change"
+
+reference:
+- title: Defining your model
+  desc: >
+    Parameter estimation and dose recommendation needs a model. The methods below
+    allow you to construct a model using `nlmixr`, `RxODE`, `deSolve` or algebraic equations.
+  contents:
+  - algebraic
+  - pk1cptivbolusVCL
+  - pk1cptoralbolusVCL
+  - tdmore
+  - tdmore.algebraic
+  - tdmore.default
+  - tdmore.nlmixrUI
+  - tdmore.RxODE
+  - tdmore_deSolve
+  - errorModel
+  - print.tdmore
+  - summary.tdmore
+  - formula.tdmore
+
+- title: "Simulating from the model"
+  desc: >
+    TDMore offers a single unifying interface to simulate from a model.
+  contents:
+  - predict.tdmore
+  - model.frame.tdmore
+  - residuals.tdmore
+
+- title: "Estimating individual parameters"
+  desc: >
+    Use this simple command to estimate individual parameters. This results in a `tdmorefit` object.
+    You can also define your own `tdmorefit` object with fixed parameter estimates.
+  contents:
+  - estimate
+  - tdmorefit
+  - fitted.tdmorefit
+  - formula.tdmorefit
+  - logLik.tdmorefit
+  - model.frame.tdmorefit
+  - predict.tdmorefit
+  - print.tdmorefit
+  - summary.tdmorefit
+  - coef.tdmorefit
+  - vcov.tdmorefit
+  - confint.tdmorefit
+
+- title: "Investigate the log-likelihood profile"
+  desc: >
+    Get more information about the log-likelihood profile, how it looks like, and why a certain
+    parameter set was estimated.
+  contents:
+  - profile.tdmorefit
+  - getLikelihoodFun
+  - ll
+  - pop_ll
+  - pred_ll
+
+- title: "Plotting"
+  desc: >
+    We offer many plotting functions, all based on `ggplot2`.
+    We suggest you build a `ggplot` object using `ggplot.tdmorefit()`,
+    allowing you to do things like `ggplot(myFit) + ipred()`.
+  contents:
+  - ggplot.tdmorefit
+  - ipred
+  - plot.tdmore
+  - plot.tdmorefit
+  - plot.tdmoreprofile
+  - autoplot.tdmore
+  - autoplot.tdmorefit
+
+- title: "Dose recommendation"
+  desc: >
+    Define a target value to reach, and find the dose that will bring the patient to that target.
+  contents:
+  - computeTmax
+  - findDose
+  - coef.recommendation
+  - plotpossibilities
+  - possibilitygrid
+  - searchspace
+  - transformRegimen
+  - updateRegimen
+  - discrete.searchspace
+  - evaluate
+  - flatten
+  - print.recommendation
+  - summary.recommendation
+
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - tutorials
+    - news
+    right: github
+  components:
+    home:
+      icon: fa-home fa-lg
+      href: index.html
+    book:
+      icon: fa-book
+      text: Book
+      href: book/index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    intro:
+      text: Get started
+      href: articles/tdmore.html
+    articles:
+      text: Articles
+      menu:
+      - text: Multiple endpoints in TDMore
+        href: articles/tdmore_multiple_endpoints.html
+      - text: Testing adherence using TDMore
+        href: articles/testing_adherence.html
+    github:
+      icon: fa-github fa-lg
+      href: https://github.com/tdmore-dev/tdmore
