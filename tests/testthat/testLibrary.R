@@ -2,11 +2,11 @@ library(tdmore)
 library(RxODE)
 library(testthat)
 
-context("Test that the algebraic library works as intented")
+context("Test that the algebraic library gives the same results as RxODE")
 
-omegas1=list(V=0.28^2, CL=0.19^2)
-mod1 <- pk1cptivbolusVCL(THETA = list(V = 61, CL = 3.7),
-                   OMEGA = omegas1) %>% algebraic() %>% tdmore(res_var=list(errorModel("CONC", exp=0.30)))
+mod1 <- pk1cptivbolusVCL(TV = 61, TVCL = 3.7,
+                         OV=0.28^2, OCL=0.19^2,
+                         res_var=list(errorModel("CONC", exp=0.30)))
 
 modelCode <- "
 Vc = 61 * exp(EV);

@@ -4,15 +4,12 @@
 \alias{tdmore.algebraic}
 \title{Build a tdmore object based on an algebraic model}
 \usage{
-\method{tdmore}{algebraic}(model, res_var, parameters = NULL,
-  omega = NULL, ...)
+\method{tdmore}{algebraic}(model, res_var, omega, ...)
 }
 \arguments{
 \item{model}{The algebraic model}
 
 \item{res_var}{the residual variability}
-
-\item{parameters}{List of parameters, should be NULL}
 
 \item{omega}{the omega matrix of the model}
 

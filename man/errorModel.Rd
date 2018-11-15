@@ -4,7 +4,7 @@
 \alias{errorModel}
 \title{Instantiate a new error model.}
 \usage{
-errorModel(var, add = 0, prop = 0, exp = 0)
+errorModel(var = "CONC", add = 0, prop = 0, exp = 0)
 }
 \arguments{
 \item{var}{the related variable name}

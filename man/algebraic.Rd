@@ -2,16 +2,24 @@
 % Please edit documentation in R/algebraic.R
 \name{algebraic}
 \alias{algebraic}
-\title{Use an external function to generate an algebraic model, capable of being used with tdmore()}
+\title{Use an external function to generate an algebraic model, capable of being used with tdmore()
+Algebraic functions are assumed to be dose-linear, meaning that they can be calculated for a single dose
+and then summed up for multiple doses.}
 \usage{
-algebraic(algebraicDefinition)
+algebraic(fun)
 }
 \arguments{
-\item{algebraicDefinition}{the algebraic model definition}
+\item{fun}{a function with 'time' as the first argument, and additional parameters as needed.
+In case parameters will be estimated, they should have a mean of '0' and be normal-distributed.
+
+The function can also include parameters `TIME`, `AMT`, `II`, `ADDL`, `RATE`, `DURATION` or `CMT`.
+These are then taken from the treatment regimen.}
 }
 \value{
-An algebraic model
+An algebraic prediction model
 }
 \description{
 Use an external function to generate an algebraic model, capable of being used with tdmore()
+Algebraic functions are assumed to be dose-linear, meaning that they can be calculated for a single dose
+and then summed up for multiple doses.
 }

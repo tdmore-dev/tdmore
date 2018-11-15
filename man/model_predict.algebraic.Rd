@@ -11,18 +11,16 @@
 \arguments{
 \item{model}{the algebraic model}
 
-\item{newdata}{dataframe with at least a column 'TIME' and other values. A prediction will be generated for each filled-in value.}
+\item{newdata}{dataframe with a column 'TIME' and 'CONC'. Other columns are ignored.}
 
 \item{regimen}{dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)}
 
-\item{parameters}{either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector}
+\item{parameters}{a named numeric vector}
 
 \item{covariates}{named vector, or data.frame with column 'TIME', and at least TIME 0}
-
-\item{extraArguments}{named list with extra arguments to use for call}
 }
 \value{
-A data.frame similar to the newdata data frame, but with predicted values.
+A data.frame similar to the newdata data frame, but with CONC column filled out.
 }
 \description{
 We only support dosing into the default compartment, and only bolus doses
