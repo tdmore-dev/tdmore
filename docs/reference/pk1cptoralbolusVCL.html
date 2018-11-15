@@ -175,11 +175,24 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pk1cptivbolusVCL.html'>pk1cptivbolusVCL</a></span>(
+    <pre class="examples"><div class='input'><span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'>pk1cptoralbolusVCL</span>(
   <span class='kw'>TVKA</span><span class='kw'>=</span><span class='fl'>0.5</span>, <span class='kw'>TVV</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>TVCL</span><span class='kw'>=</span><span class='fl'>5</span>,
   <span class='kw'>OKA</span><span class='kw'>=</span><span class='fl'>0.70</span>, <span class='kw'>OV</span><span class='kw'>=</span><span class='fl'>0.20</span>, <span class='kw'>OCL</span><span class='kw'>=</span><span class='fl'>0.30</span>,
   <span class='fu'><a href='errorModel.html'>errorModel</a></span>(<span class='kw'>prop</span><span class='kw'>=</span><span class='fl'>0.1</span>)
-)</div><div class='output co'>#&gt; <span class='error'>Error in pk1cptivbolusVCL(TVKA = 0.5, TVV = 10, TVCL = 5, OKA = 0.7, OV = 0.2,     OCL = 0.3, errorModel(prop = 0.1)): unused arguments (TVKA = 0.5, OKA = 0.7)</span></div><div class='input'><span class='fu'>summary</span>(<span class='no'>m1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in summary(m1): object 'm1' not found</span></div></pre>
+)
+<span class='fu'>summary</span>(<span class='no'>m1</span>)</div><div class='output co'>#&gt; Structural model: algebraic 
+#&gt; 
+#&gt; Parameters:
+#&gt;  name var        cv
+#&gt;    EV 0.2 0.4472136
+#&gt;   ECL 0.3 0.5477226
+#&gt;   EKA 0.7 0.8366600
+#&gt; 
+#&gt; Covariates: / 
+#&gt; 
+#&gt; Residual error model:
+#&gt;  name additiveError proportionalError exponentialError
+#&gt;  CONC             0               0.1                0</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

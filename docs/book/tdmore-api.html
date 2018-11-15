@@ -126,10 +126,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.3.2" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmorefit"><i class="fa fa-check"></i><b>4.3.2</b> Predict a tdmorefit object</a></li>
 </ul></li>
 <li class="chapter" data-level="4.4" data-path="tdmore-api.html"><a href="tdmore-api.html#estimation"><i class="fa fa-check"></i><b>4.4</b> Parameter estimation</a></li>
-<li class="chapter" data-level="4.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>4.5</b> Dose recommendation</a></li>
+<li class="chapter" data-level="4.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>4.5</b> Dose recommendation</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="tdmore-api.html"><a href="tdmore-api.html#calling-the-finddose-method"><i class="fa fa-check"></i><b>4.5.1</b> Calling the findDose method</a></li>
+<li class="chapter" data-level="4.5.2" data-path="tdmore-api.html"><a href="tdmore-api.html#visualise-a-recommendation"><i class="fa fa-check"></i><b>4.5.2</b> Visualise a recommendation</a></li>
+</ul></li>
 <li class="chapter" data-level="4.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>4.6</b> Plotting the intermediate steps</a><ul>
 <li class="chapter" data-level="4.6.1" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmore-object"><i class="fa fa-check"></i><b>4.6.1</b> Plotting a tdmore object</a></li>
 <li class="chapter" data-level="4.6.2" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object"><i class="fa fa-check"></i><b>4.6.2</b> Plotting a tdmorefit object</a></li>
+<li class="chapter" data-level="4.6.3" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmoreprofile-object"><i class="fa fa-check"></i><b>4.6.3</b> Plotting a tdmoreprofile object</a></li>
 </ul></li>
 <li class="chapter" data-level="4.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>4.7</b> Extending TDMore</a></li>
 </ul></li>
@@ -173,7 +177,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="tdmore-api" class="section level1">
 <h1><span class="header-section-number">Chapter 4</span> TDMore API</h1>
-<p>The following section shows an overview of the main methods from the TDMore API and tells you how to use them.</p>
+<p>The following section shows an overview of the main methods of the TDMore API and tells you how to use them.</p>
 <div id="model" class="section level2">
 <h2><span class="header-section-number">4.1</span> Model definition</h2>
 <p>The TDMore model can be built using 3 different ways. Its model definition can be:</p>
@@ -214,7 +218,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
 <span class="kw">library</span>(nlmixr)
 m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>()</code></pre></div>
-<p>Your model is ready to use. Have a look at the content by calling:</p>
+<p>Your model is ready to use. Have a look at its content by calling:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(m1)</code></pre></div>
 <pre><code>## Structural model: RxODE 
 ## 
@@ -229,7 +233,7 @@ m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <s
 ## Residual error model:
 ##  name additiveError proportionalError exponentialError
 ##  CONC             0               0.1                0</code></pre>
-<p>This summary tells you the model contains 3 parameters: EKA, EV and ECL. These parameters will be estimated by TDMore to fit individual observations as best as possible. The model does not have any covariates (to see how covariates are included, go to section X). Output variable is the ‘CONC’ variable. The residual error model on this variable is proportional. Please note that the underlying structural model is <code>RxODE</code>, not <code>nlxmir</code>. This is because the <code>nlxmir</code> model is automatically converted into a RxODE model. The <code>RxODE</code> package is used extensively in TDMore to simulate data.</p>
+<p>This summary tells you the model contains 3 parameters: EKA, EV and ECL. These parameters will be estimated by TDMore to fit individual observations as best as possible. The model does not have any covariates (to see how covariates are included, go to section X). Output variable is the <code>CONC</code> variable. The residual error model on this variable is proportional. Please note that the underlying structural model is <code>RxODE</code>, not <code>nlxmir</code>. This is because the <code>nlxmir</code> model is automatically converted into a RxODE model. The <code>RxODE</code> package is used extensively in TDMore to simulate data.</p>
 </div>
 <div id="build-a-tdmore-object-from-an-rxode-model" class="section level3">
 <h3><span class="header-section-number">4.1.2</span> Build a TDMore object from an RxODE model</h3>
@@ -451,8 +455,8 @@ data4<span class="op">$</span>model &lt;-<span class="st"> </span><span class="k
 <li>covariates: the covariates values. They can be time-varying (see section X).</li>
 <li>par (optional): starting parameters for the MLE minimization. This must be a numeric vector. Parameters must be ordered.</li>
 </ul>
-<p>The <code>estimate()</code> function contains a few more arguments allowing to configure the optimisation method. These are detailled in the documentation (Try <code>?tdmore::estimate</code> in the R console).</p>
-<p><strong>Example 1</strong>: Find individual parameters knowing some observed data.</p>
+<p>The <code>estimate()</code> function contains a few more arguments allowing to configure the optimisation method. These are detailled in the documentation (try <code>?tdmore::estimate</code> in the R console).</p>
+<p><strong>Example</strong>: Find individual parameters knowing some observed data.</p>
 <p>Assume we have collected 2 concentrations at 24h and 48h. In the following code, we’d like to estimate the parameters for this individual.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">observed &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">24</span>,<span class="dv">48</span>), <span class="dt">CONC=</span><span class="kw">c</span>(<span class="fl">0.4</span>,<span class="fl">0.5</span>))
 tdmorefit &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span class="dt">tdmore =</span> m1, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen1)
@@ -501,22 +505,107 @@ tdmorefit &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span c
 </div>
 <div id="dose-recommendation" class="section level2">
 <h2><span class="header-section-number">4.5</span> Dose recommendation</h2>
+<div id="calling-the-finddose-method" class="section level3">
+<h3><span class="header-section-number">4.5.1</span> Calling the findDose method</h3>
+<p>The <code>findDose()</code> method allows you to find the right dose to use according to one or multiple targets. Its main arguments are:</p>
+<ul>
+<li>tdmorefit: the <code>tdmorefit</code> object</li>
+<li>regimen: the regimen (see section <a href="tdmore-api.html#regimen">4.2</a>)</li>
+<li>doseRows (optional): which rows of the regimen to adapt when searching for a new dose, or NULL to take the last one</li>
+<li>interval (optional): which interval to search a dose in</li>
+<li>target: target value, as a data.frame</li>
+</ul>
+<p>The <code>findDose()</code> function contains a few more arguments, namely, to build a confidence interval on the returned dose using Monte-Carlo simulation. These are detailled in the documentation (try <code>?tdmore::findDose</code> in the R console).</p>
+<p><strong>Example 1</strong>: Reach the population trough concentration (first solution)</p>
+<p>Assume your indidual needs to reach a concentration of 0.75 after 1 week. A first solution is to find a daily dose that will achieve this. This can be done as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="ot">NA</span>, <span class="dt">II=</span><span class="dv">24</span>, <span class="dt">ADDL=</span><span class="dv">7</span>)
 
-recommendation &lt;-<span class="st"> </span><span class="kw">findDose</span>(
+recommendation1 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
   tdmorefit,
   <span class="dt">regimen =</span> newRegimen,
-  <span class="dt">interval =</span> <span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">5000</span>),
-  <span class="dt">target =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="dv">144</span>, <span class="dt">CONC =</span> <span class="fl">0.75</span>)
+  <span class="dt">interval =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1000</span>),
+  <span class="dt">target =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="dv">168</span>, <span class="dt">CONC =</span> <span class="fl">0.75</span>)
   )
 
-<span class="kw">summary</span>(recommendation)</code></pre></div>
+<span class="kw">summary</span>(recommendation1)</code></pre></div>
 <pre><code>## $dose
-## [1] 224.7158
+## [1] 224.7092
 ## 
 ## $regimen
 ##   TIME      AMT II ADDL
-## 1    0 224.7158 24    7</code></pre>
+## 1    0 224.7092 24    7</code></pre>
+<p>A daily dose of 225mg is recommended for this specific subject.</p>
+<p><strong>Example 2</strong>: Reach the population trough concentration (second solution)</p>
+<p>Another possible way is to adapt the last dose only. This can be specified using the following regimen:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dt">AMT=</span><span class="kw">c</span>(<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="ot">NA</span>))
+
+recommendation2 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
+  tdmorefit,
+  <span class="dt">regimen =</span> newRegimen,
+  <span class="dt">interval =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1000</span>),
+  <span class="dt">target =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="dv">168</span>, <span class="dt">CONC =</span> <span class="fl">0.75</span>)
+  )
+
+<span class="kw">summary</span>(recommendation2)</code></pre></div>
+<pre><code>## $dose
+## [1] 241.3276
+## 
+## $regimen
+##   TIME      AMT
+## 1    0 150.0000
+## 2   24 150.0000
+## 3   48 150.0000
+## 4   72 150.0000
+## 5   96 150.0000
+## 6  120 150.0000
+## 7  144 241.3276</code></pre>
+<p>A last dose of 241mg is recommended for this specific subject.</p>
+<p><strong>Example 3</strong>: Ask for a confidence interval around the dose</p>
+<p>Use argument <code>se.fit</code> as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dt">AMT=</span><span class="kw">c</span>(<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="ot">NA</span>))
+
+recommendation3 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
+  tdmorefit,
+  <span class="dt">regimen =</span> newRegimen,
+  <span class="dt">interval =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1000</span>),
+  <span class="dt">target =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="dv">168</span>, <span class="dt">CONC =</span> <span class="fl">0.75</span>),
+  <span class="dt">se.fit =</span> T
+  )
+
+<span class="kw">summary</span>(recommendation3)</code></pre></div>
+<pre><code>## $dose
+## dose.median  dose.lower  dose.upper 
+##    251.4764    200.1443    341.1719 
+## 
+## $regimen
+##   TIME      AMT
+## 1    0 150.0000
+## 2   24 150.0000
+## 3   48 150.0000
+## 4   72 150.0000
+## 5   96 150.0000
+## 6  120 150.0000
+## 7  144 251.4764</code></pre>
+<p>A 95% confidence interval is returned.</p>
+</div>
+<div id="visualise-a-recommendation" class="section level3">
+<h3><span class="header-section-number">4.5.2</span> Visualise a recommendation</h3>
+<p>Let’s compare the first and second examples.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tdmorefit<span class="op">$</span>regimen &lt;-<span class="st"> </span>recommendation1<span class="op">$</span>regimen
+data1 &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmorefit, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se.fit=</span>F)
+data1<span class="op">$</span>solution &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;Solution 1&quot;</span>)
+
+tdmorefit<span class="op">$</span>regimen &lt;-<span class="st"> </span>recommendation2<span class="op">$</span>regimen
+data2 &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmorefit, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se.fit=</span>F)
+data2<span class="op">$</span>solution &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;Solution 2&quot;</span>)
+
+<span class="kw">ggplot</span>(<span class="kw">rbind</span>(data1, data2), <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">group=</span>solution))  <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span>solution, <span class="dt">y=</span>CONC)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="fl">0.75</span>, <span class="dt">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x=</span><span class="dv">168</span>, <span class="dt">y=</span><span class="fl">0.75</span>), <span class="dt">shape=</span><span class="dv">1</span>, <span class="dt">size=</span><span class="dv">3</span>)</code></pre></div>
+<p><img src="04-API_files/figure-html/plot_tdmorefit_recommendation-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Both solutions achieve the target at the right time.</p>
+</div>
 </div>
 <div id="plotting-the-intermediate-steps" class="section level2">
 <h2><span class="header-section-number">4.6</span> Plotting the intermediate steps</h2>
@@ -529,6 +618,12 @@ recommendation &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 <h3><span class="header-section-number">4.6.2</span> Plotting a tdmorefit object</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(tdmorefit)</code></pre></div>
 <p><img src="04-API_files/figure-html/plot_tdmorefit_object-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="plotting-a-tdmoreprofile-object" class="section level3">
+<h3><span class="header-section-number">4.6.3</span> Plotting a tdmoreprofile object</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">profile &lt;-<span class="st"> </span><span class="kw">profile</span>(tdmorefit, <span class="dt">maxpts=</span><span class="dv">50</span>, <span class="dt">limits =</span> <span class="kw">list</span>(<span class="dt">ECL=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="fl">0.7</span>)), <span class="dt">fix=</span><span class="kw">c</span>(<span class="dt">EKA=</span><span class="dv">0</span>))
+<span class="kw">plot</span>(profile)</code></pre></div>
+<p><img src="04-API_files/figure-html/plot_tdmoreprofile_object-1.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="extending-tdmore" class="section level2">

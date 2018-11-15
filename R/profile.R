@@ -26,7 +26,7 @@ plot.tdmoreprofile <- function(x, parameters=NULL, contour=T, raster=T, ...) {
     if(raster) {plot <- plot + geom_raster(aes_string(fill = "exp(logLik)"))}
     if(contour){plot <- plot + geom_contour(colour="grey")}
     res <- coef(profile$tdmorefit)
-    plot + geom_point(x=c(res[1]), y=c(res[2]), colour="white", inherit.aes=FALSE)
+    plot + geom_point(x=c(res[[selectedParameters[1]]]), y=c(res[[selectedParameters[2]]]), colour="white", inherit.aes=FALSE)
 
   } else if(length == 1) {
     ggplot(data = profile$profile, aes_string(x=selectedParameters[1], y="exp(logLik)")) +
