@@ -5,6 +5,7 @@ Version: 1.0.0
 Authors@R: c(
   person("Ruben", "Faelens", role = c("aut", "cre"), email = "ruben.faelens@kuleuven.be"),
   person("Nicolas", "Luyckx", role=c("aut", "csl")),
+  person("Quentin", "Leirens", role=c("aut", "csl")),
   person("Thomas", "Bouillon", role="dgs"),
   person("Pieter", "Annaert", role="dgs"),
   person("Daniel", "Roshammar", role="dgs"),
