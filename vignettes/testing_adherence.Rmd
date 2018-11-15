@@ -1,6 +1,5 @@
 ---
 title: "Testing adherence using TDMore"
-date: "`r Sys.Date()`"
 output:
   html_document:
     keep_md: true

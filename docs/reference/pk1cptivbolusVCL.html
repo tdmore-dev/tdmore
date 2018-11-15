@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A function to predict concentration in a 1cpt PK model with bolus administration — pk1cptivbolusVCL • tdmore</title>
+<title>A tdmore model to predict concentration in a 1cpt PK model with bolus administration — pk1cptivbolusVCL • tdmore</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="A function to predict concentration in a 1cpt PK model with bolus administration — pk1cptivbolusVCL" />
+<meta property="og:title" content="A tdmore model to predict concentration in a 1cpt PK model with bolus administration — pk1cptivbolusVCL" />
 
-<meta property="og:description" content="A function to predict concentration in a 1cpt PK model with bolus administration" />
+<meta property="og:description" content="A tdmore model to predict concentration in a 1cpt PK model with bolus administration" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -122,44 +122,67 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A function to predict concentration in a 1cpt PK model with bolus administration</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/algebraic.R'><code>R/algebraic.R</code></a></small>
+    <h1>A tdmore model to predict concentration in a 1cpt PK model with bolus administration</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/algebraicLibrary.R'><code>R/algebraicLibrary.R</code></a></small>
     <div class="hidden name"><code>pk1cptivbolusVCL.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>A function to predict concentration in a 1cpt PK model with bolus administration</p>
+    <p>A tdmore model to predict concentration in a 1cpt PK model with bolus administration</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>pk1cptivbolusVCL</span>(<span class='kw'>THETA</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>V</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>CL</span> <span class='kw'>=</span> <span class='fl'>5</span>), <span class='kw'>OMEGA</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>V</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>CL</span>
-  <span class='kw'>=</span> <span class='fl'>0.3</span>))</pre>
+    <pre class="usage"><span class='fu'>pk1cptivbolusVCL</span>(<span class='kw'>TVV</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>TVCL</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>OV</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>OCL</span> <span class='kw'>=</span> <span class='fl'>0.3</span>, <span class='no'>res_var</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>THETA</th>
-      <td><p>a list(V=xx, CL=yy) with all typical values</p></td>
+      <th>TVV</th>
+      <td><p>Typical value for volume</p></td>
     </tr>
     <tr>
-      <th>OMEGA</th>
-      <td><p>a list(V=0.20, CL=0.30) with all variances describing IIV</p></td>
+      <th>TVCL</th>
+      <td><p>Typical value for clearance</p></td>
+    </tr>
+    <tr>
+      <th>OV</th>
+      <td><p>Omega for volume</p></td>
+    </tr>
+    <tr>
+      <th>OCL</th>
+      <td><p>Omega for clearance</p></td>
+    </tr>
+    <tr>
+      <th>res_var</th>
+      <td><p>Residual error model</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>the algebraic definition to predict PK 1cpt concentration, useable in algebraic()</p>
+    <p>a tdmore model</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>predictFunction</span> <span class='kw'>&lt;-</span> <span class='fu'>pk1cptivbolusVCL</span>(
-  <span class='kw'>THETA</span><span class='kw'>=</span><span class='fu'>list</span>(<span class='kw'>V</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>CL</span><span class='kw'>=</span><span class='fl'>5</span>),
-  <span class='kw'>OMEGA</span><span class='kw'>=</span><span class='fu'>list</span>(<span class='kw'>V</span><span class='kw'>=</span><span class='fl'>0.20</span>, <span class='kw'>CL</span><span class='kw'>=</span><span class='fl'>0.30</span>))
-<span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='algebraic.html'>algebraic</a></span>(<span class='no'>predictFunction</span>)
-<span class='no'>tdmore</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='tdmore.html'>tdmore</a></span>(<span class='no'>model</span>, <span class='kw'>res_var</span><span class='kw'>=</span><span class='fu'>list</span>(<span class='fu'><a href='errorModel.html'>errorModel</a></span>(<span class='st'>"CONC"</span>, <span class='kw'>prop</span><span class='kw'>=</span><span class='fl'>0.10</span>)))</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'>pk1cptivbolusVCL</span>(
+  <span class='kw'>TVV</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>TVCL</span><span class='kw'>=</span><span class='fl'>5</span>,
+  <span class='kw'>OV</span><span class='kw'>=</span><span class='fl'>0.20</span>, <span class='kw'>OCL</span><span class='kw'>=</span><span class='fl'>0.30</span>,
+  <span class='fu'><a href='errorModel.html'>errorModel</a></span>(<span class='kw'>prop</span><span class='kw'>=</span><span class='fl'>0.1</span>)
+)
+<span class='fu'>summary</span>(<span class='no'>m1</span>)</div><div class='output co'>#&gt; Structural model: algebraic 
+#&gt; 
+#&gt; Parameters:
+#&gt;  name var        cv
+#&gt;    EV 0.2 0.4472136
+#&gt;   ECL 0.3 0.5477226
+#&gt; 
+#&gt; Covariates: / 
+#&gt; 
+#&gt; Residual error model:
+#&gt;  name additiveError proportionalError exponentialError
+#&gt;  CONC             0               0.1                0</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -176,7 +199,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Ruben Faelens, Nicolas Luyckx, FWO TBM Grant.</p>
+  <p>Developed by Ruben Faelens, Nicolas Luyckx, Quentin Leirens, FWO TBM Grant.</p>
 </div>
 
 <div class="pkgdown">

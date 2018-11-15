@@ -147,7 +147,7 @@
     </tr>
     <tr>
       <th>newdata</th>
-      <td><p>dataframe with at least a column 'TIME' and other values. A prediction will be generated for each filled-in value.</p></td>
+      <td><p>dataframe with a column 'TIME' and 'CONC'. Other columns are ignored.</p></td>
     </tr>
     <tr>
       <th>regimen</th>
@@ -155,21 +155,17 @@
     </tr>
     <tr>
       <th>parameters</th>
-      <td><p>either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector</p></td>
+      <td><p>a named numeric vector</p></td>
     </tr>
     <tr>
       <th>covariates</th>
       <td><p>named vector, or data.frame with column 'TIME', and at least TIME 0</p></td>
     </tr>
-    <tr>
-      <th>extraArguments</th>
-      <td><p>named list with extra arguments to use for call</p></td>
-    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.frame similar to the newdata data frame, but with predicted values.</p>
+    <p>A data.frame similar to the newdata data frame, but with CONC column filled out.</p>
     
 
   </div>
@@ -186,7 +182,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Ruben Faelens, Nicolas Luyckx, FWO TBM Grant.</p>
+  <p>Developed by Ruben Faelens, Nicolas Luyckx, Quentin Leirens, FWO TBM Grant.</p>
 </div>
 
 <div class="pkgdown">

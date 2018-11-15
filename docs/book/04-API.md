@@ -50,14 +50,14 @@ A TDMore object can then be instantiated by running the following snippet:
 ```r
 library(tdmore)
 library(nlmixr)
-tdmore1 <- nlmixrUI(modelCode1) %>% tdmore()
+m1 <- nlmixrUI(modelCode1) %>% tdmore()
 ```
 
 Your model is ready to use. Have a look at the content by calling:
 
 
 ```r
-summary(tdmore1)
+summary(m1)
 ```
 
 ```
@@ -105,7 +105,7 @@ library(tdmore)
 library(RxODE)
 omegaMatrix <- vectorToDiagonalMatrix(c(EKA=0.3, EV=0.3, ECL=0.3))
 errorModel <- errorModel("CONC", prop=0.1)
-tdmore2 <- RxODE(modelCode2) %>% tdmore(omega=omegaMatrix, res_var=list(errorModel))
+m2 <- RxODE(modelCode2) %>% tdmore(omega=omegaMatrix, res_var=list(errorModel))
 ```
 
 The omega matrix is a 3x3 matrix. Only the diagonal is used as you can see. However, correlations can be added if needed.
@@ -113,7 +113,7 @@ Your model is now ready to use. It can be summarised this way:
 
 
 ```r
-summary(tdmore2)
+summary(m2)
 ```
 
 ```
@@ -139,51 +139,21 @@ Finally, `TDMore` can also work with algebraic models. To do so, the model defin
 
 
 ```r
-modelCode3 <- function(THETA=list(KA=1, V=70, CL=4), OMEGA=list(KA=0.3, V=0.3, CL=0.3)) {
-  return(structure(list(
-    predictFunction = function(times, regimen, EKA, EV, ECL) {
-      V = THETA$V * exp(EV)
-      CL = THETA$CL * exp(ECL)
-      KA = THETA$KA * exp(EKA)
+modelCode3 <- function(t, TIME, AMT, EKA, EV, ECL) {
+      V = 70 * exp(EV)
+      CL = 4 * exp(ECL)
+      KA = 1 * exp(EKA)
       k = CL / V
-      t = times
-      
-      CONC <- rep(0, length(times))
-      for(i in seq(1, nrow(regimen))) { # Iterate over all regimen rows
-        tD = regimen$TIME[i]
-        D = regimen$AMT[i]
-        II = regimen$II[i] # A number, 0, or NULL
-        if(!is.null(II) && II > 0) { # Keep repeating the dose until we are past the last observation time
-          nbrDoses <- row$ADDL
-          while(tD <= max(t) && nbrDoses > 0) {
-            CONC <- CONC + ifelse(t >= tD, D/V * (KA/(KA-k)) * (exp(-k*(t-tD)) - exp(-KA*(t-tD))), 0) # Algebraic solution of 1-cpt-model
-            tD <- tD + II
-            nbrDoses <- nbrDoses - 1
-          }
-        } else {
-          # Single administration
-          CONC <- CONC + ifelse(t >= tD, D/V * (KA/(KA-k)) * (exp(-k*(t-tD)) - exp(-KA*(t-tD))), 0) # Algebraic solution of 1-cpt-model
-        }
-      }
-      return(CONC)
-    },
-    omega = vectorToDiagonalMatrix(list(EKA=OMEGA$KA, EV=OMEGA$V, ECL=OMEGA$CL))),
-    class = "algebraic_definition"))
-}
-```
-
-The algebraic function definition needs to be passed to the `algebraic` function. This creates an `algebraic` model compatible with TDMore.
-
-
-```r
-library(tdmore)
-errorModel <- errorModel("CONC", prop=0.1)
-tdmore3 <- algebraic(modelCode3()) %>% tdmore(res_var=list(errorModel))
-```
-
-
-```r
-summary(tdmore3)
+      D = AMT
+      tD = TIME
+      # Algebraic solution of 1-cpt-model
+      ifelse(t >= tD, D/V * (KA/(KA-k)) * (exp(-k*(t-tD)) - exp(-KA*(t-tD))), 0) 
+    }
+m3 <- tdmore(algebraic(modelCode3), 
+       omega=c(EKA=0.3, EV=0.3, ECL=0.3),
+       res_var=errorModel(prop=0.1)
+       )
+summary(m3)
 ```
 
 ```
@@ -201,6 +171,7 @@ summary(tdmore3)
 ##  name additiveError proportionalError exponentialError
 ##  CONC             0               0.1                0
 ```
+
 ### Add model covariates
 
 Let's assume the weight is a covariate in the previous 1-compartment model. It can be added in the model as follows:
@@ -239,12 +210,12 @@ Now, the TDMore object can be created and printed.
 ```r
 library(tdmore)
 library(nlmixr)
-tdmore1_WT <- nlmixrUI(modelCode1_WT) %>% tdmore()
+m1_WT <- nlmixrUI(modelCode1_WT) %>% tdmore()
 ```
 
 
 ```r
-print(tdmore1_WT) # Print may be seen as a short 'summary'
+print(m1_WT) # Print may be seen as a short 'summary'
 ```
 
 ```
@@ -312,7 +283,7 @@ Let's have a closer look at the `predict.tdmore` arguments:
 
 ```r
 times <- seq(0, 24*7-1, by=1)
-data1a <- predict(tdmore1, newdata=times, regimen=regimen1)
+data1a <- predict(m1, newdata=times, regimen=regimen1)
 head(data1a)
 ```
 
@@ -332,7 +303,7 @@ Because `newdata` is provided as numeric (with no specified output column), all 
 
 
 ```r
-data1b <- predict(tdmore1, newdata=times, regimen=regimen1, se=T, level=0.95)
+data1b <- predict(m1, newdata=times, regimen=regimen1, se=T, level=0.95)
 head(data1b)
 ```
 
@@ -352,7 +323,7 @@ As you can see, lower and upper bounds on the concentration are provided.
 
 
 ```r
-data1c <- predict(tdmore1, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1, se=T, level=0.95)
+data1c <- predict(m1, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1, se=T, level=0.95)
 head(data1c)
 ```
 
@@ -372,16 +343,16 @@ Only the concentration is returned in the previous dataframe.
 
 
 ```r
-data1 <- predict(tdmore1, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1)
+data1 <- predict(m1, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1)
 data1$model <- factor("nlmixr model")
 
-data2 <- predict(tdmore2, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1)
+data2 <- predict(m2, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1)
 data2$model <- factor("RxODE model")
 
-data3 <- predict(tdmore3, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1)
+data3 <- predict(m3, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1)
 data3$model <- factor("algebraic model")
 
-data4 <- predict(tdmore1_WT, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1, covariates=c(WT=50))
+data4 <- predict(m1_WT, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen1, covariates=c(WT=50))
 data4$model <- factor("nlxmir model with WT covariate")
 
 library(ggplot2)
@@ -426,13 +397,13 @@ Assume we have collected 2 concentrations at 24h and 48h. In the following code,
 
 ```r
 observed <- data.frame(TIME=c(24,48), CONC=c(0.4,0.5))
-tdmorefit <- estimate(tdmore = tdmore1, observed = observed, regimen = regimen1)
+tdmorefit <- estimate(tdmore = m1, observed = observed, regimen = regimen1)
 summary(tdmorefit)
 ```
 
 ```
 ## Call:
-## estimate(tdmore = tdmore1, observed = observed, regimen = regimen1)
+## estimate(tdmore = m1, observed = observed, regimen = regimen1)
 ## Coef:
 ##        EKA         EV        ECL 
 ## 0.01971374 0.02308428 0.24015815 
@@ -517,7 +488,7 @@ summary(recommendation)
 
 
 ```r
-plot(tdmore1, regimen=regimen1)
+plot(m1, regimen=regimen1)
 ```
 
 <img src="04-API_files/figure-html/plot_tdmore_object-1.png" width="768" style="display: block; margin: auto;" />
