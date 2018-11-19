@@ -7,12 +7,12 @@ output:
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 <div align="center">
-  <a href="https://travis-ci.com/tdmore-dev/tdmore">
-    <img src="https://travis-ci.com/tdmore-dev/tdmore.svg?branch=master" alt="Build status" />
-  </a>
-  <a href="http://codecov.io/github/tdmore-dev/tdmore?branch=master">
-    <img src="http://codecov.io/github/tdmore-dev/tdmore/coverage.svg?branch=master" alt="Codecov" />
-  </a>
+<a href="https://travis-ci.com/tdmore-dev/tdmore">
+    <img src="https://travis-ci.com/tdmore-dev/tdmore.svg?token=xctp8qEX8rnVyGDrjTyu&branch=master" alt="Build status" />
+</a>
+<a href="https://codecov.io/gh/tdmore-dev/tdmore">
+  <img src="https://codecov.io/gh/tdmore-dev/tdmore/branch/master/graph/badge.svg?token=ifRzKCFY4B" />
+</a>
 </div>
 
 # TDMore <img src="bookdown/static/tdmore_logo.JPG" align="right" />
