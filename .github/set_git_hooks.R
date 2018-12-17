@@ -20,10 +20,9 @@
 
 readFile <- function(x) {
   RscriptCall <- callr:::setup_rscript_binary_and_args(list())
-  RscriptCall <- paste("#!", RscriptCall$bin, paste="")
+  RscriptShebang <- paste0("#!", RscriptCall$bin)
   text <- readLines(x)
-  text <- paste(text, collapse="\n")
-  text <- paste(c(RscriptCall, text), paste="", collapse="\n")
+  paste0(c(RscriptShebang, text, ""), collapse="\n")
 }
 script <- readFile(".github/pre-commit.R")
 usethis::use_git_hook(hook = "pre-commit", script)

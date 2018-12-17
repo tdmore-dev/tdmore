@@ -1,4 +1,3 @@
-#!/c/Program Files/R/R-3.5.1/bin/x64/Rscript
 ##
 ## Script name: pre-commit.R
 ##
