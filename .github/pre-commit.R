@@ -32,6 +32,7 @@
 suppressMessages(
   library(tidyverse)
 )
+
 stat <- git2r::status()$staged %>% tibble(file=., change=names(.)) %>%
   unnest(file)
 
@@ -39,7 +40,7 @@ files <- list.files(recursive=TRUE) %>%
   tibble(file=.) %>%
   mutate(info = map(file, file.info) ) %>%
   {suppressWarnings(unnest(., info))} %>%
-  mutate(staged= file %in% stat$file )
+  mutate(staged=if(nrow(stat)==0) FALSE else file %in% stat$file )
 
 ## Function to convert a series of boolean expressions into a categorical number
 categorize <- function(...) {
@@ -53,19 +54,6 @@ categorize <- function(...) {
   }
   x <- factor(categories, levels=seq_along(booleans), labels=c(names(booleans)))
   as.character(x)
-}
-
-getDeps <- function(x) {
-  x <- as.character(x)
-  result <- switch(x,
-                   NAMESPACE="source",
-                   man=c("source"),
-                   bookResult=c("book", "vignettes", "source"), #should every source change require a rebuild?
-                   pkgdownResult=c("pkgdown", "man", "vignettes", "source", "READMERmd", "metadata"), #should every source change require a rebuild?
-                   READMEmd=c("READMERmd", "source"),
-                   c()
-  )
-  as.list(result)
 }
 
 grepl <- function(x, pattern) {base::grepl(pattern=pattern, x=x)}
@@ -84,8 +72,10 @@ files <- files %>% mutate(category = categorize(
   pkgdownResult= startsWith(file, "docs/"),
   man=startsWith(file, "man/"),
   NAMESPACE=file=="NAMESPACE",
-  READMERmd=(file=="README.Rmd"),
-  READMEmd=(file == "README.md"),
+#  READMERmd=(file=="README.Rmd"),
+  READMEmd=(file == "README.md"), # this is used in github
+  index.Rmd=(file=="index.Rmd"), # this file gets used for pkgdown::build_site
+  Contributing=(file == "CONTRIBUTING.md"),
   Rproj=file=="tdmore.Rproj"
 ))
 
@@ -103,17 +93,21 @@ pkgdownResult vignettes
 pkgdownResult source
 pkgdownResult READMERmd
 pkgdownResult metadata
-READMEmd READMERmd
-READMEmd source
 vignettesOut vignettes
 "
+#Removed: (READMEmd is not generated anymore, but static developer information)
+#READMEmd READMERmd
+#READMEmd source
+#
 depsTable <- read.table(text=deps, header=TRUE)
 
 categoryMtimes <- files %>%
   group_by(category) %>%
-  summarize(maxMtime=max(mtime), minMtime=min(mtime)) %>%
+  arrange(mtime) %>% #from earliest to latest
+  filter(row_number() == n()) %>% # pick the file with maximum mtime
+  #summarize(maxMtime=max(mtime)) %>%
   merge(depsTable, all = TRUE) %>%
-  filter(!is.na(minMtime))
+  filter(!is.na(mtime))
 comparison <- categoryMtimes %>%
   filter(!is.na(dep)) %>%
   merge(categoryMtimes,
@@ -124,25 +118,38 @@ comparison <- categoryMtimes %>%
   ## Or otherwise put: the earliest mtime of something should always be LATER than the maximum mtime of dependencies
   ## The maxMTime of the category shows when it was last updated
   ## Using MinMTime does not make sense; e.g. the introduction of the book always stays the same
-  mutate(OK = maxMtime.category >= maxMtime.dep)
+  mutate(OK = mtime.category >= mtime.dep)
 
-problems <- comparison %>% filter(!OK)
+problems <- comparison %>% filter(!OK) %>%
+  select(dep, file.dep, mtime.dep, category, file.category, mtime.category)
 
-if(any(!problems$OK)) {
+## TODO: Check the currently staged files. If they are not contained in
+## this problem list (as source or dependent files), then we could still commit...
+
+if(nrow(problems) > 0) {
   # TODO: add some nicer output by using the crayon package
   # https://github.com/r-lib/crayon#usage
   message("Files <", paste(problems$category, collapse=", "), "> were not updated when their dependencies <", paste(unique(problems$dep), collapse=", "), "> changed.")
   problems %>%
     merge(files, by.x="dep", by.y="category") %>%
-    filter(mtime > maxMtime.category) %>%
-    select(category, maxMtime.category, file, mtime) %>%
+    filter(mtime.dep > mtime.category) %>%
+    select(category, mtime.category, file.category, dep, mtime, file) %>%
     print
 
   message("Executing the required update functions... ")
-  if("READMEmd" %in% problems$category) devtools::build_readme(quiet=FALSE)
-  if("pkgdownResult" %in% problems$category) devtools::build_site(quiet=FALSE)
-  if("bookdownResult" %in% problems$category) source("bookdown/create_bookdown.R")
+  if(any(c("man", "NAMESPACE") %in% problems$category)) {
+    if("man" %in% problems$category)
+      do.call(file.remove, list(list.files("man/", full.names = TRUE)))
+    devtools::document()
+  }
+  if("READMEmd" %in% problems$category) devtools::build_readme(quiet=TRUE)
+  if("pkgdownResult" %in% problems$category) {
+    message("Building site...")
+    devtools::build_site(quiet=TRUE)
+  }
+  if("bookResult" %in% problems$category) source("bookdown/create_bookdown.R")
+
   message("Review the modified files, stage them, and commit again")
-  stop()
+  stop(call. = FALSE)
 }
 
