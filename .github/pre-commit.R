@@ -32,6 +32,13 @@ suppressMessages(
   library(tidyverse)
 )
 
+foo <- git2r::config()
+autocrlf <- foo$local$core.autocrlf %||% foo$global$core.autocrlf %||% foo$program$core.autocrlf
+if(autocrlf != "false") {
+  print(foo)
+  stop("core.autocrlf option should be 'false'")
+}
+
 stat <- git2r::status()$staged %>% tibble(file=., change=names(.)) %>%
   unnest(file)
 
