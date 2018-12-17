@@ -574,15 +574,12 @@ nonAdhering <- predict(m1, regimen=actual, newdata=seq(0, 30*24))
 
 library(ggplot2)
 pred <- estimate(m1, regimen=regimen)
-ggplot(pred, newdata=seq(0, 30*24)) +
-  ipred(mapping=aes(x=TIME, y=CONC))
+ggplot(mapping=aes(x=TIME, y=CONC)) +
+  geom_line(aes(color="Adhering"), data=adhering) +
+  geom_line(aes(color="Non-adhering"), data=nonAdhering)
 ```
 
 <img src="08-Vignettes_files/figure-html/unnamed-chunk-24-1.png" width="672" />
-
-```r
-#  labs(x="Time (hours)", y="Concentration (mg/L)")
-```
 
 # Is the patient taking his/her medication?
 We can now take a serum sample and evaluate if there is non-adherence.

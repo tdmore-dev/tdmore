@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>TDMore: an R package for therapeutic drug monitoring</title>
+  <title>Chapter 4 TDMore API | TDMore: an R package for therapeutic drug monitoring</title>
   <meta name="description" content="TDMore reference manual">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="TDMore: an R package for therapeutic drug monitoring" />
+  <meta property="og:title" content="Chapter 4 TDMore API | TDMore: an R package for therapeutic drug monitoring />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="TDMore: an R package for therapeutic drug monitoring" />
+  <meta name="twitter:title" content="Chapter 4 TDMore API | TDMore: an R package for therapeutic drug monitoring />
   
   <meta name="twitter:description" content="TDMore reference manual" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Ruben Faelens, Nicolas Luyckx, Quentin Leirens, Thomas Bouillon">
 
 
-<meta name="date" content="2018-11-15">
+<meta name="date" content="2018-12-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="vignettes.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -575,17 +576,17 @@ recommendation3 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 <span class="kw">summary</span>(recommendation3)</code></pre></div>
 <pre><code>## $dose
 ## dose.median  dose.lower  dose.upper 
-##    251.4764    200.1443    341.1719 
+##    239.8690    203.2619    362.7847 
 ## 
 ## $regimen
-##   TIME      AMT
-## 1    0 150.0000
-## 2   24 150.0000
-## 3   48 150.0000
-## 4   72 150.0000
-## 5   96 150.0000
-## 6  120 150.0000
-## 7  144 251.4764</code></pre>
+##   TIME     AMT
+## 1    0 150.000
+## 2   24 150.000
+## 3   48 150.000
+## 4   72 150.000
+## 5   96 150.000
+## 6  120 150.000
+## 7  144 239.869</code></pre>
 <p>A 95% confidence interval is returned.</p>
 </div>
 <div id="visualise-a-recommendation" class="section level3">
@@ -657,7 +658,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -667,6 +668,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },
