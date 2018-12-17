@@ -84,9 +84,9 @@ nonAdhering <- predict(m1, regimen=actual, newdata=seq(0, 30*24))
 
 library(ggplot2)
 pred <- estimate(m1, regimen=regimen)
-ggplot(pred, newdata=seq(0, 30*24)) +
-  ipred(mapping=aes(x=TIME, y=CONC))
-#  labs(x="Time (hours)", y="Concentration (mg/L)")
+ggplot(mapping=aes(x=TIME, y=CONC)) +
+  geom_line(aes(color="Adhering"), data=adhering) +
+  geom_line(aes(color="Non-adhering"), data=nonAdhering)
 ```
 
 # Is the patient taking his/her medication?
