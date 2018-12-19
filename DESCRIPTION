@@ -18,7 +18,8 @@ Description: Easily define a Nonlinear Mixed-Effects Model,
     Finally, select the best dose and present this to the clinician.
     Provide value by automatically generating a Shiny app for use
     in a clinical setting.
-Imports: assertthat, mnormt, plyr, dplyr, numDeriv, reshape, stats, RxODE, nlmixr, deSolve, ggplot2 (>= 2.1.0), magrittr, 
+Depends: R (>= 3.5.0)
+Imports: assertthat, mnormt, plyr, dplyr, numDeriv, reshape, stats, RxODE, nlmixr, deSolve, ggplot2 (>= 3.0.0), magrittr, 
  gridExtra, mvtnorm, zoo
 License: file LICENSE
 Encoding: UTF-8
