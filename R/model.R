@@ -1,20 +1,34 @@
+## Check `r-source/src/library/stats/R/models.R` for a reference on all
+## model functions in the R `stats` package. We try to use these function
+## definitions as a base here.
+
 assert_that <- assertthat::assert_that
 # Structural model: how to predict --------------------------------------------------------
-#' Prototype predict function
+#' Prototype predict function. Implement this to add your own model type to tdmore.
 #'
 #' @param model The model itself.
-#' @param newdata dataframe with at least a column 'TIME' and other values. A prediction will be generated for each value.
+#' @param times The times at which to generate predictions. May be empty, but never NULL.
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)
 #' @param parameters named vector
 #' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
 #' @param extraArguments named list with extra arguments to use for call
 #'
 #' @return
-#' A data.frame similar to the observed data frame, but with predicted values.
+#' A data.frame with model predictions at each `times`
+#'
+#' @details
+#' The model_predict function will generate a data.frame with the model output.
+#' The data.frame will have a TIME column, and all model output in separate columns.
+#'
+#' In case the `times` vector is empty, it should generate an empty data.frame. The data.frame
+#' should still contain all columns that would usually be generated.
+#' Furthermore, it should check all arguments in the same way as usual, and even try to execute
+#' a simulation.
+#'
 #' @export
 #' @keywords internal
 #'
-model_predict <- function(model, newdata, regimen, parameters, covariates, extraArguments) {
+model_predict <- function(model, times, regimen, parameters, covariates, extraArguments) {
   UseMethod("model_predict")
 }
 
@@ -43,34 +57,49 @@ tdmore.default <- function(model, ...) {
 
 #' Predict from a tdmore model
 #'
-#' @param object TDMore object
-#' @param newdata Data.frame of new data with at least a TIME column, and blank columns with all desired predictions
-#' or a numeric vector to predict all possible values from the model
-#' @param regimen Treatment regimen
-#' @param parameters The parameter values to use, missing values are taken from the population
-#' @param covariates the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0
-#' @param se Whether to add residual error
-#' @param level How much residual error to add
-#' @param ... ignored
+#' @param object Object of class inheriting from `tdmore`
+#' @param newdata Data.frame of new data with at least a TIME column, and additional columns.
+#' Any columns that match the model output will be replaced by the predicted values.
+#' Alternatively, a numeric vector used as TIME. The resulting data.frame will
+#' contain all values predicted by the model.
+#' @param regimen Treatment regimen, or NULL for no treatment
+#' @param parameters A named numeric vector with the parameter values to use.
+#' Any model parameters that are not provided are assumed `0`.
+#' @param covariates a named numeric vector with the covariates to use.
+#' Alternatively, a data.frame with column `TIME` and columns with time-varying covariates.
+#' The first row of the data.frame should be time 0.
+#' @inheritParams model.frame.tdmore
+#' @param ... extra arguments for the call to the model
 #'
-#' @seealso tdmore::model_predict
+#' @details
+#' TODO: This is such an important function, that it merits a little more documentation
 #'
 #' @return A data.frame with all observed values at the given time points
 #' @export
-predict.tdmore <- function(object, newdata, regimen, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
+predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
   tdmore <- object
   checkCovariates(tdmore, covariates)
 
-  pars <- rep(0, length(tdmore$parameters)) #population prediction
+  pars <- rep(0, length(tdmore$parameters)) #start with population
   names(pars) <- tdmore$parameters
   if(!is.null(parameters)) {
     assert_that(is.numeric(parameters))
     assert_that(all(names(parameters) %in% names(pars)))
     pars[names(parameters)] <- parameters ## set pars from argument
   }
+  if(is.null(regimen)) regimen <- data.frame(TIME=numeric(), AMT=numeric())
 
-  predicted <- model_predict(model=tdmore$model, newdata=newdata, regimen=regimen, parameters=pars, covariates=covariates, extraArguments=tdmore$extraArguments)
-  assert_that("data.frame" %in% class(predicted))
+  if(is.data.frame(newdata)) times <- newdata$TIME
+  else times <- as.numeric(newdata)
+
+  predicted <- model_predict(model=tdmore$model, times=times, regimen=regimen, parameters=pars, covariates=covariates, extraArguments=c(..., tdmore$extraArguments))
+
+  if (is.data.frame(newdata)) {
+    # Only use the outputs specified in newdata
+    predicted <- predicted[ , colnames(newdata), drop=FALSE ]
+  }
+
+  # Finally, add residual error if needed
   result <- model.frame.tdmore(tdmore, predicted, se=se, level=level)
   result
 }
@@ -122,27 +151,39 @@ residuals.tdmore <- function(object, observed, predicted, log=TRUE, ...) {
   return(result)
 }
 
-#' Get the specified observed values, with the upper and lower bounds provided by the residual error model
+#' Get the specified data values, with the upper and lower bounds provided by the residual error model
 #'
 #' @param formula a TDMore object
-#' @param observed data.frame with at least a TIME column
-#' @param se TRUE to generate an additional xx.upper and xx.lower column for every xx column in the observed dataset
+#' @param data data.frame with at least a TIME column
+#' Or alternatively, a numeric vector.
+#' Or NULL, to get an empty data.frame with TIME and a column for every residual error variable.
+#' @param se TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset
 #' @param level numeric value to specify the confidence interval
 #' @param ... ignored
 #'
 #' @importFrom stats qnorm
 #'
-#' @return a data.frame similar to observed, but with additional columns xx.lower and xx.upper (in case of se=TRUE)
+#' @return
+#' a data.frame similar to data. It contains at least column TIME.
+#' If a numeric vector was specified as `data`, the output is a data.frame with TIME column and additional NA-filled columns corresponding to the residual error variables.
+#' If `se` is TRUE, the data.frame has additional columns xx.lower and xx.upper for all columns that match the residual error model.
 #' @export
-model.frame.tdmore <- function(formula, observed, se=FALSE, level=0.95, ...) {
+model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, ...) {
   tdmore <- formula
-  if(!se) return(observed)
-  if(is.null(observed)) return(NULL)
+  if(is.null(data)) data <- numeric()
 
-  assert_that("data.frame" %in% class(observed))
-  assert_that("TIME" %in% colnames(observed))
+  if(is.data.frame(data)) {
+    assert_that("TIME" %in% colnames(data))
+  } else {
+    # Built a data.frame with TIME column and all residual error columns
+    data <- as.numeric(data)
+    data <- data.frame(TIME=data)
+    for(err in tdmore$res_var) data[, err$var] <- numeric()
+  }
 
-  oNames <- colnames(observed)
+  if(!se) return(data)
+
+  oNames <- colnames(data)
   oNames <- oNames[oNames != "TIME"]
 
   a <- (1 - level) / 2
@@ -151,26 +192,33 @@ model.frame.tdmore <- function(formula, observed, se=FALSE, level=0.95, ...) {
   for (err in tdmore$res_var) {
     var <- err$var
     if (!(var %in% oNames)) next
-    obs <- observed[, var]
+    obs <- data[, var]
     if(err$exp != 0) {
-      observed[, paste0(var, ".upper")] <- obs * exp(err$exp * q)
-      observed[, paste0(var, ".lower")] <- obs * exp(-err$exp * q)
+      data[, paste0(var, ".lower")] <- obs * exp(-err$exp * q)
+      data[, paste0(var, ".upper")] <- obs * exp(err$exp * q)
     } else {
-      observed[, paste0(var, ".upper")] <- obs * (1 + err$prop*q) + err$add*q
-      observed[, paste0(var, ".lower")] <- obs * (1 - err$prop*q) - err$add*q
+      data[, paste0(var, ".lower")] <- obs * (1 - err$prop*q) - err$add*q
+      data[, paste0(var, ".upper")] <- obs * (1 + err$prop*q) + err$add*q
     }
   }
-  return(observed)
+  return(data)
 }
 
-#' Get the original model
+#' Get a formula that describes this model
 #'
 #' @param x TDMore object
 #' @param ... ignored
 #'
-#' @return The original model used when defining the TDMore object
+#' @return A formula in the form OUTPUT_A + OUTPUT_B ~ TIME + COVARIATES + ETAS
 #' @export
-formula.tdmore <- function(x, ...) {x$model}
+formula.tdmore <- function(x, ...) {
+  formula(x$model)
+}
+
+terms.tdmore <- function(x, ...) {
+
+}
+
 
 #' Print a tdmore object.
 #'

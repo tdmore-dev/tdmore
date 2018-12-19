@@ -16,14 +16,15 @@ pop_ll <- function(par, tdmore, observed, regimen, covariates) {
 #'
 #' @param par the current estimate of the parameters
 #' @param tdmore the tdmore object
-#' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
+#' @param observed data frame with at least a TIME column, and all observed data.
+#' The data.frame can be empty, or could contain only a TIME column.
+#' The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
 #' @param regimen data frame describing the treatment regimen
 #' @param covariates the model covariates
 #'
 #' @return the prediction log likelihood
 pred_ll <- function(par, tdmore, observed, regimen, covariates) {
-  if(is.null(observed) || nrow(observed) == 0) return(0)
   pred <- predict.tdmore(object=tdmore, newdata=observed, regimen=regimen, parameters=par, covariates=covariates)
   res <- residuals.tdmore(tdmore, observed, pred, log=TRUE)
   sum(res)
@@ -64,7 +65,8 @@ ll <- function(par, tdmore, observed, regimen, covariates) {
 #' @importFrom stats optim
 #' @export
 estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", lower = -5 * sqrt(diag(tdmore$omega)), upper = +5 * sqrt(diag(tdmore$omega)), ...) {
-  assert_that(class(tdmore) == "tdmore")
+  assert_that(inherits(tdmore, "tdmore"))
+  observed <- model.frame(tdmore, data=observed) #ensure "observed" in right format for estimation
   if(is.null(par)) par <- rep(0, length(tdmore$parameters))
 
   # First try to estimate at starting values, as a precaution
@@ -261,7 +263,6 @@ fitted.tdmorefit <- function(object, ...) {
 #' @param se.fit TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower
 #' @param level The confidence interval, or NA to return all mc.maxpts results
 #' @param mc.maxpts Maximum number of points to sample in Monte Carlo simulation
-#' @param ip.maxpts Maximum number of points to interpolate if newdata is not given
 #' @param .progress see plyr::ddply
 #' @param .parallel see plyr::ddply
 #' @param ... ignored
@@ -270,29 +271,15 @@ fitted.tdmorefit <- function(object, ...) {
 #' @export
 #'
 #' @importFrom stats coef vcov median quantile
-predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NULL, covariates=NULL, se.fit=FALSE, level=0.95, mc.maxpts=100, ip.maxpts=100, .progress="none", .parallel=FALSE, ...) {
+predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NULL, covariates=NULL, se.fit=FALSE, level=0.95, mc.maxpts=100, .progress="none", .parallel=FALSE, ...) {
   tdmorefit <- object
   if(is.null(regimen)) regimen=tdmorefit$regimen
-  if(is.null(newdata)) {
-    if(is.null(tdmorefit$observed)) {
-      return(data.frame())
-    } else {
-      assert_that("TIME" %in% colnames(tdmorefit$observed))
-      newdata <- data.frame(TIME=tdmorefit$observed$TIME)
-      colNames <- colnames(tdmorefit$observed)
-      for(oName in colNames[colNames != "TIME"]) newdata[, oName] <- NA
-    }
-  }
-  if(is.numeric(newdata)) {
-    # keep as numeric
-  } else {
-    assert_that("TIME" %in% colnames(newdata))
-  }
+  if(is.null(newdata)) newdata <- model.frame(tdmorefit)
+
   pars <- coef(tdmorefit)
-  if(!is.null(parameters)) {
-    pars[names(parameters)] <- parameters ## set pars from argument
-  }
+  if(!is.null(parameters)) pars[names(parameters)] <- parameters ## set pars from argument
   if(is.null(covariates)) covariates <- tdmorefit$covariates
+
   ipred <- predict.tdmore(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=pars, covariates=covariates)
   if(se.fit) {
     oNames <- names(newdata)
@@ -436,16 +423,20 @@ formula.tdmorefit <- function(x, ...) {x$tdmore}
 #' Get the observed values used to provide this model fit.
 #'
 #' @param formula A tdmorefit object
+#' @param data Data.frame to append and modify. If NULL, uses the observed values.
 #' @param se if TRUE, add a column xx.upper and xx.lower with the lower and upper bounds of confidence, based on the residual error model
-#' @param level Confidence interval
+#' @param level Confidence interval to use for `se`
 #' @param ... ignored
 #'
-#' @return A data.frame, similar to the original
+#' @return
+#' A data.frame, similar to the one used to estimate this `tdmorefit` object.
+#' If `se` was specified, then a column xx.upper and xx.lower with the
+#' lower and upper confidence interval (based on the residual error model) is added.
+#'
 #' @export
-model.frame.tdmorefit <- function(formula, se=FALSE, level=0.95, ...) {
-  tdmorefit <- formula
-  if(is.null(tdmorefit$observed)) return(NULL)
-  result <- model.frame.tdmore(tdmorefit$tdmore, tdmorefit$observed, se=se, level=level)
+model.frame.tdmorefit <- function(formula, data=NULL, se=FALSE, level=0.95, ...) {
+  if(is.null(data)) data <- formula$observed
+  result <- model.frame.tdmore(formula=formula$tdmore, data=data, se=se, level=level)
   result
 }
 

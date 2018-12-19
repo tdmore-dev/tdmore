@@ -9,8 +9,7 @@ context("Test that the findDose method works as intended")
 set.seed(0)
 
 # Load the Meropenem model
-source(paste0(test_path(), ("/modelLibrary.R")))
-tdmore <- nlmixrUI(meropenem_model) %>% tdmore()
+tdmore <- (meropenem_model) %>% tdmore()
 
 # Predicting new data
 regimen <- data.frame(

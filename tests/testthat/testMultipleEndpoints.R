@@ -6,8 +6,7 @@ context("Test the Sunitinib PK/PD model")
 set.seed(0)
 
 # Load the default tdmore
-source(paste0(test_path(), ("/modelLibrary.R")))
-tdmore <- nlmixrUI(sunitinib_pkpd_model) %>% tdmore(maxsteps=1E3*500)
+tdmore <- (sunitinib_pkpd_model) %>% tdmore(maxsteps=1E3*500)
 
 # Checking the error model
 expect_equal(unlist(tdmore$res_var[1]) , c(var="CONC", add=0, prop=0.417, exp=0))

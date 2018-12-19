@@ -28,8 +28,7 @@ tdmore_deSolve <- function(parameters, add=0, prop=0, exp=0, ...) {
 #' Predict for tdmore_deSolve
 #'
 #' @param model The model function
-#' @param newdata data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
-#' If not specified, we estimate the population prediction
+#' @param times sampling times at which to generate a prediction
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).
 #' @param parameters either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector
 #' @param covariates NOT IMPLEMENTED
@@ -43,26 +42,12 @@ tdmore_deSolve <- function(parameters, add=0, prop=0, exp=0, ...) {
 #' @importFrom deSolve ode
 #'
 #' @keywords internal
-model_predict.tdmore_deSolve <- function(model, newdata, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, extraArguments=list()) {
+model_predict.tdmore_deSolve <- function(model, times, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, extraArguments=list()) {
   if(any(parameters > 10 | parameters < -10)) {
-    warning("Solver requested with highly unlikely parameters, returning NA")
-    newdata[, colnames(newdata) != "TIME"] <- NA
-    return(newdata) #we cannot calculate this...
+    stop("Solver requested with highly unlikely parameters, returning NA")
   }
   # Verify arguments are good
-  samplingTimes <- NULL
-  oNames <- NULL
-  if("data.frame" %in% class(newdata)) {
-    assert_that("data.frame" %in% class(newdata))
-    assert_that("TIME" %in% colnames(newdata))
-    oNames <- colnames(newdata)
-    oNames <- oNames[oNames != "TIME"]
-    assert_that(length(oNames) > 0)
-    samplingTimes <- newdata$TIME
-  } else {
-    assert_that(is.numeric(newdata))
-    samplingTimes <- newdata
-  }
+  samplingTimes <- as.numeric(times)
 
   assert_that("data.frame" %in% class(regimen))
   assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
@@ -112,7 +97,6 @@ model_predict.tdmore_deSolve <- function(model, newdata, regimen=data.frame(TIME
   # Only get the values we want
   result <- as.data.frame(result)
   result <- result[ result$time %in% samplingTimes, ]
-  result$TIME <- result$time
-  if(!is.null(oNames)) result <- result[, c("TIME", oNames)]
+  colnames(result)[colnames(result)=="time"] <- "TIME"
   result
 }

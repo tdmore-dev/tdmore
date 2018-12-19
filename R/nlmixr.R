@@ -77,3 +77,16 @@ tdmore.nlmixrUI <- function(model, ...) {
   # Check consistency and return
   return(checkTdmore(tdmore))
 }
+
+#' Create a TDM-capable model from an nlmixr result.
+#'
+#' @param model the fitted nlmixr model
+#' @param ... extra arguments will be passed to the model_predict call
+#'
+#' @return An object of class tdmore, which can be used to estimate posthoc Bayesian parameters.
+#' The model contained within is actually an RxODE object.
+#' @export
+tdmore.nlmixrFitCore <- function(model, ...) {
+  # Use the included nlmixrUI object
+  tdmore(model$uif)
+}

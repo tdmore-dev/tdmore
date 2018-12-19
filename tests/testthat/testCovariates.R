@@ -6,8 +6,7 @@ library(testthat)
 context("Test that a clear error message is raised if no covariates are specified")
 
 # Load the default tdmore
-source(paste0(test_path(), ("/modelLibrary.R")))
-tdmore <- nlmixrUI(default_model) %>% tdmore()
+tdmore <- (default_model) %>% tdmore()
 
 regimen <- data.frame(
   TIME=seq(0, 1)*24,

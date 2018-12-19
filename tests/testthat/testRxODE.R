@@ -22,7 +22,6 @@ d/dt(centr) = ka*abs - k12*centr + k21*perip - ke*centr;
 d/dt(perip) = k12*centr - k21*perip;
 "
 omegas=c(EVc=0.19^2, ECL=0.28^2)
-
 tdmore <- RxODE::RxODE(modelCode) %>%
   tdmore(omega=vectorToDiagonalMatrix(omegas),
          res_var=list(errorModel("CONC", prop=0.23))) #Model has 23% proportional error

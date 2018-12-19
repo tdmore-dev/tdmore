@@ -37,6 +37,9 @@ algebraic <- function(fun) {
         args <- c(args, parameters) # add parameters
         do.call(fun, args=args)
       })
+      if(length(times)==0) return(numeric())
+      if(nrow(regimen) == 0) return( rep(0, length.out=length(times)) )
+
       CONC <- apply(CONCs, 1, sum, na.rm=TRUE)
       return(CONC)
     },
@@ -60,15 +63,12 @@ algebraic <- function(fun) {
 #'
 #' @export
 #' @keywords internal
-model_predict.algebraic <- function(model, newdata, regimen=data.frame(TIME=c()), parameters=c(),
+model_predict.algebraic <- function(model, times,
+                                    regimen=data.frame(TIME=numeric(), AMT=numeric()),
+                                    parameters=numeric(),
                                     covariates=NULL, extraArguments=list()) {
   # Verify arguments are good
-  assertthat::assert_that("data.frame" %in% class(newdata))
-  assertthat::assert_that("TIME" %in% colnames(newdata))
-  oNames <- colnames(newdata)
-  oNames <- oNames[oNames != "TIME"]
-  assertthat::assert_that(length(oNames) > 0)
-  assertthat::assert_that(all(oNames %in% c("CONC")))
+  times <- as.numeric(times)
 
   assertthat::assert_that("data.frame" %in% class(regimen))
   assertthat::assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
@@ -84,17 +84,13 @@ model_predict.algebraic <- function(model, newdata, regimen=data.frame(TIME=c())
   assertthat::assert_that(all(model$parameters %in% pNames))
 
   # All arguments look good, let's prepare the simulation
-  if(is.data.frame(newdata)) times <- newdata$TIME
-  assertthat::assert_that(is.numeric(times))
-
   if(is.data.frame(covariates)) stop("Time-varying covariates not supported")
   params <- c(params, covariates)
 
   CONC <- model$predictFunction(times, regimen, params)
 
   # Only get the values we want
-  result <- data.frame(TIME=times, CONC=CONC)
-  result[, colnames(newdata)]
+  data.frame(TIME=times, CONC=CONC)
 }
 
 
