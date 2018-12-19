@@ -47,3 +47,39 @@
 #' The model was estimated by nlmixr SAEM
 #' @format A fitted Nlmixr model
 "pheno_nlmixr"
+
+
+#' Default example model
+#' TODO: Better documentation required
+#' @format an nlmixrUI model
+'default_model'
+
+#' Default example model
+#' TODO: Better documentation required
+#' @format an nlmixrUI model
+'fluticasone_model'
+
+#' Default example model
+#' TODO: Better documentation required
+#' @format an nlmixrUI model
+'meropenem_1param_model'
+
+#' Default example model
+#' TODO: Better documentation required
+#' @format an nlmixrUI model
+'meropenem_model'
+
+#' Default example model
+#' TODO: Better documentation required
+#' @format an nlmixrUI model
+'meropenem_omega0_model'
+
+#' Default example model
+#' TODO: Better documentation required
+#' @format an nlmixrUI model
+'sunitinib_pkpd_model'
+
+#' Default example model
+#' TODO: Better documentation required
+#' @format an nlmixrUI model
+'two_error_models'
