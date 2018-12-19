@@ -301,6 +301,10 @@ The above summary shows us how well the observed data was estimated. In particul
 
 Predictions on the `tdmorefit` object can be done as follows (see also \@ref(predicttdmorefit):
 
+```{r echo=F}
+set.seed(0)
+```
+
 ```{r}
 data <- predict(tdmorefit, newdata=data.frame(TIME=times, CONC=NA), se.fit=TRUE)
 ```
@@ -371,6 +375,10 @@ A last dose of 241mg is recommended for this specific subject.
 **Example 3**: Ask for a confidence interval around the dose
 
 Use argument `se.fit` as follows:
+
+```{r, echo=FALSE}
+set.seed(0) #ensure always the same seed
+```
 
 ```{r}
 newRegimen <- data.frame(TIME=c(0,1,2,3,4,5,6)*24, AMT=c(150,150,150,150,150,150,NA))
