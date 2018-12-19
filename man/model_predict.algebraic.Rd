@@ -4,20 +4,20 @@
 \alias{model_predict.algebraic}
 \title{Predict for algebraic models}
 \usage{
-\method{model_predict}{algebraic}(model, newdata,
-  regimen = data.frame(TIME = c()), parameters = c(),
+\method{model_predict}{algebraic}(model, times, regimen = data.frame(TIME
+  = numeric(), AMT = numeric()), parameters = numeric(),
   covariates = NULL, extraArguments = list())
 }
 \arguments{
 \item{model}{the algebraic model}
-
-\item{newdata}{dataframe with a column 'TIME' and 'CONC'. Other columns are ignored.}
 
 \item{regimen}{dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)}
 
 \item{parameters}{a named numeric vector}
 
 \item{covariates}{named vector, or data.frame with column 'TIME', and at least TIME 0}
+
+\item{newdata}{dataframe with a column 'TIME' and 'CONC'. Other columns are ignored.}
 }
 \value{
 A data.frame similar to the newdata data frame, but with CONC column filled out.

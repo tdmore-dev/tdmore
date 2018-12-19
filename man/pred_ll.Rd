@@ -11,7 +11,9 @@ pred_ll(par, tdmore, observed, regimen, covariates)
 
 \item{tdmore}{the tdmore object}
 
-\item{observed}{data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
+\item{observed}{data frame with at least a TIME column, and all observed data.
+The data.frame can be empty, or could contain only a TIME column.
+The observed data will be compared to the model predictions.
 If not specified, we estimate the population prediction}
 
 \item{regimen}{data frame describing the treatment regimen}

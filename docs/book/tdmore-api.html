@@ -25,7 +25,7 @@
 <meta name="author" content="Ruben Faelens, Nicolas Luyckx, Quentin Leirens, Thomas Bouillon">
 
 
-<meta name="date" content="2018-12-17">
+<meta name="date" content="2018-12-19">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -382,35 +382,35 @@ m1_WT &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1_
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">times &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">24</span><span class="op">*</span><span class="dv">7</span><span class="op">-</span><span class="dv">1</span>, <span class="dt">by=</span><span class="dv">1</span>)
 data1a &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">newdata=</span>times, <span class="dt">regimen=</span>regimen1)
 <span class="kw">head</span>(data1a)</code></pre></div>
-<pre><code>##   time KA  V CL     CONC      depot    center TIME
-## 1    0  1 70  4 0.000000 150.000000   0.00000    0
-## 2    1  1 70  4 1.310408  55.181934  91.72857    1
-## 3    2  1 70  4 1.719699  20.300319 120.37894    2
-## 4    3  1 70  4 1.801530   7.468069 126.10712    3
-## 5    4  1 70  4 1.766713   2.747346 123.66993    4
-## 6    5  1 70  4 1.692589   1.010691 118.48126    5</code></pre>
+<pre><code>##   TIME KA  V CL     CONC      depot    center
+## 1    0  1 70  4 0.000000 150.000000   0.00000
+## 2    1  1 70  4 1.310408  55.181934  91.72857
+## 3    2  1 70  4 1.719699  20.300319 120.37894
+## 4    3  1 70  4 1.801530   7.468069 126.10712
+## 5    4  1 70  4 1.766713   2.747346 123.66993
+## 6    5  1 70  4 1.692589   1.010691 118.48126</code></pre>
 <p>Because <code>newdata</code> is provided as numeric (with no specified output column), all variables are output.</p>
 <p><strong>Example 1b</strong>: Simulate the first model for a week with residual error</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data1b &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">newdata=</span>times, <span class="dt">regimen=</span>regimen1, <span class="dt">se=</span>T, <span class="dt">level=</span><span class="fl">0.95</span>)
 <span class="kw">head</span>(data1b)</code></pre></div>
-<pre><code>##   time KA  V CL     CONC      depot    center TIME CONC.upper CONC.lower
-## 1    0  1 70  4 0.000000 150.000000   0.00000    0   0.000000   0.000000
-## 2    1  1 70  4 1.310408  55.181934  91.72857    1   1.053573   1.567243
-## 3    2  1 70  4 1.719699  20.300319 120.37894    2   1.382644   2.056754
-## 4    3  1 70  4 1.801530   7.468069 126.10712    3   1.448437   2.154624
-## 5    4  1 70  4 1.766713   2.747346 123.66993    4   1.420444   2.112983
-## 6    5  1 70  4 1.692589   1.010691 118.48126    5   1.360848   2.024331</code></pre>
+<pre><code>##   TIME KA  V CL     CONC      depot    center CONC.lower CONC.upper
+## 1    0  1 70  4 0.000000 150.000000   0.00000   0.000000   0.000000
+## 2    1  1 70  4 1.310408  55.181934  91.72857   1.567243   1.053573
+## 3    2  1 70  4 1.719699  20.300319 120.37894   2.056754   1.382644
+## 4    3  1 70  4 1.801530   7.468069 126.10712   2.154624   1.448437
+## 5    4  1 70  4 1.766713   2.747346 123.66993   2.112983   1.420444
+## 6    5  1 70  4 1.692589   1.010691 118.48126   2.024331   1.360848</code></pre>
 <p>As you can see, lower and upper bounds on the concentration are provided.</p>
 <p><strong>Example 1c</strong>: Simulate the first model for a week with residual error and output selection</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data1c &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1, <span class="dt">se=</span>T, <span class="dt">level=</span><span class="fl">0.95</span>)
 <span class="kw">head</span>(data1c)</code></pre></div>
-<pre><code>##   TIME     CONC CONC.upper CONC.lower
+<pre><code>##   TIME     CONC CONC.lower CONC.upper
 ## 1    0 0.000000   0.000000   0.000000
-## 2    1 1.310408   1.053573   1.567243
-## 3    2 1.719699   1.382644   2.056754
-## 4    3 1.801530   1.448437   2.154624
-## 5    4 1.766713   1.420444   2.112983
-## 6    5 1.692589   1.360848   2.024331</code></pre>
+## 2    1 1.310408   1.567243   1.053573
+## 3    2 1.719699   2.056754   1.382644
+## 4    3 1.801530   2.154624   1.448437
+## 5    4 1.766713   2.112983   1.420444
+## 6    5 1.692589   2.024331   1.360848</code></pre>
 <p>Only the concentration is returned in the previous dataframe.</p>
 <p><strong>Example 2</strong>: Compare the 4 models previously described in section <a href="tdmore-api.html#model">4.1</a></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data1 &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1)
@@ -576,17 +576,17 @@ recommendation3 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 <span class="kw">summary</span>(recommendation3)</code></pre></div>
 <pre><code>## $dose
 ## dose.median  dose.lower  dose.upper 
-##    239.8690    203.2619    362.7847 
+##    254.3902    215.0854    336.1720 
 ## 
 ## $regimen
-##   TIME     AMT
-## 1    0 150.000
-## 2   24 150.000
-## 3   48 150.000
-## 4   72 150.000
-## 5   96 150.000
-## 6  120 150.000
-## 7  144 239.869</code></pre>
+##   TIME      AMT
+## 1    0 150.0000
+## 2   24 150.0000
+## 3   48 150.0000
+## 4   72 150.0000
+## 5   96 150.0000
+## 6  120 150.0000
+## 7  144 254.3902</code></pre>
 <p>A 95% confidence interval is returned.</p>
 </div>
 <div id="visualise-a-recommendation" class="section level3">

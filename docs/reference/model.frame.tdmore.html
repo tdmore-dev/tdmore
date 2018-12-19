@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get the specified observed values, with the upper and lower bounds provided by the residual error model — model.frame.tdmore • tdmore</title>
+<title>Get the specified data values, with the upper and lower bounds provided by the residual error model — model.frame.tdmore • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Get the specified observed values, with the upper and lower bounds provided by the residual error model — model.frame.tdmore" />
+<meta property="og:title" content="Get the specified data values, with the upper and lower bounds provided by the residual error model — model.frame.tdmore" />
 
-<meta property="og:description" content="Get the specified observed values, with the upper and lower bounds provided by the residual error model" />
+<meta property="og:description" content="Get the specified data values, with the upper and lower bounds provided by the residual error model" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -89,6 +89,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/ggplot.html">Using ggplot to visualize tdmore results</a>
+    </li>
+    <li>
       <a href="../articles/tdmore_multiple_endpoints.html">Multiple endpoints in TDMore</a>
     </li>
     <li>
@@ -124,20 +127,20 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get the specified observed values, with the upper and lower bounds provided by the residual error model</h1>
+    <h1>Get the specified data values, with the upper and lower bounds provided by the residual error model</h1>
     <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/model.R'><code>R/model.R</code></a></small>
     <div class="hidden name"><code>model.frame.tdmore.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Get the specified observed values, with the upper and lower bounds provided by the residual error model</p>
+    <p>Get the specified data values, with the upper and lower bounds provided by the residual error model</p>
     
     </div>
 
     <pre class="usage"><span class='co'># S3 method for tdmore</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/model.frame'>model.frame</a></span>(<span class='no'>formula</span>, <span class='no'>observed</span>, <span class='kw'>se</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/model.frame'>model.frame</a></span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>se</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
+  <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -147,12 +150,14 @@
       <td><p>a TDMore object</p></td>
     </tr>
     <tr>
-      <th>observed</th>
-      <td><p>data.frame with at least a TIME column</p></td>
+      <th>data</th>
+      <td><p>data.frame with at least a TIME column
+Or alternatively, a numeric vector.
+Or NULL, to get an empty data.frame with TIME and a column for every residual error variable.</p></td>
     </tr>
     <tr>
       <th>se</th>
-      <td><p>TRUE to generate an additional xx.upper and xx.lower column for every xx column in the observed dataset</p></td>
+      <td><p>TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset</p></td>
     </tr>
     <tr>
       <th>level</th>
@@ -166,7 +171,9 @@
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a data.frame similar to observed, but with additional columns xx.lower and xx.upper (in case of se=TRUE)</p>
+    <p>a data.frame similar to data. It contains at least column TIME.
+If a numeric vector was specified as `data`, the output is a data.frame with TIME column and additional NA-filled columns corresponding to the residual error variables.
+If `se` is TRUE, the data.frame has additional columns xx.lower and xx.upper for all columns that match the residual error model.</p>
     
 
   </div>

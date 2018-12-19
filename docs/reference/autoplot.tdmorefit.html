@@ -89,6 +89,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/ggplot.html">Using ggplot to visualize tdmore results</a>
+    </li>
+    <li>
       <a href="../articles/tdmore_multiple_endpoints.html">Multiple endpoints in TDMore</a>
     </li>
     <li>
@@ -136,7 +139,7 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for tdmorefit</span>
-<span class='fu'>autoplot</span>(<span class='no'>x</span>, <span class='kw'>newdata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>autoplot</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -144,10 +147,6 @@
     <tr>
       <th>x</th>
       <td><p>the tdmorefit object</p></td>
-    </tr>
-    <tr>
-      <th>newdata</th>
-      <td><p>a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times</p></td>
     </tr>
     <tr>
       <th>...</th>

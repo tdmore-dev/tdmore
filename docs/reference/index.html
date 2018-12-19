@@ -86,6 +86,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/ggplot.html">Using ggplot to visualize tdmore results</a>
+    </li>
+    <li>
       <a href="../articles/tdmore_multiple_endpoints.html">Multiple endpoints in TDMore</a>
     </li>
     <li>
@@ -218,7 +221,7 @@ and then summed up for multiple doses.</p></td>
         <td>
           <p><code><a href="formula.tdmore.html">formula(<i>&lt;tdmore&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Get the original model</p></td>
+        <td><p>Get a formula that describes this model</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -238,7 +241,7 @@ and then summed up for multiple doses.</p></td>
         <td>
           <p><code><a href="model.frame.tdmore.html">model.frame(<i>&lt;tdmore&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Get the specified observed values, with the upper and lower bounds provided by the residual error model</p></td>
+        <td><p>Get the specified data values, with the upper and lower bounds provided by the residual error model</p></td>
       </tr><tr>
         
         <td>
@@ -421,6 +424,13 @@ and then summed up for multiple doses.</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="default_model.html">default_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="discrete.searchspace.html">discrete.searchspace()</a></code> </p>
         </td>
         <td><p>Add discrete options to a search space</p></td>
@@ -464,9 +474,16 @@ a given dataset using the model</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="fluticasone_model.html">fluticasone_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="formula.tdmore.html">formula(<i>&lt;tdmore&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Get the original model</p></td>
+        <td><p>Get a formula that describes this model</p></td>
       </tr><tr>
         
         <td>
@@ -494,15 +511,49 @@ a given dataset using the model</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="meropenem_1param_model.html">meropenem_1param_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="meropenem_model.html">meropenem_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="meropenem_omega0_model.html">meropenem_omega0_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="model.frame.tdmore.html">model.frame(<i>&lt;tdmore&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Get the specified observed values, with the upper and lower bounds provided by the residual error model</p></td>
+        <td><p>Get the specified data values, with the upper and lower bounds provided by the residual error model</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="model.frame.tdmorefit.html">model.frame(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
         </td>
         <td><p>Get the observed values used to provide this model fit.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="pheno.html">pheno</a></code> </p>
+        </td>
+        <td><p>Phenobarbitol dataset, as included in the NONMEM distribution.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="pheno_nlmixr.html">pheno_nlmixr</a></code> </p>
+        </td>
+        <td><p>NlmixrUI object describing Phenobarbitol 1-compartment model with IV administration
+and allometric scaling on weight</p></td>
       </tr><tr>
         
         <td>
@@ -610,6 +661,13 @@ This is based on the log-likelihood of the observed value in the residual error 
       </tr><tr>
         
         <td>
+          <p><code><a href="stat_predict.html">stat_predict()</a></code> </p>
+        </td>
+        <td><p>Calculate predictions using the provided tdmore model. This is very similar to stat_function,
+but the calculated values are calculated using `predict.tdmorefit`.</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="summary.recommendation.html">summary(<i>&lt;recommendation&gt;</i>)</a></code> </p>
         </td>
         <td><p>Summarize a recommendation object.</p></td>
@@ -628,6 +686,13 @@ This is based on the log-likelihood of the observed value in the residual error 
       </tr><tr>
         
         <td>
+          <p><code><a href="sunitinib_pkpd_model.html">sunitinib_pkpd_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="tdmore.algebraic.html">tdmore(<i>&lt;algebraic&gt;</i>)</a></code> </p>
         </td>
         <td><p>Build a tdmore object based on an algebraic model</p></td>
@@ -637,6 +702,12 @@ This is based on the log-likelihood of the observed value in the residual error 
           <p><code><a href="tdmore.default.html">tdmore(<i>&lt;default&gt;</i>)</a></code> </p>
         </td>
         <td><p>Default function, catching unsupported types of models</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="tdmore.nlmixrFitCore.html">tdmore(<i>&lt;nlmixrFitCore&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Create a TDM-capable model from an nlmixr result.</p></td>
       </tr><tr>
         
         <td>
@@ -670,9 +741,28 @@ This is based on the log-likelihood of the observed value in the residual error 
       </tr><tr>
         
         <td>
+          <p><code><a href="theopp.html">theopp</a></code> </p>
+        </td>
+        <td><p>Theophylline dataset, as included in the NONMEM distribution.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="theopp_nlmixr.html">theopp_nlmixr</a></code> </p>
+        </td>
+        <td><p>NlmixrUI object describing theophylline 1-compartment model with oral absorption</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="transformRegimen.html">transformRegimen()</a></code> </p>
         </td>
         <td><p>Transform a specific treatment regimen using a modifier</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="two_error_models.html">two_error_models</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
       </tr><tr>
         
         <td>

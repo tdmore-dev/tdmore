@@ -4,15 +4,14 @@
 \alias{model_predict.tdmore_deSolve}
 \title{Predict for tdmore_deSolve}
 \usage{
-\method{model_predict}{tdmore_deSolve}(model, newdata,
+\method{model_predict}{tdmore_deSolve}(model, times,
   regimen = data.frame(TIME = c()), parameters = c(),
   covariates = NULL, extraArguments = list())
 }
 \arguments{
 \item{model}{The model function}
 
-\item{newdata}{data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
-If not specified, we estimate the population prediction}
+\item{times}{sampling times at which to generate a prediction}
 
 \item{regimen}{dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).}
 

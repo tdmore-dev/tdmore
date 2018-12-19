@@ -2,6 +2,7 @@ pandoc: 1.19.2.1
 pkgdown: 1.2.0
 pkgdown_sha: ~
 articles:
+  ggplot: ggplot.html
   tdmore: tdmore.html
   tdmore_multiple_endpoints: tdmore_multiple_endpoints.html
   testing_adherence: testing_adherence.html

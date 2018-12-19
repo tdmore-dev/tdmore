@@ -89,6 +89,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/ggplot.html">Using ggplot to visualize tdmore results</a>
+    </li>
+    <li>
       <a href="../articles/tdmore_multiple_endpoints.html">Multiple endpoints in TDMore</a>
     </li>
     <li>
@@ -136,44 +139,50 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for tdmore</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='no'>regimen</span>, <span class='kw'>parameters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>se</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>parameters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>se</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
+  <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>TDMore object</p></td>
+      <td><p>Object of class inheriting from `tdmore`</p></td>
     </tr>
     <tr>
       <th>newdata</th>
-      <td><p>Data.frame of new data with at least a TIME column, and blank columns with all desired predictions
-or a numeric vector to predict all possible values from the model</p></td>
+      <td><p>Data.frame of new data with at least a TIME column, and additional columns.
+Any columns that match the model output will be replaced by the predicted values.
+Alternatively, a numeric vector used as TIME. The resulting data.frame will
+contain all values predicted by the model.</p></td>
     </tr>
     <tr>
       <th>regimen</th>
-      <td><p>Treatment regimen</p></td>
+      <td><p>Treatment regimen, or NULL for no treatment</p></td>
     </tr>
     <tr>
       <th>parameters</th>
-      <td><p>The parameter values to use, missing values are taken from the population</p></td>
+      <td><p>A named numeric vector with the parameter values to use.
+Any model parameters that are not provided are assumed `0`.</p></td>
     </tr>
     <tr>
       <th>covariates</th>
-      <td><p>the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0</p></td>
+      <td><p>a named numeric vector with the covariates to use.
+Alternatively, a data.frame with column `TIME` and columns with time-varying covariates.
+The first row of the data.frame should be time 0.</p></td>
     </tr>
     <tr>
       <th>se</th>
-      <td><p>Whether to add residual error</p></td>
+      <td><p>TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset</p></td>
     </tr>
     <tr>
       <th>level</th>
-      <td><p>How much residual error to add</p></td>
+      <td><p>numeric value to specify the confidence interval</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>ignored</p></td>
+      <td><p>extra arguments for the call to the model</p></td>
     </tr>
     </table>
     
@@ -181,9 +190,9 @@ or a numeric vector to predict all possible values from the model</p></td>
 
     <p>A data.frame with all observed values at the given time points</p>
     
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <div class='dont-index'><p>tdmore::model_predict</p></div>
+    <p>TODO: This is such an important function, that it merits a little more documentation</p>
     
 
   </div>
@@ -194,7 +203,7 @@ or a numeric vector to predict all possible values from the model</p></td>
       
       <li><a href="#value">Value</a></li>
 
-      <li><a href="#see-also">See also</a></li>
+      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>

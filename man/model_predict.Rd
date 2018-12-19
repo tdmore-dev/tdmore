@@ -2,15 +2,15 @@
 % Please edit documentation in R/model.R
 \name{model_predict}
 \alias{model_predict}
-\title{Prototype predict function}
+\title{Prototype predict function. Implement this to add your own model type to tdmore.}
 \usage{
-model_predict(model, newdata, regimen, parameters, covariates,
+model_predict(model, times, regimen, parameters, covariates,
   extraArguments)
 }
 \arguments{
 \item{model}{The model itself.}
 
-\item{newdata}{dataframe with at least a column 'TIME' and other values. A prediction will be generated for each value.}
+\item{times}{The times at which to generate predictions. May be empty, but never NULL.}
 
 \item{regimen}{dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)}
 
@@ -21,9 +21,18 @@ model_predict(model, newdata, regimen, parameters, covariates,
 \item{extraArguments}{named list with extra arguments to use for call}
 }
 \value{
-A data.frame similar to the observed data frame, but with predicted values.
+A data.frame with model predictions at each `times`
 }
 \description{
-Prototype predict function
+Prototype predict function. Implement this to add your own model type to tdmore.
+}
+\details{
+The model_predict function will generate a data.frame with the model output.
+The data.frame will have a TIME column, and all model output in separate columns.
+
+In case the `times` vector is empty, it should generate an empty data.frame. The data.frame
+should still contain all columns that would usually be generated.
+Furthermore, it should check all arguments in the same way as usual, and even try to execute
+a simulation.
 }
 \keyword{internal}

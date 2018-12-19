@@ -2,25 +2,29 @@
 % Please edit documentation in R/model.R
 \name{model.frame.tdmore}
 \alias{model.frame.tdmore}
-\title{Get the specified observed values, with the upper and lower bounds provided by the residual error model}
+\title{Get the specified data values, with the upper and lower bounds provided by the residual error model}
 \usage{
-\method{model.frame}{tdmore}(formula, observed, se = FALSE,
-  level = 0.95, ...)
+\method{model.frame}{tdmore}(formula, data, se = FALSE, level = 0.95,
+  ...)
 }
 \arguments{
 \item{formula}{a TDMore object}
 
-\item{observed}{data.frame with at least a TIME column}
+\item{data}{data.frame with at least a TIME column
+Or alternatively, a numeric vector.
+Or NULL, to get an empty data.frame with TIME and a column for every residual error variable.}
 
-\item{se}{TRUE to generate an additional xx.upper and xx.lower column for every xx column in the observed dataset}
+\item{se}{TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset}
 
 \item{level}{numeric value to specify the confidence interval}
 
 \item{...}{ignored}
 }
 \value{
-a data.frame similar to observed, but with additional columns xx.lower and xx.upper (in case of se=TRUE)
+a data.frame similar to data. It contains at least column TIME.
+If a numeric vector was specified as `data`, the output is a data.frame with TIME column and additional NA-filled columns corresponding to the residual error variables.
+If `se` is TRUE, the data.frame has additional columns xx.lower and xx.upper for all columns that match the residual error model.
 }
 \description{
-Get the specified observed values, with the upper and lower bounds provided by the residual error model
+Get the specified data values, with the upper and lower bounds provided by the residual error model
 }

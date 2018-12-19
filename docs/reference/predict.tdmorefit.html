@@ -89,6 +89,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/ggplot.html">Using ggplot to visualize tdmore results</a>
+    </li>
+    <li>
       <a href="../articles/tdmore_multiple_endpoints.html">Multiple endpoints in TDMore</a>
     </li>
     <li>
@@ -138,8 +141,8 @@
     <pre class="usage"><span class='co'># S3 method for tdmorefit</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>object</span>, <span class='kw'>newdata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>parameters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>ip.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>.progress</span> <span class='kw'>=</span> <span class='st'>"none"</span>, <span class='kw'>.parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>.progress</span> <span class='kw'>=</span> <span class='st'>"none"</span>,
+  <span class='kw'>.parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,10 +181,6 @@ the other parameters are taken from the tdmorefit object</p></td>
     <tr>
       <th>mc.maxpts</th>
       <td><p>Maximum number of points to sample in Monte Carlo simulation</p></td>
-    </tr>
-    <tr>
-      <th>ip.maxpts</th>
-      <td><p>Maximum number of points to interpolate if newdata is not given</p></td>
     </tr>
     <tr>
       <th>.progress</th>

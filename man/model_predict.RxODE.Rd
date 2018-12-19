@@ -4,14 +4,12 @@
 \alias{model_predict.RxODE}
 \title{Predict for RxODE}
 \usage{
-\method{model_predict}{RxODE}(model, newdata, regimen = data.frame(TIME =
-  c()), parameters = c(), covariates = NULL, extraArguments = list())
+\method{model_predict}{RxODE}(model, times, regimen = data.frame(TIME =
+  numeric()), parameters = numeric(), covariates = NULL,
+  extraArguments = list())
 }
 \arguments{
 \item{model}{The model itself.}
-
-\item{newdata}{A dataframe with at least a column 'TIME' and other values that should be observed,
-or a numeric TIME vector to produce all values that can be observed by this model}
 
 \item{regimen}{dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).}
 
@@ -20,6 +18,9 @@ or a numeric TIME vector to produce all values that can be observed by this mode
 \item{covariates}{named vector, or data.frame with column 'TIME', and at least TIME 0}
 
 \item{extraArguments}{extra arguments to use}
+
+\item{newdata}{A dataframe with at least a column 'TIME' and other values that should be observed,
+or a numeric TIME vector to produce all values that can be observed by this model}
 }
 \value{
 A data.frame similar to the observed data frame, but with predicted values.

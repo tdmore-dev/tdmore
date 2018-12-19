@@ -2,7 +2,7 @@
 % Please edit documentation in R/model.R
 \name{formula.tdmore}
 \alias{formula.tdmore}
-\title{Get the original model}
+\title{Get a formula that describes this model}
 \usage{
 \method{formula}{tdmore}(x, ...)
 }
@@ -12,8 +12,8 @@
 \item{...}{ignored}
 }
 \value{
-The original model used when defining the TDMore object
+A formula in the form OUTPUT_A + OUTPUT_B ~ TIME + COVARIATES + ETAS
 }
 \description{
-Get the original model
+Get a formula that describes this model
 }

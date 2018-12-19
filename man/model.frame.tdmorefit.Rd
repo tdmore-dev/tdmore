@@ -4,19 +4,24 @@
 \alias{model.frame.tdmorefit}
 \title{Get the observed values used to provide this model fit.}
 \usage{
-\method{model.frame}{tdmorefit}(formula, se = FALSE, level = 0.95, ...)
+\method{model.frame}{tdmorefit}(formula, data = NULL, se = FALSE,
+  level = 0.95, ...)
 }
 \arguments{
 \item{formula}{A tdmorefit object}
 
+\item{data}{Data.frame to append and modify. If NULL, uses the observed values.}
+
 \item{se}{if TRUE, add a column xx.upper and xx.lower with the lower and upper bounds of confidence, based on the residual error model}
 
-\item{level}{Confidence interval}
+\item{level}{Confidence interval to use for `se`}
 
 \item{...}{ignored}
 }
 \value{
-A data.frame, similar to the original
+A data.frame, similar to the one used to estimate this `tdmorefit` object.
+If `se` was specified, then a column xx.upper and xx.lower with the
+lower and upper confidence interval (based on the residual error model) is added.
 }
 \description{
 Get the observed values used to provide this model fit.

@@ -6,8 +6,8 @@
 \usage{
 \method{predict}{tdmorefit}(object, newdata = NULL, regimen = NULL,
   parameters = NULL, covariates = NULL, se.fit = FALSE,
-  level = 0.95, mc.maxpts = 100, ip.maxpts = 100,
-  .progress = "none", .parallel = FALSE, ...)
+  level = 0.95, mc.maxpts = 100, .progress = "none",
+  .parallel = FALSE, ...)
 }
 \arguments{
 \item{object}{A tdmorefit object}
@@ -28,8 +28,6 @@ the other parameters are taken from the tdmorefit object}
 \item{level}{The confidence interval, or NA to return all mc.maxpts results}
 
 \item{mc.maxpts}{Maximum number of points to sample in Monte Carlo simulation}
-
-\item{ip.maxpts}{Maximum number of points to interpolate if newdata is not given}
 
 \item{.progress}{see plyr::ddply}
 

@@ -4,26 +4,32 @@
 \alias{predict.tdmore}
 \title{Predict from a tdmore model}
 \usage{
-\method{predict}{tdmore}(object, newdata, regimen, parameters = NULL,
-  covariates = NULL, se = FALSE, level = 0.95, ...)
+\method{predict}{tdmore}(object, newdata, regimen = NULL,
+  parameters = NULL, covariates = NULL, se = FALSE, level = 0.95,
+  ...)
 }
 \arguments{
-\item{object}{TDMore object}
+\item{object}{Object of class inheriting from `tdmore`}
 
-\item{newdata}{Data.frame of new data with at least a TIME column, and blank columns with all desired predictions
-or a numeric vector to predict all possible values from the model}
+\item{newdata}{Data.frame of new data with at least a TIME column, and additional columns.
+Any columns that match the model output will be replaced by the predicted values.
+Alternatively, a numeric vector used as TIME. The resulting data.frame will
+contain all values predicted by the model.}
 
-\item{regimen}{Treatment regimen}
+\item{regimen}{Treatment regimen, or NULL for no treatment}
 
-\item{parameters}{The parameter values to use, missing values are taken from the population}
+\item{parameters}{A named numeric vector with the parameter values to use.
+Any model parameters that are not provided are assumed `0`.}
 
-\item{covariates}{the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0}
+\item{covariates}{a named numeric vector with the covariates to use.
+Alternatively, a data.frame with column `TIME` and columns with time-varying covariates.
+The first row of the data.frame should be time 0.}
 
-\item{se}{Whether to add residual error}
+\item{se}{TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset}
 
-\item{level}{How much residual error to add}
+\item{level}{numeric value to specify the confidence interval}
 
-\item{...}{ignored}
+\item{...}{extra arguments for the call to the model}
 }
 \value{
 A data.frame with all observed values at the given time points
@@ -31,6 +37,6 @@ A data.frame with all observed values at the given time points
 \description{
 Predict from a tdmore model
 }
-\seealso{
-tdmore::model_predict
+\details{
+TODO: This is such an important function, that it merits a little more documentation
 }

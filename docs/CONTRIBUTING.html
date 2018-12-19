@@ -86,6 +86,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="articles/ggplot.html">Using ggplot to visualize tdmore results</a>
+    </li>
+    <li>
       <a href="articles/tdmore_multiple_endpoints.html">Multiple endpoints in TDMore</a>
     </li>
     <li>
@@ -180,7 +183,7 @@
 <li>
 <code>compute_panel(self, data, scales, ...)</code> None of these functions get the <code>data</code> unmodified. So we cannot use <code>data</code> to pass arguments. We can only get the <code>plot</code> properties during <code>ggplot_add</code>, not during the plot_build phase.</li>
 </ul>
-<p>One working method is to simply use a fake <code>stat_predict()</code> function that converts the given arguments to a call into geom_line or geom_ribbon. It can only convert into a single geom though! Furthermore, we would have to pass all tdmore arguments to every <code>stat_predict()</code> if there are multiple ones.</p>
+<p>One working method is to simply use a fake <code><a href="reference/stat_predict.html">stat_predict()</a></code> function that converts the given arguments to a call into geom_line or geom_ribbon. It can only convert into a single geom though! Furthermore, we would have to pass all tdmore arguments to every <code><a href="reference/stat_predict.html">stat_predict()</a></code> if there are multiple ones.</p>
 <p>We can improve on this by creating a special <code>ggplot</code> object: <code>ggtdmore</code>. We do this by creating a special <code>ggplot.tdmorefit</code> function that creates a ggplot with the observations data.frame (similar to <code>fortify.lm</code>), but also adds the tdmorefit and newdata/regimen/covariates parameters to the ggtdmore object.</p>
 <p>We can further improve. Instead of allowing stat_predict to only create a single geom, we can create a special <code>StatPredict</code> object. We can then implement <code>ggplot_add.StatPredict</code> (called during <code>ggplot() + stat_predict()</code>, where we can add multiple specific geom’s to the ggplot.</p>
 <p>Finally, we can go a little further and add a special <code>layer(layer_class=PredictLayer)</code> instead. This will allow us to override <code>setup_data</code>, so the simulation is only performed when we render the plot. This should also allow replacement of the <code>data</code> argument. This works perfectly fine (see ggplot_integration_layer.R), but is only available in the Github version. The ggplot2 release schedule was as follows:</p>
@@ -194,7 +197,7 @@
 <li>
 <code>ggplot.tdmorefit</code> converts the tdmorefit object to a data.frame using fortify: it is simply the observed data. This is passed to <code>ggplot</code>. The resulting ggplot object is modified to include all tdmorefit arguments.</li>
 <li>
-<code>stat_predict()</code> creates a special layer, with a modified setup_data that performs a new simulation.</li>
+<code><a href="reference/stat_predict.html">stat_predict()</a></code> creates a special layer, with a modified setup_data that performs a new simulation.</li>
 </ul>
 </div>
 </div>
