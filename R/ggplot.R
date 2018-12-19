@@ -31,6 +31,12 @@ has_tdmoreArgs <- function(x) {"tdmoreArgs" %in% names(attributes(x)) }
 
 `%||%` <- function(x,y) {if(!is.null(x)) x else y}
 
+#' This method extends ggplot2 to allow inheritance of tdmore arguments
+#' from the original `ggplot()` call into the specific tdmore-related layer.
+#'
+#' @inheritParams ggplot2::ggplot_add
+#' @keywords internal
+#'
 #'@export
 ggplot_add.GGTdmoreLayer <- function(object, plot, object_name) {
   class(object) <- setdiff(class(object), "GGTdmoreLayer") #unset class
