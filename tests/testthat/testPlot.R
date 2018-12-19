@@ -6,8 +6,7 @@ library(testthat)
 context("Test we get plots as we expected")
 
 # Load the default tdmore
-source(paste0(test_path(), "/modelLibrary.R"))
-tdmore <- nlmixrUI(default_model) %>% tdmore()
+tdmore <- (default_model) %>% tdmore()
 
 regimen <- data.frame(
   TIME=seq(0, 1)*24,
@@ -16,8 +15,10 @@ regimen <- data.frame(
 covariates = c(WT=70)
 
 # Default tdmore plot
-z1 <- plot(tdmore, regimen, covariates=covariates)
-vdiffr::expect_doppelganger("default-tdmore-plot", z1)
+test_that("plot() with tdmore object produces typical value plot", {
+  z1 <- plot(tdmore, regimen, covariates=covariates)
+  vdiffr::expect_doppelganger("default-tdmore-plot", z1)
+})
 
 # Create the observed and covariates dataframe
 observed <- data.frame(TIME=2, CONC=0.040)
@@ -47,3 +48,9 @@ ipred <- tdmore %>% estimate(observed = observed, regimen = regimen, covariates 
 # Plot IPRED
 p2 <- plot(ipred, newdata=data.frame(TIME=seq(0, 48, by=0.1), CONC=NA))
 vdiffr::expect_doppelganger("ipred2-tdmore-plot", p2)
+
+
+test_that("plot() with numeric vector as newdata", {
+  p2 <- plot(ipred, newdata=seq(0, 48, by=0.1))
+  vdiffr::expect_doppelganger("ipred2-tdmore-plot2", p2)
+})

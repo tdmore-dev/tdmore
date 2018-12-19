@@ -71,10 +71,10 @@ reference:
   desc: >
     We offer many plotting functions, all based on `ggplot2`.
     We suggest you build a `ggplot` object using `ggplot.tdmorefit()`,
-    allowing you to do things like `ggplot(myFit) + ipred()`.
+    allowing you to do things like `ggplot(myFit) + stat_predict()`.
   contents:
   - ggplot.tdmorefit
-  - ipred
+  - stat_predict
   - plot.tdmore
   - plot.tdmorefit
   - plot.tdmoreprofile

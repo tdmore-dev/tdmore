@@ -26,6 +26,9 @@ vectorToDiagonalMatrix <- function(vector) {
 meltPredictions <- function(x, se=FALSE) {
   #tmp <- reshape::melt(x, id.vars="TIME")
   if(se) {
+    if(nrow(x)==0) return( data.frame(TIME=numeric(), variable=character(),
+                                      value=numeric(),
+                                      value.median=numeric(), value.lower=numeric(), value.upper=numeric()) )
     vars <- colnames(x)
     vars <- vars[vars != "TIME"]
 
@@ -41,6 +44,7 @@ meltPredictions <- function(x, se=FALSE) {
     result$value.lower <- tmp$value[ tmp$variable %in% paste0(trueVars, ".lower") ]
     result$value.upper <- tmp$value[ tmp$variable %in% paste0(trueVars, ".upper") ]
   } else {
+    if(nrow(x)==0) return( data.frame(TIME=numeric(), variable=character(), value=numeric()) )
     result <- reshape::melt(x, id.vars="TIME")
   }
   return(result)
