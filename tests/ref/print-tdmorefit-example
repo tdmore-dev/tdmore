@@ -1,0 +1,6 @@
+Call:
+estimate(tdmore = m1, observed = observed, regimen = regimen, 
+    covariates = c(WT = 70))
+Coef:
+       ECL        EV1 
+-0.1771521 -0.1240100 

@@ -70,7 +70,9 @@ estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, 
   if(is.null(par)) par <- rep(0, length(tdmore$parameters))
 
   # First try to estimate at starting values, as a precaution
-  ll(par=par, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)
+  value <- ll(par=par, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)
+  if(!is.finite(value))
+    stop("Log-likelihood is ", value, " at starting values `par`. Cannot start optimization routine.")
 
   # Function to optimise
   fn <- function(par, ...) {
@@ -287,7 +289,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     pNames <- names(coef(tdmorefit))
     mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit), varcov=vcov(tdmorefit)) )
     colnames(mc) <- names(pars)
-    mc$sample <- 1:mc.maxpts
+    mc <- cbind( sample=1:mc.maxpts, mc ) #make sure 'sample' is first column
 
     for(i in names(parameters)) mc[, i] <- parameters[i]
     fittedMC <- plyr::ddply(mc, 1, function(row) {
