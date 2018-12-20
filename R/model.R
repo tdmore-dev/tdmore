@@ -260,3 +260,19 @@ summary.tdmore <- function(object, ...) {
   cat("Residual error model:\n")
   print(errorDf, row.names = FALSE)
 }
+
+
+#' Get the population typical value parameters. This is a numeric vector of 0's, with the appropriate names.
+#'
+#' @param object tdmore object
+#' @param ... ignored
+#'
+#' @return a numeric vector of 0 values, with the appropriate names
+#'
+#' @export
+coef.tdmore <- function(object, ...) {
+  pars <- object$parameters
+  x <- rep(0, length(pars))
+  names(x) <- pars
+  x
+}

@@ -3,6 +3,7 @@
 S3method(autoplot,tdmore)
 S3method(autoplot,tdmorefit)
 S3method(coef,recommendation)
+S3method(coef,tdmore)
 S3method(coef,tdmorefit)
 S3method(confint,tdmorefit)
 S3method(fitted,tdmorefit)
