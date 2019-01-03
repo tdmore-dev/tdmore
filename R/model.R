@@ -187,7 +187,7 @@ model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, ...) {
   oNames <- oNames[oNames != "TIME"]
 
   a <- (1 - level) / 2
-  q <- qnorm(a)
+  q <- qnorm(a) * (-1) # To have a positive value
 
   for (err in tdmore$res_var) {
     var <- err$var

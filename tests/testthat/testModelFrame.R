@@ -25,6 +25,6 @@ test_that("model.frame correctly returns SE values", {
 
   expect_equal(
     model.frame(m1, data=data.frame(TIME=10, CONC=20), se=TRUE),
-    data.frame(TIME=10, CONC=20, CONC.lower=34.5429327652872, CONC.upper=5.4570672347128)
+    data.frame(TIME=10, CONC=20, CONC.lower=5.4570672347128, CONC.upper=34.5429327652872)
   )
 })
