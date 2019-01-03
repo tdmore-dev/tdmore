@@ -106,7 +106,8 @@ test_that("predict.tdmore() single profiles with covariates model", {
 })
 
 
-
+## TODO: The SE should be removed from predict.tdmore, see ticket #64
+## Instead, these tests should be moved to testModelFrame
 test_that("predict.tdmore() se", {
   #ask for SE
   prediction <- predict(m1, newdata=data.frame(TIME=0:2, CONC=NA), regimen, se=T, level=0.95)
@@ -167,3 +168,6 @@ test_that("predict.tdmorefit() with observed values", {
     data.frame(TIME=15)
   )
 })
+
+## TODO: Predict.tdmorefit with se.fit
+## TODO: predict.tdmorefit with se.fit and level=NA
