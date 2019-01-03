@@ -50,6 +50,13 @@ A TDMore object can then be instantiated by running the following snippet:
 ```r
 library(tdmore)
 library(nlmixr)
+```
+
+```
+## Warning: package 'nlmixr' was built under R version 3.5.2
+```
+
+```r
 m1 <- nlmixrUI(modelCode1) %>% tdmore()
 ```
 
@@ -103,6 +110,13 @@ Note that the model is a character vector and not a function anymore. It does no
 ```r
 library(tdmore)
 library(RxODE)
+```
+
+```
+## Warning: package 'RxODE' was built under R version 3.5.2
+```
+
+```r
 omegaMatrix <- vectorToDiagonalMatrix(c(EKA=0.3, EV=0.3, ECL=0.3))
 errorModel <- errorModel("CONC", prop=0.1)
 m2 <- RxODE(modelCode2) %>% tdmore(omega=omegaMatrix, res_var=list(errorModel))
@@ -356,6 +370,13 @@ data4 <- predict(m1_WT, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen
 data4$model <- factor("nlxmir model with WT covariate")
 
 library(ggplot2)
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.5.2
+```
+
+```r
 ggplot(data=rbind(data1, data2, data3, data4), aes(x=TIME, y=CONC, group=model)) + geom_line(aes(color=model))
 ```
 

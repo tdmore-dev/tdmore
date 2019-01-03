@@ -9,7 +9,7 @@
   <meta name="description" content="TDMore reference manual">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Chapter 4 TDMore API | TDMore: an R package for therapeutic drug monitoring />
+  <meta property="og:title" content="Chapter 4 TDMore API | TDMore: an R package for therapeutic drug monitoring" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 4 TDMore API | TDMore: an R package for therapeutic drug monitoring />
+  <meta name="twitter:title" content="Chapter 4 TDMore API | TDMore: an R package for therapeutic drug monitoring" />
   
   <meta name="twitter:description" content="TDMore reference manual" />
   
@@ -216,8 +216,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 }</code></pre></div>
 <p>A TDMore object can then be instantiated by running the following snippet:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
-<span class="kw">library</span>(nlmixr)
-m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>()</code></pre></div>
+<span class="kw">library</span>(nlmixr)</code></pre></div>
+<pre><code>## Warning: package &#39;nlmixr&#39; was built under R version 3.5.2</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>()</code></pre></div>
 <p>Your model is ready to use. Have a look at its content by calling:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(m1)</code></pre></div>
 <pre><code>## Structural model: RxODE 
@@ -251,8 +252,9 @@ m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <s
 <span class="st">&quot;</span></code></pre></div>
 <p>Note that the model is a character vector and not a function anymore. It does not include the ETA’s (and related OMEGA values). Furthemore, the residual error model is omitted. The missing information needs to be passed to TDMore as follows (arguments <code>omega</code> and <code>res_var</code>):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
-<span class="kw">library</span>(RxODE)
-omegaMatrix &lt;-<span class="st"> </span><span class="kw">vectorToDiagonalMatrix</span>(<span class="kw">c</span>(<span class="dt">EKA=</span><span class="fl">0.3</span>, <span class="dt">EV=</span><span class="fl">0.3</span>, <span class="dt">ECL=</span><span class="fl">0.3</span>))
+<span class="kw">library</span>(RxODE)</code></pre></div>
+<pre><code>## Warning: package &#39;RxODE&#39; was built under R version 3.5.2</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">omegaMatrix &lt;-<span class="st"> </span><span class="kw">vectorToDiagonalMatrix</span>(<span class="kw">c</span>(<span class="dt">EKA=</span><span class="fl">0.3</span>, <span class="dt">EV=</span><span class="fl">0.3</span>, <span class="dt">ECL=</span><span class="fl">0.3</span>))
 errorModel &lt;-<span class="st"> </span><span class="kw">errorModel</span>(<span class="st">&quot;CONC&quot;</span>, <span class="dt">prop=</span><span class="fl">0.1</span>)
 m2 &lt;-<span class="st"> </span><span class="kw">RxODE</span>(modelCode2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>(<span class="dt">omega=</span>omegaMatrix, <span class="dt">res_var=</span><span class="kw">list</span>(errorModel))</code></pre></div>
 <p>The omega matrix is a 3x3 matrix. Only the diagonal is used as you can see. However, correlations can be added if needed. Your model is now ready to use. It can be summarised this way:</p>
@@ -424,8 +426,9 @@ data3<span class="op">$</span>model &lt;-<span class="st"> </span><span class="k
 data4 &lt;-<span class="st"> </span><span class="kw">predict</span>(m1_WT, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1, <span class="dt">covariates=</span><span class="kw">c</span>(<span class="dt">WT=</span><span class="dv">50</span>))
 data4<span class="op">$</span>model &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;nlxmir model with WT covariate&quot;</span>)
 
-<span class="kw">library</span>(ggplot2)
-<span class="kw">ggplot</span>(<span class="dt">data=</span><span class="kw">rbind</span>(data1, data2, data3, data4), <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC, <span class="dt">group=</span>model)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span>model))</code></pre></div>
+<span class="kw">library</span>(ggplot2)</code></pre></div>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 3.5.2</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data=</span><span class="kw">rbind</span>(data1, data2, data3, data4), <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC, <span class="dt">group=</span>model)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span>model))</code></pre></div>
 <p><img src="04-API_files/figure-html/api_model_comparison-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>The plot above shows that the first 3 models are equivalent. The last model with the covariate is different because a covariate of WT=50 is used (this implies a lower clearance).</p>
 </div>
