@@ -5,12 +5,11 @@
 \title{Calculate the Empirical Bayesian Estimate parameters that predict
 a given dataset using the model}
 \usage{
-estimate(tdmore, observed = NULL, regimen, covariates = NULL,
-  par = NULL, method = "L-BFGS-B", lower = -5 *
-  sqrt(diag(tdmore$omega)), upper = +5 * sqrt(diag(tdmore$omega)), ...)
+estimate(object, observed = NULL, regimen, covariates = NULL,
+  par = NULL, method = "L-BFGS-B", lower = NULL, upper = NULL, ...)
 }
 \arguments{
-\item{tdmore}{a tdmore object}
+\item{object}{a tdmore or tdmore_set object}
 
 \item{observed}{data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 If not specified, we estimate the population prediction}
@@ -23,9 +22,9 @@ If not specified, we estimate the population prediction}
 
 \item{method}{the optimisation method, by default, method "L-BFGS-B" is used}
 
-\item{lower}{the lower bounds of the parameters, by default, -5 * sqrt(diag(tdmore$omega)) is used}
+\item{lower}{the lower bounds of the parameters, if null, -5 * sqrt(diag(model$omega)) is used}
 
-\item{upper}{the upper bounds of the parameters, by default, +5 * sqrt(diag(tdmore$omega)) is used}
+\item{upper}{the upper bounds of the parameters, if null, +5 * sqrt(diag(model$omega)) is used}
 
 \item{...}{extra parameters to pass to the optim function}
 }

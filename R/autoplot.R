@@ -39,7 +39,7 @@ autoplot.tdmorefit <- function(x, ...) {
 #' @importFrom stats predict
 #' @export
 autoplot.tdmore <- function(x, regimen=NULL, covariates=NULL, ...) {
-  x <- estimate(tdmore=x, regimen = regimen, covariates = covariates)
+  x <- estimate(x, regimen = regimen, covariates = covariates)
   tMax <- max(regimen$TIME)
   ggplot(data=x, mapping=aes_string(x="TIME")) +
     stat_predict(aes(color="A priori"), xlim=c(0, tMax), data=data.frame(TIME=0:tMax)) +

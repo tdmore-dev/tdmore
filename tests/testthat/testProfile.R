@@ -20,10 +20,10 @@ regimen <- data.frame(
 )
 
 # Estimating individual parameters
-pred <- estimate(tdmore = tdmore, regimen = regimen)
+pred <- tdmore %>% estimate(regimen = regimen)
 observed <- data.frame(TIME=c(9, 16), CONC=c(30, 6))
 
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
+ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
 plot(ipred)
 
 # Compute different profiles

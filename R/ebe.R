@@ -46,28 +46,38 @@ ll <- function(par, tdmore, observed, regimen, covariates) {
   res
 }
 
-
 #' Calculate the Empirical Bayesian Estimate parameters that predict
 #' a given dataset using the model
 #'
-#' @param tdmore a tdmore object
+#' @param object a tdmore or tdmore_set object
 #' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
 #' @param regimen data frame describing the treatment regimen.
 #' @param covariates the model covariates
 #' @param par optional starting parameter for the MLE minimization
 #' @param method the optimisation method, by default, method "L-BFGS-B" is used
-#' @param lower the lower bounds of the parameters, by default, -5 * sqrt(diag(tdmore$omega)) is used
-#' @param upper the upper bounds of the parameters, by default, +5 * sqrt(diag(tdmore$omega)) is used
+#' @param lower the lower bounds of the parameters, if null, -5 * sqrt(diag(model$omega)) is used
+#' @param upper the upper bounds of the parameters, if null, +5 * sqrt(diag(model$omega)) is used
 #' @param ... extra parameters to pass to the optim function
 #'
 #' @return A tdmorefit object
 #' @importFrom stats optim
 #' @export
-estimate <- function(tdmore, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", lower = -5 * sqrt(diag(tdmore$omega)), upper = +5 * sqrt(diag(tdmore$omega)), ...) {
-  assert_that(inherits(tdmore, "tdmore"))
+estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", lower=NULL, upper=NULL, ...) {
+  if ("tdmore" %in% class(object)) {
+    tdmore <- object
+  }
+  else if ("tdmore_set" %in% class(object)) {
+    tdmore <- findFirstCompatibleModel(object, covariates)
+  }
+  else {
+    stop("Object not an instance of 'tdmore' or 'tdmore_set'")
+  }
   observed <- model.frame(tdmore, data=observed) #ensure "observed" in right format for estimation
+
   if(is.null(par)) par <- rep(0, length(tdmore$parameters))
+  if(is.null(lower)) lower <- -5 * sqrt(diag(tdmore$omega))
+  if(is.null(upper)) upper <- 5 * sqrt(diag(tdmore$omega))
 
   # First try to estimate at starting values, as a precaution
   value <- ll(par=par, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)

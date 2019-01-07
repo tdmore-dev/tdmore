@@ -82,3 +82,24 @@ z1 <- ggplot(pred, aes(x=TIME,y=CONC)) +
   stat_predict(geom="line",
                xlim=c(0, 10))
 print(z1)
+
+
+########################################
+
+library(tdmore)
+library(ggplot2)
+m1 <- tdmore(meropenem_model)
+regimen <- data.frame(AMT=2000, TIME=seq(0, 100, by=8))
+
+population <- estimate(m1, regimen=regimen)
+observed <- data.frame(TIME=c(4, 7.8), CONC=c(10, 2.4))
+ipred <- estimate(m1, regimen=regimen, observed=observed)
+
+ggplot(ipred, mapping=aes(x=TIME,y=CONC)) +
+  geom_point() +
+  stat_predict(xlim=c(NA,NA)) +
+  stat_predict(xlim=c(NA,NA), tdmorefit=population)
+
+ggplot(ipred, mapping=aes(x=TIME,y=CONC)) +
+  geom_point() +
+  geom_fit(xlim=c(NA,NA))
