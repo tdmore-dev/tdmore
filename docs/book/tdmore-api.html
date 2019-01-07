@@ -9,7 +9,7 @@
   <meta name="description" content="TDMore reference manual">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Chapter 4 TDMore API | TDMore: an R package for therapeutic drug monitoring />
+  <meta property="og:title" content="Chapter 4 TDMore API | TDMore: an R package for therapeutic drug monitoring" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 4 TDMore API | TDMore: an R package for therapeutic drug monitoring />
+  <meta name="twitter:title" content="Chapter 4 TDMore API | TDMore: an R package for therapeutic drug monitoring" />
   
   <meta name="twitter:description" content="TDMore reference manual" />
   
@@ -394,22 +394,22 @@ data1a &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span c
 <span class="kw">head</span>(data1b)</code></pre></div>
 <pre><code>##   TIME KA  V CL     CONC      depot    center CONC.lower CONC.upper
 ## 1    0  1 70  4 0.000000 150.000000   0.00000   0.000000   0.000000
-## 2    1  1 70  4 1.310408  55.181934  91.72857   1.567243   1.053573
-## 3    2  1 70  4 1.719699  20.300319 120.37894   2.056754   1.382644
-## 4    3  1 70  4 1.801530   7.468069 126.10712   2.154624   1.448437
-## 5    4  1 70  4 1.766713   2.747346 123.66993   2.112983   1.420444
-## 6    5  1 70  4 1.692589   1.010691 118.48126   2.024331   1.360848</code></pre>
+## 2    1  1 70  4 1.310408  55.181934  91.72857   1.053573   1.567243
+## 3    2  1 70  4 1.719699  20.300319 120.37894   1.382644   2.056754
+## 4    3  1 70  4 1.801530   7.468069 126.10712   1.448437   2.154624
+## 5    4  1 70  4 1.766713   2.747346 123.66993   1.420444   2.112983
+## 6    5  1 70  4 1.692589   1.010691 118.48126   1.360848   2.024331</code></pre>
 <p>As you can see, lower and upper bounds on the concentration are provided.</p>
 <p><strong>Example 1c</strong>: Simulate the first model for a week with residual error and output selection</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data1c &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1, <span class="dt">se=</span>T, <span class="dt">level=</span><span class="fl">0.95</span>)
 <span class="kw">head</span>(data1c)</code></pre></div>
 <pre><code>##   TIME     CONC CONC.lower CONC.upper
 ## 1    0 0.000000   0.000000   0.000000
-## 2    1 1.310408   1.567243   1.053573
-## 3    2 1.719699   2.056754   1.382644
-## 4    3 1.801530   2.154624   1.448437
-## 5    4 1.766713   2.112983   1.420444
-## 6    5 1.692589   2.024331   1.360848</code></pre>
+## 2    1 1.310408   1.053573   1.567243
+## 3    2 1.719699   1.382644   2.056754
+## 4    3 1.801530   1.448437   2.154624
+## 5    4 1.766713   1.420444   2.112983
+## 6    5 1.692589   1.360848   2.024331</code></pre>
 <p>Only the concentration is returned in the previous dataframe.</p>
 <p><strong>Example 2</strong>: Compare the 4 models previously described in section <a href="tdmore-api.html#model">4.1</a></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data1 &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1)

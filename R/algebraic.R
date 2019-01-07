@@ -78,15 +78,14 @@ model_predict.algebraic <- function(model, times,
     assertthat::assert_that(all(c("II", "ADDL") %in% colnames(regimen)))
 
   assertthat::assert_that(is.numeric(parameters))
-  pNames <- names(parameters)
-  params = parameters
+  if(is.data.frame(covariates)) stop("Time-varying covariates not supported")
+  params <- c(parameters, covariates)
+  pNames <- names(params)
+
   assertthat::assert_that(all(pNames %in% model$parameters))
   assertthat::assert_that(all(model$parameters %in% pNames))
 
-  # All arguments look good, let's prepare the simulation
-  if(is.data.frame(covariates)) stop("Time-varying covariates not supported")
-  params <- c(params, covariates)
-
+  # All arguments look good, let's run the simulation
   CONC <- model$predictFunction(times, regimen, params)
 
   # Only get the values we want
