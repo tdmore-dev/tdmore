@@ -96,7 +96,7 @@ This section will show you how the individual parameters can be estimated, based
 
 
 ```r
-pred <- estimate(tdmore = tdmore, regimen = regimen)
+pred <- estimate(tdmore, regimen = regimen)
 coef(pred)
 ```
 
@@ -129,7 +129,7 @@ We can ask TDMore to re-estimate the parameters for this specific individual:
 
 
 ```r
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
+ipred <- estimate(tdmore, observed = observed, regimen = regimen)
 coef(ipred)
 ```
 
@@ -229,8 +229,8 @@ print(predUpdatedRegimen) # Check pred regimen
 
 
 ```r
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = ipredRecommendedRegimen)
-pred <- estimate(tdmore = tdmore, regimen = predUpdatedRegimen)
+ipred <- estimate(tdmore, observed = observed, regimen = ipredRecommendedRegimen)
+pred <- estimate(tdmore, regimen = predUpdatedRegimen)
 ```
 
 
@@ -454,7 +454,7 @@ observed <- data.frame(
   CONC=NA,
   ALT=c(21, 40, 42, 43),
   AST=c(21, 45, 47, 49))
-ipred <- estimate(tdmore = m2, observed = observed, regimen = regimen)
+ipred <- estimate(m2, observed = observed, regimen = regimen)
 
 plot(ipred, newdata=data.frame(TIME=times, CONC=NA))
 ```

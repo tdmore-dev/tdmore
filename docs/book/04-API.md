@@ -397,13 +397,13 @@ Assume we have collected 2 concentrations at 24h and 48h. In the following code,
 
 ```r
 observed <- data.frame(TIME=c(24,48), CONC=c(0.4,0.5))
-tdmorefit <- estimate(tdmore = m1, observed = observed, regimen = regimen1)
+tdmorefit <- estimate(object = m1, observed = observed, regimen = regimen1)
 summary(tdmorefit)
 ```
 
 ```
 ## Call:
-## estimate(tdmore = m1, observed = observed, regimen = regimen1)
+## estimate(object = m1, observed = observed, regimen = regimen1)
 ## Coef:
 ##        EKA         EV        ECL 
 ## 0.01971374 0.02308428 0.24015815 

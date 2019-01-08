@@ -248,7 +248,7 @@ tdmore &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrUI)</c
 <div id="estimating-individual-parameters" class="section level3 unnumbered">
 <h3>Estimating individual parameters</h3>
 <p>This section will show you how the individual parameters can be estimated, based on some observed data. Let’s first estimate the parameters of a typical individual. This is achieved by calling the estimate() function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span class="dt">tdmore =</span> tdmore, <span class="dt">regimen =</span> regimen)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">regimen =</span> regimen)
 <span class="kw">coef</span>(pred)</code></pre></div>
 <pre><code>## ECL EV1 
 ##   0   0</code></pre>
@@ -260,7 +260,7 @@ tdmore &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrUI)</c
 <p>This uncertainty is equal to the population inter-individual variability (OMEGA matrix). Now, let’s assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">observed &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">9</span>, <span class="dv">15</span>), <span class="dt">CONC=</span><span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">2</span>))</code></pre></div>
 <p>We can ask TDMore to re-estimate the parameters for this specific individual:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span class="dt">tdmore =</span> tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)
 <span class="kw">coef</span>(ipred)</code></pre></div>
 <pre><code>##        ECL        EV1 
 ##  0.2597598 -0.1320256</code></pre>
@@ -319,8 +319,8 @@ predUpdatedRegimen &lt;-<span class="st"> </span><span class="kw">updateRegimen<
 ## 2    8 1000 2000
 ## 3   16 1000 2000
 ## 4   24 4500 2000</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span class="dt">tdmore =</span> tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> ipredRecommendedRegimen)
-pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span class="dt">tdmore =</span> tdmore, <span class="dt">regimen =</span> predUpdatedRegimen)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> ipredRecommendedRegimen)
+pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">regimen =</span> predUpdatedRegimen)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">32</span>, <span class="dt">by=</span><span class="fl">0.1</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="dv">8</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/find_dose_pred_ipred_predictions-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day.</p>
@@ -494,7 +494,7 @@ times &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv"
   <span class="dt">CONC=</span><span class="ot">NA</span>,
   <span class="dt">ALT=</span><span class="kw">c</span>(<span class="dv">21</span>, <span class="dv">40</span>, <span class="dv">42</span>, <span class="dv">43</span>),
   <span class="dt">AST=</span><span class="kw">c</span>(<span class="dv">21</span>, <span class="dv">45</span>, <span class="dv">47</span>, <span class="dv">49</span>))
-ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span class="dt">tdmore =</span> m2, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)
+ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m2, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)
 
 <span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/sunitinib_pd_ipred_sld-1.png" width="768" style="display: block; margin: auto;" /></p>

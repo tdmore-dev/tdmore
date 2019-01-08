@@ -79,7 +79,7 @@ modelCode2 <- "
 
 Note that the model is a character vector and not a function anymore. It does not include the ETA's (and related OMEGA values). Furthemore, the residual error model is omitted. The missing information needs to be passed to TDMore as follows (arguments `omega` and `res_var`):
 
-```{r, message=FALSE, results='hide'}
+```{r, message=FALSE, results='hide', warning=FALSE}
 library(tdmore)
 library(RxODE)
 omegaMatrix <- vectorToDiagonalMatrix(c(EKA=0.3, EV=0.3, ECL=0.3))
