@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using the model — estimate • tdmore</title>
+a given dataset using a mixture model. — estimateMixtureModel • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,10 +32,10 @@ a given dataset using the model — estimate • tdmore</title>
 
 
 <meta property="og:title" content="Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using the model — estimate" />
+a given dataset using a mixture model. — estimateMixtureModel" />
 
 <meta property="og:description" content="Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using the model" />
+a given dataset using a mixture model." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -131,20 +131,21 @@ a given dataset using the model" />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using the model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
-    <div class="hidden name"><code>estimate.Rd</code></div>
+a given dataset using a mixture model.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/modelMixture.R'><code>R/modelMixture.R</code></a></small>
+    <div class="hidden name"><code>estimateMixtureModel.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
     <p>Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using the model</p>
+a given dataset using a mixture model.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>estimate</span>(<span class='no'>object</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>regimen</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"L-BFGS-B"</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>estimateMixtureModel</span>(<span class='no'>object</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>regimen</span>,
+  <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"L-BFGS-B"</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>upper</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
