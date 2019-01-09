@@ -49,7 +49,7 @@ ll <- function(par, tdmore, observed, regimen, covariates) {
 #' Calculate the Empirical Bayesian Estimate parameters that predict
 #' a given dataset using the model
 #'
-#' @param object a tdmore or tdmore_set object
+#' @param object a tdmore, tdmore_set or tdmore_mixture object
 #' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
 #' @param regimen data frame describing the treatment regimen.
@@ -64,14 +64,19 @@ ll <- function(par, tdmore, observed, regimen, covariates) {
 #' @importFrom stats optim
 #' @export
 estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", lower=NULL, upper=NULL, ...) {
+
+  if ("tdmore_set" %in% class(object)) {
+    # Either a tdmore or tdmore_mixture
+    object <- findFirstCompatibleModel(object, covariates)
+  }
   if ("tdmore" %in% class(object)) {
     tdmore <- object
   }
-  else if ("tdmore_set" %in% class(object)) {
-    tdmore <- findFirstCompatibleModel(object, covariates)
+  else if ("tdmore_mixture" %in% class(object)) {
+    return(estimateMixtureModel(object, observed=observed, regimen=regimen, covariates=covariates, par=par, method=method, lower=lower, upper=upper, ...))
   }
   else {
-    stop("Object not an instance of 'tdmore' or 'tdmore_set'")
+    stop("Object not an instance of 'tdmore', 'tdmore_set' or 'tdmore_mixture")
   }
   observed <- model.frame(tdmore, data=observed) #ensure "observed" in right format for estimation
 

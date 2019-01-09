@@ -12,7 +12,7 @@ findFirstCompatibleModel(tdmore_set, covariates)
 \item{covariates}{the model covariates}
 }
 \value{
-A data.frame with all observed values at the given time points
+A tdmore or tdmore_mixture model
 }
 \description{
 Find the first model in the TDMore set compatible with the specified covariates.
