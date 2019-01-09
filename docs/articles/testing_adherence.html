@@ -103,15 +103,15 @@
 
     
     
-<div id="about-this-example" class="section level1">
-<h1 class="hasAnchor">
-<a href="#about-this-example" class="anchor"></a>About this example</h1>
+<div id="about-this-example" class="section level3 unnumbered">
+<h3 class="hasAnchor">
+<a href="#about-this-example" class="anchor"></a>About this example</h3>
 <p>Non-compliance is an important issue endangering the effectiveness of treatments. In COPD, it is estimated that there is a non-compliance of more than 98% for inhaled treatments.</p>
 <p>In this example, we use TDMore to compare the systemic concentrations of inhaled fluticasone propionate with the population predictions. We show that TDMore can be used to detect severe non-adherence, and to propose corrective action.</p>
 </div>
-<div id="the-model" class="section level1">
-<h1 class="hasAnchor">
-<a href="#the-model" class="anchor"></a>The model</h1>
+<div id="the-model" class="section level3 unnumbered">
+<h3 class="hasAnchor">
+<a href="#the-model" class="anchor"></a>The model</h3>
 <p>Model taken from literature: Soulele, K., et al. “Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.” European Journal of Pharmaceutical Sciences 80 (2015): 33-42.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nlmixr)
 
@@ -173,9 +173,9 @@ pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estima
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Non-adhering"</span>), <span class="dt">data=</span>nonAdhering)</code></pre></div>
 <p><img src="testing_adherence_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 </div>
-<div id="is-the-patient-taking-hisher-medication" class="section level1">
-<h1 class="hasAnchor">
-<a href="#is-the-patient-taking-hisher-medication" class="anchor"></a>Is the patient taking his/her medication?</h1>
+<div id="is-the-patient-taking-hisher-medication" class="section level3 unnumbered">
+<h3 class="hasAnchor">
+<a href="#is-the-patient-taking-hisher-medication" class="anchor"></a>Is the patient taking his/her medication?</h3>
 <p>We can now take a serum sample and evaluate if there is non-adherence.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Take a blood sample</span>
 observed &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">30</span><span class="op">*</span><span class="dv">24</span><span class="op">+</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span><span class="dv">16</span>, <span class="dv">0</span>), <span class="dt">CONC=</span><span class="ot">NA</span>))
@@ -212,15 +212,6 @@ standardDeviations</code></pre></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#about-this-example">About this example</a></li>
-      <li><a href="#the-model">The model</a></li>
-      <li><a href="#is-the-patient-taking-hisher-medication">Is the patient taking his/her medication?</a></li>
-      </ul>
-</div>
       </div>
 
 </div>

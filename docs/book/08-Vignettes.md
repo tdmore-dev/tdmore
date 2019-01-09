@@ -500,13 +500,13 @@ coef(ipred) / sqrt(diag(m2$omega))
 
 ## Example: Detecting non-adherence
 
-# About this example
+### About this example {-}
 
 Non-compliance is an important issue endangering the effectiveness of treatments. In COPD, it is estimated that there is a non-compliance of more than 98% for inhaled treatments.
 
 In this example, we use TDMore to compare the systemic concentrations of inhaled fluticasone propionate with the population predictions. We show that TDMore can be used to detect severe non-adherence, and to propose corrective action.
 
-# The model
+### The model {-}
 
 Model taken from literature: Soulele, K., et al. "Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers." European Journal of Pharmaceutical Sciences 80 (2015): 33-42.
 
@@ -581,7 +581,7 @@ ggplot(mapping=aes(x=TIME, y=CONC)) +
 
 <img src="08-Vignettes_files/figure-html/unnamed-chunk-24-1.png" width="672" />
 
-# Is the patient taking his/her medication?
+### Is the patient taking his/her medication? {-}
 We can now take a serum sample and evaluate if there is non-adherence.
 
 
