@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>TDMore: an R package for therapeutic drug monitoring</title>
+  <title>Chapter 3 Installation script | TDMore: an R package for therapeutic drug monitoring</title>
   <meta name="description" content="TDMore reference manual">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="TDMore: an R package for therapeutic drug monitoring" />
+  <meta property="og:title" content="Chapter 3 Installation script | TDMore: an R package for therapeutic drug monitoring" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="TDMore: an R package for therapeutic drug monitoring" />
+  <meta name="twitter:title" content="Chapter 3 Installation script | TDMore: an R package for therapeutic drug monitoring" />
   
   <meta name="twitter:description" content="TDMore reference manual" />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="preface.html">
+<link rel="prev" href="install.html">
+<link rel="next" href="license.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -176,16 +176,33 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title"><code>TDMore</code>: an R package for therapeutic drug monitoring</h1>
-<p class="author"><em>Ruben Faelens, Nicolas Luyckx, Quentin Leirens, Thomas Bouillon</em></p>
-</div>
-<div id="welcome-to-tdmore" class="section level1 unnumbered">
-<h1>Welcome to TDMore</h1>
-<p>We’d like to welcome you on the <code>TDMore</code> bookdown site.</p>
-<p>Get started as quick as possible with <a href="https://github.com/tdmore-dev/tdmore">tdmore</a>, an R package that provides a global framework for making Therapeutic Drug Monitoring easy. You’ll get information on the package itself, its installation, interesting use cases and much more.</p>
-<p><img src="figures/tdmore_logo.JPG" width="80%" style="display: block; margin: auto;" /></p>
-<p>Please note that this project does not include a license. This means that all work is under exclusive copyright. Nobody else can use, copy, distribute or modify this work (more details in Chapter <a href="license.html#license">4</a>)</p>
+<div id="installation-script" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> Installation script</h1>
+<p>The below script can be used to automatically install TDMore. It uses an API key that still needs to be filled in.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(R.version<span class="op">$</span>major <span class="op">!=</span><span class="st"> &quot;3&quot;</span> <span class="op">||</span><span class="st"> </span><span class="kw">as.numeric</span>(R.version<span class="op">$</span>minor) <span class="op">&lt;</span><span class="st"> </span><span class="fl">5.2</span>) {
+  <span class="kw">stop</span>(<span class="st">&quot;tdmore requires at least R version 3.5.2</span>
+<span class="st">Please install a more recent version from https://cran.r-project.org/bin/windows/base/</span>
+<span class="st">You may have to adapt the settings of RStudio in Tools -&gt; Global Options as well.&quot;</span>)
+}
+<span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(devtools)) <span class="kw">install.packages</span>(<span class="st">&#39;devtools&#39;</span>)
+<span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(tidyverse)) <span class="kw">install.packages</span>(<span class="st">&#39;tidyverse&#39;</span>)
+
+PAT_TOKEN &lt;-<span class="st"> &quot;eab9e908f5073f3ff82a7cb77e5fced10ed01d5d&quot;</span>
+devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;tdmore-dev/tdmore&quot;</span>, <span class="dt">user=</span><span class="st">&quot;tdmore-training&quot;</span>, <span class="dt">auth_token=</span>PAT_TOKEN)
+
+tryCatch{
+  RxODE<span class="op">::</span><span class="kw">RxODE</span>( <span class="st">&quot;d/dt(A0) = -0.5 * A0;&quot;</span> ),
+  error=<span class="cf">function</span>(e) {
+    <span class="kw">stop</span>(
+<span class="st">&quot;RxODE could not compile a model.</span>
+<span class="st">This does not stop tdmore from working, nor will it stop you from completing the training.</span>
+
+<span class="st">However, you will not be able to use RxODE or nlmixr models.</span>
+<span class="st">To use nlmixr-style models, you will have to install Rtools.</span>
+<span class="st">You can find this on https://cran.r-project.org/bin/windows/Rtools/Rtools35.exe</span>
+<span class="st">&quot;</span>
+)
+  }}</code></pre></div>
 
 </div>
             </section>
@@ -193,8 +210,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-
-<a href="preface.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="install.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="license.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
