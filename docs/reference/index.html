@@ -456,6 +456,13 @@ a given dataset using the model</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="estimateMixtureModel.html">estimateMixtureModel()</a></code> </p>
+        </td>
+        <td><p>Calculate the Empirical Bayesian Estimate parameters that predict
+a given dataset using a mixture model.</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="evaluate.html">evaluate()</a></code> </p>
         </td>
         <td><p>Evaluate all discrete regimen possibilities</p></td>
@@ -465,6 +472,12 @@ a given dataset using the model</p></td>
           <p><code><a href="findDose.html">findDose()</a></code> </p>
         </td>
         <td><p>Find the dose required (quick and dirty, to be optimised)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="findFirstCompatibleModel.html">findFirstCompatibleModel()</a></code> </p>
+        </td>
+        <td><p>Find the first model in the TDMore set compatible with the specified covariates.</p></td>
       </tr><tr>
         
         <td>
@@ -525,6 +538,13 @@ TODO: Better documentation required</p></td>
         
         <td>
           <p><code><a href="meropenem_model.html">meropenem_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="meropenem_model_wt.html">meropenem_model_wt</a></code> </p>
         </td>
         <td><p>Default example model
 TODO: Better documentation required</p></td>
@@ -634,6 +654,18 @@ for a 2cpt pk model with oral absorption.</p></td>
           <p><code><a href="predict.tdmorefit.html">predict(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
         </td>
         <td><p>Predict new data using the current model</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="predict.tdmore_mixture.html">predict(<i>&lt;tdmore_mixture&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Predict from a TDMore mixture model. Default model will be used for predictions.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="predict.tdmore_set.html">predict(<i>&lt;tdmore_set&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Predict from a tdmore model set.</p></td>
       </tr><tr>
         
         <td>
@@ -758,6 +790,22 @@ TODO: Better documentation required</p></td>
           <p><code><a href="tdmore_deSolve.html">tdmore_deSolve()</a></code> </p>
         </td>
         <td><p>Create a TDM-capable model from a deSolve model</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="tdmore_mixture.html">tdmore_mixture()</a></code> </p>
+        </td>
+        <td><p>Create a TDMore mixture model.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="tdmore_set.html">tdmore_set()</a></code> </p>
+        </td>
+        <td><p>Create a TDMore set.
+Note that the order of the given models matters.
+Order must be defined from the most restrictive model (with a high number of covariates) to the lowest restrictive model (with a low number of covariates).
+These models will be tried one by one from left to right with the 'observed' data.
+The first model matching the covariates from the 'observed' data will be used.</p></td>
       </tr><tr>
         
         <td>

@@ -99,7 +99,7 @@ The plot above shows the median of the population (typical profile) and its 95% 
 This section will show you how the individual parameters can be estimated, based on some observed data. Let's first estimate the parameters of a typical individual. This is achieved by calling the estimate() function.
 
 ```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE}
-pred <- estimate(tdmore = tdmore, regimen = regimen)
+pred <- estimate(tdmore, regimen = regimen)
 coef(pred)
 ```
 
@@ -118,7 +118,7 @@ observed <- data.frame(TIME=c(9, 15), CONC=c(30, 2))
 We can ask TDMore to re-estimate the parameters for this specific individual:
 
 ```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE}
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
+ipred <- estimate(tdmore, observed = observed, regimen = regimen)
 coef(ipred)
 ```
 
@@ -179,8 +179,8 @@ print(predUpdatedRegimen) # Check pred regimen
 ```
 
 ```{r, eval=TRUE, results='hold', message=FALSE, warning=FALSE}
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = ipredRecommendedRegimen)
-pred <- estimate(tdmore = tdmore, regimen = predUpdatedRegimen)
+ipred <- estimate(tdmore, observed = observed, regimen = ipredRecommendedRegimen)
+pred <- estimate(tdmore, regimen = predUpdatedRegimen)
 ```
 
 ```{r find_dose_pred_ipred_predictions, eval=TRUE, results='hold', message=FALSE, warning=FALSE, fig.align='center', fig.height = 3, fig.width = 8}

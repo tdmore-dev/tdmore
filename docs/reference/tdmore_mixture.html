@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using the model — estimate • tdmore</title>
+<title>Create a TDMore mixture model. — tdmore_mixture • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -31,11 +30,9 @@ a given dataset using the model — estimate • tdmore</title>
 
 
 
-<meta property="og:title" content="Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using the model — estimate" />
+<meta property="og:title" content="Create a TDMore mixture model. — tdmore_mixture" />
 
-<meta property="og:description" content="Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using the model" />
+<meta property="og:description" content="Create a TDMore mixture model." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -130,67 +127,35 @@ a given dataset using the model" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using the model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
-    <div class="hidden name"><code>estimate.Rd</code></div>
+    <h1>Create a TDMore mixture model.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/modelMixture.R'><code>R/modelMixture.R</code></a></small>
+    <div class="hidden name"><code>tdmore_mixture.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using the model</p>
+    <p>Create a TDMore mixture model.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>estimate</span>(<span class='no'>object</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>regimen</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"L-BFGS-B"</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>tdmore_mixture</span>(<span class='no'>...</span>, <span class='no'>probs</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>object</th>
-      <td><p>a tdmore, tdmore_set or tdmore_mixture object</p></td>
-    </tr>
-    <tr>
-      <th>observed</th>
-      <td><p>data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
-If not specified, we estimate the population prediction</p></td>
-    </tr>
-    <tr>
-      <th>regimen</th>
-      <td><p>data frame describing the treatment regimen.</p></td>
-    </tr>
-    <tr>
-      <th>covariates</th>
-      <td><p>the model covariates</p></td>
-    </tr>
-    <tr>
-      <th>par</th>
-      <td><p>optional starting parameter for the MLE minimization</p></td>
-    </tr>
-    <tr>
-      <th>method</th>
-      <td><p>the optimisation method, by default, method "L-BFGS-B" is used</p></td>
-    </tr>
-    <tr>
-      <th>lower</th>
-      <td><p>the lower bounds of the parameters, if null, -5 * sqrt(diag(model$omega)) is used</p></td>
-    </tr>
-    <tr>
-      <th>upper</th>
-      <td><p>the upper bounds of the parameters, if null, +5 * sqrt(diag(model$omega)) is used</p></td>
-    </tr>
-    <tr>
       <th>...</th>
-      <td><p>extra parameters to pass to the optim function</p></td>
+      <td><p>1 or more tdmore models, to be added in the set.</p></td>
+    </tr>
+    <tr>
+      <th>probs</th>
+      <td><p>a numeric vector with the model probabilities. Sum must be 1.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A tdmorefit object</p>
+    <p>a tdmore_set object</p>
     
 
   </div>

@@ -35,9 +35,9 @@ plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, mc.maxpts
 
   } else {
     # Compute PRED
-    pred <- estimate(tdmorefit$tdmore, regimen=regimen, covariates=tdmorefit$covariates) %>% predict(newdata, regimen=regimen) %>% meltPredictions()
+    pred <- tdmorefit$tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates) %>% predict(newdata) %>% meltPredictions()
     if (se.fit) {
-      predre <- estimate(tdmorefit$tdmore, regimen=regimen, covariates=tdmorefit$covariates) %>% predict(newdata, se.fit=T) %>% meltPredictions(se=T)
+      predre <- tdmorefit$tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates) %>% predict(newdata, se.fit=T) %>% meltPredictions(se=T)
     }
 
     obs <- model.frame.tdmorefit(tdmorefit) %>% meltPredictions()
@@ -75,7 +75,7 @@ plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, mc.maxpts
 #' @export
 plot.tdmore <- function(x, regimen, covariates=NULL, newdata=NULL, bsv=TRUE, mc.subjects=100, .progress="none", ...) {
   tdmore <- x
-  tdmorefit <- estimate(tdmore = tdmore, regimen = regimen, covariates = covariates)
+  tdmorefit <- tdmore %>% estimate(regimen = regimen, covariates = covariates)
   plot <- plot(tdmorefit, newdata=newdata, se.fit=bsv, mc.maxpts=mc.subjects, .progress=.progress, population=TRUE)
   return(plot)
 }

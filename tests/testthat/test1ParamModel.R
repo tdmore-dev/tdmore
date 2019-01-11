@@ -20,7 +20,7 @@ regimen <- data.frame(
 
 # Estimate and plot IPRED
 observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
+ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
 
 plot(ipred)
 plot(profile(ipred))

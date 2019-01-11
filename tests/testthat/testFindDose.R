@@ -32,11 +32,11 @@ ggplot(data, aes(x=TIME, y=CONC)) +
   scale_color_manual(values=c("steelblue2"))
 
 # Estimating individual parameters
-pred <- estimate(tdmore = tdmore, regimen = regimen)
+pred <- tdmore %>% estimate(regimen = regimen)
 
 observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
 
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
+ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
 
 data <- predict(ipred, newdata=data.frame(TIME=seq(0, 24, 0.1), CONC=NA), se=TRUE)
 
@@ -84,6 +84,6 @@ expect_equal(unlist(round(recommendation2$dose, digits=1)), c(
 regimen <- recommendation2$regimen
 observed <- data.frame(TIME=c(9, 16, 20, 32), CONC=c(30, 8, 15, 3.1+0.2))
 
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
+ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
 
 plot(ipred)

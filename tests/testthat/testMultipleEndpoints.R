@@ -21,6 +21,6 @@ regimen <- data.frame(
 )
 times <- seq(0, 40*7*24, by=1)
 observed <- data.frame(TIME=c(0, 30*7*24), CONC=NA, SLD=c(25, 14))
-ipred <- estimate(tdmore = tdmore, observed = observed, regimen = regimen)
+ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
 expect_equal(round(coef(ipred)['EBASE'], digits=4) , c(EBASE=0.5397))
 

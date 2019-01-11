@@ -72,6 +72,11 @@
 #' Default example model
 #' TODO: Better documentation required
 #' @format an nlmixrUI model
+'meropenem_model_wt'
+
+#' Default example model
+#' TODO: Better documentation required
+#' @format an nlmixrUI model
 'meropenem_omega0_model'
 
 #' Default example model
