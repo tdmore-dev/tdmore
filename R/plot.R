@@ -2,6 +2,7 @@
 #'
 #' @param x the tdmorefit object
 #' @param newdata a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times
+#' @inheritParams predict.tdmorefit
 #' @param se.fit add a curve for the confidence interval around the fit
 #' @param mc.maxpts maximum number of points to use for the monte carlo fit
 #' @param .progress either "none" or "text" to see calculation progress of monte carlo simulations
@@ -13,16 +14,17 @@
 #' @importFrom stats predict
 #' @importFrom graphics plot
 #' @export
-plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progress="none", ...) {
+plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, mc.maxpts=100, .progress="none", ...) {
   tdmorefit <- x
   newdata <- processNewData(newdata, tdmorefit)
   args <- list(...)
   populationArg <- unlist(args['population'])
   population <- if (length(populationArg)==0) F else populationArg
+  if(is.null(regimen)) regimen <- tdmorefit$regimen
 
-  ipred <- tdmorefit %>% predict(newdata) %>% meltPredictions()
+  ipred <- tdmorefit %>% predict(newdata, regimen=regimen) %>% meltPredictions()
   if (se.fit) {
-    ipredre <- tdmorefit %>% predict.tdmorefit(newdata, se.fit=T, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% meltPredictions(se=T)
+    ipredre <- tdmorefit %>% predict.tdmorefit(newdata, regimen=regimen, se.fit=T, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% meltPredictions(se=T)
   }
   yVars <- colnames(newdata)[colnames(newdata) != "TIME"]
 
@@ -33,9 +35,9 @@ plot.tdmorefit <- function(x, newdata=NULL, se.fit=TRUE, mc.maxpts=100, .progres
 
   } else {
     # Compute PRED
-    pred <- estimate(tdmorefit$tdmore, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates) %>% predict(newdata) %>% meltPredictions()
+    pred <- estimate(tdmorefit$tdmore, regimen=regimen, covariates=tdmorefit$covariates) %>% predict(newdata, regimen=regimen) %>% meltPredictions()
     if (se.fit) {
-      predre <- estimate(tdmorefit$tdmore, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates) %>% predict(newdata, se.fit=T) %>% meltPredictions(se=T)
+      predre <- estimate(tdmorefit$tdmore, regimen=regimen, covariates=tdmorefit$covariates) %>% predict(newdata, se.fit=T) %>% meltPredictions(se=T)
     }
 
     obs <- model.frame.tdmorefit(tdmorefit) %>% meltPredictions()

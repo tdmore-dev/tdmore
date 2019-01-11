@@ -4,13 +4,15 @@
 \alias{plot.tdmorefit}
 \title{Plot a tdmorefit object.}
 \usage{
-\method{plot}{tdmorefit}(x, newdata = NULL, se.fit = TRUE,
-  mc.maxpts = 100, .progress = "none", ...)
+\method{plot}{tdmorefit}(x, newdata = NULL, regimen = NULL,
+  se.fit = TRUE, mc.maxpts = 100, .progress = "none", ...)
 }
 \arguments{
 \item{x}{the tdmorefit object}
 
 \item{newdata}{a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times}
+
+\item{regimen}{Treatment regimen}
 
 \item{se.fit}{add a curve for the confidence interval around the fit}
 
