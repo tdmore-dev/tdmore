@@ -4,7 +4,7 @@
 \alias{convertResultToRecommendation}
 \title{Convert the result of the uniroot function into a recommendation object.}
 \usage{
-convertResultToRecommendation(result, regimen, doseRows)
+convertResultToRecommendation(result, regimen, doseRows, target)
 }
 \arguments{
 \item{result}{the uniroot result}
@@ -12,6 +12,8 @@ convertResultToRecommendation(result, regimen, doseRows)
 \item{regimen}{the regimen}
 
 \item{doseRows}{which rows of the regimen to adapt when searching for a new dose, or NULL to take the last one}
+
+\item{target}{the original target}
 }
 \value{
 a recommendation object

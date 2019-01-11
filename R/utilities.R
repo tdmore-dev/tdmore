@@ -55,11 +55,13 @@ meltPredictions <- function(x, se=FALSE) {
 #' @param regimen the specified regimen
 #' @param observed the observed dataframe
 #'
+#' @details the maximum of all times in observed, and regimen (+one additional Interdose-interval, should this be specified)
+#'
 #' @return the tmax value, numeric
 computeTmax <- function(regimen, observed=NULL) {
   values <- c(0)
   if (!is.null(regimen)) {
-    values <- c(values, regimen$TIME, regimen$TIME + regimen$ADDL * regimen$II)
+    values <- c(values, regimen$TIME, regimen$TIME + (regimen$ADDL+1) * regimen$II)
   }
   if (!is.null(observed)) {
     values <- c(values, observed$TIME)

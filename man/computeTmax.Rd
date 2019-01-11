@@ -17,3 +17,6 @@ the tmax value, numeric
 \description{
 Compute the TMax value based on the specified regimen and observed data.
 }
+\details{
+the maximum of all times in observed, and regimen (+one additional Interdose-interval, should this be specified)
+}

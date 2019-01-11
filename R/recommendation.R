@@ -5,7 +5,9 @@
 #'
 #' @export
 print.recommendation <- function(x, ...) {
-  print(x$dose)
+  cat("Recommendation: \n")
+  cat("A dose of `", x$dose, "` will hit the requested target of\n")
+  print(x$target, row.names = F)
 }
 
 #' Summarize a recommendation object.

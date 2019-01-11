@@ -14,42 +14,36 @@
 #' @importFrom stats predict
 #' @importFrom graphics plot
 #' @export
-plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, mc.maxpts=100, .progress="none", ...) {
+plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, population=TRUE, fit=TRUE, mc.maxpts=100, .progress="none", ...) {
   tdmorefit <- x
-  newdata <- processNewData(newdata, tdmorefit)
-  args <- list(...)
-  populationArg <- unlist(args['population'])
-  population <- if (length(populationArg)==0) F else populationArg
+  newdata <- processNewData(newdata, tdmorefit, regimen=regimen, N=300)
   if(is.null(regimen)) regimen <- tdmorefit$regimen
 
-  ipred <- tdmorefit %>% predict(newdata, regimen=regimen) %>% meltPredictions()
-  if (se.fit) {
-    ipredre <- tdmorefit %>% predict.tdmorefit(newdata, regimen=regimen, se.fit=T, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% meltPredictions(se=T)
+  # Compute IPRED
+  if(fit) {
+    ipred <- tdmorefit %>% predict(newdata, regimen=regimen) %>% meltPredictions()
+    if (se.fit) {
+      ipredre <- tdmorefit %>% predict.tdmorefit(newdata, regimen=regimen, se.fit=T, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% meltPredictions(se=T)
+    }
   }
   yVars <- colnames(newdata)[colnames(newdata) != "TIME"]
 
-  if (population) {
-    # No need to compute PRED because IPRED = PRED
-    plot <- ggplot(mapping=aes_string(x="TIME", y="value", group="variable")) + geom_line(color=blue(), data=ipred)
-    if (se.fit) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.1)
-
-  } else {
-    # Compute PRED
+  # Compute PRED
+  if(population) {
     pred <- tdmorefit$tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates) %>% predict(newdata) %>% meltPredictions()
-    if (se.fit) {
-      predre <- tdmorefit$tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates) %>% predict(newdata, se.fit=T) %>% meltPredictions(se=T)
-    }
-
-    obs <- model.frame.tdmorefit(tdmorefit) %>% meltPredictions()
-    if(nrow(obs) > 0) obs <- subset(obs, obs$variable %in% yVars & !is.na(obs$value))
-
-    plot <- ggplot(mapping=aes_string(x="TIME", y="value"))
-    plot <- plot + geom_line(color=blue(), data=pred)
-    plot <- plot + geom_line(color=red(), data=ipred)
-    if(nrow(obs) > 0) plot <- plot + geom_point(data=obs)
-    if (se.fit) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=predre, alpha=0.1)
-    if (se.fit) plot <- plot + geom_ribbon(fill=red(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.15)
+    predre <- tdmorefit$tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates) %>% predict(newdata, se.fit=T) %>% meltPredictions(se=T)
   }
+
+  obs <- model.frame.tdmorefit(tdmorefit) %>% meltPredictions()
+  if(nrow(obs) > 0) obs <- subset(obs, obs$variable %in% yVars & !is.na(obs$value))
+
+  plot <- ggplot(mapping=aes_string(x="TIME", y="value"))
+  if(population) plot <- plot + geom_line(color=blue(), data=pred)
+  if(fit) plot <- plot + geom_line(color=red(), data=ipred)
+  if(nrow(obs) > 0) plot <- plot + geom_point(data=obs)
+  # always draw population + IIV
+  if(population) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=predre, alpha=0.1)
+  if(fit && se.fit) plot <- plot + geom_ribbon(fill=red(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.15)
 
   plot <- plot +
     ggplot2::facet_wrap(~variable)
@@ -76,15 +70,19 @@ plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, mc.maxpts
 plot.tdmore <- function(x, regimen, covariates=NULL, newdata=NULL, bsv=TRUE, mc.subjects=100, .progress="none", ...) {
   tdmore <- x
   tdmorefit <- tdmore %>% estimate(regimen = regimen, covariates = covariates)
-  plot <- plot(tdmorefit, newdata=newdata, se.fit=bsv, mc.maxpts=mc.subjects, .progress=.progress, population=TRUE)
+  plot <- plot(tdmorefit, newdata=newdata, se.fit=bsv, mc.maxpts=mc.subjects,
+               .progress=.progress, population=TRUE, fit=FALSE)
   return(plot)
 }
 
-processNewData <- function(newdata, tdmorefit) {
+processNewData <- function(newdata, tdmorefit, regimen=regimen, N=100) {
   if (is.null(newdata)) {
-    newdata <- data.frame(TIME = seq(0, computeTmax(tdmorefit$regimen, tdmorefit$observed), length.out = 100))
-    newdata <- addObservedVariables(newdata, tdmorefit$tdmore)
+    if(is.null(regimen)) regimen <- tdmorefit$regimen
+    newdata <- seq(0, computeTmax(regimen, tdmorefit$observed), length.out = N)
+    #ensure the regimen/ctrough are included in the points
+    newdata <- unique(c(newdata, regimen$TIME, tdmorefit$observed$TIME)) %>% sort
   }
+
   if (is.numeric(newdata)) {
     newdata <- data.frame(TIME = newdata)
     newdata <- addObservedVariables(newdata, tdmorefit$tdmore)

@@ -124,6 +124,61 @@ pk2cptivbolus <- function() {
   })
 }
 
+
+#' This base function can be used to develop an algebraic model
+#' for a 2cpt pk model with oral absorption.
+#'
+#' The caller should have access to the following values:
+#' t, TIME, AMT
+#' as well as model parameters
+#' CL, V1, Q, V2
+#'
+#' The following alternative parametrization is also permitted
+#' K12, K21, K
+#'
+#' Optionally, TLAG can be defined.
+#'
+#' @examples
+#' m1 <- algebraic(function(t, TIME, AMT, EV, ECL) {
+#'     KA <- 0.3
+#'     CL <- 3 * exp(ECL)
+#'     V1 <- 10 * exp(EV)
+#'     Q <- 3
+#'     V2 <- 800
+#'     DUR <- 3
+#'     pk2cptoralinfusion()
+#' })
+#' @export
+pk2cptivinfusion <- function() {
+  env <- parent.frame()
+  with(env, {
+    if(!exists('K12')) K12 <- Q/V1
+    if(!exists('K21')) K21 <- Q/V2
+    if(!exists('K')) K <- CL/V1
+    if(!exists('DUR') & !exists('RATE')) stop("Could not find a value for treatment duration DUR or rate RATE")
+    if(exists('RATE')) DUR <- AMT / RATE
+
+    Beta = 1/2*(K12+K21+K-sqrt((K12+K21+K)^2 - 4*K21*K) )
+    Alpha=K21*K/Beta
+    A = (1/V1) * (Alpha - K21) / (Alpha - Beta)
+    B = (1/V1) * (Beta - K21) / (Beta - Alpha)
+
+    D=AMT
+    tD=TIME
+
+    D/DUR*ifelse(t-tD <= 0, 0,
+       ifelse(t-tD <= DUR,
+          (A/Alpha)*(1-exp(-Alpha*(t-tD))) +
+            (B/Beta)*(1-exp(-Beta*(t-tD))),
+          (A/Alpha)*(1-exp(-Alpha*DUR))*exp(-Alpha*(t-tD-DUR)) +
+            (B/Beta)*(1-exp(-Beta*DUR))*exp(-Beta*(t-tD-DUR))
+       )
+    )
+  })
+}
+
+
+
 #' This base function can be used to develop an algebraic model
 #' for a 2cpt pk model with oral absorption.
 #'

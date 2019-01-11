@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute the TMax value based on the specified regimen and observed data. — computeTmax • tdmore</title>
+<title>This base function can be used to develop an algebraic model
+for a 2cpt pk model with oral absorption. — pk2cptivinfusion • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +31,13 @@
 
 
 
-<meta property="og:title" content="Compute the TMax value based on the specified regimen and observed data. — computeTmax" />
+<meta property="og:title" content="This base function can be used to develop an algebraic model
+for a 2cpt pk model with oral absorption. — pk2cptivinfusion" />
 
-<meta property="og:description" content="Compute the TMax value based on the specified regimen and observed data." />
+<meta property="og:description" content="The caller should have access to the following values:
+t, TIME, AMT
+as well as model parameters
+CL, V1, Q, V2" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -127,51 +132,49 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute the TMax value based on the specified regimen and observed data.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/utilities.R'><code>R/utilities.R</code></a></small>
-    <div class="hidden name"><code>computeTmax.Rd</code></div>
+    <h1>This base function can be used to develop an algebraic model
+for a 2cpt pk model with oral absorption.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/algebraicLibrary.R'><code>R/algebraicLibrary.R</code></a></small>
+    <div class="hidden name"><code>pk2cptivinfusion.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Compute the TMax value based on the specified regimen and observed data.</p>
+    <p>The caller should have access to the following values:
+t, TIME, AMT
+as well as model parameters
+CL, V1, Q, V2</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>computeTmax</span>(<span class='no'>regimen</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>regimen</th>
-      <td><p>the specified regimen</p></td>
-    </tr>
-    <tr>
-      <th>observed</th>
-      <td><p>the observed dataframe</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>the tmax value, numeric</p>
-    
+    <pre class="usage"><span class='fu'>pk2cptivinfusion</span>()</pre>
+        
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>the maximum of all times in observed, and regimen (+one additional Interdose-interval, should this be specified)</p>
+    <p>The following alternative parametrization is also permitted
+K12, K21, K</p>
+<p>Optionally, TLAG can be defined.</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='algebraic.html'>algebraic</a></span>(<span class='kw'>function</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>EV</span>, <span class='no'>ECL</span>) {
+    <span class='no'>KA</span> <span class='kw'>&lt;-</span> <span class='fl'>0.3</span>
+    <span class='no'>CL</span> <span class='kw'>&lt;-</span> <span class='fl'>3</span> * <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Log'>exp</a></span>(<span class='no'>ECL</span>)
+    <span class='no'>V1</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span> * <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Log'>exp</a></span>(<span class='no'>EV</span>)
+    <span class='no'>Q</span> <span class='kw'>&lt;-</span> <span class='fl'>3</span>
+    <span class='no'>V2</span> <span class='kw'>&lt;-</span> <span class='fl'>800</span>
+    <span class='no'>DUR</span> <span class='kw'>&lt;-</span> <span class='fl'>3</span>
+    <span class='fu'>pk2cptoralinfusion</span>()
+})</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

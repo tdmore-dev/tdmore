@@ -5,7 +5,8 @@
 \title{Plot a tdmorefit object.}
 \usage{
 \method{plot}{tdmorefit}(x, newdata = NULL, regimen = NULL,
-  se.fit = TRUE, mc.maxpts = 100, .progress = "none", ...)
+  se.fit = TRUE, population = TRUE, fit = TRUE, mc.maxpts = 100,
+  .progress = "none", ...)
 }
 \arguments{
 \item{x}{the tdmorefit object}

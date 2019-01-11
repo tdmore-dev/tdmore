@@ -24,7 +24,7 @@ findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), tar
         obs[ , colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
       }
       result <- runUniroot(rootFunction, interval, ...)
-      return(convertResultToRecommendation(result, regimen, doseRows))
+      return(convertResultToRecommendation(result, regimen, doseRows, target))
 
     } else {
       # Find the dose for each Monte-Carlo sample
@@ -45,7 +45,7 @@ findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), tar
         cbind(row, dose=result$root, f.root=result$f.root, iter=result$iter, estim.prec=result$estim.prec)
       }, .progress=.progress, .parallel=.parallel)
 
-      return(convertMCResultToRecommendation(mcResult, regimen, doseRows, level))
+      return(convertMCResultToRecommendation(mcResult, regimen, doseRows, target, level))
     }
 }
 
@@ -75,10 +75,11 @@ runUniroot <- function(rootFunction, interval, ...) {
 #' @param result the uniroot result
 #' @param regimen the regimen
 #' @param doseRows which rows of the regimen to adapt when searching for a new dose, or NULL to take the last one
+#' @param target the original target
 #'
 #' @return a recommendation object
 #' @keywords internal
-convertResultToRecommendation <- function(result, regimen, doseRows) {
+convertResultToRecommendation <- function(result, regimen, doseRows, target) {
   return(structure(
     list(
       dose = result$root,
@@ -87,6 +88,7 @@ convertResultToRecommendation <- function(result, regimen, doseRows) {
         doseRows = doseRows,
         newDose = result$root
       ),
+      target=target,
       result = result
     ),
     class = c("recommendation")
@@ -98,12 +100,13 @@ convertResultToRecommendation <- function(result, regimen, doseRows) {
 #' @param mcResult a dataframe with all the uniroot results, one per Monte-Carlo sample
 #' @param regimen the regimen
 #' @param doseRows which rows of the regimen to adapt when searching for a new dose, or NULL to take the last one
+#' @param target the original target
 #' @param level the confidence interval on the dose
 #'
 #' @return a recommendation object
 #' @importFrom dplyr summarise
 #' @keywords internal
-convertMCResultToRecommendation <- function(mcResult, regimen, doseRows, level) {
+convertMCResultToRecommendation <- function(mcResult, regimen, doseRows, target, level) {
   ciLevel <- (1-level)/2
   dose <- c(
     dose.median = as.numeric(median(mcResult$dose)),
@@ -118,10 +121,17 @@ convertMCResultToRecommendation <- function(mcResult, regimen, doseRows, level) 
         doseRows = doseRows,
         newDose = dose['dose.median']
       ),
-      result = mcResult
+      result = mcResult,
+      target=target
     ),
     class = c("recommendation")
   ))
+}
+
+#' @export
+as.numeric.recommendation <- function(x) {
+  x$dose
+
 }
 
 #' Update a regimen with the specified dose.
@@ -136,7 +146,7 @@ updateRegimen <- function(regimen, doseRows = NULL, newDose) {
   if (is.null(doseRows))
     doseRows <- nrow(regimen)
 
-  dose <- numeric(length = length(doseRows)) + newDose
+  dose <- numeric(length = length(doseRows)) + as.numeric(newDose)
   names(dose) <- paste0(doseRows, ".AMT")
   updatedRegimen <- transformRegimen(regimen, dose)
 

@@ -30,11 +30,13 @@ if(!require(devtools)) install.packages('devtools')
 if(!require(tidyverse)) install.packages('tidyverse')
 
 PAT_TOKEN <- "eab9e908f5073f3ff82a7cb77e5fced10ed01d5d"
-devtools::install_github("tdmore-dev/tdmore", user="tdmore-training", auth_token=PAT_TOKEN)
+devtools::install_github("tdmore-dev/tdmore", user="tdmore-training", auth_token=PAT_TOKEN,
+                         upgrade="never")
 
-tryCatch{
-  RxODE::RxODE( "d/dt(A0) = -0.5 * A0;" ),
-  error=function(e) {
+tryCatch(
+  {
+    RxODE::RxODE( "d/dt(A0) = -0.5 * A0;" )
+  }, error=function(e) {
     stop(
 "RxODE could not compile a model.
 This does not stop tdmore from working, nor will it stop you from completing the training.
@@ -44,5 +46,5 @@ To use nlmixr-style models, you will have to install Rtools.
 You can find this on https://cran.r-project.org/bin/windows/Rtools/Rtools35.exe
 "
 )
-  }}
+  })
 ```
