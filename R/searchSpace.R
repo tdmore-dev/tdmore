@@ -99,5 +99,5 @@ flatten <- function(regimen) {
       newRegimen <- rbind(newRegimen, tmt)
     }
   }
-  newRegimen
+  newRegimen[, ! colnames(newRegimen) %in% c("ADDL", "II")] # Without columns ADDL and II
 }

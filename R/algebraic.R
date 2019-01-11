@@ -38,6 +38,7 @@ algebraic <- function(fun) {
         do.call(fun, args=args)
       })
       if(length(times)==0) return(numeric())
+      if(length(times)==1) return( sum(CONCs, na.rm=TRUE) )
       if(nrow(regimen) == 0) return( rep(0, length.out=length(times)) )
 
       CONC <- apply(CONCs, 1, sum, na.rm=TRUE)
@@ -76,6 +77,7 @@ model_predict.algebraic <- function(model, times,
   # if either II or ADDL is mentioned, the other one needs to be present as well
   if("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))
     assertthat::assert_that(all(c("II", "ADDL") %in% colnames(regimen)))
+  regimen <- flatten(regimen)
 
   assertthat::assert_that(is.numeric(parameters))
   if(is.data.frame(covariates)) stop("Time-varying covariates not supported")
