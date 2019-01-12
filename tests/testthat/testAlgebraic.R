@@ -1,18 +1,17 @@
 
 context("Test algebraic models")
 
-m1 <- algebraic({
-  function(t, TIME, AMT, EKA, EV, ECL, WT) {
-    V = 70 * exp(EV) * WT/70
-    CL = 4 * exp(ECL) * (WT/70)^0.75
-    KA = 1 * exp(EKA)
-    k = CL / V
-    tD = TIME
-    ifelse(t >= TIME,
-           AMT/V * (KA/(KA-k)) * (exp(-k*(t-tD)) - exp(-KA*(t-tD))),
-           0)
-  }
-})
+myFunction <- function(t, TIME, AMT, EKA, EV, ECL, WT) {
+  V = 70 * exp(EV) * WT/70
+  CL = 4 * exp(ECL) * (WT/70)^0.75
+  KA = 1 * exp(EKA)
+  k = CL / V
+  tD = TIME
+  ifelse(t >= TIME,
+         AMT/V * (KA/(KA-k)) * (exp(-k*(t-tD)) - exp(-KA*(t-tD))),
+         0)
+}
+m1 <- algebraic(myFunction)
 regimen <- data.frame(TIME=seq(0, 100, by=24), AMT=150)
 covariates <- c(WT=49)
 test_that("model_predict function generates values as expected", {
@@ -28,14 +27,23 @@ test_that("model_predict function generates values as expected", {
   expect_error( #covariates missing
     model_predict(model=m1, times=numeric(), parameters=c(EKA=0, EV=0, ECL=0))
   )
+  expect_error( #regimen missing
+    model_predict(model=m1, times=numeric(), parameters=c(EKA=0, EV=0, ECL=0), covariates=covariates)
+  )
   expect_equal(
-    model_predict(model=m1, times=numeric(), parameters=c(EKA=0, EV=0, ECL=0), covariates=covariates),
+    model_predict(model=m1, times=numeric(), parameters=c(EKA=0, EV=0, ECL=0),
+                  regimen=regimen, covariates=covariates),
     data.frame(TIME=numeric(), CONC=numeric())
   )
+  prediction <- model_predict(model=m1, times=0:15,
+                              parameters=c(EKA=0, EV=0, ECL=0), covariates=covariates,
+                              regimen=regimen)
   expect_equal(
-    model_predict(model=m1, times=0:15, parameters=c(EKA=0, EV=0, ECL=0), covariates=covariates),
-    data.frame(TIME=0:15, CONC=0)
+    prediction %>% colnames,
+    c("TIME", "CONC")
   )
+  expect_equal(prediction$TIME, 0:15)
+  expect_equal(prediction$CONC, myFunction(t=0:15, TIME=0, AMT=150, EKA=0, EV=0, ECL=0, WT=49) )
 
   result <- model_predict(model=m1, times=seq(0, 100, by=0.1),
                           regimen=regimen,
