@@ -61,7 +61,7 @@ recommendation1 <- findDose(
   target = data.frame(TIME = 32, CONC = 3.1)
 )
 
-expect_equal(round(recommendation1$dose, digits=2), 296.62)
+expect_equal(round(as.double(recommendation1), digits=2), 296.62)
 
 # Finding the right dose to give (with 95% CI)
 recommendation2 <- suppressWarnings(findDose(
