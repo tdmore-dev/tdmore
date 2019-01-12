@@ -129,9 +129,8 @@ convertMCResultToRecommendation <- function(mcResult, regimen, doseRows, target,
 }
 
 #' @export
-as.numeric.recommendation <- function(x) {
+as.numeric.recommendation <- function(x, ...) {
   x$dose
-
 }
 
 #' Update a regimen with the specified dose.
