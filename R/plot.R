@@ -6,6 +6,8 @@
 #' @param se.fit add a curve for the confidence interval around the fit
 #' @param mc.maxpts maximum number of points to use for the monte carlo fit
 #' @param .progress either "none" or "text" to see calculation progress of monte carlo simulations
+#' @param population should I plot the population prediction (in blue) ?
+#' @param fit should I plot the fit (in red) ?
 #' @param ... ignored
 #'
 #' @return a ggplot object with the fitted individual curve, the 95% CI of this curve, the population prediction (with between-subject variability) and the observed data

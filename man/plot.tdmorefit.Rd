@@ -17,6 +17,10 @@
 
 \item{se.fit}{add a curve for the confidence interval around the fit}
 
+\item{population}{should I plot the population prediction (in blue) ?}
+
+\item{fit}{should I plot the fit (in red) ?}
+
 \item{mc.maxpts}{maximum number of points to use for the monte carlo fit}
 
 \item{.progress}{either "none" or "text" to see calculation progress of monte carlo simulations}
