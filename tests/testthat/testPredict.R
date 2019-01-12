@@ -74,6 +74,9 @@ test_that("predict.tdmore() single profiles with covariates model", {
   #missing covariates should give error
   expect_error( predict(m2, newdata=c()), ".*covariate.*WT.*missing")
 
+  #wrong format
+  expect_error( predict(m2, newdata=c(), covariates=list(WT=70)), ".*ovariates.*in wrong format")
+
   # covariate provided
   expect_equal( predict(m2, newdata=c(), covariates=c(WT=70)), subset(expected_output, FALSE))
 

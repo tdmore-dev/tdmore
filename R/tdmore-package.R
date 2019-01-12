@@ -8,5 +8,5 @@
 NULL
 
 .onAttach <- function(libname, pkgname) {
-  if(interactive()) packageStartupMessage("Welcome to TDMore, more info on https://tdmore-dev.github.io/tdmore.")
+  if(interactive()) packageStartupMessage("Welcome to TDMore, more info on https://tdmore-dev.github.io/tdmore.") #nocov
 }
