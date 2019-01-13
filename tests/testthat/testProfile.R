@@ -27,10 +27,22 @@ ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
 plot(ipred)
 
 # Compute different profiles
+# TODO: Use vdiffr to check values
 profile <- profile(ipred, maxpts = 20)
 plot(profile)
 plot(profile, raster = F)
 plot(profile, contour = F)
+plot(profile, parameters="ECL") #TODO: Gives the wrong figure
+#TODO: specifying 3 parameters does not give an error message
+#Instead, the first 2 are drawn while silently ignoring the 3rd parameter
+plot(profile, parameters=c("ECL", "EV1") )
+expect_warning({
+  plot(profile, parameters=list() )
+})
+# Error if requesting a parameter that does not exist
+expect_error(
+  plot(profile, parameters="NO_EXIST")
+)
 
 profile <- profile(ipred, maxpts = 20, limits = list(ECL=c(-0.8,0.5), EV1=c(-0.8,0.9)))
 plot(profile)
