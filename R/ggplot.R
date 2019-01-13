@@ -36,8 +36,9 @@ has_tdmoreArgs <- function(x) {"tdmoreArgs" %in% names(attributes(x)) }
 #'
 #' @inheritParams ggplot2::ggplot_add
 #' @keywords internal
+#' @importFrom ggplot2 ggplot_add
 #'
-#'@export
+#' @export
 ggplot_add.GGTdmoreLayer <- function(object, plot, object_name) {
   class(object) <- setdiff(class(object), "GGTdmoreLayer") #unset class
 

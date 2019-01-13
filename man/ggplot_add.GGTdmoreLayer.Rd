@@ -5,7 +5,7 @@
 \title{This method extends ggplot2 to allow inheritance of tdmore arguments
 from the original `ggplot()` call into the specific tdmore-related layer.}
 \usage{
-ggplot_add.GGTdmoreLayer(object, plot, object_name)
+\method{ggplot_add}{GGTdmoreLayer}(object, plot, object_name)
 }
 \arguments{
 \item{object}{An object to add to the plot}
