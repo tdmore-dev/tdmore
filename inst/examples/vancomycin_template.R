@@ -34,14 +34,14 @@ TARGET <- 15 #in this case, we target Ctrough [mg/L]
 SAFETY <- 50 #limit for peak post-infusion  [mg/L]
 
 ## We can now repeat the exercise for a different patient
-covariates <- c(eGFR=125, AGE=45, BW=70)
+covariates <- c(eGFR=125, AGE=45, BW=70)   ### YOU NEED TO ADAPT THIS
 LOADING_DOSE <- data.frame(TIME=0, II=0, ADDL=0, AMT=25*covariates['BW'])
 regimen <- bind_rows(
   LOADING_DOSE,
-  data.frame(TIME=12, II=12, ADDL=0, AMT=1000)
+  data.frame(TIME=12, II=12, ADDL=0, AMT=1000) ### YOU NEED TO ADAPT THIS
 )
 observed <- bind_rows(
-  data.frame(TIME=24, CONC=7.6)
+  data.frame(TIME=24, CONC=7.6) ### YOU NEED TO ADAPT THIS
 )
 
 ## A priori plot
@@ -59,7 +59,7 @@ plot(ipred) +
 ## Predict the dose
 regimen <- bind_rows(
   LOADING_DOSE,
-  data.frame(TIME=12, II=12, ADDL=0, AMT=1000), #the past
+  data.frame(TIME=12, II=12, ADDL=0, AMT=1000), #the past   ### YOU NEED TO ADAPT THIS
   data.frame(TIME=24, II=12, ADDL=11, AMT=NA) # the future
 )
 recommendation <- findDose(ipred, regimen, target=data.frame(TIME=4*24, CONC=TARGET))
