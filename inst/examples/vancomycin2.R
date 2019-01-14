@@ -35,7 +35,7 @@ model <- algebraic(function(t, TIME, AMT, ECL, EV2, eGFR, AGE, BW) {
               res_var=errorModel(prop=0.249))
 
 #______________________________________________________________________________________________
-#----               EXERCICE 1a: Plotting regimen               ----
+#----               EXERCICE 1: Plotting regimen               ----
 #______________________________________________________________________________________________
 
 # Our targeted PK metric
@@ -48,9 +48,9 @@ covariates <- c(eGFR=60, AGE=73, BW=55)
 LOADING_DOSE <- data.frame(TIME=0, II=0, ADDL=0, AMT=25*covariates['BW'] )
 
 regimen <- bind_rows(
-  LOADING_DOSE,                                # Past
-  data.frame(TIME=12, II=0, ADDL=0, AMT=750),  # Past
-  data.frame(TIME=24, II=12, ADDL=4, AMT=1000) # Past (1st recommendation)
+  LOADING_DOSE,
+  data.frame(TIME=12, II=0, ADDL=0, AMT=750),
+  data.frame(TIME=24, II=12, ADDL=4, AMT=1000)
 )
 
 observed <- data.frame(TIME=c(24, 72), CONC=c(12.5, 17.5))
@@ -62,7 +62,7 @@ plot(model, regimen=regimen, covariates=covariates) +
   scale_x_continuous(breaks=seq(0, 84, by=12))
 
 #______________________________________________________________________________________________
-#---- EXERCICE 1b: Optimisation based on first two observations and forward predictions    ----
+#---- EXERCICE 2: Optimisation based on first two observations and forward predictions    ----
 #______________________________________________________________________________________________
 
 ipred <- estimate(model, observed = observed, covariates = covariates, regimen = regimen)
@@ -73,9 +73,9 @@ print(recommendation)
 observed <- data.frame(TIME=c(24, 72, 6*24), CONC=c(12.5, 17.5, 20.2))
 
 regimen <- bind_rows(
-  LOADING_DOSE,                                # Past
-  data.frame(TIME=12, II=0, ADDL=0, AMT=750),  # Past
-  data.frame(TIME=24, II=12, ADDL=10, AMT=1000) # Past (1st recommendation)
+  LOADING_DOSE,
+  data.frame(TIME=12, II=0, ADDL=0, AMT=750),
+  data.frame(TIME=24, II=12, ADDL=10, AMT=1000)
 )
 
 plot(model, regimen=regimen, covariates=covariates) +
@@ -83,26 +83,28 @@ plot(model, regimen=regimen, covariates=covariates) +
   geom_vline(xintercept=144, linetype=2) +
   geom_point(aes(x=TIME, y=CONC), data=observed) +
   annotate("text", x=144, y=TARGET, label=TARGET, vjust=-0.5, hjust=1.5) +
-  annotate("text", x=144, y=observed$CONC[3], label=observed$CONC[3], vjust=-0.5, hjust=1.5)
-  #scale_x_continuous(breaks=seq(0, 84, by=12))
+  annotate("text", x=144, y=observed$CONC[3], label=observed$CONC[3], vjust=-0.5, hjust=1.5) +
+  scale_x_continuous(breaks=seq(0, 156, by=12))
 
-#########
+#______________________________________________________________________________________________
+#----   EXERCICE 3: Reestimate etas based on third observation only + new recommendation   ----
+#______________________________________________________________________________________________
 
 observed <- data.frame(TIME=c(6*24), CONC=c(20.2))
 
 regimen <- bind_rows(
-  LOADING_DOSE,                                   # Past
-  data.frame(TIME=12, II=0, ADDL=0, AMT=750),     # Past
-  data.frame(TIME=24, II=12, ADDL=9, AMT=1000)   # Past (1st recommendation)
+  LOADING_DOSE,
+  data.frame(TIME=12, II=0, ADDL=0, AMT=750),
+  data.frame(TIME=24, II=12, ADDL=9, AMT=1000)
 )
 
 ipred <- estimate(model, observed = observed, covariates = covariates, regimen = regimen)
 
 regimen <- bind_rows(
-  LOADING_DOSE,                                   # Past
-  data.frame(TIME=12, II=0, ADDL=0, AMT=750),     # Past
-  data.frame(TIME=24, II=12, ADDL=9, AMT=1000),   # Past (1st recommendation)
-  data.frame(TIME=6*24, II=12, ADDL=14, AMT=NA)  # Past (2st recommendation)
+  LOADING_DOSE,
+  data.frame(TIME=12, II=0, ADDL=0, AMT=750),
+  data.frame(TIME=24, II=12, ADDL=9, AMT=1000),
+  data.frame(TIME=6*24, II=12, ADDL=5, AMT=NA)
 )
 
 recommendation <- findDose(ipred, regimen=regimen, target=data.frame(TIME=6*24+STEADY_STATE, CONC=TARGET))
@@ -112,36 +114,29 @@ OBSERVED <- data.frame(TIME=c(6*24, 7*24), CONC=c(20.2, 17.1))
 plot(ipred, regimen=recommendation$regimen, covariates=covariates) +
   geom_hline(yintercept=c(TARGET, SAFETY)) +
   geom_vline(xintercept=168, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 240, by=12), limits = c(0, 240)) +
-  scale_y_continuous(limits = c(5, 80)) +
+  scale_x_continuous(breaks=seq(0, 216, by=12)) +
+  scale_y_continuous(limits = c(0, 80)) +
   geom_point(aes(x=TIME, y=CONC), data = OBSERVED, size=I(3))
 
-#########################
+#______________________________________________________________________________________________
+#----        EXERCICE 4: Recompute recommendation with a 8h dosing interval                ----
+#______________________________________________________________________________________________
 
 regimen <- bind_rows(
-  LOADING_DOSE,                                   # Past
-  data.frame(TIME=12, II=0, ADDL=0, AMT=750),     # Past
-  data.frame(TIME=24, II=12, ADDL=9, AMT=1000),   # Past (1st recommendation)
-  data.frame(TIME=6*24, II=8, ADDL=14, AMT=NA)  # Past (2st recommendation)
+  LOADING_DOSE,
+  data.frame(TIME=12, II=0, ADDL=0, AMT=750),
+  data.frame(TIME=24, II=12, ADDL=9, AMT=1000),
+  data.frame(TIME=6*24, II=8, ADDL=8, AMT=NA)
 )
 
 recommendation <- findDose(ipred, regimen=regimen, target=data.frame(TIME=6*24+STEADY_STATE, CONC=TARGET))
 print(recommendation)
-
-# plot(ipred, regimen=recommendation$regimen, covariates=covariates) +
-#   geom_hline(yintercept=c(TARGET, SAFETY)) +
-#   geom_vline(xintercept=0, linetype=2) +
-#   scale_x_continuous(breaks=seq(0, 240, by=12), limits = c(0, 240)) +
-#   scale_y_continuous(limits = c(5, 80))
-
-#########################
-
 
 OBSERVED <- data.frame(TIME=c(6*24, 7*24), CONC=c(20.2, 17.1))
 
 plot(ipred, regimen=recommendation$regimen, covariates=covariates) +
   geom_hline(yintercept=c(TARGET, SAFETY)) +
   geom_vline(xintercept=168, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 240, by=12), limits = c(0, 240)) +
-  scale_y_continuous(limits = c(5, 80)) +
+  scale_x_continuous(breaks=seq(0, 216, by=12)) +
+  scale_y_continuous(limits = c(0, 80)) +
   geom_point(aes(x=TIME, y=CONC), data = OBSERVED, size=I(3))
