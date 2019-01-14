@@ -8,15 +8,15 @@ library(tidyverse)
 # Source: Sanchez, J. L., et al. "Population pharmacokinetics of vancomycin in adult and geriatric patients: comparison of eleven approaches."
 # International journal of clinical pharmacology and therapeutics 48.8 (2010): 525-533.
 
-model <- algebraic(function(t, TIME, AMT, ECL, EV2, CRCL, AGE, BW) {
+model <- algebraic(function(t, TIME, AMT, ECL, EV2, eGFR, AGE, BW) {
   THETA1=0.157
   THETA5=0.563
   THETA4=0.111
   THETA2=0.283
   THETA3=32.2
 
-  CRCL = CRCL / 1000 * 60 #convert CRCL to L/h
-  TVCL = THETA1 + THETA5 * CRCL
+  eGFR = eGFR / 1000 * 60 #convert eGFR to L/h
+  TVCL = THETA1 + THETA5 * eGFR
   TVV1 = THETA2 * BW
   TVV2 = THETA3 * AGE/53.5
   TVQ = THETA4
@@ -44,7 +44,7 @@ SAFETY <- 50 # limit for peak post-infusion  [mg/L]
 STEADY_STATE <- 72 # steady state is reached after 3 days
 
 # Patient covariates
-covariates <- c(CRCL=60, AGE=73, BW=55)
+covariates <- c(eGFR=60, AGE=73, BW=55)
 LOADING_DOSE <- data.frame(TIME=0, II=0, ADDL=0, AMT=25*covariates['BW'] )
 
 regimen <- bind_rows(
