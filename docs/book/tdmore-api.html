@@ -134,7 +134,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>5.6</b> Plotting the intermediate steps</a><ul>
 <li class="chapter" data-level="5.6.1" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmore-object"><i class="fa fa-check"></i><b>5.6.1</b> Plotting a tdmore object</a></li>
 <li class="chapter" data-level="5.6.2" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object"><i class="fa fa-check"></i><b>5.6.2</b> Plotting a tdmorefit object</a></li>
-<li class="chapter" data-level="5.6.3" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmoreprofile-object"><i class="fa fa-check"></i><b>5.6.3</b> Plotting a tdmoreprofile object</a></li>
+<li class="chapter" data-level="5.6.3" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object-with-an-adapted-regimen"><i class="fa fa-check"></i><b>5.6.3</b> Plotting a tdmorefit object with an adapted regimen</a></li>
+<li class="chapter" data-level="5.6.4" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmoreprofile-object"><i class="fa fa-check"></i><b>5.6.4</b> Plotting a tdmoreprofile object</a></li>
 </ul></li>
 <li class="chapter" data-level="5.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>5.7</b> Extending TDMore</a></li>
 </ul></li>
@@ -192,7 +193,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="build-a-tdmore-object-from-a-nlxmir-model" class="section level3">
 <h3><span class="header-section-number">5.1.1</span> Build a TDMore object from a nlxmir model</h3>
 <p>Let’s implement a basic 1-compartment PK model in <code>nlmixr</code>. The model code is divided in two different blocks. The ‘ini’ block is used to define all the model parameter values (commonly called theta’s, omega’s and sigma’s in PK/PD modelling language) while the ‘model’ blocks defines all the equations of the model. The <code>nlmixr</code> function is implemented as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelCode1 &lt;-<span class="st"> </span><span class="cf">function</span>() {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlmixr)
+modelCode1 &lt;-<span class="st"> </span><span class="cf">function</span>() {
   <span class="kw">ini</span>({
     TVKA &lt;-<span class="st"> </span><span class="dv">1</span> <span class="co"># THETA on KA</span>
     TVV &lt;-<span class="st"> </span><span class="dv">70</span> <span class="co"># THETA on V</span>
@@ -218,7 +220,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 }</code></pre></div>
 <p>A TDMore object can then be instantiated by running the following snippet:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
-<span class="kw">library</span>(nlmixr)
 m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>()</code></pre></div>
 <p>Your model is ready to use. Have a look at its content by calling:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(m1)</code></pre></div>
@@ -621,8 +622,19 @@ data2<span class="op">$</span>solution &lt;-<span class="st"> </span><span class
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(tdmorefit)</code></pre></div>
 <p><img src="04-API_files/figure-html/plot_tdmorefit_object-1.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
+<div id="plotting-a-tdmorefit-object-with-an-adapted-regimen" class="section level3">
+<h3><span class="header-section-number">5.6.3</span> Plotting a tdmorefit object with an adapted regimen</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="ot">NA</span>, <span class="dt">II=</span><span class="dv">24</span>, <span class="dt">ADDL=</span><span class="dv">7</span>)
+recommendation1 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
+  tdmorefit, 
+  <span class="dt">regimen =</span> newRegimen,
+  <span class="dt">target =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="dv">168</span>, <span class="dt">CONC =</span> <span class="fl">0.75</span>)
+)
+<span class="kw">plot</span>(tdmorefit, <span class="dt">regimen=</span>recommendation1<span class="op">$</span>regimen)</code></pre></div>
+<p><img src="04-API_files/figure-html/plot_tdmorefit_object_regimen-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
 <div id="plotting-a-tdmoreprofile-object" class="section level3">
-<h3><span class="header-section-number">5.6.3</span> Plotting a tdmoreprofile object</h3>
+<h3><span class="header-section-number">5.6.4</span> Plotting a tdmoreprofile object</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">profile &lt;-<span class="st"> </span><span class="kw">profile</span>(tdmorefit, <span class="dt">maxpts=</span><span class="dv">50</span>, <span class="dt">limits =</span> <span class="kw">list</span>(<span class="dt">ECL=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="fl">0.7</span>)), <span class="dt">fix=</span><span class="kw">c</span>(<span class="dt">EKA=</span><span class="dv">0</span>))
 <span class="kw">plot</span>(profile)</code></pre></div>
 <p><img src="04-API_files/figure-html/plot_tdmoreprofile_object-1.png" width="768" style="display: block; margin: auto;" /></p>
