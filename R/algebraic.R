@@ -28,6 +28,7 @@ algebraic <- function(fun) {
       if(!all(names(parameters) %in% pNames) || !all(pNames %in% names(parameters)))
         stop("Algebraic function requires parameters `", paste(pNames, collapse=", "), "',
              but was provided the following: `", paste(names(parameters), collapse=", "), "'")
+      if(anyNA(regimen)) stop("The provided regimen contains NA. Cannot calculate algebraic model...")
       CONCs = apply(regimen, 1, function(x) {
         args <- list(times)
         names(args) <- tArg

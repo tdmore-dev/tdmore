@@ -45,6 +45,13 @@ test_that("model_predict function generates values as expected", {
   expect_equal(prediction$TIME, 0:15)
   expect_equal(prediction$CONC, myFunction(t=0:15, TIME=0, AMT=150, EKA=0, EV=0, ECL=0, WT=49) )
 
+  expect_error(
+    model_predict(model=m1, times=0:15,
+                  parameters=c(EKA=0, EV=0, ECL=0), covariates=covariates,
+                  regimen=data.frame(TIME=c(0, 12), AMT=c(NA, 1000))),
+    "The provided regimen contains NA.*"
+  )
+
   result <- model_predict(model=m1, times=seq(0, 100, by=0.1),
                           regimen=regimen,
                           parameters=c(EKA=0, EV=0, ECL=0),
