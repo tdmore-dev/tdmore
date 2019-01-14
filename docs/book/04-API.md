@@ -18,6 +18,7 @@ The `nlmixr` function is implemented as follows:
 
 
 ```r
+library(nlmixr)
 modelCode1 <- function() {
   ini({
     TVKA <- 1 # THETA on KA
@@ -49,7 +50,6 @@ A TDMore object can then be instantiated by running the following snippet:
 
 ```r
 library(tdmore)
-library(nlmixr)
 m1 <- nlmixrUI(modelCode1) %>% tdmore()
 ```
 
@@ -619,6 +619,21 @@ plot(tdmorefit)
 ```
 
 <img src="04-API_files/figure-html/plot_tdmorefit_object-1.png" width="768" style="display: block; margin: auto;" />
+
+### Plotting a tdmorefit object with an adapted regimen
+
+
+```r
+newRegimen <- data.frame(TIME=0, AMT=NA, II=24, ADDL=7)
+recommendation1 <- findDose(
+  tdmorefit, 
+  regimen = newRegimen,
+  target = data.frame(TIME = 168, CONC = 0.75)
+)
+plot(tdmorefit, regimen=recommendation1$regimen)
+```
+
+<img src="04-API_files/figure-html/plot_tdmorefit_object_regimen-1.png" width="768" style="display: block; margin: auto;" />
 
 ### Plotting a tdmoreprofile object
 
