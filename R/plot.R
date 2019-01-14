@@ -18,7 +18,7 @@
 #' @export
 plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, population=TRUE, fit=TRUE, mc.maxpts=100, .progress="none", ...) {
   tdmorefit <- x
-  newdata <- processNewData(newdata, tdmorefit, regimen=regimen, N=300)
+  newdata <- processNewData(newdata, tdmorefit, regimen=regimen, N=1000)
   if(is.null(regimen)) regimen <- tdmorefit$regimen
 
   # Compute IPRED
