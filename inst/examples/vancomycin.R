@@ -3,15 +3,15 @@ library(tidyverse)
 
 ## Vancomycin model: 2cpt model with IIV on CL and V2
 ## Source: Sanchez, J. L., et al. "Population pharmacokinetics of vancomycin in adult and geriatric patients: comparison of eleven approaches." International journal of clinical pharmacology and therapeutics 48.8 (2010): 525-533.
-model <- algebraic(function(t, TIME, AMT, ECL, EV2, CRCL, AGE, BW) {
+model <- algebraic(function(t, TIME, AMT, ECL, EV2, eGFR, AGE, BW) {
   THETA1=0.157
   THETA5=0.563
   THETA4=0.111
   THETA2=0.283
   THETA3=32.2
 
-  CRCL = CRCL / 1000 * 60 #convert CRCL to L/h
-  TVCL = THETA1 + THETA5 * CRCL
+  eGFR = eGFR / 1000 * 60 #convert eGFR to L/h
+  TVCL = THETA1 + THETA5 * eGFR
   TVV1 = THETA2 * BW
   TVV2 = THETA3 * AGE/53.5
   TVQ = THETA4
@@ -34,7 +34,7 @@ TARGET <- 15 #in this case, we target Ctrough [mg/L]
 SAFETY <- 50 #limit for peak post-infusion  [mg/L]
 
 ## Patient covariates
-covariates <- c(CRCL=125, AGE=45, BW=70)
+covariates <- c(eGFR=125, AGE=45, BW=70)
 LOADING_DOSE <- data.frame(TIME=0, II=0, ADDL=0, AMT=25*covariates['BW'] )
 
 ## What should the regimen be for this patient, based on the dosing table?
@@ -48,7 +48,7 @@ regimen_dosingTable <- bind_rows(
 plot(model, regimen=regimen_dosingTable, covariates=covariates) +
   geom_hline(yintercept=c(TARGET, SAFETY)) +
   geom_vline(xintercept=0, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 200, by=12))
+  scale_x_continuous(breaks=seq(0, 2000, by=12))
   # This is a concentration-time plot
   # It shows (in blue) the estimated value and 95% prediction interval
   # for the covariate-corrected population.
@@ -64,7 +64,7 @@ regimen <- bind_rows(
 plot(model, regimen=regimen, covariates=covariates) +
   geom_hline(yintercept=c(TARGET, SAFETY))  +
   geom_vline(xintercept=0, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 200, by=12)) +
+  scale_x_continuous(breaks=seq(0, 2000, by=12)) +
   annotate("text", x=24, y=TARGET, label=TARGET, vjust=-0.5, hjust=1.5) +
   geom_text( aes(y=CONC, label=round(CONC, 2)), data=predict(model, regimen=regimen, covariates=covariates, newdata=24))
   # you are not hitting your target
@@ -81,20 +81,18 @@ plot(model, regimen=regimen, covariates=covariates) +
   geom_text(aes(x=TIME, y=CONC, label=CONC), data=observed, hjust=1.5) +
   geom_hline(yintercept=c(TARGET, SAFETY)) +
   geom_vline(xintercept=24, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 200, by=12))
+  scale_x_continuous(breaks=seq(0, 2000, by=12))
     # the point is in the blue area, so this is a subject that is within the 95% PI for the population
     # If it would not be in the blue band:
     #   perhaps you made a mistake in the input data?
     #   or maybe the model is not appropriate?
     #   or maybe that patient is simply very unusual? (OMEGA usually has large RSE)
-    #
-
 
 # Estimate the patient PK parameters, and get a better prediction
 ipred <- estimate(model, regimen=regimen, covariates=covariates, observed=observed)
 coef(ipred)
 
-TVCL = 0.157 + 0.563 * covariates['CRCL'] / 1000 * 60
+TVCL = 0.157 + 0.563 * covariates['eGFR'] / 1000 * 60
 message("Typical clearance is ", TVCL)
 CL = TVCL * exp(coef(ipred)['ECL'])
 message("Patient estimated clearance is ", CL)
@@ -103,10 +101,9 @@ message("Patient estimated clearance is ", CL)
 plot(ipred, se.fit=F) +
   geom_hline(yintercept=c(TARGET, SAFETY))  +
   geom_vline(xintercept=24, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 200, by=12))
+  scale_x_continuous(breaks=seq(0, 2000, by=12))
   # This is a time-concentration plot
-  # It shows (in red) the estimated value and 95% prediction interval for the given patient
-  # This prediction is more accurate now, because we have a concentration point to characterize the patient.
+  # It shows (in red) the estimated valuefor the given patient
   #
   # The curve does not go exactly through the point.
   # The bayesian approach penalizes moving estimated parameters away from the typical value.
@@ -116,7 +113,6 @@ plot(ipred, se.fit=F) +
   # This is the unadjusted prediction for the population (without concentration samples)
   #
   #   Does this estimate describe what you observed?
-  #
 
 
 # Now we can adapt the dose, and predict into the future
@@ -129,7 +125,7 @@ regimen <- bind_rows(
 plot(ipred, regimen=regimen, se.fit=T, population=F) +
   geom_hline(yintercept=c(TARGET, SAFETY)) +
   geom_vline(xintercept=24, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 200, by=12))
+  scale_x_continuous(breaks=seq(0, 2000, by=12))
 
 # or 1000mg q8
 regimen <- bind_rows(
@@ -140,7 +136,7 @@ regimen <- bind_rows(
 plot(ipred, regimen=regimen, se.fit=T, population=F) +
   geom_hline(yintercept=c(TARGET, SAFETY)) +
   geom_vline(xintercept=24, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 200, by=12))
+  scale_x_continuous(breaks=seq(0, 2000, by=12))
 
 
 ## We can also ask TDMore which dose should be given (for a pre-specified dosing interval)
@@ -157,7 +153,7 @@ recommendation
 plot(ipred, regimen=recommendation$regimen, se.fit=T, population=F) +
   geom_hline(yintercept=c(TARGET, SAFETY)) +
   geom_vline(xintercept=24, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 200, by=12))
+  scale_x_continuous(breaks=seq(0, 2000, by=12))
   ## The dose we find should be evaluated on safety as well
     # The predicted concentration is too high
     # We should probably switch to a q8 regimen
@@ -175,7 +171,7 @@ print(recommendation)
 plot(ipred, regimen=recommendation$regimen, se.fit=T, population=F) +
   geom_hline(yintercept=c(TARGET, SAFETY)) +
   geom_vline(xintercept=24, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 200, by=12))
+  scale_x_continuous(breaks=seq(0, 2000, by=12))
 
 # We can ask which loading dose should be given, and which maintenance dose
 regimen <- bind_rows(
@@ -189,7 +185,7 @@ print(loadingRecommendation)
 plot(ipred, regimen=loadingRecommendation$regimen, population=F) +
   geom_hline(yintercept=c(TARGET, SAFETY)) +
   geom_vline(xintercept=24, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 200, by=12))
+  scale_x_continuous(breaks=seq(0, 2000, by=12))
 # and now the maintenance dose
 regimen <- bind_rows(
   loadingRecommendation$regimen, #the previously found regimen
@@ -203,7 +199,7 @@ print(recommendation$regimen)
 plot(ipred, regimen=recommendation$regimen, population=F) +
   geom_hline(yintercept=c(TARGET, SAFETY)) +
   geom_vline(xintercept=24, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 200, by=12))
+  scale_x_continuous(breaks=seq(0, 2000, by=12))
     ## The loading dose and maintenance dose are so similar
     ## that a loading dose is probably not required here
 
@@ -224,7 +220,7 @@ plot(ipred, regimen=regimen, population=F) +
   annotate("text", x=3*24, y=14.2, label=14.2, hjust=1.5) +
   geom_hline(yintercept=c(TARGET, SAFETY)) +
   geom_vline(xintercept=24, linetype=2) +
-  scale_x_continuous(breaks=seq(0, 200, by=12)) +
+  scale_x_continuous(breaks=seq(0, 2000, by=12)) +
   geom_text(aes(x=TIME, y=CONC, label=round(CONC,1)),
     data=predictedValue, hjust=1.5 )
 ## And the actual numbers?
