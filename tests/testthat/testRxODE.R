@@ -31,6 +31,16 @@ regimen <- data.frame(
   AMT=5 #5mg
 )
 
+expect_known_output(
+  print(tdmore),
+  "tdmoreRxode.txt"
+)
+
+expect_known_output(
+  print(summary(tdmore)),
+  "tdmoreRxodeSummary.txt"
+)
+
 # Default tdmore plot
 plot(tdmore, regimen)
 

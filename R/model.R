@@ -204,21 +204,6 @@ model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, ...) {
   return(data)
 }
 
-#' Get a formula that describes this model
-#'
-#' @param x TDMore object
-#' @param ... ignored
-#'
-#' @return A formula in the form OUTPUT_A + OUTPUT_B ~ TIME + COVARIATES + ETAS
-#' @export
-formula.tdmore <- function(x, ...) {
-  formula(x$model)
-}
-
-terms.tdmore <- function(x, ...) {
-
-}
-
 
 #' Print a tdmore object.
 #'
@@ -244,7 +229,18 @@ print.tdmore <- function(x, ...) {
 #'
 #' @export
 summary.tdmore <- function(object, ...) {
-  x <- object
+  structure(list(
+    tdmore=object
+  ), class="summary.tdmore")
+}
+
+#' Print a tdmore summary
+#'
+#' @param x a tdmore summary
+#'
+#' @export
+print.summary.tdmore <- function(x, ...) {
+  x <- x$tdmore
   cat("Structural model:", class(x$model), "\n\n")
   parameters <- data.frame(name=x$parameters, var=diag(x$omega), cv=sqrt(diag(x$omega)))
   cat("Parameters:\n")

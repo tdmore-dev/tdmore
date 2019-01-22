@@ -1,0 +1,12 @@
+Structural model: RxODE 
+
+Parameters:
+ name    var   cv
+  ECL 0.0784 0.28
+  EVc 0.0361 0.19
+
+Covariates: / 
+
+Residual error model:
+ name additiveError proportionalError exponentialError
+ CONC             0              0.23                0
