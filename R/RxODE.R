@@ -4,13 +4,14 @@
 #' @param res_var the residual variability
 #' @param parameters list of parameter names, or NULL to use all parameters names from RxODE
 #' @param omega omega variance-covariance matrix, or NULL to use a diagonal matrix of variances 1
+#' @param iov list of parameter names related to IOV, NULL if no IOV
 #' @param ... extra arguments will be passed to the model_predict call
 #'
 #' @return An object of class tdmore, which can be used to estimate posthoc Bayesian parameters
 #' @export
 #'
 #' @example inst/examples/RxODE.R
-tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, ...) {
+tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, ...) {
   assert_that(class(model) %in% c("RxODE")) #currently, only RxODE is supported
 
   tdmore <- structure(list(
@@ -19,6 +20,7 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, ...) {
     res_var=res_var,
     parameters=parameters,
     covariates=NULL, # Computed automatically in checkTdmore
+    iov=iov,
     extraArguments=list(...)
   ), class="tdmore")
 
@@ -33,7 +35,7 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, ...) {
 #' A dataframe with at least a column 'TIME' and other values that should be observed,
 #' or a numeric TIME vector to produce all values that can be observed by this model
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).
-#' @param parameters either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector
+#' @param parameters named numeric vector with the parameters
 #' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
 #' @param extraArguments extra arguments to use
 #'
@@ -58,53 +60,19 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   }
   modVars <- model$get.modelVars()
 
-  # Verify arguments are good
-  assert_that(is.numeric(times))
-  assert_that(!is.unsorted(times))
-
-  assert_that("data.frame" %in% class(regimen))
-  assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
-  assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "DURATION", "CMT", "II", "ADDL")))
-  if("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))
-    assert_that(all(c("II", "ADDL") %in% colnames(regimen)))
-
+  # Check times and regimen objects
+  checkTimes(times)
+  checkRegimen(regimen)
 
   # All arguments look good, let's prepare the simulation
   ev <- RxODE::eventTable()
   if(length(times) > 0) ev$add.sampling(time=times)
-  for(i in seq_len(nrow(regimen))) {
-    row <- regimen[i, ,drop=FALSE]
-    dosing.to = 1
-    rate = NULL
-    nbr.doses = 1
-    dosing.interval = 24
-    if(isTRUE(row$II > 0)) {
-      dosing.interval <- row$II
-      nbr.doses <- row$ADDL
-      #duration <- max(observed$TIME) - row$TIME
-      #nbr.doses <- ceiling(duration / dosing.interval)
-    }
+  ev <- addRegimenToEventTable(ev, regimen)
 
-    if(isTRUE(is.finite(row$RATE))) rate=row$RATE
-    if(isTRUE(is.finite(row$DURATION))) {
-      if(!is.null(rate)) stop("Cannot specify RATE and DURATION in the same treatment row ", i)
-      rate = row$AMT / row$DURATION
-    }
-
-    if("CMT" %in% names(row)) dosing.to <- row$CMT
-    ev$add.dosing(start.time = row$TIME,
-                  dose=row$AMT,
-                  dosing.to=dosing.to,
-                  rate=rate,
-                  dosing.interval=dosing.interval,
-                  nbr.doses=nbr.doses)
-  }
-
-
-  ## Set up the parameters
+  # Set up the parameters
   params = NULL
   assert_that(is.numeric(parameters))
-  pNames <- names(parameters)
+  pNames <- names(parameters) # parameter names
   params = parameters # parameters + fixed covariate values
   cNames <- c()
 
@@ -118,7 +86,7 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     eventTable <- ev$get.EventTable()
     covs <-  eventTable %>% dplyr::transmute(TIME=eventTable$time) %>% dplyr::left_join(covariates, by="TIME")
     for(i in colnames(covs))
-      covs[, i] <- zoo::na.locf( covs[, i] )
+      covs[, i] <- zoo::na.locf( covs[, i] ) # last observation carried forward for NA values
 
     cNames <- colnames(covariates)
     cNames <- cNames[cNames != "TIME"]
@@ -150,8 +118,39 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   # Only get the values we want
   result <- as.data.frame(result, row.names=NULL)
   names(result)[names(result)=="time"] <- "TIME"
+
   # Remove spurious sampling times due to covariates
   # But keep this a data.frame!
   result <- subset( result, result$TIME %in% times, drop=FALSE)
   result
+}
+
+addRegimenToEventTable <- function(eventTable, regimen) {
+  for(i in seq_len(nrow(regimen))) {
+    row <- regimen[i, ,drop=FALSE]
+    dosing.to = 1
+    rate = NULL
+    nbr.doses = 1
+    dosing.interval = 24
+
+    if(isTRUE(row$II > 0)) {
+      dosing.interval <- row$II
+      nbr.doses <- row$ADDL
+    }
+
+    if(isTRUE(is.finite(row$RATE))) rate=row$RATE
+    if(isTRUE(is.finite(row$DURATION))) {
+      if(!is.null(rate)) stop("Cannot specify RATE and DURATION in the same treatment row ", i)
+      rate = row$AMT / row$DURATION
+    }
+
+    if("CMT" %in% names(row)) dosing.to <- row$CMT
+    eventTable$add.dosing(start.time = row$TIME,
+                  dose=row$AMT,
+                  dosing.to=dosing.to,
+                  rate=rate,
+                  dosing.interval=dosing.interval,
+                  nbr.doses=nbr.doses)
+  }
+  return(eventTable)
 }

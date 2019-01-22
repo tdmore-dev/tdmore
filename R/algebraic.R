@@ -120,7 +120,8 @@ tdmore.algebraic <- function(model, res_var, omega, ...) {
     omega=omega,
     res_var=res_var,
     parameters=parameters,
-    covariates=covariates
+    covariates=covariates,
+    iov=NULL
   ), class="tdmore")
 
   # Check consistency and return

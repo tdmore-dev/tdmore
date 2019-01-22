@@ -13,7 +13,7 @@
 
 \item{regimen}{dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).}
 
-\item{parameters}{either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector}
+\item{parameters}{named numeric vector with the parameters}
 
 \item{covariates}{named vector, or data.frame with column 'TIME', and at least TIME 0}
 

@@ -5,7 +5,7 @@
 \title{Create a TDM-capable model from an RxODE model}
 \usage{
 \method{tdmore}{RxODE}(model, res_var, parameters = NULL, omega = NULL,
-  ...)
+  iov = NULL, ...)
 }
 \arguments{
 \item{model}{the RxODE model}
@@ -15,6 +15,8 @@
 \item{parameters}{list of parameter names, or NULL to use all parameters names from RxODE}
 
 \item{omega}{omega variance-covariance matrix, or NULL to use a diagonal matrix of variances 1}
+
+\item{iov}{list of parameter names related to IOV, NULL if no IOV}
 
 \item{...}{extra arguments will be passed to the model_predict call}
 }

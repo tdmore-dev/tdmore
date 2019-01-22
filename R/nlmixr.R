@@ -1,12 +1,13 @@
 #' Create a TDM-capable model from an nlmixr UI object.
 #'
 #' @param model the nlmixr UI object
+#' @param iov list of parameter names related to IOV, NULL if no IOV
 #' @param ... extra arguments will be passed to the model_predict call
 #'
 #' @return An object of class tdmore, which can be used to estimate posthoc Bayesian parameters.
 #' The model contained within is actually an RxODE object.
 #' @export
-tdmore.nlmixrUI <- function(model, ...) {
+tdmore.nlmixrUI <- function(model, iov=NULL, ...) {
   assert_that(class(model) %in% c("nlmixrUI"))
 
   # The processing below relies on the nlmixrUI object structure
@@ -71,6 +72,7 @@ tdmore.nlmixrUI <- function(model, ...) {
     res_var=errorModels,
     parameters=parameters,
     covariates=covariates,
+    iov=iov,
     extraArguments=list(...)
   ), class="tdmore")
 

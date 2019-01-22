@@ -4,6 +4,7 @@ checkTdmore <- function(tdmore) {
   tdmore <- checkOmegaMatrix(tdmore)
   tdmore <- checkNamesConsistency(tdmore)
   tdmore <- checkErrorModel(tdmore)
+  tdmore <- checkIOV(tdmore)
   return(tdmore)
 }
 
@@ -97,4 +98,32 @@ checkCovariates <- function(tdmore, covariates) {
   }
   condition <- tdmore$covariates %in% cNames
   assert_that(all(condition), msg=paste("Value for covariate(s)", paste(tdmore$covariates[!condition], collapse=",")  ,"missing"))
+}
+
+checkIOV <- function(tdmore) {
+  iov <- unlist(tdmore$iov)
+  if (!is.null(iov)) {
+    if (is.character(iov)) {
+      parameters <- tdmore$parameters
+      condition <- iov %in% parameters
+      assert_that(all(condition), msg=paste("IOV term(s)", paste(iov[!condition], collapse=",")  ,"not defined in model"))
+      tdmore$iov <- iov
+    } else {
+      stop("IOV should be a character or character array")
+    }
+  }
+  return(tdmore)
+}
+
+checkRegimen <- function(regimen) {
+  assert_that("data.frame" %in% class(regimen))
+  assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
+  assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "DURATION", "CMT", "II", "ADDL")))
+  if("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))
+    assert_that(all(c("II", "ADDL") %in% colnames(regimen)))
+}
+
+checkTimes <- function(times) {
+  assert_that(is.numeric(times))
+  assert_that(!is.unsorted(times))
 }

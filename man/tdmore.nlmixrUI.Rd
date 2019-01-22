@@ -4,10 +4,12 @@
 \alias{tdmore.nlmixrUI}
 \title{Create a TDM-capable model from an nlmixr UI object.}
 \usage{
-\method{tdmore}{nlmixrUI}(model, ...)
+\method{tdmore}{nlmixrUI}(model, iov = NULL, ...)
 }
 \arguments{
 \item{model}{the nlmixr UI object}
+
+\item{iov}{list of parameter names related to IOV, NULL if no IOV}
 
 \item{...}{extra arguments will be passed to the model_predict call}
 }
