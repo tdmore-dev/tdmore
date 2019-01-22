@@ -237,6 +237,7 @@ summary.tdmore <- function(object, ...) {
 #' Print a tdmore summary
 #'
 #' @param x a tdmore summary
+#' @param ... ignored
 #'
 #' @export
 print.summary.tdmore <- function(x, ...) {

@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{a tdmore summary}
+
+\item{...}{ignored}
 }
 \description{
 Print a tdmore summary
