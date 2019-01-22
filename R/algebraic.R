@@ -36,7 +36,8 @@ algebraic <- function(fun) {
         args <- c(args, as.list(x)) # add regimen names
 
         args <- c(args, parameters) # add parameters
-        do.call(fun, args=args)
+        funValue <- do.call(fun, args=args)
+        ifelse(times < args$TIME, 0, funValue)
       })
       if(length(times)==0) return(numeric())
       if(length(times)==1) return( sum(CONCs, na.rm=TRUE) )
