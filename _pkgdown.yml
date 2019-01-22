@@ -17,18 +17,18 @@ reference:
     allow you to construct a model using `nlmixr`, `RxODE`, `deSolve` or algebraic equations.
   contents:
   - algebraic
-  - pk1cptivbolusVCL
-  - pk1cptoralbolusVCL
   - tdmore
   - tdmore.algebraic
   - tdmore.default
   - tdmore.nlmixrUI
+  - tdmore.nlmixrFitCore
   - tdmore.RxODE
   - tdmore_deSolve
   - errorModel
   - print.tdmore
   - summary.tdmore
   - formula.tdmore
+  - coef.tdmore
 
 - title: "Simulating from the model"
   desc: >
@@ -73,7 +73,6 @@ reference:
     We suggest you build a `ggplot` object using `ggplot.tdmorefit()`,
     allowing you to do things like `ggplot(myFit) + stat_predict()`.
   contents:
-  - ggplot.tdmorefit
   - stat_predict
   - plot.tdmore
   - plot.tdmorefit
@@ -98,6 +97,38 @@ reference:
   - flatten
   - print.recommendation
   - summary.recommendation
+
+- title: "Composite and mixture models"
+  desc: >
+    Combine models (e.g. full covariate and base model) depending on availability,
+    or describe subpopulations using multiple models
+  contents:
+  - tdmore_set
+  - tdmore_mixture
+  - estimateMixtureModel
+  - findFirstCompatibleModel
+  - predict.tdmore_mixture
+  - predict.tdmore_set
+
+- title: "Model library"
+  desc: >
+    A library of models, to get you started.
+  contents:
+  - default_model
+  - fluticasone_model
+  - meropenem_1param_model
+  - meropenem_model
+  - meropenem_model_wt
+  - meropenem_omega0_model
+  - pheno
+  - pheno_nlmixr
+  - theopp
+  - theopp_nlmixr
+  - two_error_models
+  - sunitinib_pkpd_model
+  - linCmt
+  - pk_
+
 
 navbar:
   structure:

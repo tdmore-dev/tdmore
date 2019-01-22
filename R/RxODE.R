@@ -11,8 +11,6 @@
 #'
 #' @example inst/examples/RxODE.R
 tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, ...) {
-  assert_that(class(model) %in% c("RxODE")) #currently, only RxODE is supported
-
   tdmore <- structure(list(
     model=model,
     omega=omega,
@@ -23,6 +21,7 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, ...) {
   ), class="tdmore")
 
   # Check consistency and return
+  # TODO: checkTdmore does more than just check! It modifies!
   return(checkTdmore(tdmore))
 }
 

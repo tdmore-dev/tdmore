@@ -12,11 +12,13 @@ checkOmegaMatrix <- function(tdmore) {
   parameters <- tdmore$parameters
 
   if(is.null(omega)) omega = diag(rep(1, length(parameters)))
+  if(!is.numeric(omega)) stop("`omega' should be a numeric vector or matrix")
+  if(is.null(dim(omega))) omega <- vectorToDiagonalMatrix(omega)
 
   assertthat::are_equal(nrow(omega), length(parameters))
   assertthat::are_equal(ncol(omega), length(parameters))
   assertthat::assert_that(all( eigen(omega)$values >= 0), msg = "Omega matrix is not positive semi-definite")
-  assert_that(sum(diag(tdmore$omega)==0) == 0, msg = "Omega's can't have a zero value")
+  assert_that(all(diag(omega)!=0), msg = "Omega's can't have a zero value")
 
   colnames <- colnames(omega)
   rownames <- rownames(omega)

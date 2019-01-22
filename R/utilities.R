@@ -4,9 +4,12 @@
 #' @param vector a numeric vector/list
 #'
 #' @return a diagonal matrix
-#' @export
 vectorToDiagonalMatrix <- function(vector) {
-  diagMatrix <- diag(x = vector)
+  if(length(vector)==1) {
+    diagMatrix <- matrix(data=vector, nrow=1, ncol=1)
+  } else {
+    diagMatrix <- diag(x = vector)
+  }
   if (!is.null(names(vector))) {
     colnames(diagMatrix) <- names(vector)
     rownames(diagMatrix) <- names(vector)
