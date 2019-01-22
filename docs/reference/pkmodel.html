@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>This function guesses which model should be calculated, based on the available variables
-in the caller environment — linCmt • tdmore</title>
+<title>Execute the appropriate PK model, based on the same rules as used by Monolix — pkmodel • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -31,12 +30,9 @@ in the caller environment — linCmt • tdmore</title>
 
 
 
-<meta property="og:title" content="This function guesses which model should be calculated, based on the available variables
-in the caller environment — linCmt" />
+<meta property="og:title" content="Execute the appropriate PK model, based on the same rules as used by Monolix — pkmodel" />
 
-<meta property="og:description" content="Please note this function also modifies the caller environment with the
-appropriate values for the call to the algebraic function.
-As an example, it will define 'K'." />
+<meta property="og:description" content="Execute the appropriate PK model, based on the same rules as used by Monolix" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -131,30 +127,31 @@ As an example, it will define 'K'." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>This function guesses which model should be calculated, based on the available variables
-in the caller environment</h1>
+    <h1>Execute the appropriate PK model, based on the same rules as used by Monolix</h1>
     <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/algebraicLibrary.R'><code>R/algebraicLibrary.R</code></a></small>
-    <div class="hidden name"><code>linCmt.Rd</code></div>
+    <div class="hidden name"><code>pkmodel.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Please note this function also modifies the caller environment with the
-appropriate values for the call to the algebraic function.
-As an example, it will define 'K'.</p>
+    <p>Execute the appropriate PK model, based on the same rules as used by Monolix</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>linCmt</span>(<span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sys.parent'>parent.frame</a></span>())</pre>
+    <pre class="usage"><span class='fu'>pkmodel</span>(<span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>env</th>
-      <td><p>environment in which to search for parameters</p></td>
+      <th>...</th>
+      <td><p>the parameters for the PK model</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>See http://monolix.lixoft.com/data-and-models/pkmodel1/ for more information</p>
     
 
   </div>
@@ -162,7 +159,9 @@ As an example, it will define 'K'.</p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#details">Details</a></li>
+          </ul>
 
   </div>
 </div>

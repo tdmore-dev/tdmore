@@ -7,6 +7,9 @@ in the caller environment}
 \usage{
 linCmt(env = parent.frame())
 }
+\arguments{
+\item{env}{environment in which to search for parameters}
+}
 \description{
 Please note this function also modifies the caller environment with the
 appropriate values for the call to the algebraic function.

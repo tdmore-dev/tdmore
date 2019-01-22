@@ -36,13 +36,29 @@ pk3cptoral_(t, TIME, AMT, V, K, KA, K12, K21, K13, K31, SS = 0,
 \arguments{
 \item{t}{sampling times}
 
+\item{TIME}{dosing time}
+
+\item{AMT}{dosing amount}
+
 \item{V}{volume of distribution}
 
 \item{K}{elimination constant}
 
-\item{tD}{dosing time}
+\item{SS}{0 for no steady-state, 1 for steady-state}
 
-\item{D}{dosing amount}
+\item{II}{inter-dose interval, required for steady-state calculations}
+
+\item{RATE}{infusion rate}
+
+\item{KA}{absorption constant}
+
+\item{K12}{transfer rate from central compartment to peripheral compartment A}
+
+\item{K21}{transfer rate from peripheral compartment A to central compartment}
+
+\item{K13}{transfer rate from central compartment to peripheral compartment B}
+
+\item{K31}{transfer rate from peripheral compartment B to central compartment}
 }
 \value{
 vector of same size as `t`, with the concentrations

@@ -1,5 +1,7 @@
 ## Library of functions
 
+### Ask R CMD CHECK to ignore the use of locally assigned variables
+if(getRversion() >= "2.15.1")  utils::globalVariables(c("D", "tD", "TInf", "Tau", "Alpha", "Beta", "Gamma", "A", "B", "C"))
 
 ## These equations come from PFIM / INSERM / Monolix PKPD library
 # Core algebraic equations ----------------------------------------------------
@@ -8,10 +10,18 @@
 #' Algebraic equations for PK models
 #'
 #' @param t sampling times
-#' @param tD dosing time
-#' @param D dosing amount
+#' @param TIME dosing time
+#' @param AMT dosing amount
 #' @param V volume of distribution
 #' @param K elimination constant
+#' @param SS 0 for no steady-state, 1 for steady-state
+#' @param II inter-dose interval, required for steady-state calculations
+#' @param RATE infusion rate
+#' @param KA absorption constant
+#' @param K12 transfer rate from central compartment to peripheral compartment A
+#' @param K21 transfer rate from peripheral compartment A to central compartment
+#' @param K13 transfer rate from central compartment to peripheral compartment B
+#' @param K31 transfer rate from peripheral compartment B to central compartment
 #'
 #' @return vector of same size as `t`, with the concentrations
 #' @name pk_
@@ -257,23 +267,43 @@ pkFromParentFrame <- function(fName=as.character(sys.call())[1], env=parent.fram
   do.call(myFun, args)
 }
 
+#' Executes the requested PK model, and
+#' fetches the arguments from the caller's environment.
+#'
+#' @param fName function name to delegate this call too
+#' filled in automatically
+#' @param env environment in which to search the function arguments
+#' filled in automatically
+#'
+#' @name pk
+NULL
+
 #' @export
+#' @rdname pk
 pk1cptiv <- pkFromParentFrame
 #' @export
+#' @rdname pk
 pk1cptinfusion <- pkFromParentFrame
 #' @export
+#' @rdname pk
 pk1cptoral <- pkFromParentFrame
 #' @export
+#' @rdname pk
 pk2cptiv <- pkFromParentFrame
 #' @export
+#' @rdname pk
 pk2cptinfusion <- pkFromParentFrame
 #' @export
+#' @rdname pk
 pk2cptoral <- pkFromParentFrame
 #' @export
+#' @rdname pk
 pk3cptiv <- pkFromParentFrame
 #' @export
+#' @rdname pk
 pk3cptinfusion <- pkFromParentFrame
 #' @export
+#' @rdname pk
 pk3cptoral <- pkFromParentFrame
 
 
@@ -470,6 +500,8 @@ nlmixrParams = list(
 #' appropriate values for the call to the algebraic function.
 #' As an example, it will define 'K'.
 #'
+#' @param env environment in which to search for parameters
+#'
 #' @export
 linCmt <- function(env=parent.frame()) {
   values <- as.list(env) ## TODO: does not include parent values...
@@ -507,8 +539,15 @@ monolixParams = list(
   pk1cptinfusion=list("Cl", "V", "RATE"),
   pk1cptiv=list("Cl", "V")
 )
-## See http://monolix.lixoft.com/data-and-models/pkmodel1/
+
+#' Execute the appropriate PK model, based on the same rules as used by Monolix
+#'
+#' @details
+#' See http://monolix.lixoft.com/data-and-models/pkmodel1/ for more information
+#'
+#' @param ... the parameters for the PK model
 #' @export
+#' @importFrom rlang quos
 pkmodel <- function(...) {
   env=parent.frame()
   qArgsNamed = rlang::quos(..., .named=TRUE)
