@@ -11,6 +11,7 @@ assert_that <- assertthat::assert_that
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)
 #' @param parameters named vector
 #' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
+#' @param iov_parameters IOV parameters
 #' @param extraArguments named list with extra arguments to use for call
 #'
 #' @return
@@ -28,7 +29,7 @@ assert_that <- assertthat::assert_that
 #' @export
 #' @keywords internal
 #'
-model_predict <- function(model, times, regimen, parameters, covariates, extraArguments) {
+model_predict <- function(model, times, regimen, parameters, covariates, iov_parameters, extraArguments) {
   UseMethod("model_predict")
 }
 
@@ -65,6 +66,7 @@ tdmore.default <- function(model, ...) {
 #' @param regimen Treatment regimen, or NULL for no treatment
 #' @param parameters A named numeric vector with the parameter values to use.
 #' Any model parameters that are not provided are assumed `0`.
+#' @param iov_parameters IOV parameters
 #' @param covariates a named numeric vector with the covariates to use.
 #' Alternatively, a data.frame with column `TIME` and columns with time-varying covariates.
 #' The first row of the data.frame should be time 0.
@@ -76,23 +78,28 @@ tdmore.default <- function(model, ...) {
 #'
 #' @return A data.frame with all observed values at the given time points
 #' @export
-predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
+predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, iov_parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
   tdmore <- object
   checkCovariates(tdmore, covariates)
 
-  pars <- rep(0, length(tdmore$parameters)) #start with population
+  # Process regimen
+  if(is.null(regimen)) regimen <- data.frame(TIME=numeric(), AMT=numeric())
+
+  # Process parameters
+  pars <- rep(0, length(tdmore$parameters)) # start with population
   names(pars) <- tdmore$parameters
   if(!is.null(parameters)) {
     assert_that(is.numeric(parameters))
     assert_that(all(names(parameters) %in% names(pars)))
-    pars[names(parameters)] <- parameters ## set pars from argument
+    pars[names(parameters)] <- parameters # set pars from argument
   }
-  if(is.null(regimen)) regimen <- data.frame(TIME=numeric(), AMT=numeric())
 
+  # Retrieve times vector from newdata
   if(is.data.frame(newdata)) times <- newdata$TIME
   else times <- as.numeric(newdata)
 
-  predicted <- model_predict(model=tdmore$model, times=times, regimen=regimen, parameters=pars, covariates=covariates, extraArguments=c(..., tdmore$extraArguments))
+  # Call to model_predict
+  predicted <- model_predict(model=tdmore$model, times=times, regimen=regimen, parameters=pars, covariates=covariates, iov_parameters=iov_parameters, extraArguments=c(..., tdmore$extraArguments))
 
   if (is.data.frame(newdata)) {
     # Only use the outputs specified in newdata

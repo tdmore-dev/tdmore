@@ -59,6 +59,7 @@ algebraic <- function(fun) {
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)
 #' @param parameters a named numeric vector
 #' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
+#' @param iov list of parameter names related to IOV, NULL if no IOV
 #'
 #' @return
 #' A data.frame similar to the newdata data frame, but with CONC column filled out.
@@ -68,7 +69,7 @@ algebraic <- function(fun) {
 model_predict.algebraic <- function(model, times,
                                     regimen=data.frame(TIME=numeric(), AMT=numeric()),
                                     parameters=numeric(),
-                                    covariates=NULL, extraArguments=list()) {
+                                    covariates=NULL, iov, extraArguments=list()) {
   # Verify arguments are good
   times <- as.numeric(times)
 

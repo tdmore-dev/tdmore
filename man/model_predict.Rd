@@ -4,7 +4,7 @@
 \alias{model_predict}
 \title{Prototype predict function. Implement this to add your own model type to tdmore.}
 \usage{
-model_predict(model, times, regimen, parameters, covariates,
+model_predict(model, times, regimen, parameters, covariates, iov,
   extraArguments)
 }
 \arguments{
@@ -17,6 +17,8 @@ model_predict(model, times, regimen, parameters, covariates,
 \item{parameters}{named vector}
 
 \item{covariates}{named vector, or data.frame with column 'TIME', and at least TIME 0}
+
+\item{iov}{list of parameter names related to IOV, NULL if no IOV}
 
 \item{extraArguments}{named list with extra arguments to use for call}
 }

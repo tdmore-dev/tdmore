@@ -115,12 +115,26 @@ checkIOV <- function(tdmore) {
   return(tdmore)
 }
 
-checkRegimen <- function(regimen) {
+checkRegimen <- function(regimen, iov) {
   assert_that("data.frame" %in% class(regimen))
   assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
-  assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "DURATION", "CMT", "II", "ADDL")))
-  if("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))
+  assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "DURATION", "CMT", "II", "ADDL", "OCC")))
+
+  if ("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))
     assert_that(all(c("II", "ADDL") %in% colnames(regimen)))
+
+  if ("OCC" %in% colnames(regimen)) {
+    if (is.null(iov)) {
+      stop("No IOV exists in model")
+    } else {
+      uniqueOcc <- unique(regimen$OCC)
+      assert_that(all(uniqueOcc == 1:max(regimen$OCC)), msg="Occasions mispecified in regimen")
+    }
+  }
+  if (!("OCC" %in% colnames(regimen)) && !is.null(iov)) {
+    stop("No occasion column (OCC) in regimen")
+  }
+
 }
 
 checkTimes <- function(times) {

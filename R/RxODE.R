@@ -37,6 +37,7 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, 
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).
 #' @param parameters named numeric vector with the parameters
 #' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
+#' @param iov_parameters iov parameters
 #' @param extraArguments extra arguments to use
 #'
 #' @export
@@ -48,7 +49,7 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, 
 #'
 #' @keywords internal
 #'
-model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric()), parameters=numeric(), covariates=NULL, extraArguments=list()) {
+model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric()), parameters=numeric(), covariates=NULL, iov_parameters, extraArguments=list()) {
   ### RxODE sometimes errors out...
   ### Probably not a solver issue, but rather
   ### issue that the DLL of RxODE is no longer loaded
@@ -62,12 +63,10 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 
   # Check times and regimen objects
   checkTimes(times)
-  checkRegimen(regimen)
+  checkRegimen(regimen, colnames(iov_parameters))
 
-  # All arguments look good, let's prepare the simulation
-  ev <- RxODE::eventTable()
-  if(length(times) > 0) ev$add.sampling(time=times)
-  ev <- addRegimenToEventTable(ev, regimen)
+  # Flatten the regimen (additional doses are converted)
+  regimen <- flatten(regimen)
 
   # Set up the parameters
   params = NULL
@@ -76,18 +75,10 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   params = parameters # parameters + fixed covariate values
   cNames <- c()
 
-  if("data.frame" %in% class(covariates)) {
+  covariateAsDataFrame <- "data.frame" %in% class(covariates)
+  if(covariateAsDataFrame) {
     assert_that("TIME" %in% colnames(covariates))
     assert_that(0 %in% covariates$TIME)
-
-    missingTimes <- covariates$TIME[ !(covariates$TIME %in% ev$get.sampling()$time) ]
-    if(length(missingTimes) > 0) ev$add.sampling(missingTimes)
-
-    eventTable <- ev$get.EventTable()
-    covs <-  eventTable %>% dplyr::transmute(TIME=eventTable$time) %>% dplyr::left_join(covariates, by="TIME")
-    for(i in colnames(covs))
-      covs[, i] <- zoo::na.locf( covs[, i] ) # last observation carried forward for NA values
-
     cNames <- colnames(covariates)
     cNames <- cNames[cNames != "TIME"]
   } else if (is.numeric(covariates)){
@@ -104,25 +95,87 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   assert_that(all(pNames %in% modVars$params))
   assert_that(all(modVars$params %in% pNames))
 
-  # RxODE does not allow to simulate 'nothing'
-  # Manually construct an empty data.frame with the right columns
-  if(length(times) == 0 && nrow(regimen) == 0) {
-    result <- data.frame()
-    for(i in c("TIME", modVars$lhs, modVars$state)) result[, i] <- numeric()
-    return(result)
+  # Occasion processing
+  occasionTimes <- getOccasionTimes(regimen)
+  occasionNumber <- getOccasionNumber(regimen)
+  predictWithIOV <- FALSE
+  if(!is.null(iov_parameters)) {
+    predictWithIOV <- TRUE
+    assert_that(nrow(iov_parameters) == occasionNumber)
+    assert_that(all(colnames(iov_parameters) %in% names(parameters)))
   }
 
-  # Run the simulation
-  result <- do.call(RxODE::rxSolve, c( list(object=model, events=ev, params=params, covs=covs), extraArguments))
+  # ODE's initial values
+  inits <- rep(0, length(modVars$state))
+  names(inits) <- modVars$state
+  retValue <- NULL
 
-  # Only get the values we want
-  result <- as.data.frame(result, row.names=NULL)
-  names(result)[names(result)=="time"] <- "TIME"
+  # Predict each occasion
+  for(occasion in 1:occasionNumber) {
+    last <- occasion == occasionNumber
+    currentCovariates <- covariates
 
-  # Remove spurious sampling times due to covariates
-  # But keep this a data.frame!
-  result <- subset( result, result$TIME %in% times, drop=FALSE)
-  result
+    if(predictWithIOV) {
+      occasionTime <- occasionTimes[occasion]
+      nextOccasionTime <- if(last) {Inf} else {occasionTimes[occasion + 1]}
+      currentRegimen <- regimen %>% subset(TIME >= occasionTime & TIME < nextOccasionTime)
+      currentTimes <- times[times >= occasionTime & times <= nextOccasionTime]
+      if(covariateAsDataFrame) {
+        currentCovariates %>% subset(TIME >= occasionTime & TIME < nextOccasionTime)
+      }
+      params[colnames(iov_parameters)] <- iov_parameters[occasion,]
+    } else {
+      currentRegimen <- regimen
+      currentTimes <- times
+    }
+
+    # All arguments look good, let's prepare the simulation
+    ev <- RxODE::eventTable()
+    if(length(currentTimes) > 0) ev$add.sampling(time=currentTimes)
+    ev <- addRegimenToEventTable(ev, currentRegimen)
+
+    # Treat missing times (TODO: should be done outside loop and filtered here)
+    if(covariateAsDataFrame) {
+      missingTimes <- currentCovariates$TIME[ !(currentCovariates$TIME %in% ev$get.sampling()$time) ]
+      if(length(missingTimes) > 0) ev$add.sampling(missingTimes)
+
+      eventTable <- ev$get.EventTable()
+      covs <-  eventTable %>% dplyr::transmute(TIME=eventTable$time) %>% dplyr::left_join(currentCovariates, by="TIME")
+      for(i in colnames(covs))
+        covs[, i] <- zoo::na.locf(covs[,i]) # last observation carried forward for NA values
+    }
+
+    # RxODE does not allow to simulate 'nothing'
+    # Manually construct an empty data.frame with the right columns
+    # if(length(currentTimes) == 0 && nrow(currentRegimen) == 0) {
+    #   result <- data.frame()
+    #   for(i in c("TIME", modVars$lhs, modVars$state)) result[, i] <- numeric()
+    #   return(result)
+    # }
+
+    # Run the simulation
+    result <- do.call(RxODE::rxSolve, c( list(object=model, events=ev, params=params, covs=covs, inits=inits), extraArguments))
+
+    # Remove last row if not last iteration
+    if(!last) result <- result[-nrow(result),]
+
+    # Only get the values we want
+    result <- as.data.frame(result, row.names=NULL)
+    names(result)[names(result)=="time"] <- "TIME"
+
+    # Remove spurious sampling times due to covariates
+    # But keep this a data.frame!
+    result <- subset( result, result$TIME %in% times, drop=FALSE)
+
+    # Bind to global result
+    retValue <- rbind(retValue, result)
+
+    # Adapt initial values for next iteration
+    inits <- as.numeric(result[nrow(result),][modVars$state])
+    names(inits) <- modVars$state
+  }
+
+  retValue
 }
 
 addRegimenToEventTable <- function(eventTable, regimen) {
@@ -133,6 +186,7 @@ addRegimenToEventTable <- function(eventTable, regimen) {
     nbr.doses = 1
     dosing.interval = 24
 
+    # dosing interval not used since regimen has been flattened
     if(isTRUE(row$II > 0)) {
       dosing.interval <- row$II
       nbr.doses <- row$ADDL
@@ -153,4 +207,24 @@ addRegimenToEventTable <- function(eventTable, regimen) {
                   nbr.doses=nbr.doses)
   }
   return(eventTable)
+}
+
+getOccasionTimes <- function(regimen) {
+  occasionNumber <- getOccasionNumber(regimen)
+  if(is.null(occasionNumber)) {
+    retValue <- NULL
+  } else {
+    temp <- regimen[!duplicated(regimen$OCC),]
+    retValue <- temp$TIME
+  }
+  return(retValue)
+}
+
+getOccasionNumber <- function(regimen) {
+  if("OCC" %in% colnames(regimen)) {
+    retValue <- max(regimen$OCC)
+  } else {
+    retValue <- 1
+  }
+  return(retValue)
 }

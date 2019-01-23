@@ -5,7 +5,7 @@
 \title{Predict for RxODE}
 \usage{
 \method{model_predict}{RxODE}(model, times, regimen = data.frame(TIME =
-  numeric()), parameters = numeric(), covariates = NULL,
+  numeric()), parameters = numeric(), covariates = NULL, iov,
   extraArguments = list())
 }
 \arguments{
@@ -16,6 +16,8 @@
 \item{parameters}{named numeric vector with the parameters}
 
 \item{covariates}{named vector, or data.frame with column 'TIME', and at least TIME 0}
+
+\item{iov}{list of parameter names related to IOV, NULL if no IOV}
 
 \item{extraArguments}{extra arguments to use}
 

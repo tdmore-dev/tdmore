@@ -8,9 +8,12 @@ context("Test that IOV is working as expected")
 set.seed(0)
 
 regimen <- data.frame(
-  TIME=c(0,24),
-  AMT=150
+  TIME=c(0,24,48),
+  AMT=150,
+  OCC=c(1,2,2)
 )
+
+regimen2 <- flatten(regimen)
 
 mod_1cpt_1 <- nlmixrUI(function(){
   ini({
@@ -35,3 +38,13 @@ mod_1cpt_1 <- nlmixrUI(function(){
 
 expect_error(mod_1cpt_1 %>% tdmore(iov="EKA_IOV2")) # Error is raised: 'IOV term(s) EKA_IOV2 not defined in model'
 m1 <- mod_1cpt_1 %>% tdmore(iov="EKA_IOV")
+
+
+iov_parameters <- data.frame(EKA_IOV=c(0.1, 0.2))
+
+debugonce(tdmore:::model_predict)
+yep <- m1 %>% predict(newdata=0:96, regimen=regimen, iov_parameters=iov_parameters)
+
+checkRegimen(regimen, "EKA_IOV")
+
+getOccasionTimes(regimen)
