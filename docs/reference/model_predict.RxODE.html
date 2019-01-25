@@ -140,7 +140,7 @@
 
     <pre class="usage"><span class='co'># S3 method for RxODE</span>
 <span class='fu'><a href='model_predict.html'>model_predict</a></span>(<span class='no'>model</span>, <span class='no'>times</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>TIME</span> <span class='kw'>=</span>
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/numeric'>numeric</a></span>()), <span class='kw'>parameters</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/numeric'>numeric</a></span>(), <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/numeric'>numeric</a></span>()), <span class='kw'>parameters</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/numeric'>numeric</a></span>(), <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>iov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>extraArguments</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -156,11 +156,15 @@
     </tr>
     <tr>
       <th>parameters</th>
-      <td><p>either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector</p></td>
+      <td><p>named numeric vector with the parameters</p></td>
     </tr>
     <tr>
       <th>covariates</th>
       <td><p>named vector, or data.frame with column 'TIME', and at least TIME 0</p></td>
+    </tr>
+    <tr>
+      <th>iov</th>
+      <td><p>character array with the IOV terms, can be NULL</p></td>
     </tr>
     <tr>
       <th>extraArguments</th>

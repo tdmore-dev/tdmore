@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Prototype predict function. Implement this to add your own model type to tdmore. — model_predict • tdmore</title>
+<title>Add variance-covariance information regarding all IOV terms in the omega matrix.
+Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames(). — addIOVToOmegaMatrix • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +31,11 @@
 
 
 
-<meta property="og:title" content="Prototype predict function. Implement this to add your own model type to tdmore. — model_predict" />
+<meta property="og:title" content="Add variance-covariance information regarding all IOV terms in the omega matrix.
+Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames(). — addIOVToOmegaMatrix" />
 
-<meta property="og:description" content="Prototype predict function. Implement this to add your own model type to tdmore." />
+<meta property="og:description" content="Add variance-covariance information regarding all IOV terms in the omega matrix.
+Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames()." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -127,65 +130,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Prototype predict function. Implement this to add your own model type to tdmore.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/model.R'><code>R/model.R</code></a></small>
-    <div class="hidden name"><code>model_predict.Rd</code></div>
+    <h1>Add variance-covariance information regarding all IOV terms in the omega matrix.
+Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames().</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
+    <div class="hidden name"><code>addIOVToOmegaMatrix.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Prototype predict function. Implement this to add your own model type to tdmore.</p>
+    <p>Add variance-covariance information regarding all IOV terms in the omega matrix.
+Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames().</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>model_predict</span>(<span class='no'>model</span>, <span class='no'>times</span>, <span class='no'>regimen</span>, <span class='no'>parameters</span>, <span class='no'>covariates</span>, <span class='no'>iov</span>,
-  <span class='no'>extraArguments</span>)</pre>
+    <pre class="usage"><span class='fu'>addIOVToOmegaMatrix</span>(<span class='no'>tdmore</span>, <span class='no'>occasions</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>model</th>
-      <td><p>The model itself.</p></td>
+      <th>tdmore</th>
+      <td><p>the tdmore object</p></td>
     </tr>
     <tr>
-      <th>times</th>
-      <td><p>The times at which to generate predictions. May be empty, but never NULL.</p></td>
-    </tr>
-    <tr>
-      <th>regimen</th>
-      <td><p>dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)</p></td>
-    </tr>
-    <tr>
-      <th>parameters</th>
-      <td><p>named vector</p></td>
-    </tr>
-    <tr>
-      <th>covariates</th>
-      <td><p>named vector, or data.frame with column 'TIME', and at least TIME 0</p></td>
-    </tr>
-    <tr>
-      <th>iov</th>
-      <td><p>IOV terms</p></td>
-    </tr>
-    <tr>
-      <th>extraArguments</th>
-      <td><p>named list with extra arguments to use for call</p></td>
+      <th>occasions</th>
+      <td><p>how many occasions</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.frame with model predictions at each `times`</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The model_predict function will generate a data.frame with the model output.
-The data.frame will have a TIME column, and all model output in separate columns.</p>
-<p>In case the `times` vector is empty, it should generate an empty data.frame. The data.frame
-should still contain all columns that would usually be generated.
-Furthermore, it should check all arguments in the same way as usual, and even try to execute
-a simulation.</p>
+    <p>the omega matrix with the duplicated IOV terms at the end</p>
     
 
   </div>
@@ -195,8 +170,6 @@ a simulation.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>

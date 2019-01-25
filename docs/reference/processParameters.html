@@ -6,7 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Prototype predict function. Implement this to add your own model type to tdmore. — model_predict • tdmore</title>
+<title>Check input parameters and return a standardised named num array with the parameter names and values.
+If the initial values are not provided, zeroes will be used (=population values for ETAS)
+Provided parameters will overwrite initial values. — processParameters • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +32,13 @@
 
 
 
-<meta property="og:title" content="Prototype predict function. Implement this to add your own model type to tdmore. — model_predict" />
+<meta property="og:title" content="Check input parameters and return a standardised named num array with the parameter names and values.
+If the initial values are not provided, zeroes will be used (=population values for ETAS)
+Provided parameters will overwrite initial values. — processParameters" />
 
-<meta property="og:description" content="Prototype predict function. Implement this to add your own model type to tdmore." />
+<meta property="og:description" content="Check input parameters and return a standardised named num array with the parameter names and values.
+If the initial values are not provided, zeroes will be used (=population values for ETAS)
+Provided parameters will overwrite initial values." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -127,65 +133,47 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Prototype predict function. Implement this to add your own model type to tdmore.</h1>
+    <h1>Check input parameters and return a standardised named num array with the parameter names and values.
+If the initial values are not provided, zeroes will be used (=population values for ETAS)
+Provided parameters will overwrite initial values.</h1>
     <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/model.R'><code>R/model.R</code></a></small>
-    <div class="hidden name"><code>model_predict.Rd</code></div>
+    <div class="hidden name"><code>processParameters.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Prototype predict function. Implement this to add your own model type to tdmore.</p>
+    <p>Check input parameters and return a standardised named num array with the parameter names and values.
+If the initial values are not provided, zeroes will be used (=population values for ETAS)
+Provided parameters will overwrite initial values.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>model_predict</span>(<span class='no'>model</span>, <span class='no'>times</span>, <span class='no'>regimen</span>, <span class='no'>parameters</span>, <span class='no'>covariates</span>, <span class='no'>iov</span>,
-  <span class='no'>extraArguments</span>)</pre>
+    <pre class="usage"><span class='fu'>processParameters</span>(<span class='no'>parameters</span>, <span class='no'>tdmore</span>, <span class='no'>regimen</span>, <span class='kw'>initialValues</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>model</th>
-      <td><p>The model itself.</p></td>
+      <th>parameters</th>
+      <td><p>user inputted array of parameters</p></td>
     </tr>
     <tr>
-      <th>times</th>
-      <td><p>The times at which to generate predictions. May be empty, but never NULL.</p></td>
+      <th>tdmore</th>
+      <td><p>the tdmore object</p></td>
     </tr>
     <tr>
       <th>regimen</th>
-      <td><p>dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)</p></td>
+      <td><p>the regimen</p></td>
     </tr>
     <tr>
-      <th>parameters</th>
-      <td><p>named vector</p></td>
-    </tr>
-    <tr>
-      <th>covariates</th>
-      <td><p>named vector, or data.frame with column 'TIME', and at least TIME 0</p></td>
-    </tr>
-    <tr>
-      <th>iov</th>
-      <td><p>IOV terms</p></td>
-    </tr>
-    <tr>
-      <th>extraArguments</th>
-      <td><p>named list with extra arguments to use for call</p></td>
+      <th>initialValues</th>
+      <td><p>the initial values, in the right order</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.frame with model predictions at each `times`</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The model_predict function will generate a data.frame with the model output.
-The data.frame will have a TIME column, and all model output in separate columns.</p>
-<p>In case the `times` vector is empty, it should generate an empty data.frame. The data.frame
-should still contain all columns that would usually be generated.
-Furthermore, it should check all arguments in the same way as usual, and even try to execute
-a simulation.</p>
+    <p>a standardised named num array with the parameter names and values</p>
     
 
   </div>
@@ -195,8 +183,6 @@ a simulation.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>
