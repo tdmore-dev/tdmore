@@ -18,7 +18,7 @@ model_predict(model, times, regimen, parameters, covariates, iov,
 
 \item{covariates}{named vector, or data.frame with column 'TIME', and at least TIME 0}
 
-\item{iov}{list of parameter names related to IOV, NULL if no IOV}
+\item{iov}{IOV terms}
 
 \item{extraArguments}{named list with extra arguments to use for call}
 }

@@ -4,10 +4,12 @@
 \alias{pred_ll}
 \title{Calculate the prediction log likelihood.}
 \usage{
-pred_ll(par, tdmore, observed, regimen, covariates)
+pred_ll(par, omega, tdmore, observed, regimen, covariates)
 }
 \arguments{
 \item{par}{the current estimate of the parameters}
+
+\item{omega}{the omega matrix}
 
 \item{tdmore}{the tdmore object}
 

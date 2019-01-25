@@ -11,7 +11,7 @@ assert_that <- assertthat::assert_that
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)
 #' @param parameters named vector
 #' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
-#' @param iov_parameters IOV parameters
+#' @param iov IOV terms
 #' @param extraArguments named list with extra arguments to use for call
 #'
 #' @return
@@ -29,7 +29,7 @@ assert_that <- assertthat::assert_that
 #' @export
 #' @keywords internal
 #'
-model_predict <- function(model, times, regimen, parameters, covariates, iov_parameters, extraArguments) {
+model_predict <- function(model, times, regimen, parameters, covariates, iov, extraArguments) {
   UseMethod("model_predict")
 }
 
@@ -66,7 +66,6 @@ tdmore.default <- function(model, ...) {
 #' @param regimen Treatment regimen, or NULL for no treatment
 #' @param parameters A named numeric vector with the parameter values to use.
 #' Any model parameters that are not provided are assumed `0`.
-#' @param iov_parameters IOV parameters
 #' @param covariates a named numeric vector with the covariates to use.
 #' Alternatively, a data.frame with column `TIME` and columns with time-varying covariates.
 #' The first row of the data.frame should be time 0.
@@ -78,7 +77,7 @@ tdmore.default <- function(model, ...) {
 #'
 #' @return A data.frame with all observed values at the given time points
 #' @export
-predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, iov_parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
+predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
   tdmore <- object
   checkCovariates(tdmore, covariates)
 
@@ -86,20 +85,14 @@ predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, iov_p
   if(is.null(regimen)) regimen <- data.frame(TIME=numeric(), AMT=numeric())
 
   # Process parameters
-  pars <- rep(0, length(tdmore$parameters)) # start with population
-  names(pars) <- tdmore$parameters
-  if(!is.null(parameters)) {
-    assert_that(is.numeric(parameters))
-    assert_that(all(names(parameters) %in% names(pars)))
-    pars[names(parameters)] <- parameters # set pars from argument
-  }
+  par <- processParameters(parameters, tdmore, regimen)
 
   # Retrieve times vector from newdata
   if(is.data.frame(newdata)) times <- newdata$TIME
   else times <- as.numeric(newdata)
 
   # Call to model_predict
-  predicted <- model_predict(model=tdmore$model, times=times, regimen=regimen, parameters=pars, covariates=covariates, iov_parameters=iov_parameters, extraArguments=c(..., tdmore$extraArguments))
+  predicted <- model_predict(model=tdmore$model, times=times, regimen=regimen, parameters=par, covariates=covariates, iov=tdmore$iov, extraArguments=c(..., tdmore$extraArguments))
 
   if (is.data.frame(newdata)) {
     # Only use the outputs specified in newdata
@@ -282,4 +275,59 @@ coef.tdmore <- function(object, ...) {
   x <- rep(0, length(pars))
   names(x) <- pars
   x
+}
+
+#' Check input parameters and return a standardised named num array with the parameter names and values.
+#' If the initial values are not provided, zeroes will be used (=population values for ETAS)
+#' Provided parameters will overwrite initial values.
+#'
+#' @param parameters user inputted array of parameters
+#' @param tdmore the tdmore object
+#' @param regimen the regimen
+#' @param initialValues the initial values, in the right order
+#'
+#' @return a standardised named num array with the parameter names and values
+#'
+processParameters <- function(parameters, tdmore, regimen, initialValues=NULL) {
+  parameterNames <- getParameterNames(tdmore, regimen)
+
+  if(is.null(initialValues)) {
+    par <- rep(0, length(parameterNames)) # start with population
+  } else {
+    par <- initialValues
+  }
+  assert_that(length(par)==length(parameterNames))
+  names(par) <- parameterNames
+
+  if(!is.null(parameters)) {
+    assert_that(is.numeric(parameters))
+    assert_that(all(names(parameters) %in% names(par)))
+    par[names(parameters)] <- parameters # set par from argument
+    iov <- tdmore$iov
+    if(!is.null(iov)) {
+      for(iov_term in iov) {
+        par[which(names(par)==iov_term)] <- parameters[which(names(parameters)==iov_term)]
+      }
+    }
+  }
+  return(par)
+}
+
+#' Get the parameter names. If IOV is defined in the model,
+#' IOV terms will be added at the end of the character array and repeated as many times as there are occasions in the regimen.
+#' E.g. 2 occasions: "ECL", "EKA", "ECL_IOV", "EKA_IOV", "ECL_IOV", "EKA_IOV"
+#'
+#' @param tdmore the tdmore object
+#' @param regimen the regimen
+#' @return an ordered character array with the parameters names
+getParameterNames <- function(tdmore, regimen) {
+  iov <- tdmore$iov # IOV terms order is same as in parameters
+  parameters <- tdmore$parameters
+  if(is.null(iov)) {
+    retValue <- tdmore$parameters
+  } else {
+    retValue <- c(parameters[!(parameters %in% iov)],
+                  rep(parameters[(parameters %in% iov)], getMaxOccasion(regimen)))
+  }
+  return(retValue)
 }

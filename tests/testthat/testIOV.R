@@ -38,19 +38,24 @@ mod_1cpt_1 <- nlmixrUI(function(){
 })
 
 expect_error(mod_1cpt_1 %>% tdmore(iov="EKA_IOV2")) # Error is raised: 'IOV term(s) EKA_IOV2 not defined in model'
-tdmore <- mod_1cpt_1 %>% tdmore(iov=c("ECL_IOV", "EKA_IOV"))
+tdmore <- mod_1cpt_1 %>% tdmore(iov=c("EKA_IOV", "ECL_IOV"))
 
-
-iov_parameters <- data.frame(EKA_IOV=c(1, -2), ECL_IOV=c(-0.1, -0.2))
 
 #debugonce(tdmore:::model_predict)
 
-yep <- tdmore %>% predict(newdata=0:96, regimen=regimen, iov_parameters=iov_parameters)
-ggplot(yep, aes(x = TIME, y=CONC)) + geom_line()
+data1 <- tdmore %>% predict(newdata=0:96, regimen=regimen, parameters=c(EKA_IOV=1, ECL_IOV=0, EKA_IOV=-2, ECL_IOV=0))
+ggplot(data1, aes(x = TIME, y=CONC)) + geom_line()
 
-observed <- data.frame(TIME=c(20, 75), CONC=c(0.8, 0.9))
+#observed <- data.frame(TIME=c(20, 75), CONC=c(0.8, 0.9))
+observed <- data.frame(TIME=c(7, 23, 75), CONC=c(1.25, 0.55, 0.8))
 
 #debugonce(tdmore:::estimate)
 #debug(tdmore:::pop_ll)
 fit <- estimate(object = tdmore, regimen = regimen, observed = observed)
 
+#debugonce(tdmore:::predict.tdmorefit)
+data2 <- predict(fit, newdata=0:96, regimen=regimen)
+ggplot(data2, aes(x = TIME, y=CONC)) + geom_line()
+
+#debugonce(tdmore:::plot.tdmorefit)
+plot(fit, newdata=0:96)

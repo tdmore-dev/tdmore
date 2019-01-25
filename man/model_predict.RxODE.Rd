@@ -17,7 +17,7 @@
 
 \item{covariates}{named vector, or data.frame with column 'TIME', and at least TIME 0}
 
-\item{iov}{list of parameter names related to IOV, NULL if no IOV}
+\item{iov}{character array with the IOV terms, can be NULL}
 
 \item{extraArguments}{extra arguments to use}
 

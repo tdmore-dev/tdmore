@@ -37,7 +37,7 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, 
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).
 #' @param parameters named numeric vector with the parameters
 #' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
-#' @param iov_parameters iov parameters
+#' @param iov character array with the IOV terms, can be NULL
 #' @param extraArguments extra arguments to use
 #'
 #' @export
@@ -49,7 +49,7 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, 
 #'
 #' @keywords internal
 #'
-model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric()), parameters=numeric(), covariates=NULL, iov_parameters, extraArguments=list()) {
+model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric()), parameters=numeric(), covariates=NULL, iov, extraArguments=list()) {
   ### RxODE sometimes errors out...
   ### Probably not a solver issue, but rather
   ### issue that the DLL of RxODE is no longer loaded
@@ -63,10 +63,18 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 
   # Check times and regimen objects
   checkTimes(times)
-  checkRegimen(regimen, colnames(iov_parameters))
+  checkRegimen(regimen, iov)
+
+  # IOV processing
+  iovPrediction <- !is.null(iov)
+  iovIndexes <- which(names(parameters) %in% iov)
+  iovParameters <- parameters[iovIndexes]
+  parameters <- parameters[!duplicated(names(parameters))]
 
   # Flatten the regimen (additional doses are converted)
-  regimen <- flatten(regimen)
+  # RxODE is much slower if a big regimen is flattened...
+  # It is only needed when IOV is present
+  if(iovPrediction) regimen <- flatten(regimen)
 
   # Set up the parameters
   params = NULL
@@ -98,24 +106,26 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   # Occasion processing
   occasionTimes <- getOccasionTimes(regimen)
   occasions <- getMaxOccasion(regimen)
-  predictWithIOV <- FALSE
-  if(!is.null(iov_parameters)) {
-    predictWithIOV <- TRUE
-    assert_that(nrow(iov_parameters) == occasions)
-    assert_that(all(colnames(iov_parameters) %in% names(parameters)))
-  }
 
   # ODE's initial values
   inits <- rep(0, length(modVars$state))
   names(inits) <- modVars$state
   retValue <- NULL
 
+  # RxODE does not allow to simulate 'nothing'
+  # Manually construct an empty data.frame with the right columns
+  if(length(times) == 0 && nrow(regimen) == 0) {
+    result <- data.frame()
+    for(i in c("TIME", modVars$lhs, modVars$state)) result[, i] <- numeric()
+    return(result)
+  }
+
   # Predict each occasion
   for(occasion in 1:occasions) {
     last <- occasion == occasions
     currentCovariates <- covariates
 
-    if(predictWithIOV) {
+    if(iovPrediction) {
       occasionTime <- occasionTimes[occasion]
       nextOccasionTime <- if(last) {Inf} else {occasionTimes[occasion + 1]}
       currentRegimen <- regimen %>% subset(TIME >= occasionTime & TIME < nextOccasionTime)
@@ -124,7 +134,14 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
       if(covariateAsDataFrame) {
         currentCovariates %>% subset(TIME >= occasionTime & TIME < nextOccasionTime)
       }
-      params[colnames(iov_parameters)] <- as.numeric(iov_parameters[occasion,])
+      for(iov_term in iov) {
+        iovValueIndexes <- which(names(iovParameters)==iov_term)
+        iovValue <- iovParameters[[iovValueIndexes[occasion]]]
+        if(is.null(iovValue)) {
+          stop(paste("Missing IOV values for", iov_term))
+        }
+        params[iov_term] <- iovValue
+      }
     } else {
       currentRegimen <- regimen
       currentTimes <- times
@@ -146,14 +163,6 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
         covs[, i] <- zoo::na.locf(covs[,i]) # last observation carried forward for NA values
     }
 
-    # RxODE does not allow to simulate 'nothing'
-    # Manually construct an empty data.frame with the right columns
-    # if(length(currentTimes) == 0 && nrow(currentRegimen) == 0) {
-    #   result <- data.frame()
-    #   for(i in c("TIME", modVars$lhs, modVars$state)) result[, i] <- numeric()
-    #   return(result)
-    # }
-
     # Run the simulation
     result <- do.call(RxODE::rxSolve, c( list(object=model, events=ev, params=params, covs=covs, inits=inits), extraArguments))
 
@@ -161,7 +170,7 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     inits <- as.numeric(result[nrow(result),][modVars$state])
     names(inits) <- modVars$state
 
-    # Remove last row if not last iteration (TODO not true if last row of not last iteration is observation)
+    # Remove last row if not last iteration (TODO: not true if last row of not last iteration is observation)
     if(!last) result <- result[-nrow(result),]
 
     # Only get the values we want

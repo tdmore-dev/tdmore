@@ -107,7 +107,7 @@ checkIOV <- function(tdmore) {
       parameters <- tdmore$parameters
       condition <- iov %in% parameters
       assert_that(all(condition), msg=paste("IOV term(s)", paste(iov[!condition], collapse=",")  ,"not defined in model"))
-      tdmore$iov <- iov
+      tdmore$iov <- parameters[(parameters %in% iov)] # Reorder IOV params in iov attribute
     } else {
       stop("IOV should be a character or character array")
     }
