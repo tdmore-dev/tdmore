@@ -36,7 +36,8 @@ algebraic <- function(fun) {
         args <- c(args, as.list(x)) # add regimen names
 
         args <- c(args, parameters) # add parameters
-        do.call(fun, args=args)
+        funValue <- do.call(fun, args=args)
+        ifelse(times < args$TIME, 0, funValue)
       })
       if(length(times)==0) return(numeric())
       if(length(times)==1) return( sum(CONCs, na.rm=TRUE) )
@@ -59,7 +60,7 @@ algebraic <- function(fun) {
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)
 #' @param parameters a named numeric vector
 #' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
-#' @param iov list of parameter names related to IOV, NULL if no IOV
+#' @param iov character array with the IOV terms, NULL if no IOV - NOT IMPLEMENTED
 #'
 #' @return
 #' A data.frame similar to the newdata data frame, but with CONC column filled out.
@@ -69,7 +70,7 @@ algebraic <- function(fun) {
 model_predict.algebraic <- function(model, times,
                                     regimen=data.frame(TIME=numeric(), AMT=numeric()),
                                     parameters=numeric(),
-                                    covariates=NULL, iov, extraArguments=list()) {
+                                    covariates=NULL, iov=NULL, extraArguments=list()) {
   # Verify arguments are good
   times <- as.numeric(times)
 

@@ -6,7 +6,7 @@
 \usage{
 \method{model_predict}{algebraic}(model, times, regimen = data.frame(TIME
   = numeric(), AMT = numeric()), parameters = numeric(),
-  covariates = NULL, iov, extraArguments = list())
+  covariates = NULL, iov = NULL, extraArguments = list())
 }
 \arguments{
 \item{model}{the algebraic model}
@@ -17,7 +17,7 @@
 
 \item{covariates}{named vector, or data.frame with column 'TIME', and at least TIME 0}
 
-\item{iov}{list of parameter names related to IOV, NULL if no IOV}
+\item{iov}{character array with the IOV terms, NULL if no IOV - NOT IMPLEMENTED}
 
 \item{newdata}{dataframe with a column 'TIME' and 'CONC'. Other columns are ignored.}
 }

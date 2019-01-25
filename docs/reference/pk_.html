@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A tdmore model to predict concentration in a 1cpt PK model with bolus administration — pk1cptivbolusVCL • tdmore</title>
+<title>Algebraic equations for PK models — pk_ • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="A tdmore model to predict concentration in a 1cpt PK model with bolus administration — pk1cptivbolusVCL" />
+<meta property="og:title" content="Algebraic equations for PK models — pk_" />
 
-<meta property="og:description" content="A tdmore model to predict concentration in a 1cpt PK model with bolus administration" />
+<meta property="og:description" content="Algebraic equations for PK models" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -127,67 +127,99 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A tdmore model to predict concentration in a 1cpt PK model with bolus administration</h1>
+    <h1>Algebraic equations for PK models</h1>
     <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/algebraicLibrary.R'><code>R/algebraicLibrary.R</code></a></small>
-    <div class="hidden name"><code>pk1cptivbolusVCL.Rd</code></div>
+    <div class="hidden name"><code>pk_.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>A tdmore model to predict concentration in a 1cpt PK model with bolus administration</p>
+    <p>Algebraic equations for PK models</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>pk1cptivbolusVCL</span>(<span class='kw'>TVV</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>TVCL</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>OV</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>OCL</span> <span class='kw'>=</span> <span class='fl'>0.3</span>, <span class='no'>res_var</span>)</pre>
+    <pre class="usage"><span class='fu'>pk1cptiv_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+
+<span class='fu'>pk1cptinfusion_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>RATE</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+
+<span class='fu'>pk1cptoral_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>KA</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+
+<span class='fu'>pk2cptiv_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+
+<span class='fu'>pk2cptinfusion_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>RATE</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+
+<span class='fu'>pk2cptoral_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>KA</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+
+<span class='fu'>pk3cptiv_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='no'>K13</span>, <span class='no'>K31</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+
+<span class='fu'>pk3cptinfusion_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>RATE</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='no'>K13</span>, <span class='no'>K31</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+
+<span class='fu'>pk3cptoral_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>KA</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='no'>K13</span>, <span class='no'>K31</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>TVV</th>
-      <td><p>Typical value for volume</p></td>
+      <th>t</th>
+      <td><p>sampling times</p></td>
     </tr>
     <tr>
-      <th>TVCL</th>
-      <td><p>Typical value for clearance</p></td>
+      <th>TIME</th>
+      <td><p>dosing time</p></td>
     </tr>
     <tr>
-      <th>OV</th>
-      <td><p>Omega for volume</p></td>
+      <th>AMT</th>
+      <td><p>dosing amount</p></td>
     </tr>
     <tr>
-      <th>OCL</th>
-      <td><p>Omega for clearance</p></td>
+      <th>V</th>
+      <td><p>volume of distribution</p></td>
     </tr>
     <tr>
-      <th>res_var</th>
-      <td><p>Residual error model</p></td>
+      <th>K</th>
+      <td><p>elimination constant</p></td>
+    </tr>
+    <tr>
+      <th>SS</th>
+      <td><p>0 for no steady-state, 1 for steady-state</p></td>
+    </tr>
+    <tr>
+      <th>II</th>
+      <td><p>inter-dose interval, required for steady-state calculations</p></td>
+    </tr>
+    <tr>
+      <th>RATE</th>
+      <td><p>infusion rate</p></td>
+    </tr>
+    <tr>
+      <th>KA</th>
+      <td><p>absorption constant</p></td>
+    </tr>
+    <tr>
+      <th>K12</th>
+      <td><p>transfer rate from central compartment to peripheral compartment A</p></td>
+    </tr>
+    <tr>
+      <th>K21</th>
+      <td><p>transfer rate from peripheral compartment A to central compartment</p></td>
+    </tr>
+    <tr>
+      <th>K13</th>
+      <td><p>transfer rate from central compartment to peripheral compartment B</p></td>
+    </tr>
+    <tr>
+      <th>K31</th>
+      <td><p>transfer rate from peripheral compartment B to central compartment</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a tdmore model</p>
+    <p>vector of same size as `t`, with the concentrations</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'>pk1cptivbolusVCL</span>(
-  <span class='kw'>TVV</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>TVCL</span><span class='kw'>=</span><span class='fl'>5</span>,
-  <span class='kw'>OV</span><span class='kw'>=</span><span class='fl'>0.20</span>, <span class='kw'>OCL</span><span class='kw'>=</span><span class='fl'>0.30</span>,
-  <span class='fu'><a href='errorModel.html'>errorModel</a></span>(<span class='kw'>prop</span><span class='kw'>=</span><span class='fl'>0.1</span>)
-)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>m1</span>)</div><div class='output co'>#&gt; Structural model: algebraic 
-#&gt; 
-#&gt; Parameters:
-#&gt;  name var        cv
-#&gt;    EV 0.2 0.4472136
-#&gt;   ECL 0.3 0.5477226
-#&gt; 
-#&gt; Covariates: / 
-#&gt; 
-#&gt; Residual error model:
-#&gt;  name additiveError proportionalError exponentialError
-#&gt;  CONC             0               0.1                0</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -195,9 +227,7 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>

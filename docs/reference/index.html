@@ -153,18 +153,6 @@ and then summed up for multiple doses.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="pk1cptivbolusVCL.html">pk1cptivbolusVCL()</a></code> </p>
-        </td>
-        <td><p>A tdmore model to predict concentration in a 1cpt PK model with bolus administration</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pk1cptoralbolusVCL.html">pk1cptoralbolusVCL()</a></code> </p>
-        </td>
-        <td><p>A tdmore model to predict concentration in a 1cpt PK model with bolus administration</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="tdmore.html">tdmore()</a></code> </p>
         </td>
         <td><p>tdmore is a generic function to append TDM functionality to a pharmacometrics model.</p></td>
@@ -186,6 +174,12 @@ and then summed up for multiple doses.</p></td>
           <p><code><a href="tdmore.nlmixrUI.html">tdmore(<i>&lt;nlmixrUI&gt;</i>)</a></code> </p>
         </td>
         <td><p>Create a TDM-capable model from an nlmixr UI object.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="tdmore.nlmixrFitCore.html">tdmore(<i>&lt;nlmixrFitCore&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Create a TDM-capable model from an nlmixr result.</p></td>
       </tr><tr>
         
         <td>
@@ -219,9 +213,9 @@ and then summed up for multiple doses.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="formula.tdmore.html">formula(<i>&lt;tdmore&gt;</i>)</a></code> </p>
+          <p><code><a href="coef.tdmore.html">coef(<i>&lt;tdmore&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Get a formula that describes this model</p></td>
+        <td><p>Get the population typical value parameters. This is a numeric vector of 0's, with the appropriate names.</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -380,239 +374,10 @@ If arguments `fix` and `limits` are not set for a specific parameter, individual
       <tr>
         
         <td>
-          <p><code><a href="algebraic.html">algebraic()</a></code> </p>
+          <p><code><a href="stat_predict.html">stat_predict()</a></code> </p>
         </td>
-        <td><p>Use an external function to generate an algebraic model, capable of being used with tdmore()
-Algebraic functions are assumed to be dose-linear, meaning that they can be calculated for a single dose
-and then summed up for multiple doses.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="autoplot.tdmore.html">autoplot(<i>&lt;tdmore&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Plot a tdmore object (typical profile (population) + between subject variability).</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="autoplot.tdmorefit.html">autoplot(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Plot a tdmorefit object.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="coef.recommendation.html">coef(<i>&lt;recommendation&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>The obtained parameter values for a recommendation.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="coef.tdmore.html">coef(<i>&lt;tdmore&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get the population typical value parameters. This is a numeric vector of 0's, with the appropriate names.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="coef.tdmorefit.html">coef(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>The obtained parameter values for the fit</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="computeTmax.html">computeTmax()</a></code> </p>
-        </td>
-        <td><p>Compute the TMax value based on the specified regimen and observed data.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="confint.tdmorefit.html">confint(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Calculates the confidence interval on the obtained parameter values</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="default_model.html">default_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="discrete.searchspace.html">discrete.searchspace()</a></code> </p>
-        </td>
-        <td><p>Add discrete options to a search space</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="errorModel.html">errorModel()</a></code> </p>
-        </td>
-        <td><p>Instantiate a new error model.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="estimate.html">estimate()</a></code> </p>
-        </td>
-        <td><p>Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using the model</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="estimateMixtureModel.html">estimateMixtureModel()</a></code> </p>
-        </td>
-        <td><p>Calculate the Empirical Bayesian Estimate parameters that predict
-a given dataset using a mixture model.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="evaluate.html">evaluate()</a></code> </p>
-        </td>
-        <td><p>Evaluate all discrete regimen possibilities</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="findDose.html">findDose()</a></code> </p>
-        </td>
-        <td><p>Find the dose required (quick and dirty, to be optimised)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="findFirstCompatibleModel.html">findFirstCompatibleModel()</a></code> </p>
-        </td>
-        <td><p>Find the first model in the TDMore set compatible with the specified covariates.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fitted.tdmorefit.html">fitted(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get the predicted (fitted) data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="flatten.html">flatten()</a></code> </p>
-        </td>
-        <td><p>Flatten a treatment regimen</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fluticasone_model.html">fluticasone_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="formula.tdmore.html">formula(<i>&lt;tdmore&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get a formula that describes this model</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="formula.tdmorefit.html">formula(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get the model used to provide this fit</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getLikelihoodFun.html">getLikelihoodFun()</a></code> </p>
-        </td>
-        <td><p>Get the right likelihood function for the specified type.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ll.html">ll()</a></code> </p>
-        </td>
-        <td><p>Calculate the log likelihood as the sum of the population likelihood and the prediction likelihood.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="logLik.tdmorefit.html">logLik(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get the log-likelihood of the predicted values.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_1param_model.html">meropenem_1param_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_model.html">meropenem_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_model_wt.html">meropenem_model_wt</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_omega0_model.html">meropenem_omega0_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="model.frame.tdmore.html">model.frame(<i>&lt;tdmore&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get the specified data values, with the upper and lower bounds provided by the residual error model</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="model.frame.tdmorefit.html">model.frame(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get the observed values used to provide this model fit.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pheno.html">pheno</a></code> </p>
-        </td>
-        <td><p>Phenobarbitol dataset, as included in the NONMEM distribution.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pheno_nlmixr.html">pheno_nlmixr</a></code> </p>
-        </td>
-        <td><p>NlmixrUI object describing Phenobarbitol 1-compartment model with IV administration
-and allometric scaling on weight</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pk1cptivbolusVCL.html">pk1cptivbolusVCL()</a></code> </p>
-        </td>
-        <td><p>A tdmore model to predict concentration in a 1cpt PK model with bolus administration</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pk1cptoralbolusVCL.html">pk1cptoralbolusVCL()</a></code> </p>
-        </td>
-        <td><p>A tdmore model to predict concentration in a 1cpt PK model with bolus administration</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pk2cptivbolus.html">pk2cptivbolus()</a></code> </p>
-        </td>
-        <td><p>This base function can be used to develop an algebraic model
-for a 2cpt pk model with oral absorption.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pk2cptivinfusion.html">pk2cptivinfusion()</a></code> </p>
-        </td>
-        <td><p>This base function can be used to develop an algebraic model
-for a 2cpt pk model with oral absorption.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pk2cptoralbolus.html">pk2cptoralbolus()</a></code> </p>
-        </td>
-        <td><p>This base function can be used to develop an algebraic model
-for a 2cpt pk model with oral absorption.</p></td>
+        <td><p>Calculate predictions using the provided tdmore model. This is very similar to stat_function,
+but the calculated values are calculated using `predict.tdmorefit`.</p></td>
       </tr><tr>
         
         <td>
@@ -634,229 +399,15 @@ for a 2cpt pk model with oral absorption.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="plotpossibilities.html">plotpossibilities()</a></code> </p>
+          <p><code><a href="autoplot.tdmore.html">autoplot(<i>&lt;tdmore&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Plot the fitted prediction under all discrete regimen possibilities</p></td>
+        <td><p>Plot a tdmore object (typical profile (population) + between subject variability).</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="pop_ll.html">pop_ll()</a></code> </p>
+          <p><code><a href="autoplot.tdmorefit.html">autoplot(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Calculate the population log likelihood.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="possibilitygrid.html">possibilitygrid()</a></code> </p>
-        </td>
-        <td><p>Calculate all possible regimen combinations, as rows in a data.frame</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="predict.tdmore.html">predict(<i>&lt;tdmore&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Predict from a tdmore model</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="predict.tdmorefit.html">predict(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Predict new data using the current model</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="predict.tdmore_mixture.html">predict(<i>&lt;tdmore_mixture&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Predict from a TDMore mixture model. Default model will be used for predictions.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="predict.tdmore_set.html">predict(<i>&lt;tdmore_set&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Predict from a tdmore model set.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pred_ll.html">pred_ll()</a></code> </p>
-        </td>
-        <td><p>Calculate the prediction log likelihood.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="print.recommendation.html">print(<i>&lt;recommendation&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Print a recommendation object.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="print.tdmore.html">print(<i>&lt;tdmore&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Print a tdmore object.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="print.tdmorefit.html">print(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Print an EBE fit.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="profile.tdmorefit.html">profile(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get an overview of the log-likelihood for varying parameter values.
-If arguments `fix` and `limits` are not set for a specific parameter, individual eta's will be generated to cover 95 percent of the population distribution.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="residuals.tdmore.html">residuals(<i>&lt;tdmore&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get the residual values of a predicted value vs the observed value
-This is based on the log-likelihood of the observed value in the residual error model</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="searchspace.html">searchspace()</a></code> </p>
-        </td>
-        <td><p>Define a blank search space</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="stat_predict.html">stat_predict()</a></code> </p>
-        </td>
-        <td><p>Calculate predictions using the provided tdmore model. This is very similar to stat_function,
-but the calculated values are calculated using `predict.tdmorefit`.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="summary.recommendation.html">summary(<i>&lt;recommendation&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Summarize a recommendation object.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="summary.tdmore.html">summary(<i>&lt;tdmore&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Summarise a tdmore object.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="summary.tdmorefit.html">summary(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Summary of a tdmorefit object.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="sunitinib_pkpd_model.html">sunitinib_pkpd_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tdmore.algebraic.html">tdmore(<i>&lt;algebraic&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Build a tdmore object based on an algebraic model</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tdmore.default.html">tdmore(<i>&lt;default&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Default function, catching unsupported types of models</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tdmore.nlmixrFitCore.html">tdmore(<i>&lt;nlmixrFitCore&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Create a TDM-capable model from an nlmixr result.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tdmore.nlmixrUI.html">tdmore(<i>&lt;nlmixrUI&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Create a TDM-capable model from an nlmixr UI object.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tdmore.html">tdmore()</a></code> </p>
-        </td>
-        <td><p>tdmore is a generic function to append TDM functionality to a pharmacometrics model.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tdmore.RxODE.html">tdmore(<i>&lt;RxODE&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Create a TDM-capable model from an RxODE model</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tdmorefit.html">tdmorefit()</a></code> </p>
-        </td>
-        <td><p>Create a tdmorefit object manually</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tdmore_deSolve.html">tdmore_deSolve()</a></code> </p>
-        </td>
-        <td><p>Create a TDM-capable model from a deSolve model</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tdmore_mixture.html">tdmore_mixture()</a></code> </p>
-        </td>
-        <td><p>Create a TDMore mixture model.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tdmore_set.html">tdmore_set()</a></code> </p>
-        </td>
-        <td><p>Create a TDMore set.
-Note that the order of the given models matters.
-Order must be defined from the most restrictive model (with a high number of covariates) to the lowest restrictive model (with a low number of covariates).
-These models will be tried one by one from left to right with the 'observed' data.
-The first model matching the covariates from the 'observed' data will be used.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="theopp.html">theopp</a></code> </p>
-        </td>
-        <td><p>Theophylline dataset, as included in the NONMEM distribution.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="theopp_nlmixr.html">theopp_nlmixr</a></code> </p>
-        </td>
-        <td><p>NlmixrUI object describing theophylline 1-compartment model with oral absorption</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="transformRegimen.html">transformRegimen()</a></code> </p>
-        </td>
-        <td><p>Transform a specific treatment regimen using a modifier</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="two_error_models.html">two_error_models</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="updateRegimen.html">updateRegimen()</a></code> </p>
-        </td>
-        <td><p>Update a regimen with the specified dose.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vcov.tdmorefit.html">vcov(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>The variance-covariance matrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="vectorToDiagonalMatrix.html">vectorToDiagonalMatrix()</a></code> </p>
-        </td>
-        <td><p>Convert a numeric vector/list into a diagonal matrix.
-If the vector/list is named, names will be used as the column and row names of the resulting diagonal matrix.</p></td>
+        <td><p>Plot a tdmorefit object.</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -944,6 +495,157 @@ If the vector/list is named, names will be used as the column and row names of t
         </td>
         <td><p>Summarize a recommendation object.</p></td>
       </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-composite-and-mixture-models" class="hasAnchor"><a href="#section-composite-and-mixture-models" class="anchor"></a>Composite and mixture models</h2>
+          <p class="section-desc"><p>Combine models (e.g. full covariate and base model) depending on availability, or describe subpopulations using multiple models</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="tdmore_set.html">tdmore_set()</a></code> </p>
+        </td>
+        <td><p>Create a TDMore set.
+Note that the order of the given models matters.
+Order must be defined from the most restrictive model (with a high number of covariates) to the lowest restrictive model (with a low number of covariates).
+These models will be tried one by one from left to right with the 'observed' data.
+The first model matching the covariates from the 'observed' data will be used.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="tdmore_mixture.html">tdmore_mixture()</a></code> </p>
+        </td>
+        <td><p>Create a TDMore mixture model.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="estimateMixtureModel.html">estimateMixtureModel()</a></code> </p>
+        </td>
+        <td><p>Calculate the Empirical Bayesian Estimate parameters that predict
+a given dataset using a mixture model.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="findFirstCompatibleModel.html">findFirstCompatibleModel()</a></code> </p>
+        </td>
+        <td><p>Find the first model in the TDMore set compatible with the specified covariates.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="predict.tdmore_mixture.html">predict(<i>&lt;tdmore_mixture&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Predict from a TDMore mixture model. Default model will be used for predictions.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="predict.tdmore_set.html">predict(<i>&lt;tdmore_set&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Predict from a tdmore model set.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-model-library" class="hasAnchor"><a href="#section-model-library" class="anchor"></a>Model library</h2>
+          <p class="section-desc"><p>A library of models, to get you started.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="default_model.html">default_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="fluticasone_model.html">fluticasone_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="meropenem_1param_model.html">meropenem_1param_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="meropenem_model.html">meropenem_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="meropenem_model_wt.html">meropenem_model_wt</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="meropenem_omega0_model.html">meropenem_omega0_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="pheno.html">pheno</a></code> </p>
+        </td>
+        <td><p>Phenobarbitol dataset, as included in the NONMEM distribution.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="pheno_nlmixr.html">pheno_nlmixr</a></code> </p>
+        </td>
+        <td><p>NlmixrUI object describing Phenobarbitol 1-compartment model with IV administration
+and allometric scaling on weight</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="theopp.html">theopp</a></code> </p>
+        </td>
+        <td><p>Theophylline dataset, as included in the NONMEM distribution.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="theopp_nlmixr.html">theopp_nlmixr</a></code> </p>
+        </td>
+        <td><p>NlmixrUI object describing theophylline 1-compartment model with oral absorption</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="two_error_models.html">two_error_models</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sunitinib_pkpd_model.html">sunitinib_pkpd_model</a></code> </p>
+        </td>
+        <td><p>Default example model
+TODO: Better documentation required</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="linCmt.html">linCmt()</a></code> </p>
+        </td>
+        <td><p>This function guesses which model should be calculated, based on the available variables
+in the caller environment</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="pk_.html">pk1cptiv_()</a></code> <code><a href="pk_.html">pk1cptinfusion_()</a></code> <code><a href="pk_.html">pk1cptoral_()</a></code> <code><a href="pk_.html">pk2cptiv_()</a></code> <code><a href="pk_.html">pk2cptinfusion_()</a></code> <code><a href="pk_.html">pk2cptoral_()</a></code> <code><a href="pk_.html">pk3cptiv_()</a></code> <code><a href="pk_.html">pk3cptinfusion_()</a></code> <code><a href="pk_.html">pk3cptoral_()</a></code> </p>
+        </td>
+        <td><p>Algebraic equations for PK models</p></td>
+      </tr>
     </tbody>
     </table>
   </div>
@@ -957,6 +659,8 @@ If the vector/list is named, names will be used as the column and row names of t
       <li><a href="#section-investigate-the-log-likelihood-profile">Investigate the log-likelihood profile</a></li>
       <li><a href="#section-plotting">Plotting</a></li>
       <li><a href="#section-dose-recommendation">Dose recommendation</a></li>
+      <li><a href="#section-composite-and-mixture-models">Composite and mixture models</a></li>
+      <li><a href="#section-model-library">Model library</a></li>
     </ul>
   </div>
 </div>

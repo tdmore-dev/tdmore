@@ -32,6 +32,7 @@ tdmore_deSolve <- function(parameters, add=0, prop=0, exp=0, ...) {
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).
 #' @param parameters either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector
 #' @param covariates NOT IMPLEMENTED
+#' @param iov character array with the IOV terms, NULL if no IOV - NOT IMPLEMENTED
 #' @param extraArguments extra arguments to use
 #'
 #' @export
@@ -42,7 +43,7 @@ tdmore_deSolve <- function(parameters, add=0, prop=0, exp=0, ...) {
 #' @importFrom deSolve ode
 #'
 #' @keywords internal
-model_predict.tdmore_deSolve <- function(model, times, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, extraArguments=list()) {
+model_predict.tdmore_deSolve <- function(model, times, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, iov=NULL, extraArguments=list()) {
   if(any(parameters > 10 | parameters < -10)) {
     stop("Solver requested with highly unlikely parameters, returning NA")
   }

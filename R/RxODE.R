@@ -12,8 +12,6 @@
 #'
 #' @example inst/examples/RxODE.R
 tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, ...) {
-  assert_that(class(model) %in% c("RxODE")) #currently, only RxODE is supported
-
   tdmore <- structure(list(
     model=model,
     omega=omega,
@@ -25,6 +23,7 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, 
   ), class="tdmore")
 
   # Check consistency and return
+  # TODO: checkTdmore does more than just check! It modifies!
   return(checkTdmore(tdmore))
 }
 
@@ -49,7 +48,7 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, 
 #'
 #' @keywords internal
 #'
-model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric()), parameters=numeric(), covariates=NULL, iov, extraArguments=list()) {
+model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric()), parameters=numeric(), covariates=NULL, iov=NULL, extraArguments=list()) {
   ### RxODE sometimes errors out...
   ### Probably not a solver issue, but rather
   ### issue that the DLL of RxODE is no longer loaded
@@ -72,8 +71,7 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   parameters <- parameters[!duplicated(names(parameters))]
 
   # Flatten the regimen (additional doses are converted)
-  # RxODE is much slower if a big regimen is flattened...
-  # It is only needed when IOV is present
+  # This is done only for IOV, because RxODE is slower with a flattened regimen
   if(iovPrediction) regimen <- flatten(regimen)
 
   # Set up the parameters
@@ -128,11 +126,11 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     if(iovPrediction) {
       occasionTime <- occasionTimes[occasion]
       nextOccasionTime <- if(last) {Inf} else {occasionTimes[occasion + 1]}
-      currentRegimen <- regimen %>% subset(TIME >= occasionTime & TIME < nextOccasionTime)
+      currentRegimen <- regimen %>% subset(regimen$TIME >= occasionTime & regimen$TIME < nextOccasionTime)
       currentTimes <- times[times >= occasionTime & times <= nextOccasionTime]
       currentTimes <- if(is.finite(nextOccasionTime)) {unique(c(currentTimes, nextOccasionTime))} else {currentTimes}
       if(covariateAsDataFrame) {
-        currentCovariates %>% subset(TIME >= occasionTime & TIME < nextOccasionTime)
+        currentCovariates %>% subset(currentCovariates$TIME >= occasionTime & currentCovariates$TIME < nextOccasionTime)
       }
       for(iov_term in iov) {
         iovValueIndexes <- which(names(iovParameters)==iov_term)

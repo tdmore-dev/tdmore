@@ -103,9 +103,8 @@ Note that the model is a character vector and not a function anymore. It does no
 ```r
 library(tdmore)
 library(RxODE)
-omegaMatrix <- vectorToDiagonalMatrix(c(EKA=0.3, EV=0.3, ECL=0.3))
 errorModel <- errorModel("CONC", prop=0.1)
-m2 <- RxODE(modelCode2) %>% tdmore(omega=omegaMatrix, res_var=list(errorModel))
+m2 <- RxODE(modelCode2) %>% tdmore(omega=c(EKA=0.3, EV=0.3, ECL=0.3), res_var=list(errorModel))
 ```
 
 The omega matrix is a 3x3 matrix. Only the diagonal is used as you can see. However, correlations can be added if needed.

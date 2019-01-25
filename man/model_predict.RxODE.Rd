@@ -5,7 +5,7 @@
 \title{Predict for RxODE}
 \usage{
 \method{model_predict}{RxODE}(model, times, regimen = data.frame(TIME =
-  numeric()), parameters = numeric(), covariates = NULL, iov,
+  numeric()), parameters = numeric(), covariates = NULL, iov = NULL,
   extraArguments = list())
 }
 \arguments{

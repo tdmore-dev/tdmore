@@ -23,12 +23,22 @@ d/dt(perip) = k12*centr - k21*perip;
 "
 omegas=c(EVc=0.19^2, ECL=0.28^2)
 tdmore <- RxODE::RxODE(modelCode) %>%
-  tdmore(omega=vectorToDiagonalMatrix(omegas),
+  tdmore(omega=omegas,
          res_var=list(errorModel("CONC", prop=0.23))) #Model has 23% proportional error
 
 regimen <- data.frame(
   TIME=seq(0, 3)*24,
   AMT=5 #5mg
+)
+
+expect_known_output(
+  print(tdmore),
+  "tdmoreRxode.txt"
+)
+
+expect_known_output(
+  print(summary(tdmore)),
+  "tdmoreRxodeSummary.txt"
 )
 
 # Default tdmore plot

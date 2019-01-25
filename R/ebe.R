@@ -320,7 +320,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
 
     for(i in names(parameters)) mc[, i] <- parameters[i] # TODO: adapt because of same names
     fittedMC <- plyr::ddply(mc, 1, function(row) {
-      res <- unlist(row[-1])
+      res <- unlist(row[-1]) # Remove 'sample'
       names(res) <- names(pars)
       pred <- predict.tdmore(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=unlist(res), covariates=covariates)
       colnames(row) <- uniqueColnames

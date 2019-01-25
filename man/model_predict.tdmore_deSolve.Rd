@@ -6,7 +6,7 @@
 \usage{
 \method{model_predict}{tdmore_deSolve}(model, times,
   regimen = data.frame(TIME = c()), parameters = c(),
-  covariates = NULL, extraArguments = list())
+  covariates = NULL, iov = NULL, extraArguments = list())
 }
 \arguments{
 \item{model}{The model function}
@@ -18,6 +18,8 @@
 \item{parameters}{either a dataframe with column 'TIME' and a column for each covariate and parameter, or a named numeric vector}
 
 \item{covariates}{NOT IMPLEMENTED}
+
+\item{iov}{character array with the IOV terms, NULL if no IOV - NOT IMPLEMENTED}
 
 \item{extraArguments}{extra arguments to use}
 }

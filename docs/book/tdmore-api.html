@@ -255,9 +255,8 @@ m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <s
 <p>Note that the model is a character vector and not a function anymore. It does not include the ETA’s (and related OMEGA values). Furthemore, the residual error model is omitted. The missing information needs to be passed to TDMore as follows (arguments <code>omega</code> and <code>res_var</code>):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
 <span class="kw">library</span>(RxODE)
-omegaMatrix &lt;-<span class="st"> </span><span class="kw">vectorToDiagonalMatrix</span>(<span class="kw">c</span>(<span class="dt">EKA=</span><span class="fl">0.3</span>, <span class="dt">EV=</span><span class="fl">0.3</span>, <span class="dt">ECL=</span><span class="fl">0.3</span>))
 errorModel &lt;-<span class="st"> </span><span class="kw">errorModel</span>(<span class="st">&quot;CONC&quot;</span>, <span class="dt">prop=</span><span class="fl">0.1</span>)
-m2 &lt;-<span class="st"> </span><span class="kw">RxODE</span>(modelCode2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>(<span class="dt">omega=</span>omegaMatrix, <span class="dt">res_var=</span><span class="kw">list</span>(errorModel))</code></pre></div>
+m2 &lt;-<span class="st"> </span><span class="kw">RxODE</span>(modelCode2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>(<span class="dt">omega=</span><span class="kw">c</span>(<span class="dt">EKA=</span><span class="fl">0.3</span>, <span class="dt">EV=</span><span class="fl">0.3</span>, <span class="dt">ECL=</span><span class="fl">0.3</span>), <span class="dt">res_var=</span><span class="kw">list</span>(errorModel))</code></pre></div>
 <p>The omega matrix is a 3x3 matrix. Only the diagonal is used as you can see. However, correlations can be added if needed. Your model is now ready to use. It can be summarised this way:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(m2)</code></pre></div>
 <pre><code>## Structural model: RxODE 
