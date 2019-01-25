@@ -1,15 +1,18 @@
 #' Calculate the population log likelihood.
 #'
 #' @param par the current estimate of the parameters
+#' @param omega omega
 #' @param tdmore the tdmore object
 #' @param observed the observed data, not used in the population log likelihood
 #' @param regimen data frame describing the treatment regimen
 #' @param covariates the model covariates, not used in the population log likelihood
 #'
 #' @return the population log likelihood
-pop_ll <- function(par, tdmore, observed, regimen, covariates) {
-  omega <- tdmore$omega
-  sum( mvtnorm::dmvnorm(par, sigma=omega, log=TRUE) )
+pop_ll <- function(par, omega, tdmore, observed, regimen, covariates) {
+  #omega <- tdmore$omega
+  retValue <- sum( mvtnorm::dmvnorm(par, sigma=omega, log=TRUE) )
+  print(retValue)
+  retValue
 }
 
 #' Calculate the prediction log likelihood.
@@ -25,14 +28,25 @@ pop_ll <- function(par, tdmore, observed, regimen, covariates) {
 #'
 #' @return the prediction log likelihood
 pred_ll <- function(par, tdmore, observed, regimen, covariates) {
-  pred <- predict.tdmore(object=tdmore, newdata=observed, regimen=regimen, parameters=par, covariates=covariates)
+  iov <- tdmore$iov
+  par_final <- par
+  if(!is.null(iov)) {
+    par_final <- par[!(names(par) %in% iov)]
+    iov_par <- par[(names(par) %in% iov)]
+    iov_parameters <- as.data.frame(matrix(iov_par, nrow = length(iov_par)/length(iov), ncol = length(iov), byrow = TRUE))
+    colnames(iov_parameters) <- iov
+  }
+  pred <- predict.tdmore(object=tdmore, newdata=observed, regimen=regimen, parameters=par_final, iov_parameters=iov_parameters, covariates=covariates)
   res <- residuals.tdmore(tdmore, observed, pred, log=TRUE)
-  sum(res)
+  retValue <- sum(res)
+  print(retValue)
+  retValue
 }
 
 #' Calculate the log likelihood as the sum of the population likelihood and the prediction likelihood.
 #'
 #' @param par the current estimate of the parameters
+#' @param omega omega
 #' @param tdmore the tdmore object
 #' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
@@ -40,10 +54,24 @@ pred_ll <- function(par, tdmore, observed, regimen, covariates) {
 #' @param covariates the model covariates
 #'
 #' @return the log likelihood
-ll <- function(par, tdmore, observed, regimen, covariates) {
-  if(is.null(names(par))) names(par) <- tdmore$parameters #you should support named parameters as well!
-  res <- pop_ll(par, tdmore, observed, regimen, covariates) + pred_ll(par, tdmore, observed, regimen, covariates)
+ll <- function(par, omega, tdmore, observed, regimen, covariates) {
+  names(par) <- getParNames(tdmore, regimen)
+  pop_ll <- pop_ll(par, omega, tdmore, observed, regimen, covariates)
+  pred_ll <- pred_ll(par, tdmore, observed, regimen, covariates)
+  res <- pop_ll + pred_ll
   res
+}
+
+getParNames <- function(tdmore, regimen) {
+  iov <- tdmore$iov
+  parameters <- tdmore$parameters
+  if(is.null(iov)) {
+    retValue <- tdmore$parameters
+  } else {
+    retValue <- c(parameters[!(parameters %in% iov)],
+                  rep(parameters[(parameters %in% iov)], getMaxOccasion(regimen)))
+  }
+  return(retValue)
 }
 
 #' Calculate the Empirical Bayesian Estimate parameters that predict
@@ -80,19 +108,30 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   }
   observed <- model.frame(tdmore, data=observed) #ensure "observed" in right format for estimation
 
+  # Processing IOV
+  iov <- tdmore$iov
+  occasions <- getMaxOccasion(regimen)
+  parNames <- getParNames(tdmore, regimen)
+
   if(is.null(par)) par <- rep(0, length(tdmore$parameters))
-  if(is.null(lower)) lower <- -5 * sqrt(diag(tdmore$omega))
-  if(is.null(upper)) upper <- 5 * sqrt(diag(tdmore$omega))
+  par <- includeIOVTermsInPar(tdmore, par, occasions)
+  omegaIOV <- includeIOVTermsInOmega(tdmore, occasions)
+
+  #if(is.null(par)) par <- rep(0, length(tdmore$parameters))
+  #if(is.null(lower)) lower <- -5 * sqrt(diag(tdmore$omega))
+  #if(is.null(upper)) upper <- 5 * sqrt(diag(tdmore$omega))
+  lower <- -5 * sqrt(diag(omegaIOV))
+  upper <- 5 * sqrt(diag(omegaIOV))
 
   # First try to estimate at starting values, as a precaution
-  value <- ll(par=par, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)
+  value <- ll(par=par, omega=omegaIOV, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)
   if(!is.finite(value))
     stop("Log-likelihood is ", value, " at starting values `par`. Cannot start optimization routine.")
 
   # Function to optimise
   fn <- function(par, ...) {
     tryCatch({
-      -2 * ll(par = par, ...)
+      -2 * ll(par = par, omega = omegaIOV, ...)
     }, error = function(e) {
       999999
     })
@@ -113,13 +152,59 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     ...
   )
   res <- pointEstimate$par
-  names(res) <- tdmore$parameters
+  names(res) <- parNames
+
   # Observed fisher information matrix = -hessian(ll)
   OFIM <- pointEstimate$hessian * 1/2
   varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
-  dimnames(varcov) = list(tdmore$parameters, tdmore$parameters)
+  dimnames(varcov) = list(parNames, parNames)
   ofv <- pointEstimate$value
   tdmorefit(tdmore, observed, regimen, covariates, ofv, res, varcov, nlmresult=pointEstimate, call=match.call())
+}
+
+includeIOVTermsInPar <- function(tdmore, par, occasions) {
+  iov <- tdmore$iov
+  names(par) <- tdmore$parameters
+
+  if(is.null(iov)) {
+    retValue <- par
+  } else {
+    indexes <- 1:length(tdmore$parameters)
+    iovIndexes <- indexes[(names(par) %in% iov)]
+    noIovIndexes <- indexes[!(names(par) %in% iov)]
+    retValue <- c(par[noIovIndexes], rep(par[iovIndexes], occasions))
+  }
+  return(retValue)
+}
+
+includeIOVTermsInOmega <- function(tdmore, occasions) {
+  iov <- tdmore$iov
+  omega <- tdmore$omega
+
+  if(is.null(iov)) {
+    retValue <- omega
+  } else {
+    indexes <- 1:ncol(omega)
+    iovIndexes <- indexes[(colnames(omega) %in% iov)]
+    noIovIndexes <- indexes[!(colnames(omega) %in% iov)]
+
+    # A little complex but seems to work
+    mat_tmp <- omega[c(noIovIndexes, iovIndexes), c(noIovIndexes, iovIndexes)]
+    for(occasion in 1:(occasions - 1)) {
+      indexesToCopy <- (ncol(mat_tmp)-(length(iov) - 1)):ncol(mat_tmp)
+      matV <- mat_tmp[,indexesToCopy]
+      mat_tmp <- cbind(mat_tmp, matV)
+      matH <- mat_tmp[indexesToCopy,]
+      mat_tmp <- rbind(mat_tmp, matH)
+      for(sourceIndex in indexesToCopy) {
+        destIndex <- sourceIndex + length(iov)
+        mat_tmp[sourceIndex, destIndex] <- 0
+        mat_tmp[destIndex, sourceIndex] <- 0
+      }
+    }
+    retValue <- mat_tmp
+  }
+  return(retValue)
 }
 
 #' Create a tdmorefit object manually

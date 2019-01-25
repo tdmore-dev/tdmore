@@ -20,13 +20,14 @@ mod_1cpt_1 <- nlmixrUI(function(){
     TVV <- 70
     TVKA <- 1
     TVCL <- 4
+    ECL_IOV ~ 0.02
     ECL ~ 0.09 # SD=0.3
     EKA ~ 0.09 # SD=0.3
-    EKA_IOV ~ 0.09 # SD=0.3
+    EKA_IOV ~ 0.02
     EPS_PROP <- 0.1
   })
   model({
-    CL <- TVCL * exp(ECL)
+    CL <- TVCL * exp(ECL + ECL_IOV)
     V <- TVV
     KA <- TVKA * exp(EKA + EKA_IOV)
     d/dt(abs) = - abs*KA
@@ -37,14 +38,19 @@ mod_1cpt_1 <- nlmixrUI(function(){
 })
 
 expect_error(mod_1cpt_1 %>% tdmore(iov="EKA_IOV2")) # Error is raised: 'IOV term(s) EKA_IOV2 not defined in model'
-m1 <- mod_1cpt_1 %>% tdmore(iov="EKA_IOV")
+tdmore <- mod_1cpt_1 %>% tdmore(iov=c("ECL_IOV", "EKA_IOV"))
 
 
-iov_parameters <- data.frame(EKA_IOV=c(0.1, 0.2))
+iov_parameters <- data.frame(EKA_IOV=c(1, -2), ECL_IOV=c(-0.1, -0.2))
 
-debugonce(tdmore:::model_predict)
-yep <- m1 %>% predict(newdata=0:96, regimen=regimen, iov_parameters=iov_parameters)
+#debugonce(tdmore:::model_predict)
 
-checkRegimen(regimen, "EKA_IOV")
+yep <- tdmore %>% predict(newdata=0:96, regimen=regimen, iov_parameters=iov_parameters)
+ggplot(yep, aes(x = TIME, y=CONC)) + geom_line()
 
-getOccasionTimes(regimen)
+observed <- data.frame(TIME=c(20, 75), CONC=c(0.8, 0.9))
+
+#debugonce(tdmore:::estimate)
+#debug(tdmore:::pop_ll)
+fit <- estimate(object = tdmore, regimen = regimen, observed = observed)
+

@@ -97,11 +97,11 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 
   # Occasion processing
   occasionTimes <- getOccasionTimes(regimen)
-  occasionNumber <- getOccasionNumber(regimen)
+  occasions <- getMaxOccasion(regimen)
   predictWithIOV <- FALSE
   if(!is.null(iov_parameters)) {
     predictWithIOV <- TRUE
-    assert_that(nrow(iov_parameters) == occasionNumber)
+    assert_that(nrow(iov_parameters) == occasions)
     assert_that(all(colnames(iov_parameters) %in% names(parameters)))
   }
 
@@ -111,8 +111,8 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   retValue <- NULL
 
   # Predict each occasion
-  for(occasion in 1:occasionNumber) {
-    last <- occasion == occasionNumber
+  for(occasion in 1:occasions) {
+    last <- occasion == occasions
     currentCovariates <- covariates
 
     if(predictWithIOV) {
@@ -120,10 +120,11 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
       nextOccasionTime <- if(last) {Inf} else {occasionTimes[occasion + 1]}
       currentRegimen <- regimen %>% subset(TIME >= occasionTime & TIME < nextOccasionTime)
       currentTimes <- times[times >= occasionTime & times <= nextOccasionTime]
+      currentTimes <- if(is.finite(nextOccasionTime)) {unique(c(currentTimes, nextOccasionTime))} else {currentTimes}
       if(covariateAsDataFrame) {
         currentCovariates %>% subset(TIME >= occasionTime & TIME < nextOccasionTime)
       }
-      params[colnames(iov_parameters)] <- iov_parameters[occasion,]
+      params[colnames(iov_parameters)] <- as.numeric(iov_parameters[occasion,])
     } else {
       currentRegimen <- regimen
       currentTimes <- times
@@ -156,7 +157,11 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     # Run the simulation
     result <- do.call(RxODE::rxSolve, c( list(object=model, events=ev, params=params, covs=covs, inits=inits), extraArguments))
 
-    # Remove last row if not last iteration
+    # Adapt initial values for next iteration
+    inits <- as.numeric(result[nrow(result),][modVars$state])
+    names(inits) <- modVars$state
+
+    # Remove last row if not last iteration (TODO not true if last row of not last iteration is observation)
     if(!last) result <- result[-nrow(result),]
 
     # Only get the values we want
@@ -169,10 +174,6 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 
     # Bind to global result
     retValue <- rbind(retValue, result)
-
-    # Adapt initial values for next iteration
-    inits <- as.numeric(result[nrow(result),][modVars$state])
-    names(inits) <- modVars$state
   }
 
   retValue
@@ -210,8 +211,8 @@ addRegimenToEventTable <- function(eventTable, regimen) {
 }
 
 getOccasionTimes <- function(regimen) {
-  occasionNumber <- getOccasionNumber(regimen)
-  if(is.null(occasionNumber)) {
+  maxOccasion <- getMaxOccasion(regimen)
+  if(is.null(maxOccasion)) {
     retValue <- NULL
   } else {
     temp <- regimen[!duplicated(regimen$OCC),]
@@ -220,7 +221,7 @@ getOccasionTimes <- function(regimen) {
   return(retValue)
 }
 
-getOccasionNumber <- function(regimen) {
+getMaxOccasion <- function(regimen) {
   if("OCC" %in% colnames(regimen)) {
     retValue <- max(regimen$OCC)
   } else {
