@@ -91,7 +91,7 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
 
   # Setting optim initial conditions
   par <- processParameters(par, tdmore, regimen)
-  omega <- addIOVToOmegaMatrix(tdmore, occasions)
+  omega <- expandOmega(tdmore, occasions)
   lower <- processParameters(lower, tdmore, regimen, -5 * sqrt(diag(omega)))
   upper <- processParameters(upper, tdmore, regimen, +5 * sqrt(diag(omega)))
 
@@ -373,7 +373,7 @@ logLik.tdmorefit <- function(object, type=c('ll', 'pop', 'pred'), ...) {
   covariates <- object$covariates
   fun <- getLikelihoodFun(type)
   fun(par=estimate,
-      omega=addIOVToOmegaMatrix(tdmore, getMaxOccasion(regimen)),
+      omega=expandOmega(tdmore, getMaxOccasion(regimen)),
       tdmore=tdmore,
       observed=observed,
       regimen=regimen,
@@ -434,7 +434,7 @@ profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c
   profile <- plyr::adply(grid, 1, function(estimate) {
     eta <- as.numeric(estimate)
     names(eta) <- model$parameters
-    omega <- addIOVToOmegaMatrix(model, getMaxOccasion(tdmorefit$regimen))
+    omega <- expandOmega(model, getMaxOccasion(tdmorefit$regimen))
     c(logLik=fun(eta, omega, model, tdmorefit$observed, tdmorefit$regimen, tdmorefit$covariates))
   }, .progress=.progress)
 
@@ -496,25 +496,26 @@ getLikelihoodFun <- function(type) {
 #' @export
 is.tdmorefit <- function(a) {inherits(a, "tdmorefit")}
 
-#' Add variance-covariance information regarding all IOV terms in the omega matrix.
+#' Expand OMEGA matrix by adding variance-covariance information regarding all IOV terms.
 #' Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames().
 #'
 #' @param tdmore the tdmore object
 #' @param occasions how many occasions
 #' @return the omega matrix with the duplicated IOV terms at the end
-addIOVToOmegaMatrix <- function(tdmore, occasions) {
+#' @export
+expandOmega <- function(tdmore, occasions) {
   iov <- tdmore$iov
   omega <- tdmore$omega
 
   if(is.null(iov)) {
     retValue <- omega
   } else {
-    indexes <- 1:ncol(omega)
+    indexes <- seq_len(ncol(omega))
     iovIndexes <- indexes[(colnames(omega) %in% iov)]
     noIovIndexes <- indexes[!(colnames(omega) %in% iov)]
     mat_tmp <- omega[c(noIovIndexes, iovIndexes), c(noIovIndexes, iovIndexes)]
 
-    for(occasion in 1:(occasions - 1)) {
+    for(occasion in seq_len(occasions - 1)) {
       indexesToCopy <- (ncol(mat_tmp)-(length(iov) - 1)):ncol(mat_tmp)
       # Copy vertical IOV columns at the end
       matV <- mat_tmp[,indexesToCopy]

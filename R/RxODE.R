@@ -186,6 +186,13 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   retValue
 }
 
+#' Add the given regimen into the RxODE event table.
+#'
+#' @param eventTable the RxODE event table
+#' @param regimen the specified regimen
+#'
+#' @return a completed event table
+#'
 addRegimenToEventTable <- function(eventTable, regimen) {
   for(i in seq_len(nrow(regimen))) {
     row <- regimen[i, ,drop=FALSE]
@@ -215,24 +222,4 @@ addRegimenToEventTable <- function(eventTable, regimen) {
                   nbr.doses=nbr.doses)
   }
   return(eventTable)
-}
-
-getOccasionTimes <- function(regimen) {
-  maxOccasion <- getMaxOccasion(regimen)
-  if(is.null(maxOccasion)) {
-    retValue <- NULL
-  } else {
-    temp <- regimen[!duplicated(regimen$OCC),]
-    retValue <- temp$TIME
-  }
-  return(retValue)
-}
-
-getMaxOccasion <- function(regimen) {
-  if("OCC" %in% colnames(regimen)) {
-    retValue <- max(regimen$OCC)
-  } else {
-    retValue <- 1
-  }
-  return(retValue)
 }

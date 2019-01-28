@@ -20,9 +20,9 @@ mod_1cpt_1 <- nlmixrUI(function(){
     TVV <- 70
     TVKA <- 1
     TVCL <- 4
-    ECL_IOV ~ 0.02
-    ECL ~ 0.09 # SD=0.3
-    EKA ~ 0.09 # SD=0.3
+    ECL_IOV ~ 0.03
+    ECL ~ 0.09
+    EKA ~ 0.08
     EKA_IOV ~ 0.02
     EPS_PROP <- 0.1
   })
@@ -40,22 +40,37 @@ mod_1cpt_1 <- nlmixrUI(function(){
 expect_error(mod_1cpt_1 %>% tdmore(iov="EKA_IOV2")) # Error is raised: 'IOV term(s) EKA_IOV2 not defined in model'
 tdmore <- mod_1cpt_1 %>% tdmore(iov=c("EKA_IOV", "ECL_IOV"))
 
-
-#debugonce(tdmore:::model_predict)
-
 data1 <- tdmore %>% predict(newdata=0:96, regimen=regimen, parameters=c(EKA_IOV=1, ECL_IOV=0, EKA_IOV=-2, ECL_IOV=0))
 ggplot(data1, aes(x = TIME, y=CONC)) + geom_line()
 
-#observed <- data.frame(TIME=c(20, 75), CONC=c(0.8, 0.9))
 observed <- data.frame(TIME=c(7, 23, 75), CONC=c(1.25, 0.55, 0.8))
 
-#debugonce(tdmore:::estimate)
-#debug(tdmore:::pop_ll)
 fit <- estimate(object = tdmore, regimen = regimen, observed = observed)
+expectedValues <- c(ECL=-0.0102, EKA=0.0463, ECL_IOV=0.1026, EKA_IOV=0.0137, ECL_IOV=-0.1060, EKA_IOV=-0.0021)
+expect_equal(round(coef(fit), digits=4), expectedValues)
 
-#debugonce(tdmore:::predict.tdmorefit)
 data2 <- predict(fit, newdata=0:96, regimen=regimen)
 ggplot(data2, aes(x = TIME, y=CONC)) + geom_line()
 
-#debugonce(tdmore:::plot.tdmorefit)
 plot(fit, newdata=0:96)
+
+# Check OMEGA matrix transformation
+omega <- tdmore$omega
+omega[2,1] <- 0.1
+omega[1,2] <- 0.1
+omega[3,1] <- 0.11
+omega[1,3] <- 0.11
+omega[4,1] <- 0.12
+omega[1,4] <- 0.12
+omega[3,2] <- 0.13
+omega[2,3] <- 0.13
+omega[4,2] <- 0.14
+omega[2,4] <- 0.14
+omega[4,3] <- 0.15
+omega[3,4] <- 0.15
+
+tdmore$omega <- omega
+expandedOmega <- expandOmega(tdmore, 2)
+expectedOmega <- matrix(c(0.09,0.13,0.1,0.14,0.1,0.14,0.13,0.08,0.11,0.15,0.11,0.15,0.1,0.11,0.03,0.12,0,0.12,0.14,0.15,0.12,0.02,0.12,0,0.1,0.11,0,0.12,0.03,0.12,0.14,0.15,0.12,0,0.12,0.02), nrow = 6, ncol = 6)
+dimnames(expectedOmega) = list(names(expectedValues), names(expectedValues))
+expect_equal(expandedOmega, expectedOmega)
