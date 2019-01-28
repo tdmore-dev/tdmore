@@ -93,3 +93,40 @@ regimen <- data.frame(
 dose <- findDose(fit, regimen, target=data.frame(TIME=120, CONC=1), se.fit = T)
 plot(fit, newdata=0:120, regimen = dose$regimen)
 expect_equal(round(dose$dose[["dose.median"]], digits=4), 206.8491)
+
+# Test timevarying covariates
+regimen <- data.frame(
+  TIME=c(0,24,48),
+  AMT=150,
+  OCC=c(1,2,2)
+)
+
+mod_1cpt_1 <- nlmixrUI(function(){
+  ini({
+    TVV <- 70
+    TVKA <- 1
+    TVCL <- 4
+    ECL_IOV ~ 0.03
+    ECL ~ 0.09
+    EKA ~ 0.08
+    EKA_IOV ~ 0.02
+    EPS_PROP <- 0.1
+  })
+  model({
+    CL <- TVCL * (WT/70)^0.75 * exp(ECL + ECL_IOV)
+    V <- TVV * WT/70
+    KA <- TVKA * exp(EKA + EKA_IOV)
+    d/dt(abs) = - abs*KA
+    d/dt(center) = abs*KA - CL/V * center
+    CONC = center / V
+    CONC ~ prop(EPS_PROP)
+  })
+})
+tdmore <- mod_1cpt_1 %>% tdmore(iov=c("EKA_IOV", "ECL_IOV"))
+#debugonce(tdmore:::predict.tdmore)
+data3 <- tdmore %>% predict(newdata=seq(0, 96, by=0.1), regimen=regimen, parameters=c(EKA_IOV=1, ECL_IOV=0, EKA_IOV=-2, ECL_IOV=0), covariates=data.frame(TIME=c(0, 12.5, 24, 75), WT=c(70, 80, 85, 70)))
+
+data4 <- rbind(data1 %>% mutate(type="No covariate"), data3 %>% mutate(type="WT covariate"))
+ggplot(data4, aes(x = TIME, y=CONC, group=type, color=type)) + geom_line() +
+  geom_line()
+
