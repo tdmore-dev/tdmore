@@ -322,13 +322,13 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     fittedMC <- plyr::ddply(mc, 1, function(row) {
       res <- unlist(row[-1]) # Remove 'sample'
       names(res) <- names(pars)
-      pred <- predict.tdmore(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=unlist(res), covariates=covariates)
+      pred <- predict.tdmore(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=res, covariates=covariates)
       colnames(row) <- uniqueColnames
       resArray <- cbind(row, pred)
       resArray
     }, .progress=.progress, .parallel=.parallel)
 
-    colnames(fittedMC)[1:length(uniqueColnames)] <- colnames(mc)
+    colnames(fittedMC)[seq_len(length(uniqueColnames))] <- colnames(mc)
 
     if(is.na(level)) { #user requested full dataframe without summary
       return(fittedMC)

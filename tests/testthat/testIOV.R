@@ -13,8 +13,6 @@ regimen <- data.frame(
   OCC=c(1,2,2)
 )
 
-regimen2 <- flatten(regimen)
-
 mod_1cpt_1 <- nlmixrUI(function(){
   ini({
     TVV <- 70
@@ -40,11 +38,13 @@ mod_1cpt_1 <- nlmixrUI(function(){
 expect_error(mod_1cpt_1 %>% tdmore(iov="EKA_IOV2")) # Error is raised: 'IOV term(s) EKA_IOV2 not defined in model'
 tdmore <- mod_1cpt_1 %>% tdmore(iov=c("EKA_IOV", "ECL_IOV"))
 
+# Simple prediction test with IOV
 data1 <- tdmore %>% predict(newdata=0:96, regimen=regimen, parameters=c(EKA_IOV=1, ECL_IOV=0, EKA_IOV=-2, ECL_IOV=0))
 ggplot(data1, aes(x = TIME, y=CONC)) + geom_line()
 
 observed <- data.frame(TIME=c(7, 23, 75), CONC=c(1.25, 0.55, 0.8))
 
+# Simple estimate test with IOV
 fit <- estimate(object = tdmore, regimen = regimen, observed = observed)
 expectedValues <- c(ECL=-0.0102, EKA=0.0463, ECL_IOV=0.1026, EKA_IOV=0.0137, ECL_IOV=-0.1060, EKA_IOV=-0.0021)
 expect_equal(round(coef(fit), digits=4), expectedValues)
@@ -74,3 +74,22 @@ expandedOmega <- expandOmega(tdmore, 2)
 expectedOmega <- matrix(c(0.09,0.13,0.1,0.14,0.1,0.14,0.13,0.08,0.11,0.15,0.11,0.15,0.1,0.11,0.03,0.12,0,0.12,0.14,0.15,0.12,0.02,0.12,0,0.1,0.11,0,0.12,0.03,0.12,0.14,0.15,0.12,0,0.12,0.02), nrow = 6, ncol = 6)
 dimnames(expectedOmega) = list(names(expectedValues), names(expectedValues))
 expect_equal(expandedOmega, expectedOmega)
+
+# Test find dose
+regimen <- data.frame(
+  TIME=c(0,24,48,96),
+  AMT=c(150,150,150,NA),
+  OCC=c(1,2,2,3)
+)
+
+expect_error(findDose(fit, regimen, target=data.frame(TIME=120, CONC=1))) # Error: Number of occasions is different in tdmorefit regimen and findDose regimen
+
+regimen <- data.frame(
+  TIME=c(0,24,48,96),
+  AMT=c(150,150,150,NA),
+  OCC=c(1,2,2,2)
+)
+
+dose <- findDose(fit, regimen, target=data.frame(TIME=120, CONC=1), se.fit = T)
+plot(fit, newdata=0:120, regimen = dose$regimen)
+expect_equal(round(dose$dose[["dose.median"]], digits=4), 206.8491)

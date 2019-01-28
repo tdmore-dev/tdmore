@@ -16,37 +16,51 @@
 #' @export
 #' @importFrom stats uniroot
 findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), target, se.fit = FALSE, level = 0.95, mc.maxpts = 100, .progress="none", .parallel=FALSE, ...) {
-    if(!se.fit) {
-      # Find the best dose for the estimated parameters
-      rootFunction <- function(AMT) {
-        myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)
-        obs <- predict(tdmorefit, newdata=target, regimen=myRegimen)
-        obs[ , colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
-      }
-      result <- runUniroot(rootFunction, interval, ...)
-      return(convertResultToRecommendation(result, regimen, doseRows, target))
+  # Check if IOV is present in model
+  iov <- tdmorefit$tdmore$iov
+  if (!is.null(iov)) {
+    tdmorefitRegimen <- tdmorefit$regimen
+    assert_that(getMaxOccasion(tdmorefitRegimen) == getMaxOccasion(regimen),
+                msg="Number of occasions is different in tdmorefit regimen and findDose regimen")
+  }
 
-    } else {
-      # Find the dose for each Monte-Carlo sample
-      mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit), varcov=vcov(tdmorefit)) )
-      mc$sample <- 1:mc.maxpts
-      parameters <- coef(tdmorefit)
-
-      mcResult <- plyr::ddply(mc, 1, function(row) {
-        paramValues <- row[names(parameters)]
-
-        mcRootFunction <- function(AMT) {
-          myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)
-          obs <- predict.tdmore(object=tdmorefit$tdmore, newdata=target, regimen=myRegimen, parameters=unlist(paramValues), covariates=tdmorefit$covariates)
-          obs[, colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
-        }
-
-        result <- runUniroot(mcRootFunction, interval, ...)
-        cbind(row, dose=result$root, f.root=result$f.root, iter=result$iter, estim.prec=result$estim.prec)
-      }, .progress=.progress, .parallel=.parallel)
-
-      return(convertMCResultToRecommendation(mcResult, regimen, doseRows, target, level))
+  if (!se.fit) {
+    # Find the best dose for the estimated parameters
+    rootFunction <- function(AMT) {
+      myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)
+      obs <- predict(tdmorefit, newdata = target, regimen = myRegimen)
+      obs[, colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
     }
+    result <- runUniroot(rootFunction, interval, ...)
+    return(convertResultToRecommendation(result, regimen, doseRows, target))
+
+  } else {
+    # Find the dose for each Monte-Carlo sample
+    mc <- as.data.frame(mnormt::rmnorm(mc.maxpts, mean = coef(tdmorefit), varcov = vcov(tdmorefit)))
+    pNames <- names(coef(tdmorefit))
+    colnames(mc) <- pNames
+    mc <- cbind( sample=1:mc.maxpts, mc ) #make sure 'sample' is first column
+    uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
+
+    mcResult <- plyr::ddply(mc, 1, function(row) {
+      res <- unlist(row[-1]) # Remove 'sample'
+      names(res) <- pNames
+
+      mcRootFunction <- function(AMT) {
+        myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)
+        obs <- predict.tdmore(object = tdmorefit$tdmore, newdata = target, regimen = myRegimen, parameters = res, covariates = tdmorefit$covariates)
+        obs[, colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
+      }
+
+      result <- runUniroot(mcRootFunction, interval, ...)
+      colnames(row) <- uniqueColnames
+      cbind(row, dose = result$root, f.root = result$f.root, iter = result$iter, estim.prec = result$estim.prec)
+    }, .progress = .progress, .parallel = .parallel)
+
+    colnames(mcResult)[seq_len(length(uniqueColnames))] <- colnames(mc)
+
+    return(convertMCResultToRecommendation(mcResult, regimen, doseRows, target, level))
+  }
 }
 
 runUniroot <- function(rootFunction, interval, ...) {
