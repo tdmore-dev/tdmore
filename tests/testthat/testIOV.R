@@ -2,6 +2,7 @@ library(tdmore)
 library(nlmixr)
 library(ggplot2)
 library(testthat)
+library(dplyr)
 
 context("Test that IOV is working as expected")
 
