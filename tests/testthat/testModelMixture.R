@@ -100,3 +100,37 @@ plot(ipred)
 # Plot should be model 3 because covariates in m3 model
 ipred <-  estimate(object=set, observed = observed1, regimen = regimen, covariates = c(WT=70))
 plot(ipred)
+
+
+
+
+mod_1cpt <- nlmixrUI(function(){
+  ini({
+    TVV <- 70
+    TVKA <- 1
+    TVCL_FM <- 3.20 #Fast metabolizer: *320%
+    TVCL <- 2 #Slow metabolizer
+    ECL ~ 0.09 # SD=0.3
+    EPS_PROP <- 0.1
+  })
+  model({
+    CL <- TVCL * TVCL_FM^FM * exp(ECL)
+    V <- TVV
+    KA <- TVKA
+    d/dt(abs) = - abs*KA
+    d/dt(center) = abs*KA - CL/V * center
+    CONC = center / V
+    CONC ~ prop(EPS_PROP)
+  })
+})
+m1 <- (mod_1cpt) %>% tdmore()
+
+expect_error(
+  tdmore_mixture_covariates(m1, probs=c(0.8, 0.2), covariates=list(FM=0, FM=1 ) )
+)
+mixture <- tdmore_mixture_covariates(m1, probs=c(0.8, 0.2), covariates=list( c(FM=0), c(FM=1) ) )
+plot(mixture, regimen=regimen, newdata=0:24)
+
+observed1 <- data.frame(TIME=c(10, 20), CONC=c(1.20, 0.75))
+ipred <-  estimate(object=mixture, observed = observed1, regimen = regimen)
+plot(ipred)  ## TODO: The blue zone should be sampled from 80% slow metabolizers and 20% fast metabolizers

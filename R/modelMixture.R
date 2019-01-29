@@ -23,6 +23,63 @@ tdmore_mixture <- function(..., probs) {
   return(tdmoreMixture)
 }
 
+#' Create a TDMore mixture model, based on several options for a discrete covariate.
+#'
+#' @param a tdmore model with a discrete covariate
+#' @param probs a numeric vector with the a priori probabilities for the covariate values
+#' @param covariates a list with covariate values corresponding to the right names
+#'
+#' @return a tdmore_mixture object
+#' @export
+#' @example
+#' tdmore_mixture_covariates(tacrolimus_storset, probs=c(36, 205), covariates=list(c(CYP3A5=1), c(CYP3A5=0))
+tdmore_mixture_covariates <- function(m1, probs, covariates) {
+  N <- length(probs)
+  stopifnot(length(covariates) == N)
+
+  models <- purrr::map(covariates, ~ curry_covariate(m1, .x) )
+
+  do.call(tdmore_mixture, c(models, list(probs=probs))  )
+}
+
+#' Fill in a specific covariate in a model, transforming it into a more specific model
+curry_covariate <- function(m1, curriedCovariates) {
+  stopifnot( length(names(curriedCovariates)) == length(curriedCovariates) ) #all covariates should be named
+  stopifnot( all(names(curriedCovariates) %in% m1$covariates) )
+  stopifnot(  all(is.numeric(curriedCovariates))  )
+  class(m1) <- c("tdmoreCurried", class(m1))
+  m1$curriedCovariates <- curriedCovariates
+
+  m1
+}
+
+predict.tdmoreCurried <- function(object, ...) {
+  args <- list(...)
+
+  ## Covariates could be data.frame or numeric vector
+  if(is.null(args$covariates)) {
+    covariates <- object$curriedCovariates
+  } else {
+    if(is.data.frame(args$covariates)) {
+      covariates <- cbind( args$covariates, object$curriedCovariates )
+    } else {
+      covariates <- c(object$curriedCovariates, args$covariates)
+    }
+  }
+
+  class(object) <- setdiff(class(object), "tdmoreCurried" )
+
+  NextMethod(object=object, covariates=covariates, ...)
+}
+
+#' @export
+print.tdmoreCurried <- function(object, ...) {
+  cat("Pre-filled covariates: \n")
+  print(object$curriedCovariates)
+
+  NextMethod()
+}
+
 #' Predict from a TDMore mixture model. Default model will be used for predictions.
 #'
 #' @inheritParams predict.tdmore

@@ -27,8 +27,8 @@ pop_ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #'
 #' @return the prediction log likelihood
 pred_ll <- function(par, omega, tdmore, observed, regimen, covariates) {
-  pred <- predict.tdmore(object=tdmore, newdata=observed, regimen=regimen, parameters=par, covariates=covariates)
-  res <- residuals.tdmore(tdmore, observed, pred, log=TRUE)
+  pred <- predict(object=tdmore, newdata=observed, regimen=regimen, parameters=par, covariates=covariates)
+  res <- residuals(tdmore, observed, pred, log=TRUE)
   return(sum(res))
 }
 
@@ -308,7 +308,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
   pars <- processParameters(parameters, tdmorefit$tdmore, regimen, initialValues=coef(tdmorefit))
   if(is.null(covariates)) covariates <- tdmorefit$covariates
 
-  ipred <- predict.tdmore(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=pars, covariates=covariates)
+  ipred <- predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=pars, covariates=covariates)
   if(se.fit) {
     oNames <- names(newdata)
     oNames <- oNames[oNames != "TIME"]
@@ -322,7 +322,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     fittedMC <- plyr::ddply(mc, 1, function(row) {
       res <- unlist(row[-1]) # Remove 'sample'
       names(res) <- names(pars)
-      pred <- predict.tdmore(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=res, covariates=covariates)
+      pred <- predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=res, covariates=covariates)
       colnames(row) <- uniqueColnames
       resArray <- cbind(row, pred)
       resArray
