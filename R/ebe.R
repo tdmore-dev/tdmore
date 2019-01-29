@@ -69,14 +69,14 @@ ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #' @export
 estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", lower=NULL, upper=NULL, ...) {
 
-  if ("tdmore_set" %in% class(object)) {
+  if (inherits(object, "tdmore_set")) {
     # Either a tdmore or tdmore_mixture
     object <- findFirstCompatibleModel(object, covariates)
   }
-  if ("tdmore" %in% class(object)) {
+  if (inherits(object, "tdmore")) {
     tdmore <- object
   }
-  else if ("tdmore_mixture" %in% class(object)) {
+  else if (inherits(object, "tdmore_mixture")) {
     return(estimateMixtureModel(object, observed=observed, regimen=regimen, covariates=covariates, par=par, method=method, lower=lower, upper=upper, ...))
   }
   else {

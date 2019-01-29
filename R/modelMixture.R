@@ -1,29 +1,28 @@
 #' Create a TDMore mixture model.
 #'
-#' @param ... 1 or more tdmore models, to be added in the set.
-#' @param probs a numeric vector with the model probabilities. Sum must be 1.
+#' @param ... 2 or more tdmore models that describe different subpopulations
+#' @param probs 'a priori' probabilities for belonging to the different subpopulations, numeric vector
 #'
 #' @return a tdmore_set object
 #' @export
 tdmore_mixture <- function(..., probs) {
   models <- list(...)
   for (model in models) {
-    assert_that("tdmore" %in% class(model), msg = "Only tdmore models can be added to the tdmore mixture")
+    assert_that(inherits(model, "tdmore"), msg = "Only tdmore models can be added to the tdmore mixture")
   }
   assert_that(length(models) >= 2, msg = "You should provide at least two tdmore models to create a tdmore mixture")
   assert_that(is.numeric(probs), msg = "probs is not numeric")
   assert_that(length(models) == length(probs), msg = "There must be as many models as probabilities defined in the numeric vector 'probs'")
-
+  assert_that(isTRUE(all.equal(target = 1, current = sum(probs), tolerance = 1e-6)), msg = "Sum of probabilities must be 1")
   tdmoreMixture <- structure(list(
     models=models,
-    probs=probs,
-    defaultModel=1 # Index of the default model in the list of models
+    probs=probs
   ), class="tdmore_mixture")
 
   return(tdmoreMixture)
 }
 
-#' Predict from a TDMore mixture model. Default model will be used for predictions.
+#' Predict from a TDMore mixture model. The model with the highest probability is used for the predictions.
 #'
 #' @inheritParams predict.tdmore
 #' @param ... extra arguments for the call to the model
@@ -33,7 +32,7 @@ tdmore_mixture <- function(..., probs) {
 #' @export
 predict.tdmore_mixture <- function(object, newdata, regimen=NULL, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
   tdmoreMixture <- object
-  chosenModel <- tdmoreMixture$models[[tdmoreMixture$defaultModel]]
+  chosenModel <- tdmoreMixture$models[[which.max(tdmoreMixture$probs)]]
   return(chosenModel %>% predict(newdata, regimen, parameters, covariates, se, level, ...))
 }
 

@@ -55,6 +55,7 @@ m2 <- (mod_1cpt_2) %>% tdmore()
 plot(m1, regimen)
 plot(m2, regimen)
 
+expect_error(tdmore_mixture(m1, m2, probs = c(0.5, 0.51))) # Error: Sum of probabilities must be 1
 mixture <- tdmore_mixture(m1, m2, probs = c(0.5, 0.5))
 
 # Model 1 is the most likely model
