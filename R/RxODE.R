@@ -130,7 +130,7 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
       currentTimes <- times[times >= occasionTime & times <= nextOccasionTime]
       currentTimes <- if(is.finite(nextOccasionTime)) {unique(c(currentTimes, nextOccasionTime))} else {currentTimes}
       if(covariateAsDataFrame) {
-        currentCovariates %>% subset(currentCovariates$TIME >= occasionTime & currentCovariates$TIME < nextOccasionTime)
+        currentCovariates <- currentCovariates %>% subset(currentCovariates$TIME >= occasionTime & currentCovariates$TIME < nextOccasionTime)
       }
       for(iov_term in iov) {
         iovValueIndexes <- which(names(iovParameters)==iov_term)
@@ -150,7 +150,7 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     if(length(currentTimes) > 0) ev$add.sampling(time=currentTimes)
     ev <- addRegimenToEventTable(ev, currentRegimen)
 
-    # Treat missing times (TODO: should be done outside loop and filtered here)
+    # Treat missing times
     if(covariateAsDataFrame) {
       missingTimes <- currentCovariates$TIME[ !(currentCovariates$TIME %in% ev$get.sampling()$time) ]
       if(length(missingTimes) > 0) ev$add.sampling(missingTimes)
@@ -168,7 +168,7 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     inits <- as.numeric(result[nrow(result),][modVars$state])
     names(inits) <- modVars$state
 
-    # Remove last row if not last iteration (TODO: not true if last row of not last iteration is observation)
+    # Remove last row if not last iteration
     if(!last) result <- result[-nrow(result),]
 
     # Only get the values we want

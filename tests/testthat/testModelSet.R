@@ -24,6 +24,7 @@ regimen <- data.frame(
   RATE=c(1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
 )
 
+# Predict without covariates
 data1 <- predict(
   object = set,
   newdata = data.frame(TIME = seq(0, 24, by = 0.5), CONC = NA),
@@ -38,6 +39,10 @@ ggplot(data1, aes(x=TIME, y=CONC)) +
 
 pred <- estimate(object = set, regimen = regimen)
 
+# Check tdmore model in pred does not have covariates
+expect_true(length(pred$tdmore$covariates)==0)
+
+# Predict with covariates
 data2 <- predict(
   object = set,
   newdata = data.frame(TIME = seq(0, 24, by = 0.5), CONC = NA),
@@ -52,4 +57,8 @@ ggplot(data2, aes(x=TIME, y=CONC)) +
   scale_color_manual(values=c("steelblue2"))
 
 pred <- estimate(object = set, regimen = regimen, covariates = c(WT=25))
+
+# Check tdmore model in pred does have covariates
+expect_true(pred$tdmore$covariates==c("WT"))
+
 

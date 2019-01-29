@@ -2,7 +2,7 @@
 % Please edit documentation in R/modelMixture.R
 \name{predict.tdmore_mixture}
 \alias{predict.tdmore_mixture}
-\title{Predict from a TDMore mixture model. Default model will be used for predictions.}
+\title{Predict from a TDMore mixture model. The model with the highest probability is used for the predictions.}
 \usage{
 \method{predict}{tdmore_mixture}(object, newdata, regimen = NULL,
   parameters = NULL, covariates = NULL, se = FALSE, level = 0.95,
@@ -35,5 +35,5 @@ The first row of the data.frame should be time 0.}
 A data.frame with all observed values at the given time points
 }
 \description{
-Predict from a TDMore mixture model. Default model will be used for predictions.
+Predict from a TDMore mixture model. The model with the highest probability is used for the predictions.
 }

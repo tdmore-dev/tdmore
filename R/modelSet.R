@@ -45,10 +45,10 @@ predict.tdmore_set <- function(object, newdata, regimen=NULL, parameters=NULL, c
 findFirstCompatibleModel <- function(tdmore_set, covariates) {
   chosenModel <- NULL
   for (model in tdmore_set$models) {
-    isMixtureModel <- "tdmore_mixture" %in% class(model)
+    isMixtureModel <- inherits(model, "tdmore_mixture")
     if (isMixtureModel) {
       # Take default tdmore model from the mixture
-      modelToCheck <- model$models[[model$defaultModel]]
+      modelToCheck <- model$models[[which.max(model$probs)[1]]]
     } else {
       # Model to check is a tdmore model
       modelToCheck <- model
