@@ -7,9 +7,9 @@
 tdmore_mixture(..., probs)
 }
 \arguments{
-\item{...}{1 or more tdmore models, to be added in the set.}
+\item{...}{2 or more tdmore models that describe different subpopulations}
 
-\item{probs}{a numeric vector with the model probabilities. Sum must be 1.}
+\item{probs}{'a priori' probabilities for belonging to the different subpopulations, numeric vector}
 }
 \value{
 a tdmore_set object

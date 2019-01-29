@@ -60,24 +60,32 @@ mixture <- tdmore_mixture(m1, m2, probs = c(0.5, 0.5))
 
 # Model 1 is the most likely model
 observed1 <- data.frame(TIME=c(10, 20), CONC=c(1.20, 0.75))
-ipred <-  estimate(object=mixture, observed = observed1, regimen = regimen)
-plot(ipred)
+ipred_mixture <-  estimate(object=mixture, observed = observed1, regimen = regimen)
+plot(ipred_mixture)
+expect_true(ipred_mixture$winner == 1)
+expect_equal(round(ipred_mixture$fits_prob$IPk, digits = 4), c(0.9248, 0.0752))
 
 # Model 2 is the most likely model
 observed2 <- data.frame(TIME=c(10, 20), CONC=c(1.5, 1.25))
-ipred <-  estimate(object=mixture, observed = observed2, regimen = regimen)
-plot(ipred)
+ipred_mixture <-  estimate(object=mixture, observed = observed2, regimen = regimen)
+plot(ipred_mixture)
+expect_true(ipred_mixture$winner == 2)
+expect_equal(round(ipred_mixture$fits_prob$IPk, digits = 4), c(0.1500, 0.8500))
 
 # Model 2 is the most likely model
 observed3 <- data.frame(TIME=c(10, 15, 20), CONC=c(1.5, 1.5, 0.75))
-ipred <-  estimate(object=mixture, observed = observed3, regimen = regimen)
-plot(ipred)
+ipred_mixture <-  estimate(object=mixture, observed = observed3, regimen = regimen)
+plot(ipred_mixture)
+expect_true(ipred_mixture$winner == 2)
+expect_equal(round(ipred_mixture$fits_prob$IPk, digits = 4), c(0.4910, 0.5090))
 
 # Model 2 was the most likely but probabilities are now different, so model 1 is the most likely model
 mixture <- tdmore_mixture(m1, m2, probs = c(0.6, 0.4))
 observed3 <- data.frame(TIME=c(10, 15, 20), CONC=c(1.5, 1.5, 0.75))
-ipred <-  estimate(object=mixture, observed = observed3, regimen = regimen)
-plot(ipred)
+ipred_mixture <-  estimate(object=mixture, observed = observed3, regimen = regimen)
+plot(ipred_mixture)
+expect_true(ipred_mixture$winner == 1)
+expect_equal(round(ipred_mixture$fits_prob$IPk, digits = 4), c(0.5913, 0.4087))
 
 # It should be also possible to predict from a mixture, default model index is used
 data1 <- predict(

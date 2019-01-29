@@ -17,23 +17,43 @@
 #' @importFrom graphics plot
 #' @export
 plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, population=TRUE, fit=TRUE, mc.maxpts=100, .progress="none", ...) {
-  tdmorefit <- x
+  if(inherits(x, "tdmorefit_mixture")) {
+    tdmorefit <- x$fits[[1]] # Does not matter which one, fit is used for regimen and covariates infos
+    tdmore <- x$mixture # tdmore_mixture
+    mixture <- T
+  } else {
+    tdmorefit <- x
+    tdmore <- x$tdmore
+    mixture <- F
+  }
+
   newdata <- processNewData(newdata, tdmorefit, regimen=regimen, N=1000)
   if(is.null(regimen)) regimen <- tdmorefit$regimen
 
   # Compute IPRED
   if(fit) {
-    ipred <- tdmorefit %>% predict(newdata, regimen=regimen) %>% meltPredictions()
+    ipred <- x %>% predict(newdata, regimen=regimen) %>% meltPredictions()
     if (se.fit) {
-      ipredre <- tdmorefit %>% predict.tdmorefit(newdata, regimen=regimen, se.fit=T, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% meltPredictions(se=T)
+      ipredre <- x %>% predict(newdata, regimen=regimen, se.fit=T, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% meltPredictions(se=T)
     }
   }
   yVars <- colnames(newdata)[colnames(newdata) != "TIME"]
 
   # Compute PRED
   if(population) {
-    pred <- tdmorefit$tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates) %>% predict(newdata) %>% meltPredictions()
-    predre <- tdmorefit$tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates) %>% predict(newdata, se.fit=T) %>% meltPredictions(se=T)
+    pred_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates)
+    if(mixture) {
+      pred_tmp$fits_prob <- x$fits_prob # Use same fit probabilities as ipred to have a coherent plot
+      pred_tmp$winner <- x$winner # Same winner
+    }
+    pred <- pred_tmp %>% predict(newdata) %>% meltPredictions()
+
+    predre_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates)
+    if(mixture) {
+      predre_tmp$fits_prob <- x$fits_prob # Use same fit probabilities as ipred to have a coherent plot
+      predre_tmp$winner <- x$winner # Same winner
+    }
+    predre <- predre_tmp %>% predict(newdata, se.fit=T) %>% meltPredictions(se=T)
   }
 
   obs <- model.frame.tdmorefit(tdmorefit) %>% meltPredictions()
@@ -50,6 +70,15 @@ plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, populatio
   plot <- plot +
     ggplot2::facet_wrap(~variable)
   return(plot)
+}
+
+#' Plot a tdmorefit mixture object.
+#'
+#' @param x the tdmorefit mixture object
+#' @inheritParams predict.tdmorefit
+#' @export
+plot.tdmorefit_mixture <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, population=TRUE, fit=TRUE, mc.maxpts=100, .progress="none", ...) {
+  plot.tdmorefit(x, newdata=newdata, regimen=regimen, se.fit=se.fit, population=population, fit=fit, mc.maxpts=mc.maxpts, .progress=.progress, ...)
 }
 
 #' Plot a tdmore object (typical profile of the population and between subject variability).

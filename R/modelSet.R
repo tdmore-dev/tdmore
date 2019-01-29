@@ -48,7 +48,7 @@ findFirstCompatibleModel <- function(tdmore_set, covariates) {
     isMixtureModel <- inherits(model, "tdmore_mixture")
     if (isMixtureModel) {
       # Take default tdmore model from the mixture
-      modelToCheck <- model$models[[which.max(model$probs)]]
+      modelToCheck <- model$models[[which.max(model$probs)[1]]]
     } else {
       # Model to check is a tdmore model
       modelToCheck <- model

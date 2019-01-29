@@ -27,7 +27,6 @@ tdmore_mixture <- function(..., probs) {
 #' @inheritParams predict.tdmore
 #' @param ... extra arguments for the call to the model
 #'
-#'
 #' @return A data.frame with all observed values at the given time points
 #' @export
 predict.tdmore_mixture <- function(object, newdata, regimen=NULL, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
@@ -42,7 +41,7 @@ predict.tdmore_mixture <- function(object, newdata, regimen=NULL, parameters=NUL
 #' @inheritParams estimate
 #' @param ... extra parameters to pass to the optim function
 #'
-#' @return A tdmorefit object
+#' @return A tdmorefit_mixture object
 #' @importFrom stats optim
 estimateMixtureModel <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", lower=NULL, upper=NULL, ...) {
   mixture <- object
@@ -56,8 +55,52 @@ estimateMixtureModel <- function(object, observed=NULL, regimen, covariates=NULL
                probs = probs)
   mixtureProbs$IPkNumerator <- mixtureProbs$lik * mixtureProbs$probs
   mixtureProbs$IPk <- mixtureProbs$IPkNumerator/sum(mixtureProbs$IPkNumerator)
-  winnerIndex <- which(mixtureProbs$IPk == max(mixtureProbs$IPk))
 
-  return(fits[[winnerIndex]])
+  retValue <- structure(list(
+    mixture = mixture,
+    fits = fits,
+    fits_prob = mixtureProbs,
+    winner = which(mixtureProbs$IPk == max(mixtureProbs$IPk))[1] # [1] in case of several winners
+  ), class = c("tdmorefit_mixture"))
+
+  return(retValue)
+}
+
+#' Predict from a tdmorefit mixture object.
+#'
+#' @inheritParams predict.tdmorefit
+#' @param ... ignored
+#'
+#' @return a data.frame
+#' @export
+predict.tdmorefit_mixture <- function(object, newdata=NULL, regimen=NULL, parameters=NULL, covariates=NULL, se.fit=FALSE, level=0.95, mc.maxpts=100, .progress="none", .parallel=FALSE, ...) {
+
+  fits <- object$fits
+  mixture <- object$mixture
+  winner <- object$winner
+  ipred <- predict(fits[[winner]], newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates, se.fit=F)
+
+  if(se.fit==TRUE) {
+    fits_prob <- object$fits_prob
+    mixnum <- sample(seq_along(fits_prob$IPk), size=mc.maxpts, replace=T, prob=fits_prob$IPk)
+    fits_prob <- cbind(fit=seq_len(nrow(fits_prob)), fits_prob) # Fit column added with fit index
+
+    fittedMC <- plyr::ddply(fits_prob, 1, function(row) {
+              fitIndex <- row[["fit"]]
+              samples <- sum(mixnum==fitIndex)
+              fit <- fits[[fitIndex]]
+             predict(fit, newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates, se.fit=T, level=NA, mc.maxpts=samples, .progress="none", .parallel=FALSE)
+           })
+
+    if(is.na(level)) { #user requested full dataframe without summary
+      return(fittedMC)
+    }
+    oNames <- getPredictOutputNames(newdata, colnames(fittedMC), names(coef(fits[[1]])))
+    retValue <- summariseFittedMC(fittedMC, ipred, level, oNames)
+    return(retValue)
+
+  } else {
+    ipred
+  }
 }
 

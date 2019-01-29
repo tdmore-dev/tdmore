@@ -310,9 +310,6 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
 
   ipred <- predict.tdmore(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=pars, covariates=covariates)
   if(se.fit) {
-    oNames <- names(newdata)
-    oNames <- oNames[oNames != "TIME"]
-    pNames <- names(coef(tdmorefit))
     mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit), varcov=vcov(tdmorefit)) )
     colnames(mc) <- names(pars)
     mc <- cbind( sample=1:mc.maxpts, mc ) #make sure 'sample' is first column
@@ -333,27 +330,54 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     if(is.na(level)) { #user requested full dataframe without summary
       return(fittedMC)
     }
+    oNames <- getPredictOutputNames(newdata, colnames(fittedMC), names(coef(tdmorefit)))
+    return(summariseFittedMC(fittedMC, ipred, level, oNames))
 
-    # By default, if newdata is numeric vector (oNames is null), all outputs from RxODE are returned
-    if(is.null(oNames)) {
-      colnames <- colnames(fittedMC)
-      oNames <- colnames[!(colnames %in% c("time", "TIME", "sample", pNames))]
-    }
-
-    a <- (1-level)/2
-    plyr::ddply(fittedMC, "TIME", function(x) {
-      result <- list(TIME = x$TIME[1])
-      for(i in oNames) {
-        result[i] <- ipred[ipred$TIME==x$TIME[1], i]
-        result[paste0(i, ".median")] <- median(x[,i])
-        result[paste0(i, ".lower")] <- quantile(x[,i], probs=a)
-        result[paste0(i, ".upper")] <- quantile(x[,i], probs=1-a)
-      }
-      unlist(result)
-    })
   } else {
     ipred
   }
+}
+
+#' Return the output names of the fitted MC matrix.
+#'
+#' @param newdata the newdata data frame
+#' @param colnames current column names
+#' @param pNames parameters names
+#'
+#' @return a vector with all the output names
+getPredictOutputNames <- function(newdata, columnNames, pNames) {
+  oNames <- names(newdata)
+  oNames <- oNames[oNames != "TIME"]
+
+  # By default, if newdata is numeric vector (oNames is null), all outputs from RxODE are returned
+  if(is.null(oNames)) {
+    oNames <- columnNames[!(columnNames %in% c("time", "TIME", "fit", "sample", pNames))]
+  }
+  return(oNames)
+}
+
+#' Summarise fitted MC matrix over all the samples.
+#' TIME column must be present.
+#'
+#' @param fittedMC fitted MC matrix (result of predict.tdmorefit)
+#' @param ipred result of predict.tdmorefit
+#' @param level ignored
+#' @param oNames outputs to summarise
+#'
+#' @return a summarised data frame
+summariseFittedMC <- function(fittedMC, ipred, level, oNames) {
+  a <- (1-level)/2
+  retValue <- plyr::ddply(fittedMC, "TIME", function(x) {
+    result <- list(TIME = x$TIME[1])
+    for(i in oNames) {
+      result[i] <- ipred[ipred$TIME==x$TIME[1], i]
+      result[paste0(i, ".median")] <- median(x[,i])
+      result[paste0(i, ".lower")] <- quantile(x[,i], probs=a)
+      result[paste0(i, ".upper")] <- quantile(x[,i], probs=1-a)
+    }
+    unlist(result)
+  })
+  return(retValue)
 }
 
 #' Get the log-likelihood of the predicted values.

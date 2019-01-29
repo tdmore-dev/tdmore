@@ -30,7 +30,7 @@ If not specified, we estimate the population prediction}
 \item{...}{extra parameters to pass to the optim function}
 }
 \value{
-A tdmorefit object
+A tdmorefit_mixture object
 }
 \description{
 Calculate the Empirical Bayesian Estimate parameters that predict
