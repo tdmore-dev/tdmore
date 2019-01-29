@@ -341,7 +341,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
 #' Return the output names of the fitted MC matrix.
 #'
 #' @param newdata the newdata data frame
-#' @param colnames current column names
+#' @param columnNames current column names
 #' @param pNames parameters names
 #'
 #' @return a vector with all the output names

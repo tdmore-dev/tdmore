@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Flatten a treatment regimen — flatten • tdmore</title>
+<title>Predict from a tdmorefit mixture object. — predict.tdmorefit_mixture • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Flatten a treatment regimen — flatten" />
+<meta property="og:title" content="Predict from a tdmorefit mixture object. — predict.tdmorefit_mixture" />
 
-<meta property="og:description" content="Flatten a treatment regimen" />
+<meta property="og:description" content="Predict from a tdmorefit mixture object." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -127,44 +127,80 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Flatten a treatment regimen</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/regimen.R'><code>R/regimen.R</code></a></small>
-    <div class="hidden name"><code>flatten.Rd</code></div>
+    <h1>Predict from a tdmorefit mixture object.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/modelMixture.R'><code>R/modelMixture.R</code></a></small>
+    <div class="hidden name"><code>predict.tdmorefit_mixture.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Flatten a treatment regimen</p>
+    <p>Predict from a tdmorefit mixture object.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>flatten</span>(<span class='no'>regimen</span>)</pre>
+    <pre class="usage"><span class='co'># S3 method for tdmorefit_mixture</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>object</span>, <span class='kw'>newdata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>parameters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='kw'>.progress</span> <span class='kw'>=</span> <span class='st'>"none"</span>, <span class='kw'>.parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>object</th>
+      <td><p>A tdmorefit object</p></td>
+    </tr>
+    <tr>
+      <th>newdata</th>
+      <td><p>A data.frame with new data and the columns to predict,
+or a numeric vector to specify times, and predict all model output
+or NULL to interpolate between 0 and the maximum known times</p></td>
+    </tr>
+    <tr>
       <th>regimen</th>
-      <td><p>data.frame with treatment regimen</p></td>
+      <td><p>Treatment regimen</p></td>
+    </tr>
+    <tr>
+      <th>parameters</th>
+      <td><p>Set parameters. If missing, or if only part of the parameters are specified,
+the other parameters are taken from the tdmorefit object</p></td>
+    </tr>
+    <tr>
+      <th>covariates</th>
+      <td><p>the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0</p></td>
+    </tr>
+    <tr>
+      <th>se.fit</th>
+      <td><p>TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower</p></td>
+    </tr>
+    <tr>
+      <th>level</th>
+      <td><p>The confidence interval, or NA to return all mc.maxpts results</p></td>
+    </tr>
+    <tr>
+      <th>mc.maxpts</th>
+      <td><p>Maximum number of points to sample in Monte Carlo simulation</p></td>
+    </tr>
+    <tr>
+      <th>.progress</th>
+      <td><p>see plyr::ddply</p></td>
+    </tr>
+    <tr>
+      <th>.parallel</th>
+      <td><p>see plyr::ddply</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>ignored</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The equivalent treatment regimen with all ADDL objects moved to 0</p>
+    <p>a data.frame</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>flatten</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>TIME</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>AMT</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>ADDL</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>II</span><span class='kw'>=</span><span class='fl'>24</span>))</div><div class='output co'>#&gt;   TIME AMT
-#&gt; 1   10  10
-#&gt; 2   34  10
-#&gt; 3   58  10
-#&gt; 4   82  10
-#&gt; 5  106  10
-#&gt; 6  130  10
-#&gt; 7  154  10
-#&gt; 8  178  10
-#&gt; 9  202  10</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -172,9 +208,7 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>

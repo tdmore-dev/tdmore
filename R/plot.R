@@ -75,7 +75,7 @@ plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, populatio
 #' Plot a tdmorefit mixture object.
 #'
 #' @param x the tdmorefit mixture object
-#' @inheritParams predict.tdmorefit
+#' @inheritParams plot.tdmorefit
 #' @export
 plot.tdmorefit_mixture <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, population=TRUE, fit=TRUE, mc.maxpts=100, .progress="none", ...) {
   plot.tdmorefit(x, newdata=newdata, regimen=regimen, se.fit=se.fit, population=population, fit=fit, mc.maxpts=mc.maxpts, .progress=.progress, ...)

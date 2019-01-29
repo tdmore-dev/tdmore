@@ -11,17 +11,19 @@
 \arguments{
 \item{x}{the tdmorefit mixture object}
 
-\item{newdata}{A data.frame with new data and the columns to predict,
-or a numeric vector to specify times, and predict all model output
-or NULL to interpolate between 0 and the maximum known times}
+\item{newdata}{a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times}
 
 \item{regimen}{Treatment regimen}
 
-\item{se.fit}{TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower}
+\item{se.fit}{add a curve for the confidence interval around the fit}
 
-\item{mc.maxpts}{Maximum number of points to sample in Monte Carlo simulation}
+\item{population}{should I plot the population prediction (in blue) ?}
 
-\item{.progress}{see plyr::ddply}
+\item{fit}{should I plot the fit (in red) ?}
+
+\item{mc.maxpts}{maximum number of points to use for the monte carlo fit}
+
+\item{.progress}{either "none" or "text" to see calculation progress of monte carlo simulations}
 
 \item{...}{ignored}
 }

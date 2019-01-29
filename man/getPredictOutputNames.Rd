@@ -9,9 +9,9 @@ getPredictOutputNames(newdata, columnNames, pNames)
 \arguments{
 \item{newdata}{the newdata data frame}
 
-\item{pNames}{parameters names}
+\item{columnNames}{current column names}
 
-\item{colnames}{current column names}
+\item{pNames}{parameters names}
 }
 \value{
 a vector with all the output names

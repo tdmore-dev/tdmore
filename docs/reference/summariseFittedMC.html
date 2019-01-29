@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Flatten a treatment regimen — flatten • tdmore</title>
+<title>Summarise fitted MC matrix over all the samples.
+TIME column must be present. — summariseFittedMC • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +31,11 @@
 
 
 
-<meta property="og:title" content="Flatten a treatment regimen — flatten" />
+<meta property="og:title" content="Summarise fitted MC matrix over all the samples.
+TIME column must be present. — summariseFittedMC" />
 
-<meta property="og:description" content="Flatten a treatment regimen" />
+<meta property="og:description" content="Summarise fitted MC matrix over all the samples.
+TIME column must be present." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -127,44 +130,47 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Flatten a treatment regimen</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/regimen.R'><code>R/regimen.R</code></a></small>
-    <div class="hidden name"><code>flatten.Rd</code></div>
+    <h1>Summarise fitted MC matrix over all the samples.
+TIME column must be present.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
+    <div class="hidden name"><code>summariseFittedMC.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Flatten a treatment regimen</p>
+    <p>Summarise fitted MC matrix over all the samples.
+TIME column must be present.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>flatten</span>(<span class='no'>regimen</span>)</pre>
+    <pre class="usage"><span class='fu'>summariseFittedMC</span>(<span class='no'>fittedMC</span>, <span class='no'>ipred</span>, <span class='no'>level</span>, <span class='no'>oNames</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>regimen</th>
-      <td><p>data.frame with treatment regimen</p></td>
+      <th>fittedMC</th>
+      <td><p>fitted MC matrix (result of predict.tdmorefit)</p></td>
+    </tr>
+    <tr>
+      <th>ipred</th>
+      <td><p>result of predict.tdmorefit</p></td>
+    </tr>
+    <tr>
+      <th>level</th>
+      <td><p>ignored</p></td>
+    </tr>
+    <tr>
+      <th>oNames</th>
+      <td><p>outputs to summarise</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The equivalent treatment regimen with all ADDL objects moved to 0</p>
+    <p>a summarised data frame</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>flatten</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>TIME</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>AMT</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>ADDL</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>II</span><span class='kw'>=</span><span class='fl'>24</span>))</div><div class='output co'>#&gt;   TIME AMT
-#&gt; 1   10  10
-#&gt; 2   34  10
-#&gt; 3   58  10
-#&gt; 4   82  10
-#&gt; 5  106  10
-#&gt; 6  130  10
-#&gt; 7  154  10
-#&gt; 8  178  10
-#&gt; 9  202  10</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -172,9 +178,7 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>
