@@ -5,7 +5,7 @@
 #' @param fun a function with 'time' as the first argument, and additional parameters as needed.
 #' In case parameters will be estimated, they should have a mean of '0' and be normal-distributed.
 #'
-#' The function can also include parameters `TIME`, `AMT`, `II`, `ADDL`, `RATE`, `DURATION` or `CMT`.
+#' The function can also include parameters `TIME`, `AMT`, `II`, `ADDL`, `RATE`, `DURATION`, `CMT`.
 #' These are then taken from the treatment regimen.
 #'
 #' @return An algebraic prediction model
@@ -16,26 +16,45 @@ algebraic <- function(fun) {
   tArg <- argNames[1]
   argNames <- argNames[-1] #remove first argument; it is always the evaluation time
 
-  regimenNames <- c("TIME", "AMT", "II", "ADDL", "RATE", "DURATION", "CMT")
+  regimenNames <- c("TIME", "AMT", "II", "ADDL", "RATE", "DURATION", "CMT", "OCC")
   regimenNames <- argNames[argNames %in% regimenNames]
   pNames <- argNames[! argNames %in% regimenNames]
 
   structure(list(
-    predictFunction = function(times, regimen, parameters) {
-      if(!all(colnames(regimen) %in% regimenNames) || !all(regimenNames %in% colnames(regimen)))
-        stop("Algebraic function requires regimen names `", paste(regimenNames, collapse=", "), "',
-             but regimen provided the following columns: `", paste(colnames(regimen), collapse=", "), "'")
+    predictFunction = function(times, regimen, parameters, iov) {
+      # if(!all(colnames(regimen) %in% regimenNames) || !all(regimenNames %in% colnames(regimen)))
+      #   stop("Algebraic function requires regimen names `", paste(regimenNames, collapse=", "), "',
+      #        but regimen provided the following columns: `", paste(colnames(regimen), collapse=", "), "'")
       if(!all(names(parameters) %in% pNames) || !all(pNames %in% names(parameters)))
         stop("Algebraic function requires parameters `", paste(pNames, collapse=", "), "',
              but was provided the following: `", paste(names(parameters), collapse=", "), "'")
       if(anyNA(regimen)) stop("The provided regimen contains NA. Cannot calculate algebraic model...")
-      CONCs = apply(regimen, 1, function(x) {
+
+      CONCs = apply(regimen, 1, function(regimenRow) {
+        iovPrediction <- !is.null(iov)
+        iovIndexes <- which(names(parameters) %in% iov)
+        iovParameters <- parameters[iovIndexes]
+        parameters <- parameters[!duplicated(names(parameters))]
+
+        if(iovPrediction) {
+          occasion <- regimenRow[['OCC']]
+          for(iov_term in iov) {
+            iovValueIndexes <- which(names(iovParameters)==iov_term)
+            iovValue <- iovParameters[[iovValueIndexes[occasion]]]
+            if(is.null(iovValue)) {
+              stop(paste("Missing IOV values for", iov_term))
+            }
+            parameters[iov_term] <- iovValue
+          }
+        }
+
         args <- list(times)
         names(args) <- tArg
 
-        args <- c(args, as.list(x)) # add regimen names
-
+        regimenRow
+        args <- c(args, as.list(regimenRow[!(names(regimenRow) %in% c("OCC"))])) # add regimen names
         args <- c(args, parameters) # add parameters
+
         funValue <- do.call(fun, args=args)
         ifelse(times < args$TIME, 0, funValue)
       })
@@ -60,41 +79,32 @@ algebraic <- function(fun) {
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)
 #' @param parameters a named numeric vector
 #' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
-#' @param iov character array with the IOV terms, NULL if no IOV - NOT IMPLEMENTED
+#' @param iov character array with the IOV terms, NULL if no IOV, IOV on KA only
 #'
 #' @return
 #' A data.frame similar to the newdata data frame, but with CONC column filled out.
 #'
 #' @export
 #' @keywords internal
-model_predict.algebraic <- function(model, times,
-                                    regimen=data.frame(TIME=numeric(), AMT=numeric()),
-                                    parameters=numeric(),
-                                    covariates=NULL, iov=NULL, extraArguments=list()) {
-  # Verify arguments are good
-  times <- as.numeric(times)
+model_predict.algebraic <- function(model, times, regimen=data.frame(TIME=numeric(), AMT=numeric(), OCC=numeric()), parameters=numeric(), covariates=NULL, iov=NULL, extraArguments=list()) {
 
-  assertthat::assert_that("data.frame" %in% class(regimen))
-  assertthat::assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
-  assertthat::assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "II", "ADDL")))
-  # if either II or ADDL is mentioned, the other one needs to be present as well
-  if("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))
-    assertthat::assert_that(all(c("II", "ADDL") %in% colnames(regimen)))
+  # Check times and regimen objects
+  checkTimes(times)
+  checkRegimen(regimen, iov)
   regimen <- flatten(regimen)
 
+  # Check parameters and covariates
   assertthat::assert_that(is.numeric(parameters))
   if(is.data.frame(covariates)) stop("Time-varying covariates not supported")
   params <- c(parameters, covariates)
   pNames <- names(params)
-
   assertthat::assert_that(all(pNames %in% model$parameters))
   assertthat::assert_that(all(model$parameters %in% pNames))
 
-  # All arguments look good, let's run the simulation
-  CONC <- model$predictFunction(times, regimen, params)
+  # Predict concentrations
+  conc <- model$predictFunction(times, regimen, params, iov)
 
-  # Only get the values we want
-  data.frame(TIME=times, CONC=CONC)
+  return(data.frame(TIME=times, CONC=conc))
 }
 
 
@@ -103,12 +113,13 @@ model_predict.algebraic <- function(model, times,
 #' @param model The algebraic model
 #' @param res_var the residual variability
 #' @param omega the omega matrix of the model
+#' @param iov iov terms
 #' @param ... extra arguments will be passed to the model_predict call
 #'
 #' @return a tdmore object, capable of estimating bayesian individual parameters
 #' @export
-tdmore.algebraic <- function(model, res_var, omega, ...) {
-  if(is.numeric(omega)) omega <- vectorToDiagonalMatrix(omega)
+tdmore.algebraic <- function(model, res_var, omega, iov=NULL) {
+  if(is.numeric(omega) && !is.matrix(omega)) omega <- vectorToDiagonalMatrix(omega)
   if(!all(colnames(omega) %in% model$parameters))
     stop("Not all omega parameters are known to the model...")
 
@@ -123,7 +134,7 @@ tdmore.algebraic <- function(model, res_var, omega, ...) {
     res_var=res_var,
     parameters=parameters,
     covariates=covariates,
-    iov=NULL
+    iov=iov
   ), class="tdmore")
 
   # Check consistency and return

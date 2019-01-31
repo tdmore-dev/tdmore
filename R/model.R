@@ -281,29 +281,36 @@ coef.tdmore <- function(object, ...) {
 #' @param parameters user inputted array of parameters
 #' @param tdmore the tdmore object
 #' @param regimen the regimen
-#' @param initialValues the initial values, in the right order
+#' @param defaultValues the default values, in the right order
 #'
 #' @return a standardised named num array with the parameter names and values
 #'
-processParameters <- function(parameters, tdmore, regimen, initialValues=NULL) {
+processParameters <- function(parameters, tdmore, regimen, defaultValues=NULL) {
   parameterNames <- getParameterNames(tdmore, regimen)
 
-  if(is.null(initialValues)) {
+  if(is.null(defaultValues)) {
     par <- rep(0, length(parameterNames)) # start with population
   } else {
-    par <- initialValues
+    par <- defaultValues
   }
   assert_that(length(par)==length(parameterNames))
   names(par) <- parameterNames
 
   if(!is.null(parameters)) {
     assert_that(is.numeric(parameters))
-    assert_that(all(names(parameters) %in% names(par)))
+    assert_that(all(names(parameters) %in% names(par)),
+                msg=paste("Unknown parameters", paste(names(parameters[!(names(parameters) %in% names(par))]), collapse = ",")))
     par[names(parameters)] <- parameters # set par from argument
     iov <- tdmore$iov
     if(!is.null(iov)) {
       for(iov_term in iov) {
-        par[which(names(par)==iov_term)] <- parameters[which(names(parameters)==iov_term)]
+        updatedPar <- parameters[which(names(parameters)==iov_term)]
+        if(length(updatedPar) > 0) {
+          parIndexes <- which(names(par)==iov_term)
+          assert_that(length(updatedPar) == length(parIndexes),
+                      msg=paste0("Incorrect number of initial values for IOV term ", iov_term, " (", length(parIndexes), " needed)"))
+          par[parIndexes] <- updatedPar
+        }
       }
     }
   }

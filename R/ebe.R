@@ -305,7 +305,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
   if(is.null(regimen)) regimen=tdmorefit$regimen
   if(is.null(newdata)) newdata <- model.frame(tdmorefit)
 
-  pars <- processParameters(parameters, tdmorefit$tdmore, regimen, initialValues=coef(tdmorefit))
+  pars <- processParameters(parameters, tdmorefit$tdmore, regimen, defaultValues=coef(tdmorefit))
   if(is.null(covariates)) covariates <- tdmorefit$covariates
 
   ipred <- predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=pars, covariates=covariates)

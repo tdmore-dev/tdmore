@@ -6,7 +6,7 @@
 If the initial values are not provided, zeroes will be used (=population values for ETAS)
 Provided parameters will overwrite initial values.}
 \usage{
-processParameters(parameters, tdmore, regimen, initialValues = NULL)
+processParameters(parameters, tdmore, regimen, defaultValues = NULL)
 }
 \arguments{
 \item{parameters}{user inputted array of parameters}
@@ -15,7 +15,7 @@ processParameters(parameters, tdmore, regimen, initialValues = NULL)
 
 \item{regimen}{the regimen}
 
-\item{initialValues}{the initial values, in the right order}
+\item{defaultValues}{the default values, in the right order}
 }
 \value{
 a standardised named num array with the parameter names and values

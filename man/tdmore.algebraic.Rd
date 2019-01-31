@@ -4,7 +4,7 @@
 \alias{tdmore.algebraic}
 \title{Build a tdmore object based on an algebraic model}
 \usage{
-\method{tdmore}{algebraic}(model, res_var, omega, ...)
+\method{tdmore}{algebraic}(model, res_var, omega, iov = NULL)
 }
 \arguments{
 \item{model}{The algebraic model}
@@ -12,6 +12,8 @@
 \item{res_var}{the residual variability}
 
 \item{omega}{the omega matrix of the model}
+
+\item{iov}{iov terms}
 
 \item{...}{extra arguments will be passed to the model_predict call}
 }
