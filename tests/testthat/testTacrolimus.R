@@ -8,6 +8,68 @@ library(dplyr)
 #----                           TACROLIMUS NLMIXR WITH IOV                                 ----
 #______________________________________________________________________________________________
 
+tacrolimus_nlmixr <- nlmixrUI(function(){
+  ini({
+    TVKa <- 1.01
+    #TVTLag <- 0.41  #to be included in model definition itself...
+
+    TVCLp = 811
+    TVCLp_CYP3A5 = 1.30
+    TVV1p = 6290
+    TVQp=1200
+    TVV2p=32100
+
+    TVF_PredEMax = 0.67 #relative
+    TVF_Pred50 = 35 #mg
+    TVF_FirstDay = 2.68 #relative
+    TVF_CYP3A5  = 0.82
+
+    # var <- list(CL=0.14842, V1=0.2558818, Q=0.3342555)
+    #40%, 54%, 63% resp; 0.43 corrCL/V1, 0.62 corrCL/Q
+    ECL + EV1 + EQ ~ c(0.14842,
+                       0.08379814, 0.2558818,
+                       0.1380948,  0,         0.3342555)
+    # Corresponding variance calculated using CV = sqrt( exp(omega^2) -1 )
+    # omega^2 = log( CV^2 + 1 )
+    EF ~ 0.281337 #57%
+
+    EF_IOV ~ 0.05154826 #23%
+    EKa_IOV ~ 0.891998 #120%
+
+    EPS_PROP = 0.149 #standard deviation
+  })
+  model({
+    BMI = WT / HT^2 ;
+    FFM = 9.27E3 * WT / (6.68E3 + 216*BMI);
+    if(FEMALE) FFM=9.27E3 * WT / (8.78E3 + 244*BMI);
+    Ka <- TVKa*exp(EKa_IOV)
+
+    CLp <- TVCLp * (FFM/60)^0.75 * TVCLp_CYP3A5^CYP3A5 * exp(ECL)
+    V1p <- TVV1p * exp(EV1)
+    V2p <- TVV2p
+    Qp <- TVQp * exp(EQ)
+
+    K12 <- Qp/V1p
+    K21 <- Qp/V2p
+    Ke <- CLp/V1p
+
+    #Covariates: PredDose, FirstDay, CYP3A5
+    TVF = 1 * (1 - TVF_PredEMax*PredDose / (PredDose + TVF_Pred50)) * TVF_FirstDay^FirstDay * TVF_CYP3A5^CYP3A5
+    F = TVF * exp(EF + EF_IOV)
+
+    d/dt(abs) = -Ka*abs
+    d/dt(center) = F*Ka*abs - Ke*center - K12*center + K21*periph
+    d/dt(periph) = K12*center - K21*periph
+
+    Bmax = 418 #ug/L erythrocytes
+    Kd=3.8 #ug/L plasma
+    Cp = center/V1p #free concentration in plasma
+    Crbc = Cp * HCT * Bmax / (Kd + Cp)
+    Cwb = Cp + Crbc
+    Cwb ~ prop(EPS_PROP)
+  })
+}) %>% tdmore(iov=c("EF_IOV", "EKa_IOV"))
+
 regimen <- data.frame(
  TIME=seq(0, 6)*24,
  AMT=5,
@@ -16,13 +78,13 @@ regimen <- data.frame(
 
 covariates=c(WT=70, HT=1.8, FEMALE=0, CYP3A5=0, PredDose=50, FirstDay=0, HCT=0.45)
 
-plot(tacrolimus_storset, regimen, covariates=covariates, newdata=data.frame(TIME=seq(0, 7*24, by=1), Cwb=NA))
+plot(tacrolimus_nlmixr, regimen, covariates=covariates, newdata=data.frame(TIME=seq(0, 7*24, by=1), Cwb=NA))
 
-data <- predict(tacrolimus_storset, newdata=seq(0, 7*24, by=1), regimen=regimen, covariates=covariates, parameters = c(EKa_IOV=rnorm(1), EKa_IOV=rnorm(1), EKa_IOV=rnorm(1), EKa_IOV=rnorm(1)))
+data <- predict(tacrolimus_nlmixr, newdata=seq(0, 7*24, by=1), regimen=regimen, covariates=covariates, parameters = c(EKa_IOV=rnorm(1), EKa_IOV=rnorm(1), EKa_IOV=rnorm(1), EKa_IOV=rnorm(1)))
 ggplot(data, aes(x = TIME, y=Cwb)) + geom_line()
 
 observed <- data.frame(TIME=3*24, Cwb=0.007)
-ipred <- estimate(tacrolimus_storset, regimen=regimen, covariates=covariates, observed=observed)
+ipred <- estimate(tacrolimus_nlmixr, regimen=regimen, covariates=covariates, observed=observed)
 
 ## Prediction at day 7 will be quite close to population, but prediction at day 4 should be more accurate
 plot(ipred, newdata=data.frame(TIME=seq(0, 7*24, by=1), Cwb=NA))
@@ -186,6 +248,3 @@ plot(ipred, DOSE$regimen, newdata=data.frame(TIME=seq(0, 7*24, by=1), CONC=NA)) 
 options(scipen=8)
 vcov(ipred)
 
-
-
-flatten(data.frame(TIME=10, AMT=10, ADDL=8, II=24))
