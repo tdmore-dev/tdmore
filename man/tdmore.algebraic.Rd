@@ -4,7 +4,7 @@
 \alias{tdmore.algebraic}
 \title{Build a tdmore object based on an algebraic model}
 \usage{
-\method{tdmore}{algebraic}(model, res_var, omega, iov = NULL)
+\method{tdmore}{algebraic}(model, res_var, omega, iov = NULL, ...)
 }
 \arguments{
 \item{model}{The algebraic model}

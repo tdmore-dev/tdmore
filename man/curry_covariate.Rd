@@ -2,10 +2,18 @@
 % Please edit documentation in R/modelMixture.R
 \name{curry_covariate}
 \alias{curry_covariate}
-\title{Fill in a specific covariate in a model, transforming it into a more specific model}
+\title{Fill in a specific covariate in a model, transforming it into a more specific model.}
 \usage{
-curry_covariate(m1, curriedCovariates)
+curry_covariate(model, curriedCovariates)
+}
+\arguments{
+\item{model}{tdmore model with a discrete covariate}
+
+\item{curriedCovariates}{the curried covariates}
+}
+\value{
+the model with the curried covariates
 }
 \description{
-Fill in a specific covariate in a model, transforming it into a more specific model
+Fill in a specific covariate in a model, transforming it into a more specific model.
 }

@@ -24,34 +24,43 @@ tdmore_mixture <- function(..., probs) {
 
 #' Create a TDMore mixture model, based on several options for a discrete covariate.
 #'
-#' @param a tdmore model with a discrete covariate
+#' @param model a tdmore model with a discrete covariate
 #' @param probs a numeric vector with the a priori probabilities for the covariate values
 #' @param covariates a list with covariate values corresponding to the right names
 #'
 #' @return a tdmore_mixture object
 #' @export
-#' @example
-#' tdmore_mixture_covariates(tacrolimus_storset, probs=c(36, 205), covariates=list(c(CYP3A5=1), c(CYP3A5=0))
-tdmore_mixture_covariates <- function(m1, probs, covariates) {
+#' @importFrom purrr map
+#' @examples tdmore_mixture_covariates(tacrolimus_storset, probs=c(0.5, 0.5), covariates=list(c(CYP3A5=1), c(CYP3A5=0)))
+tdmore_mixture_covariates <- function(model, probs, covariates) {
   N <- length(probs)
   stopifnot(length(covariates) == N)
-
-  models <- purrr::map(covariates, ~ curry_covariate(m1, .x) )
-
+  models <- purrr::map(covariates, ~ curry_covariate(model, .x) )
   do.call(tdmore_mixture, c(models, list(probs=probs))  )
 }
 
-#' Fill in a specific covariate in a model, transforming it into a more specific model
-curry_covariate <- function(m1, curriedCovariates) {
-  stopifnot( length(names(curriedCovariates)) == length(curriedCovariates) ) #all covariates should be named
-  stopifnot( all(names(curriedCovariates) %in% m1$covariates) )
-  stopifnot(  all(is.numeric(curriedCovariates))  )
-  class(m1) <- c("tdmoreCurried", class(m1))
-  m1$curriedCovariates <- curriedCovariates
 
-  m1
+#' Fill in a specific covariate in a model, transforming it into a more specific model.
+#'
+#' @param model tdmore model with a discrete covariate
+#' @param curriedCovariates the curried covariates
+#'
+#' @return the model with the curried covariates
+curry_covariate <- function(model, curriedCovariates) {
+  stopifnot( length(names(curriedCovariates)) == length(curriedCovariates) ) #all covariates should be named
+  stopifnot( all(names(curriedCovariates) %in% model$covariates) )
+  stopifnot(  all(is.numeric(curriedCovariates))  )
+  class(model) <- c("tdmoreCurried", class(model))
+  model$curriedCovariates <- curriedCovariates
+  model
 }
 
+#' Predict a tdmoreCurried object.
+#'
+#' @param object a tdmoreCurried object
+#' @param ... all the extra arguments to pass to the next predict method
+#'
+#' @return a dataframe with the predictions
 predict.tdmoreCurried <- function(object, ...) {
   args <- list(...)
 
@@ -65,17 +74,18 @@ predict.tdmoreCurried <- function(object, ...) {
       covariates <- c(object$curriedCovariates, args$covariates)
     }
   }
-
-  class(object) <- setdiff(class(object), "tdmoreCurried" )
-
+  class(object) <- setdiff(class(object), "tdmoreCurried" ) # Remove tdmoreCurried class
   NextMethod(object=object, covariates=covariates, ...)
 }
 
+#' Print a tdmoreCurried object.
+#'
+#' @param x a tdmoreCurried object
+#' @param ... extra arguments, not used
 #' @export
-print.tdmoreCurried <- function(object, ...) {
+print.tdmoreCurried <- function(x, ...) {
   cat("Pre-filled covariates: \n")
-  print(object$curriedCovariates)
-
+  print(x$curriedCovariates)
   NextMethod()
 }
 

@@ -23,19 +23,15 @@ transformRegimen <- function(regimen, x) {
 #'
 #' @examples flatten(data.frame(TIME=10, AMT=10, ADDL=8, II=24))
 flatten <- function(regimen) {
-  newRegimen <- data.frame()
-  for(i in seq_len(nrow(regimen))) {
-    tmt <- data.frame( regimen[i, ] )
-    addl <- tmt$ADDL
-    if(is.null(addl)) addl <- 0
-    tmt$ADDL <- 0
-    newRegimen <- rbind(newRegimen, tmt)
-    for(i in seq_len(addl)) {
-      tmt$TIME <- tmt$TIME + tmt$II
-      newRegimen <- rbind(newRegimen, tmt)
-    }
-  }
-  newRegimen[, ! colnames(newRegimen) %in% c("ADDL", "II")] # Without columns ADDL and II
+  if(! "ADDL" %in% colnames(regimen)) return(regimen)
+  myList <- apply(regimen, 1, function(row) {
+    row <- as.list(row)
+    row$TIME <- row$TIME + seq(0, row$ADDL)*row$II
+    row$ADDL <- NULL
+    row$II <- NULL
+    row
+  })
+  dplyr::bind_rows( lapply(myList, as.data.frame) )
 }
 
 #' Get the times related to each occasion in a regimen.

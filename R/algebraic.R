@@ -118,7 +118,7 @@ model_predict.algebraic <- function(model, times, regimen=data.frame(TIME=numeri
 #'
 #' @return a tdmore object, capable of estimating bayesian individual parameters
 #' @export
-tdmore.algebraic <- function(model, res_var, omega, iov=NULL) {
+tdmore.algebraic <- function(model, res_var, omega, iov=NULL, ...) {
   if(is.numeric(omega) && !is.matrix(omega)) omega <- vectorToDiagonalMatrix(omega)
   if(!all(colnames(omega) %in% model$parameters))
     stop("Not all omega parameters are known to the model...")

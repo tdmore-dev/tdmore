@@ -337,4 +337,5 @@ tacrolimus_storset <- nlmixrUI(function(){
     Cwb ~ prop(EPS_PROP)
   })
 }) %>% tdmore(iov=c("EF_IOV", "EKa_IOV"))
+remove("wd", envir=tacrolimus_storset$model)
 usethis::use_data(tacrolimus_storset, overwrite=TRUE)
