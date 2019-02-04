@@ -54,9 +54,11 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   # RxODE does not allow to simulate 'nothing'
   # Manually construct an empty data.frame with the right columns
   if(length(times) == 0) {
-    result <- data.frame()
-    for(i in c("TIME", modVars$lhs, modVars$state)) result[, i] <- numeric()
-    return(result)
+    colNames <- c("TIME", modVars$lhs, modVars$state)
+    df <- data.frame(matrix(numeric(), nrow=0, ncol=length(colNames),
+                           dimnames=list(c(), colNames)),
+                    stringsAsFactors=F)
+    return(df)
   }
 
   ### RxODE sometimes errors out...

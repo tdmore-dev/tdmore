@@ -337,5 +337,5 @@ tacrolimus_storset <- nlmixrUI(function(){
   })
 }) %>% tdmore(iov=c("EF_IOV", "EKa_IOV"))
 #RxODE compiled the model, so the 'wd' registered is all wrong...
-assign("wd", NULL, envir=tacrolimus_storset$model)
+assign("wd", ".", envir=tacrolimus_storset$model)
 usethis::use_data(tacrolimus_storset, overwrite=TRUE)

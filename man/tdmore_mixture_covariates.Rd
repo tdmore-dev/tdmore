@@ -20,5 +20,8 @@ a tdmore_mixture object
 Create a TDMore mixture model, based on several options for a discrete covariate.
 }
 \examples{
-tdmore_mixture_covariates(tacrolimus_storset, probs=c(0.5, 0.5), covariates=list(c(CYP3A5=1), c(CYP3A5=0)))
+tdmore_mixture_covariates(tacrolimus_storset,
+   probs=c(0.5, 0.5),
+   covariates=list(c(CYP3A5=1), c(CYP3A5=0))
+)
 }

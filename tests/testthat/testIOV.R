@@ -93,7 +93,7 @@ regimen <- data.frame(
 
 dose <- findDose(fit, regimen, target=data.frame(TIME=120, CONC=1), se.fit = T)
 plot(fit, newdata=0:120, regimen = dose$regimen)
-expect_equal(round(dose$dose[["dose.median"]], digits=4), 206.8476)
+expect_equal(dose$dose[["dose.median"]], 206, tolerance=0.01)
 
 # Test timevarying covariates
 regimen <- data.frame(
