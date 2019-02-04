@@ -1,4 +1,3 @@
-
 default_model <- nlmixrUI(function(){
   ini({
     TVKA <- 3.7
@@ -337,5 +336,6 @@ tacrolimus_storset <- nlmixrUI(function(){
     Cwb ~ prop(EPS_PROP)
   })
 }) %>% tdmore(iov=c("EF_IOV", "EKa_IOV"))
-remove("wd", envir=tacrolimus_storset$model)
+#RxODE compiled the model, so the 'wd' registered is all wrong...
+assign("wd", NULL, envir=tacrolimus_storset$model)
 usethis::use_data(tacrolimus_storset, overwrite=TRUE)
