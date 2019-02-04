@@ -25,6 +25,8 @@ pop_ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #' @param regimen data frame describing the treatment regimen
 #' @param covariates the model covariates
 #'
+#' @importFrom stats residuals
+#'
 #' @return the prediction log likelihood
 pred_ll <- function(par, omega, tdmore, observed, regimen, covariates) {
   pred <- predict(object=tdmore, newdata=observed, regimen=regimen, parameters=par, covariates=covariates)

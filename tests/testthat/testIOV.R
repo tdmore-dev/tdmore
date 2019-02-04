@@ -93,7 +93,7 @@ regimen <- data.frame(
 
 dose <- findDose(fit, regimen, target=data.frame(TIME=120, CONC=1), se.fit = T)
 plot(fit, newdata=0:120, regimen = dose$regimen)
-expect_equal(round(dose$dose[["dose.median"]], digits=4), 206.8491)
+expect_equal(round(dose$dose[["dose.median"]], digits=4), 206.8476)
 
 # Test timevarying covariates
 regimen <- data.frame(
@@ -124,10 +124,23 @@ mod_1cpt_1 <- nlmixrUI(function(){
   })
 })
 tdmore <- mod_1cpt_1 %>% tdmore(iov=c("EKA_IOV", "ECL_IOV"))
-#debugonce(tdmore:::predict.tdmore)
 data3 <- tdmore %>% predict(newdata=seq(0, 96, by=0.1), regimen=regimen, parameters=c(EKA_IOV=1, ECL_IOV=0, EKA_IOV=-2, ECL_IOV=0), covariates=data.frame(TIME=c(0, 12.5, 24, 75), WT=c(70, 80, 85, 70)))
 
 data4 <- rbind(data1 %>% mutate(type="No covariate"), data3 %>% mutate(type="WT covariate"))
 ggplot(data4, aes(x = TIME, y=CONC, group=type, color=type)) + geom_line() +
   geom_line()
 
+
+m1 <- tacrolimus_storset
+regimen <- data.frame(
+  TIME=seq(0, 6)*24,
+  AMT=5,
+  OCC=c(1,1,2,2,3,3,4)
+)
+covariates=c(WT=70, HT=1.8, FEMALE=0, CYP3A5=0, PredDose=50, FirstDay=0, HCT=0.45)
+plot(m1, regimen, covariates=covariates, newdata=seq(0, 7*24, by=0.1) )
+
+observed <- data.frame(TIME=3*24, Cwb=0.007)
+ipred <- estimate(m1, regimen=regimen, covariates=covariates, observed=observed)
+## Prediction at day 7 will be quite close to population, but prediction at day 4 should be more accurate
+plot(ipred, newdata=seq(0, 7*24, by=0.1))

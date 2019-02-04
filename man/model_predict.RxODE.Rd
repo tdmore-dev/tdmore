@@ -17,7 +17,7 @@
 
 \item{covariates}{named vector, or data.frame with column 'TIME', and at least TIME 0}
 
-\item{iov}{character array with the IOV terms, can be NULL}
+\item{iov}{character array with the parameters that should change for every different OCC, can be NULL}
 
 \item{extraArguments}{extra arguments to use}
 
