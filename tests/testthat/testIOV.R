@@ -130,17 +130,5 @@ data4 <- rbind(data1 %>% mutate(type="No covariate"), data3 %>% mutate(type="WT 
 ggplot(data4, aes(x = TIME, y=CONC, group=type, color=type)) + geom_line() +
   geom_line()
 
-
-m1 <- tacrolimus_storset
-regimen <- data.frame(
-  TIME=seq(0, 6)*24,
-  AMT=5,
-  OCC=c(1,1,2,2,3,3,4)
-)
-covariates=c(WT=70, HT=1.8, FEMALE=0, CYP3A5=0, PredDose=50, FirstDay=0, HCT=0.45)
-plot(m1, regimen, covariates=covariates, newdata=seq(0, 7*24, by=0.1) )
-
-observed <- data.frame(TIME=3*24, Cwb=0.007)
-ipred <- estimate(m1, regimen=regimen, covariates=covariates, observed=observed)
-## Prediction at day 7 will be quite close to population, but prediction at day 4 should be more accurate
-plot(ipred, newdata=seq(0, 7*24, by=0.1))
+data4Check <- data4 %>% filter(TIME==55) %>% select(CONC)
+expect_equal(data4Check, data.frame(CONC=c(1.717376, 1.460061)), tolerance=1e-6)
