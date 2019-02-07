@@ -144,7 +144,8 @@ a given dataset using the model</p>
     </div>
 
     <pre class="usage"><span class='fu'>estimate</span>(<span class='no'>object</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>regimen</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"L-BFGS-B"</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"L-BFGS-B"</span>, <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>upper</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -173,6 +174,10 @@ If not specified, we estimate the population prediction</p></td>
     <tr>
       <th>method</th>
       <td><p>the optimisation method, by default, method "L-BFGS-B" is used</p></td>
+    </tr>
+    <tr>
+      <th>se.fit</th>
+      <td><p>calculate the variance-covariance matrix for the fit</p></td>
     </tr>
     <tr>
       <th>lower</th>

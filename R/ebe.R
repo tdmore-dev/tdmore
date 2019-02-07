@@ -62,6 +62,7 @@ ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #' @param covariates the model covariates
 #' @param par optional starting parameter for the MLE minimization
 #' @param method the optimisation method, by default, method "L-BFGS-B" is used
+#' @param se.fit calculate the variance-covariance matrix for the fit
 #' @param lower the lower bounds of the parameters, if null, -5 * sqrt(diag(model$omega)) is used
 #' @param upper the upper bounds of the parameters, if null, +5 * sqrt(diag(model$omega)) is used
 #' @param ... extra parameters to pass to the optim function
@@ -69,7 +70,7 @@ ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #' @return A tdmorefit object
 #' @importFrom stats optim
 #' @export
-estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", lower=NULL, upper=NULL, ...) {
+estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, ...) {
 
   if (inherits(object, "tdmore_set")) {
     # Either a tdmore or tdmore_mixture
@@ -129,8 +130,12 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   names(res) <- parNames
 
   # Observed fisher information matrix = -hessian(ll)
-  OFIM <- pointEstimate$hessian * 1/2
-  varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
+  if(se.fit) {
+    OFIM <- pointEstimate$hessian * 1/2
+    varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
+  } else {
+    varcov <- diag(0, nrow=length(parNames)) #very small value, to keep matrix semi-definite
+  }
   dimnames(varcov) = list(parNames, parNames)
   ofv <- pointEstimate$value
   tdmorefit(tdmore, observed, regimen, covariates, ofv, res, varcov, nlmresult=pointEstimate, call=match.call())
