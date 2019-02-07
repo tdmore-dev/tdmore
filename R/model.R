@@ -127,9 +127,9 @@ residuals.tdmore <- function(object, observed, predicted, log=TRUE, ...) {
     var <- err$var
     if (!(var %in% oNames)) next
 
-    ipredColumn <- predicted[, var]
-    obsColumn <- observed[, var]
-    obsTimes <- observed[, "TIME"][!is.na(obsColumn)]
+    ipredColumn <- predicted[, var, drop=TRUE]
+    obsColumn <- observed[, var, drop=TRUE]
+    obsTimes <- observed[!is.na(obsColumn) , "TIME", drop=TRUE]
 
     obs <- obsColumn[!is.na(obsColumn)]
     ipred <- ipredColumn[predicted$TIME %in% obsTimes]
