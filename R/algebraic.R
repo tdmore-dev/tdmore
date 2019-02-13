@@ -16,18 +16,19 @@ algebraic <- function(fun) {
   tArg <- argNames[1]
   argNames <- argNames[-1] #remove first argument; it is always the evaluation time
 
-  regimenNames <- c("TIME", "AMT", "II", "ADDL", "RATE", "DURATION", "CMT", "OCC")
+  regimenNames <- c("TIME", "AMT", "II", "ADDL", "RATE", "DURATION", "CMT")
   regimenNames <- argNames[argNames %in% regimenNames]
-  pNames <- argNames[! argNames %in% regimenNames]
+  pNames <- argNames[! argNames %in% c(regimenNames)]
 
   structure(list(
-    predictFunction = function(times, regimen, parameters, iov) {
-      # if(!all(colnames(regimen) %in% regimenNames) || !all(regimenNames %in% colnames(regimen)))
-      #   stop("Algebraic function requires regimen names `", paste(regimenNames, collapse=", "), "',
-      #        but regimen provided the following columns: `", paste(colnames(regimen), collapse=", "), "'")
-      if(!all(names(parameters) %in% pNames) || !all(pNames %in% names(parameters)))
+    predictFunction = function(times, regimen, parameters, covariates, iov) {
+      if(!all(colnames(regimen) %in% c(regimenNames, "OCC")) || !all(regimenNames %in% colnames(regimen)))
+        stop("Algebraic function requires regimen names `", paste(regimenNames, collapse=", "), "',
+             but regimen provided the following columns: `", paste(colnames(regimen), collapse=", "), "'")
+      if(!all(names(parameters) %in% pNames) || !all(pNames %in% c(names(parameters), names(covariates))))
         stop("Algebraic function requires parameters `", paste(pNames, collapse=", "), "',
              but was provided the following: `", paste(names(parameters), collapse=", "), "'")
+
       if(anyNA(regimen)) stop("The provided regimen contains NA. Cannot calculate algebraic model...")
 
       CONCs = apply(regimen, 1, function(regimenRow) {
@@ -36,6 +37,7 @@ algebraic <- function(fun) {
         iovParameters <- parameters[iovIndexes]
         parameters <- parameters[!duplicated(names(parameters))]
 
+        # Use IOV value corresponding to regimen occasion
         if(iovPrediction) {
           occasion <- regimenRow[['OCC']]
           for(iov_term in iov) {
@@ -48,10 +50,24 @@ algebraic <- function(fun) {
           }
         }
 
+        # Fixed covariates
+        if(is.null(covariates) || is.numeric(covariates)) {
+          parameters <- c(parameters, covariates)
+
+        # Time-varying covariates (only works at regimen times)
+        } else {
+          covariates <- covariates[order(covariates$TIME),]
+          cNames <- colnames(covariates)
+          cNames <- cNames[cNames != "TIME"]
+          selectedRow <- tail(which((covariates$TIME <= as.numeric(regimenRow[['TIME']]))==TRUE), n=1)
+          covs <- unlist(covariates[selectedRow, cNames])
+          parameters <- parameters[!(names(parameters) %in% names(covariates))]
+          parameters <- c(parameters, covs)
+        }
+
         args <- list(times)
         names(args) <- tArg
 
-        regimenRow
         args <- c(args, as.list(regimenRow[!(names(regimenRow) %in% c("OCC"))])) # add regimen names
         args <- c(args, parameters) # add parameters
 
@@ -78,7 +94,7 @@ algebraic <- function(fun) {
 #' @param newdata dataframe with a column 'TIME' and 'CONC'. Other columns are ignored.
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)
 #' @param parameters a named numeric vector
-#' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
+#' @param covariates named numeric vector, or data.frame with column 'TIME', and at least TIME 0
 #' @param iov character array with the IOV terms, NULL if no IOV, IOV on KA only
 #'
 #' @return
@@ -95,14 +111,22 @@ model_predict.algebraic <- function(model, times, regimen=data.frame(TIME=numeri
 
   # Check parameters and covariates
   assertthat::assert_that(is.numeric(parameters))
-  if(is.data.frame(covariates)) stop("Time-varying covariates not supported")
-  params <- c(parameters, covariates)
-  pNames <- names(params)
+
+  # Check covariates
+  if (is.null(covariates) || is.numeric(covariates)) {
+    pNames <- names(c(parameters, covariates))
+  } else if (is.data.frame(covariates)) {
+    cNames <- colnames(covariates)
+    cNames <- cNames[cNames != "TIME"]
+    pNames <- unique(c(names(parameters), cNames))
+  } else {
+    stop("Covariates should be either a numeric vector or data frame")
+  }
   assertthat::assert_that(all(pNames %in% model$parameters))
   assertthat::assert_that(all(model$parameters %in% pNames))
 
   # Predict concentrations
-  conc <- model$predictFunction(times, regimen, params, iov)
+  conc <- model$predictFunction(times, regimen, parameters, covariates, iov)
 
   return(data.frame(TIME=times, CONC=conc))
 }

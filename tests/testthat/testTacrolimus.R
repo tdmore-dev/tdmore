@@ -98,6 +98,7 @@ plot(ipred_algebraic, dose_algebraic$regimen, newdata=data.frame(TIME=seq(0, 7*2
 
 options(scipen=8)
 vcov(ipred_algebraic)
+
 #______________________________________________________________________________________________
 #----                              COMPARISON ODE VS ALGEBRAIC                             ----
 #______________________________________________________________________________________________
@@ -107,5 +108,28 @@ expect_equal(coef(ipred_ode), coef(ipred_algebraic), tolerance=1e-3)
 expect_equal(vcov(ipred_ode), vcov(ipred_algebraic), tolerance=1e-1)
 expect_equal(dose_algebraic$dose, dose_ode$dose, tolerance=1e-3)
 expect_equal(dose_algebraic$dose, 10.945, tolerance=1e-3)
+
+#______________________________________________________________________________________________
+#----                            TACROLIMUS ALGEBRAIC TIME-VARYING COVS                    ----
+#______________________________________________________________________________________________
+regimen <- data.frame(
+  TIME=c(0,24,48),
+  AMT=5,
+  OCC=c(1,2,3)
+)
+
+# Example 1
+covariatesVector=c(WT=70, HT=1.8, FEMALE=0, CYP3A5=0, PredDose=50, FirstDay=0, HCT=0.45)
+
+covariates <- data.frame(TIME=c(0,24,48), EV1=c(1,0,2))
+for(i in names(covariatesVector)) covariates[,i] <- covariatesVector[i]
+example1 <- tacro_algebraic %>% predict(newdata=seq(0, 72, by = 0.1), regimen=regimen, covariates=covariates)
+ggplot(example1, aes(x=TIME, y=CONC)) + geom_line()
+
+# Example 2
+covariates <- data.frame(TIME=c(0,24,48), ECL=c(1,0,2))
+for(i in names(covariatesVector)) covariates[,i] <- covariatesVector[i]
+example2 <- tacro_algebraic %>% predict(newdata=seq(0, 72, by = 0.1), regimen=regimen, covariates=covariates)
+ggplot(example2, aes(x=TIME, y=CONC)) + geom_line()
 
 
