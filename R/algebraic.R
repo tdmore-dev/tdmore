@@ -7,10 +7,11 @@
 #'
 #' The function can also include parameters `TIME`, `AMT`, `II`, `ADDL`, `RATE`, `DURATION`, `CMT`.
 #' These are then taken from the treatment regimen.
+#' @param output Name for the output
 #'
 #' @return An algebraic prediction model
 #' @export
-algebraic <- function(fun) {
+algebraic <- function(fun, output="CONC") {
   argNames <- names(formals(fun))
 
   tArg <- argNames[1]
@@ -21,6 +22,7 @@ algebraic <- function(fun) {
   pNames <- argNames[! argNames %in% regimenNames]
 
   structure(list(
+    output=output,
     predictFunction = function(times, regimen, parameters, iov) {
       # if(!all(colnames(regimen) %in% regimenNames) || !all(regimenNames %in% colnames(regimen)))
       #   stop("Algebraic function requires regimen names `", paste(regimenNames, collapse=", "), "',
@@ -103,8 +105,9 @@ model_predict.algebraic <- function(model, times, regimen=data.frame(TIME=numeri
 
   # Predict concentrations
   conc <- model$predictFunction(times, regimen, params, iov)
-
-  return(data.frame(TIME=times, CONC=conc))
+  result <- data.frame(TIME=times)
+  result[, model$output] <- conc
+  result
 }
 
 

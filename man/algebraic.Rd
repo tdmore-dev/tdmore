@@ -6,7 +6,7 @@
 Algebraic functions are assumed to be dose-linear, meaning that they can be calculated for a single dose
 and then summed up for multiple doses.}
 \usage{
-algebraic(fun)
+algebraic(fun, output = "CONC")
 }
 \arguments{
 \item{fun}{a function with 'time' as the first argument, and additional parameters as needed.
@@ -14,6 +14,8 @@ In case parameters will be estimated, they should have a mean of '0' and be norm
 
 The function can also include parameters `TIME`, `AMT`, `II`, `ADDL`, `RATE`, `DURATION`, `CMT`.
 These are then taken from the treatment regimen.}
+
+\item{output}{Name for the output}
 }
 \value{
 An algebraic prediction model
