@@ -15,7 +15,7 @@
 
 \item{parameters}{a named numeric vector}
 
-\item{covariates}{named vector, or data.frame with column 'TIME', and at least TIME 0}
+\item{covariates}{named numeric vector, or data.frame with column 'TIME', and at least TIME 0}
 
 \item{iov}{character array with the IOV terms, NULL if no IOV, IOV on KA only}
 
