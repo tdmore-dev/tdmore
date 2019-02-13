@@ -27,9 +27,6 @@ test_that("model_predict function generates values as expected", {
   expect_error( #covariates missing
     model_predict(model=m1, times=numeric(), parameters=c(EKA=0, EV=0, ECL=0))
   )
-  expect_error( #regimen missing
-    model_predict(model=m1, times=numeric(), parameters=c(EKA=0, EV=0, ECL=0), covariates=covariates)
-  )
   expect_equal(
     model_predict(model=m1, times=numeric(), parameters=c(EKA=0, EV=0, ECL=0),
                   regimen=regimen, covariates=covariates),
