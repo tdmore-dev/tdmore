@@ -7,6 +7,13 @@
 #'
 #' The function can also include parameters `TIME`, `AMT`, `II`, `ADDL`, `RATE`, `DURATION`, `CMT`.
 #' These are then taken from the treatment regimen.
+#'
+#' The function returns a single vector with the concentrations for the given times.
+#'
+#' It can also return a named list of values.
+#' The vector with the output name will be summed up across multiple administrations.
+#' Any other values will be treated as parameter values. The output will be observed using last-observation-carry-forward.
+#'
 #' @param output Name for the output
 #'
 #' @return An algebraic prediction model
@@ -32,7 +39,13 @@ algebraic <- function(fun, output="CONC") {
              but was provided the following: `", paste(names(parameters), collapse=", "), "'")
       if(anyNA(regimen)) stop("The provided regimen contains NA. Cannot calculate algebraic model...")
 
-      CONCs = apply(regimen, 1, function(regimenRow) {
+      df <- data.frame(TIME=times)
+      if(nrow(regimen) == 0) {
+        df[, output] <- rep(0, length.out=length(times))
+        return( df ) #not entirely happy, because the extra output will not be in there...
+      }
+
+      regimenResult = apply(regimen, 1, function(regimenRow) {
         iovPrediction <- !is.null(iov)
         iovIndexes <- which(names(parameters) %in% iov)
         iovParameters <- parameters[iovIndexes]
@@ -58,14 +71,43 @@ algebraic <- function(fun, output="CONC") {
         args <- c(args, parameters) # add parameters
 
         funValue <- do.call(fun, args=args)
-        ifelse(times < args$TIME, 0, funValue)
-      })
-      if(length(times)==0) return(numeric())
-      if(length(times)==1) return( sum(CONCs, na.rm=TRUE) )
-      if(nrow(regimen) == 0) return( rep(0, length.out=length(times)) )
+        if(!is.list(funValue)) {
+          funValue[times < args$TIME] <- 0
+          out <- list(funValue)
+          names(out) <- output
+          out
+        } else {
+          stopifnot( output %in% names(funValue))
+          funValue[[output]][times < args$TIME] <- 0
 
-      CONC <- apply(CONCs, 1, sum, na.rm=TRUE)
-      return(CONC)
+          n <- lapply(funValue, length)
+          stopifnot( n[[output]] == length(times) )
+          stopifnot( all( n[ names(n) != output ] == 1 ))
+          funValue
+        }
+      })
+      #We now have a list of all results from each treatment
+
+      ## We need to SUM the concentrations
+      ## And fetch the appropriate parameter values from the right regimen result
+      CONCs <- vapply(regimenResult, function(x) { x[[output]] }, FUN.VALUE=times )
+
+      if(length(times)==0) {
+        df[, names( regimenResult[[1]] )] <- numeric()
+      } else if (length(times)==1) {
+        df[, output] <- sum(CONCs)
+        i <- max(which(times >= regimen$TIME))
+        otherNames <- setdiff( names(regimenResult[[1]]), output)
+        for(j in otherNames) df[, j] <- vapply( regimenResult[i], function(x){ x[[j]] }, numeric(1))
+      } else {
+        df[, output] <- apply(CONCs, 1, sum) ## why was na.rm here?
+        i <- vapply(times, function(t) {
+          max(which(t >= regimen$TIME))
+        }, integer(1)) #find the nearest treatment regimen
+        otherNames <- setdiff( names(regimenResult[[1]]), output)
+        for(j in otherNames) df[, j] <- vapply( regimenResult[i], function(x){ x[[j]] }, numeric(1))
+      }
+      return(df)
     },
     parameters = pNames
   ),
@@ -104,10 +146,7 @@ model_predict.algebraic <- function(model, times, regimen=data.frame(TIME=numeri
   assertthat::assert_that(all(model$parameters %in% pNames))
 
   # Predict concentrations
-  conc <- model$predictFunction(times, regimen, params, iov)
-  result <- data.frame(TIME=times)
-  result[, model$output] <- conc
-  result
+  model$predictFunction(times, regimen, params, iov)
 }
 
 

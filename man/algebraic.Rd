@@ -13,7 +13,13 @@ algebraic(fun, output = "CONC")
 In case parameters will be estimated, they should have a mean of '0' and be normal-distributed.
 
 The function can also include parameters `TIME`, `AMT`, `II`, `ADDL`, `RATE`, `DURATION`, `CMT`.
-These are then taken from the treatment regimen.}
+These are then taken from the treatment regimen.
+
+The function returns a single vector with the concentrations for the given times.
+
+It can also return a named list of values.
+The vector with the output name will be summed up across multiple administrations.
+Any other values will be treated as parameter values. The output will be observed using last-observation-carry-forward.}
 
 \item{output}{Name for the output}
 }
