@@ -169,12 +169,12 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     updatedVarcov <- varcov # nothing to do
   } else {
     updatedVarcov <- matrix(0, nrow=length(parNames), ncol=length(parNames))
-    updatedVarcov[-fixIndexes, -fixIndexes, drop=FALSE] <- varcov
+    updatedVarcov[-fixIndexes, -fixIndexes] <- varcov
   }
 
   dimnames(updatedVarcov) = list(parNames, parNames)
   ofv <- pointEstimate$value
-  tdmorefit(tdmore, observed, regimen, covariates, ofv, updatedRes, updatedVarcov, nlmresult=pointEstimate, call=match.call())
+  tdmorefit(tdmore, observed, regimen, covariates, ofv, updatedRes, updatedVarcov, fix$values, nlmresult=pointEstimate, call=match.call())
 }
 
 #' Get the indexes of the fixed parameters.
@@ -212,12 +212,13 @@ getFixedParametersIndexes <- function(par, fix) {
 #' @param ofv (optional) the OFV value
 #' @param res the found parameter values, as a named vector, or NULL to use 0
 #' @param varcov the found varcov matrix, or NULL to use a diagonal matrix
+#' @param fix the fixed parameters
 #' @param nlmresult the result of the non-linear minimization
 #' @param call a informative string that gives the arguments that were used in estimate()
 #'
 #' @return A tdmorefit object, manually created
 #' @export
-tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, res=NULL, varcov=NULL, nlmresult=NULL, call=NULL) {
+tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, res=NULL, varcov=NULL, fix=NULL, nlmresult=NULL, call=NULL) {
   N <- length(tdmore$parameters)
   if(is.null(res)) {
     res <- rep(0, N) #population prediction
@@ -238,6 +239,7 @@ tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, r
       logLik=ofv/-2,
       res=res,
       varcov=varcov,
+      fix=fix,
       nlmresult=nlmresult,
       call=call
     ), class=c("tdmorefit"))

@@ -308,9 +308,9 @@ processParameters <- function(parameters, tdmore, regimen, defaultValues=NULL) {
         updatedPar <- parameters[which(names(parameters)==iov_term)]
         if(length(updatedPar) > 0) {
           parIndexes <- which(names(par)==iov_term)
-          assert_that(length(updatedPar) == length(parIndexes),
-                      msg=paste0("Incorrect number of initial values for IOV term ", iov_term, " (", length(parIndexes), " needed)"))
-          par[parIndexes] <- updatedPar
+          # assert_that(length(updatedPar) == length(parIndexes),
+          #             msg=paste0("Incorrect number of initial values for IOV term ", iov_term, " (", length(parIndexes), " needed)"))
+          par[parIndexes[1:length(updatedPar)]] <- updatedPar
         }
       }
     }

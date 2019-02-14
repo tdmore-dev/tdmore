@@ -139,73 +139,33 @@ i <- 1
 fixedParameters <- c()
 covariates <- theta
 input <- observed[i,]
+#debugonce(tdmore:::plot.tdmorefit)
 ipred <- estimate(m1, regimen=regimen %>% filter(OCC <= 1), observed=input, covariates=covariates, # Add filter on OCC
                   control=list(trace=1, REPORT=1))
-
-#plot(ipred)
+plot(ipred)
 
 ## Second iteration
-i <- 2
+for(i in 2:5) {
 
-previousEta <- coef(ipred)[  seq(1, N) + (i-2)*N ] #fix the previous Eta
-fixedParameters <- c(fixedParameters, previousEta)
+  previousEta <- coef(ipred)[  seq(1, N) + (i-2)*N ] #fix the previous Eta
+  fixedParameters <- c(fixedParameters, previousEta)
 
-previousEbe <- predict(ipred, newdata=observed$TIME[i-1])[, c("Ka", "CL", "V1", "V2", "Q")] #set up a new THETA
-names(previousEbe) <- paste0("TV", names(previousEbe)) #use these as the typical values for the new estimation
-previousEbe$TIME <- observed$TIME[i-1]
+  previousEbe <- predict(ipred, newdata=observed$TIME[i-1])[, c("Ka", "CL", "V1", "V2", "Q")] #set up a new THETA
+  names(previousEbe) <- paste0("TV", names(previousEbe)) #use these as the typical values for the new estimation
+  previousEbe$TIME <- observed$TIME[i-1]
 
-## TODO: take the right rows from vcov (the ones that refer to the uncertainty on the current occasion)
-m1$omega <- vcov(ipred)[seq(1,N)+(i-2)*N, seq(1,N)+(i-2)*N] #adapt OMEGA
+  ## TODO: take the right rows from vcov (the ones that refer to the uncertainty on the current occasion)
+  m1$omega <- vcov(ipred)[seq(1,N)+(i-2)*N, seq(1,N)+(i-2)*N] #adapt OMEGA
 
-input <- observed[i,]
-covariates <- bind_rows(covariates, previousEbe)
-# So in this call, we use the estimated ETA and real THETA for occasion 1
-# And in occasion 2, we estimate the new ETA using an OMEGA of vcov, and the THETA that is the previous EBE
-#debugonce(tdmore:::estimate)
-ipred <- estimate(m1, regimen=regimen %>% filter(OCC <= 2), observed=input, covariates=covariates,
-                  fix=fixedParameters,  ## TODO: add a mechanism to FIX parameters
-                  control=list(trace=1, REPORT=1))
+  input <- observed[i,]
+  covariates <- bind_rows(covariates, previousEbe)
+  # So in this call, we use the estimated ETA and real THETA for occasion 1
+  # And in occasion 2, we estimate the new ETA using an OMEGA of vcov, and the THETA that is the previous EBE
 
-
-### TODO: Make this work
-## Third iteration
-i <- 3
-
-previousEta <- coef(ipred)[  seq(1, N)+(i-2)*N ] #fix the previous Eta
-fixedParameters <- c(fixedParameters, previousEta)
-
-previousEbe <- predict(ipred, newdata=observed$TIME[i-1])[, c("Ka", "CL", "V1", "V2", "Q")] #set up a new THETA
-names(previousEbe) <- paste0("TV", names(previousEbe)) #use these as the typical values for the new estimation
-previousEbe$TIME <- observed$TIME[i-1]
-
-## TODO: take the right rows from vcov (the ones that refer to the uncertainty on the current occasion)
-m1$omega <- vcov(ipred)[seq(1,N)+(i-2)*N, seq(1,N)+(i-2)*N] #adapt OMEGA
-
-input <- observed[i,]
-covariates <- bind_rows(covariates, previousEbe)
-# So in this call, we use the estimated ETA and real THETA for occasion 1
-# And in occasion 2, we estimate the new ETA using an OMEGA of vcov, and the THETA that is the previous EBE
-ipred <- estimate(m1, regimen=regimen %>% filter(OCC <= 3), observed=input, covariates=covariates,
-                  fix=fixedParameters,  ## TODO: add a mechanism to FIX parameters
-                  control=list(trace=1, REPORT=1))
-
-
-## Fourth iteration
-## INPUT: observed[4, ]
-## COVARIATES: time-varying covariates
-## time 0->first obs: THETA
-## first obs->second obs: parameter values from the first estimation
-## second->third: parameter values from the second estimation
-## third->future: parameter values from the third (previous) estimation
-## etc
-## fixedParameters:
-## Should be so that the following is true:
-## predict(firstObs) --> should match the prediction when you estimated that observation
-## predict(secondObs) --> should match the prediction when you estimated that observation
-## predict(thirdObs) --> should match the prediction when you estimated that observation
-## predict(fourthObs) --> should be ETA=0, these eta's can be changed, should match the previous prediction for that point
-##
-
-ipred <- estimate(m1, regimen=regimen, observed=input, covariates=covariates,
-                  fix=fixedParameters,  ## TODO: add a mechanism to FIX parameters
-                  control=list(trace=1, REPORT=1))
+  #debugonce(tdmore:::estimate)
+  ipred <- estimate(m1, regimen=regimen %>% filter(OCC <= i), observed=input, covariates=covariates,
+                    fix=fixedParameters,  ## TODO: add a mechanism to FIX parameters
+                    control=list(trace=1, REPORT=1))
+  #debugonce(tdmore:::plot.tdmorefit)
+  print(plot(ipred, se.fit=NA))
+}
