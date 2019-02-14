@@ -168,7 +168,7 @@ ipred <- estimate(m1, regimen=regimen %>% filter(OCC <= 2), observed=input, cova
 
 
 ### TODO: Make this work
-## Second iteration
+## Third iteration
 i <- 3
 
 previousEta <- coef(ipred)[  seq(1, N)+(i-2)*N ] #fix the previous Eta
@@ -189,3 +189,23 @@ ipred <- estimate(m1, regimen=regimen %>% filter(OCC <= 3), observed=input, cova
                   fix=fixedParameters,  ## TODO: add a mechanism to FIX parameters
                   control=list(trace=1, REPORT=1))
 
+
+## Fourth iteration
+## INPUT: observed[4, ]
+## COVARIATES: time-varying covariates
+## time 0->first obs: THETA
+## first obs->second obs: parameter values from the first estimation
+## second->third: parameter values from the second estimation
+## third->future: parameter values from the third (previous) estimation
+## etc
+## fixedParameters:
+## Should be so that the following is true:
+## predict(firstObs) --> should match the prediction when you estimated that observation
+## predict(secondObs) --> should match the prediction when you estimated that observation
+## predict(thirdObs) --> should match the prediction when you estimated that observation
+## predict(fourthObs) --> should be ETA=0, these eta's can be changed, should match the previous prediction for that point
+##
+
+ipred <- estimate(m1, regimen=regimen, observed=input, covariates=covariates,
+                  fix=fixedParameters,  ## TODO: add a mechanism to FIX parameters
+                  control=list(trace=1, REPORT=1))

@@ -4,9 +4,9 @@
 \alias{model_predict.algebraic}
 \title{Predict for algebraic models}
 \usage{
-\method{model_predict}{algebraic}(model, times, regimen = data.frame(TIME
-  = numeric(), AMT = numeric(), OCC = numeric()), parameters = numeric(),
-  covariates = NULL, iov = NULL, extraArguments = list())
+\method{model_predict}{algebraic}(model, times, regimen = NULL,
+  parameters = numeric(), covariates = NULL, iov = NULL,
+  extraArguments = list())
 }
 \arguments{
 \item{model}{the algebraic model}

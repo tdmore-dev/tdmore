@@ -17,6 +17,7 @@
 #' @param output Name for the output
 #'
 #' @return An algebraic prediction model
+#' @importFrom utils tail
 #' @export
 algebraic <- function(fun, output="CONC") {
   argNames <- names(formals(fun))
@@ -74,7 +75,7 @@ algebraic <- function(fun, output="CONC") {
           covariates <- covariates[order(covariates$TIME),]
           cNames <- colnames(covariates)
           cNames <- cNames[cNames != "TIME"]
-          selectedRow <- tail(which((covariates$TIME <= as.numeric(regimenRow[['TIME']]))==TRUE), n=1)
+          selectedRow <- utils::tail(which((covariates$TIME <= as.numeric(regimenRow[['TIME']]))==TRUE), n=1)
           covs <- unlist(covariates[selectedRow, cNames])
           parameters <- parameters[!(names(parameters) %in% names(covariates))]
           parameters <- c(parameters, covs)
@@ -106,7 +107,7 @@ algebraic <- function(fun, output="CONC") {
 
       ## We need to SUM the concentrations
       ## And fetch the appropriate parameter values from the right regimen result
-      CONCs <- vapply(regimenResult, function(x) { x[[output]] }, FUN.VALUE=times )
+      CONCs <- vapply(regimenResult, function(x) { x[[output]] }, FUN.VALUE=numeric(length(times)) )
 
       if(length(times)==0) {
         df[, names( regimenResult[[1]] )] <- numeric()
@@ -146,7 +147,11 @@ algebraic <- function(fun, output="CONC") {
 #'
 #' @export
 #' @keywords internal
-model_predict.algebraic <- function(model, times, regimen=data.frame(TIME=numeric(), AMT=numeric(), OCC=numeric()), parameters=numeric(), covariates=NULL, iov=NULL, extraArguments=list()) {
+model_predict.algebraic <- function(model, times, regimen=NULL, parameters=numeric(), covariates=NULL, iov=NULL, extraArguments=list()) {
+  if(is.null(regimen)){
+    regimen <- data.frame(TIME=numeric(), AMT=numeric())
+    if(!is.null(iov)) regimen$OCC <- numeric()
+  }
 
   # Check times and regimen objects
   checkTimes(times)
