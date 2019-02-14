@@ -63,9 +63,16 @@ ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #' @param par optional starting parameter for the MLE minimization
 #' @param method the optimisation method, by default, method "L-BFGS-B" is used
 #' @param se.fit calculate the variance-covariance matrix for the fit
+#' Putting this to FALSE can reduce computation time.
 #' @param lower the lower bounds of the parameters, if null, -5 * sqrt(diag(model$omega)) is used
 #' @param upper the upper bounds of the parameters, if null, +5 * sqrt(diag(model$omega)) is used
 #' @param ... extra parameters to pass to the optim function
+#' A good example is to specify `control=list(trace=1, REPORT=10, factr=1e13)` to improve performance.
+#' This will `trace` the estimation progress
+#' and `report` every 10 iterations. It limits the precision of the `L-BFGS-B` method to 3 significant digits (`factr` is multiplied with the machine precision, `1e12 * 1e-16 = 1e-4`).
+#'
+#' Incidentally, 3 significant digits \href{http://holford.fmhs.auckland.ac.nz/research/sigdig}{is the default value for NONMEM}.
+#' Without the above option, `estimate` will calculate with a relative precision of `1e-8`.
 #'
 #' @return A tdmorefit object
 #' @importFrom stats optim
@@ -119,7 +126,7 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     method = method,
     lower = lower,
     upper = upper,
-    hessian = TRUE,
+    hessian = se.fit, #only calculate the hessian if we want the vcov
     tdmore = tdmore,
     observed = observed,
     regimen = regimen,
@@ -134,7 +141,7 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     OFIM <- pointEstimate$hessian * 1/2
     varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
   } else {
-    varcov <- diag(0, nrow=length(parNames)) #very small value, to keep matrix semi-definite
+    varcov <- diag(0, nrow=length(parNames)) #vcov not calculated, so assumed '0'
   }
   dimnames(varcov) = list(parNames, parNames)
   ofv <- pointEstimate$value

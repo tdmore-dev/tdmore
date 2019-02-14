@@ -177,7 +177,8 @@ If not specified, we estimate the population prediction</p></td>
     </tr>
     <tr>
       <th>se.fit</th>
-      <td><p>calculate the variance-covariance matrix for the fit</p></td>
+      <td><p>calculate the variance-covariance matrix for the fit
+Putting this to FALSE can reduce computation time.</p></td>
     </tr>
     <tr>
       <th>lower</th>
@@ -189,7 +190,12 @@ If not specified, we estimate the population prediction</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>extra parameters to pass to the optim function</p></td>
+      <td><p>extra parameters to pass to the optim function
+A good example is to specify `control=list(trace=1, REPORT=10, factr=1e13)` to improve performance.
+This will `trace` the estimation progress
+and `report` every 10 iterations. It limits the precision of the `L-BFGS-B` method to 3 significant digits (`factr` is multiplied with the machine precision, `1e12 * 1e-16 = 1e-4`).</p>
+<p>Incidentally, 3 significant digits <a href='http://holford.fmhs.auckland.ac.nz/research/sigdig'>is the default value for NONMEM</a>.
+Without the above option, `estimate` will calculate with a relative precision of `1e-8`.</p></td>
     </tr>
     </table>
     

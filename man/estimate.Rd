@@ -23,13 +23,20 @@ If not specified, we estimate the population prediction}
 
 \item{method}{the optimisation method, by default, method "L-BFGS-B" is used}
 
-\item{se.fit}{calculate the variance-covariance matrix for the fit}
+\item{se.fit}{calculate the variance-covariance matrix for the fit
+Putting this to FALSE can reduce computation time.}
 
 \item{lower}{the lower bounds of the parameters, if null, -5 * sqrt(diag(model$omega)) is used}
 
 \item{upper}{the upper bounds of the parameters, if null, +5 * sqrt(diag(model$omega)) is used}
 
-\item{...}{extra parameters to pass to the optim function}
+\item{...}{extra parameters to pass to the optim function
+A good example is to specify `control=list(trace=1, REPORT=10, factr=1e13)` to improve performance.
+This will `trace` the estimation progress
+and `report` every 10 iterations. It limits the precision of the `L-BFGS-B` method to 3 significant digits (`factr` is multiplied with the machine precision, `1e12 * 1e-16 = 1e-4`).
+
+Incidentally, 3 significant digits \href{http://holford.fmhs.auckland.ac.nz/research/sigdig}{is the default value for NONMEM}.
+Without the above option, `estimate` will calculate with a relative precision of `1e-8`.}
 }
 \value{
 A tdmorefit object
