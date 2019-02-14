@@ -139,13 +139,15 @@ i <- 1
 fixedParameters <- c()
 covariates <- theta
 input <- observed[i,]
-ipred <- estimate(m1, regimen=regimen, observed=input, covariates=covariates,
+ipred <- estimate(m1, regimen=regimen %>% filter(OCC <= 1), observed=input, covariates=covariates, # Add filter on OCC
                   control=list(trace=1, REPORT=1))
+
+#plot(ipred)
 
 ## Second iteration
 i <- 2
 
-previousEta <- coef(ipred)[  seq(1, N)+(i-2)*N ] #fix the previous Eta
+previousEta <- coef(ipred)[  seq(1, N) + (i-2)*N ] #fix the previous Eta
 fixedParameters <- c(fixedParameters, previousEta)
 
 previousEbe <- predict(ipred, newdata=observed$TIME[i-1])[, c("Ka", "CL", "V1", "V2", "Q")] #set up a new THETA
@@ -159,7 +161,8 @@ input <- observed[i,]
 covariates <- bind_rows(covariates, previousEbe)
 # So in this call, we use the estimated ETA and real THETA for occasion 1
 # And in occasion 2, we estimate the new ETA using an OMEGA of vcov, and the THETA that is the previous EBE
-ipred <- estimate(m1, regimen=regimen, observed=input, covariates=covariates,
+#debugonce(tdmore:::estimate)
+ipred <- estimate(m1, regimen=regimen %>% filter(OCC <= 2), observed=input, covariates=covariates,
                   fix=fixedParameters,  ## TODO: add a mechanism to FIX parameters
                   control=list(trace=1, REPORT=1))
 
@@ -182,7 +185,7 @@ input <- observed[i,]
 covariates <- bind_rows(covariates, previousEbe)
 # So in this call, we use the estimated ETA and real THETA for occasion 1
 # And in occasion 2, we estimate the new ETA using an OMEGA of vcov, and the THETA that is the previous EBE
-ipred <- estimate(m1, regimen=regimen, observed=input, covariates=covariates,
+ipred <- estimate(m1, regimen=regimen %>% filter(OCC <= 3), observed=input, covariates=covariates,
                   fix=fixedParameters,  ## TODO: add a mechanism to FIX parameters
                   control=list(trace=1, REPORT=1))
 
