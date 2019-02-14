@@ -114,12 +114,12 @@ predict.tdmore_mixture <- function(object, newdata, regimen=NULL, parameters=NUL
 #'
 #' @return A tdmorefit_mixture object
 #' @importFrom stats optim
-estimateMixtureModel <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", lower=NULL, upper=NULL, ...) {
+estimateMixtureModel <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", lower=NULL, upper=NULL, ...) {
   mixture <- object
   models <- mixture$models
   probs <- mixture$probs
   fits <- lapply(models, FUN=function(model) {
-    estimate(model, observed=observed, regimen=regimen, covariates=covariates, par=par, method=method, lower=lower, upper=upper, ...)
+    estimate(model, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix, method=method, lower=lower, upper=upper, ...)
   })
   mixtureProbs <-
     data.frame(lik = as.numeric(lapply(fits, FUN = function(fit) {exp(fit$logLik)})),

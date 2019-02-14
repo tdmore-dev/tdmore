@@ -88,7 +88,7 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     tdmore <- object
   }
   else if (inherits(object, "tdmore_mixture")) {
-    return(estimateMixtureModel(object, observed=observed, regimen=regimen, covariates=covariates, par=par, method=method, lower=lower, upper=upper, ...))
+    return(estimateMixtureModel(object, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix, method=method, lower=lower, upper=upper, ...))
   }
   else {
     stop("Object not an instance of 'tdmore', 'tdmore_set' or 'tdmore_mixture")
@@ -111,7 +111,7 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   allIndexes <- seq_len(length(par))
   parIndexes <- allIndexes[! allIndexes %in% fixIndexes]
   par <- par[parIndexes]
-  omega <- omega[parIndexes, parIndexes]
+  omega <- omega[parIndexes, parIndexes, drop=FALSE]
   lower <- lower[parIndexes]
   upper <- upper[parIndexes]
   fix <- list(indexes=fixIndexes, values=fix)
@@ -169,7 +169,7 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     updatedVarcov <- varcov # nothing to do
   } else {
     updatedVarcov <- matrix(0, nrow=length(parNames), ncol=length(parNames))
-    updatedVarcov[-fixIndexes, -fixIndexes] <- varcov
+    updatedVarcov[-fixIndexes, -fixIndexes, drop=FALSE] <- varcov
   }
 
   dimnames(updatedVarcov) = list(parNames, parNames)
@@ -467,6 +467,7 @@ logLik.tdmorefit <- function(object, type=c('ll', 'pop', 'pred'), ...) {
   fun <- getLikelihoodFun(type)
   fun(par=estimate,
       omega=expandOmega(tdmore, getMaxOccasion(regimen)),
+      fix=list(indexes=c(), values=c()),
       tdmore=tdmore,
       observed=observed,
       regimen=regimen,
@@ -528,7 +529,7 @@ profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c
     eta <- as.numeric(estimate)
     names(eta) <- model$parameters
     omega <- expandOmega(model, getMaxOccasion(tdmorefit$regimen))
-    c(logLik=fun(eta, omega, model, tdmorefit$observed, tdmorefit$regimen, tdmorefit$covariates))
+    c(logLik=fun(eta, omega, NULL, model, tdmorefit$observed, tdmorefit$regimen, tdmorefit$covariates))
   }, .progress=.progress)
 
   return(structure(
