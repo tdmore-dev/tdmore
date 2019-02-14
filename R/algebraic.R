@@ -110,7 +110,7 @@ algebraic <- function(fun, output="CONC") {
       CONCs <- vapply(regimenResult, function(x) { x[[output]] }, FUN.VALUE=numeric(length(times)) )
 
       if(length(times)==0) {
-        df[, names( regimenResult[[1]] )] <- numeric()
+        for(outputCol in names( regimenResult[[1]] ))df[, outputCol] <- numeric()
       } else if (length(times)==1) {
         df[, output] <- sum(CONCs)
         i <- max(which(times >= regimen$TIME))

@@ -6,8 +6,8 @@
 a given dataset using the model}
 \usage{
 estimate(object, observed = NULL, regimen, covariates = NULL,
-  par = NULL, method = "L-BFGS-B", se.fit = TRUE, lower = NULL,
-  upper = NULL, ...)
+  par = NULL, fix = NULL, method = "L-BFGS-B", se.fit = TRUE,
+  lower = NULL, upper = NULL, ...)
 }
 \arguments{
 \item{object}{a tdmore, tdmore_set or tdmore_mixture object}
@@ -20,6 +20,8 @@ If not specified, we estimate the population prediction}
 \item{covariates}{the model covariates}
 
 \item{par}{optional starting parameter for the MLE minimization}
+
+\item{fix}{named vector with the fixed parameters}
 
 \item{method}{the optimisation method, by default, method "L-BFGS-B" is used}
 

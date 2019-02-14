@@ -32,28 +32,31 @@ plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, populatio
 
   # Compute IPRED
   if(fit) {
-    ipred <- x %>% predict(newdata, regimen=regimen) %>% meltPredictions()
-    if (se.fit) {
-      ipredre <- x %>% predict(newdata, regimen=regimen, se.fit=T, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress) %>% meltPredictions(se=T)
+    ipred <- predict(x, newdata=newdata, regimen=regimen, parameters=tdmorefit$fix) %>% meltPredictions()
+    if (!is.na(se.fit) && se.fit) {
+      ipredre_tmp <- predict(x, newdata=newdata, regimen=regimen, parameters=tdmorefit$fix, se.fit=T, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress)
+      ipredre <- ipredre_tmp %>% meltPredictions(se=T)
     }
   }
   yVars <- colnames(newdata)[colnames(newdata) != "TIME"]
 
   # Compute PRED
   if(population) {
-    pred_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates)
+    pred_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates, fix=tdmorefit$fix)
     if(mixture) {
       pred_tmp$fits_prob <- x$fits_prob # Use same fit probabilities as ipred to have a coherent plot
       pred_tmp$winner <- x$winner # Same winner
     }
-    pred <- pred_tmp %>% predict(newdata) %>% meltPredictions()
+    pred <-  predict(pred_tmp, newdata=newdata, parameters=tdmorefit$fix) %>% meltPredictions()
 
-    predre_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates)
+    predre_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates, fix=tdmorefit$fix)
     if(mixture) {
       predre_tmp$fits_prob <- x$fits_prob # Use same fit probabilities as ipred to have a coherent plot
       predre_tmp$winner <- x$winner # Same winner
     }
-    predre <- predre_tmp %>% predict(newdata, se.fit=T) %>% meltPredictions(se=T)
+    if(!is.na(se.fit)) {
+      predre <- predict(predre_tmp, newdata=newdata, parameters=tdmorefit$fix, se.fit=T) %>% meltPredictions(se=T)
+    }
   }
 
   obs <- model.frame.tdmorefit(tdmorefit) %>% meltPredictions()
@@ -64,8 +67,8 @@ plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, populatio
   if(fit) plot <- plot + geom_line(color=red(), data=ipred)
   if(nrow(obs) > 0) plot <- plot + geom_point(data=obs)
   # always draw population + IIV
-  if(population) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=predre, alpha=0.1)
-  if(fit && se.fit) plot <- plot + geom_ribbon(fill=red(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.15)
+  if(population && !is.na(se.fit)) plot <- plot + geom_ribbon(fill=blue(), aes_string(ymin="value.lower", ymax="value.upper"), data=predre, alpha=0.1)
+  if(fit && !is.na(se.fit) && se.fit) plot <- plot + geom_ribbon(fill=red(), aes_string(ymin="value.lower", ymax="value.upper"), data=ipredre, alpha=0.15)
 
   plot <- plot +
     ggplot2::facet_wrap(~variable)

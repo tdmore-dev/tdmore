@@ -4,12 +4,14 @@
 \alias{pop_ll}
 \title{Calculate the population log likelihood.}
 \usage{
-pop_ll(par, omega, tdmore, observed, regimen, covariates)
+pop_ll(par, omega, fix, tdmore, observed, regimen, covariates)
 }
 \arguments{
 \item{par}{the current estimate of the parameters}
 
 \item{omega}{the omega matrix}
+
+\item{fix}{named vector with the fixed parameters, not used in this function}
 
 \item{tdmore}{the tdmore object}
 

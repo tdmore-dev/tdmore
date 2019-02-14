@@ -2,13 +2,14 @@
 #'
 #' @param par the current estimate of the parameters
 #' @param omega the omega matrix
+#' @param fix named vector with the fixed parameters, not used in this function
 #' @param tdmore the tdmore object
 #' @param observed the observed data, not used in the population log likelihood
 #' @param regimen data frame describing the treatment regimen
 #' @param covariates the model covariates, not used in the population log likelihood
 #'
 #' @return the population log likelihood
-pop_ll <- function(par, omega, tdmore, observed, regimen, covariates) {
+pop_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
   sum <- sum( mvtnorm::dmvnorm(par, sigma=omega, log=TRUE) )
   return(sum)
 }
@@ -17,6 +18,7 @@ pop_ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #'
 #' @param par the current estimate of the parameters
 #' @param omega the omega matrix
+#' @param fix named vector with the fixed parameters
 #' @param tdmore the tdmore object
 #' @param observed data frame with at least a TIME column, and all observed data.
 #' The data.frame can be empty, or could contain only a TIME column.
@@ -28,8 +30,8 @@ pop_ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #' @importFrom stats residuals
 #'
 #' @return the prediction log likelihood
-pred_ll <- function(par, omega, tdmore, observed, regimen, covariates) {
-  pred <- predict(object=tdmore, newdata=observed, regimen=regimen, parameters=par, covariates=covariates)
+pred_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
+  pred <- predict(object=tdmore, newdata=observed, regimen=regimen, parameters=c(fix$values,par), covariates=covariates)
   res <- residuals(tdmore, observed, pred, log=TRUE)
   return(sum(res))
 }
@@ -38,6 +40,7 @@ pred_ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #'
 #' @param par the current estimate of the parameters
 #' @param omega the omega matrix
+#' @param fix named vector with the fixed parameters
 #' @param tdmore the tdmore object
 #' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
@@ -45,10 +48,14 @@ pred_ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #' @param covariates the model covariates
 #'
 #' @return the log likelihood
-ll <- function(par, omega, tdmore, observed, regimen, covariates) {
-  names(par) <- getParameterNames(tdmore, regimen)
-  pop_ll <- pop_ll(par, omega, tdmore, observed, regimen, covariates)
-  pred_ll <- pred_ll(par, omega, tdmore, observed, regimen, covariates)
+ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
+  parNames <- getParameterNames(tdmore, regimen)
+  if(!is.null(fix$indexes)) {
+    parNames <- parNames[-fix$indexes]
+    names(par) <- parNames
+  }
+  pop_ll <- pop_ll(par, omega, fix, tdmore, observed, regimen, covariates)
+  pred_ll <- pred_ll(par, omega, fix, tdmore, observed, regimen, covariates)
   return(pop_ll + pred_ll)
 }
 
@@ -61,6 +68,7 @@ ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #' @param regimen data frame describing the treatment regimen.
 #' @param covariates the model covariates
 #' @param par optional starting parameter for the MLE minimization
+#' @param fix named vector with the fixed parameters
 #' @param method the optimisation method, by default, method "L-BFGS-B" is used
 #' @param se.fit calculate the variance-covariance matrix for the fit
 #' Putting this to FALSE can reduce computation time.
@@ -77,7 +85,7 @@ ll <- function(par, omega, tdmore, observed, regimen, covariates) {
 #' @return A tdmorefit object
 #' @importFrom stats optim
 #' @export
-estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, ...) {
+estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, ...) {
 
   if (inherits(object, "tdmore_set")) {
     # Either a tdmore or tdmore_mixture
@@ -87,7 +95,7 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     tdmore <- object
   }
   else if (inherits(object, "tdmore_mixture")) {
-    return(estimateMixtureModel(object, observed=observed, regimen=regimen, covariates=covariates, par=par, method=method, lower=lower, upper=upper, ...))
+    return(estimateMixtureModel(object, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix, method=method, lower=lower, upper=upper, ...))
   }
   else {
     stop("Object not an instance of 'tdmore', 'tdmore_set' or 'tdmore_mixture")
@@ -105,15 +113,26 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   lower <- processParameters(lower, tdmore, regimen, -5 * sqrt(diag(omega)))
   upper <- processParameters(upper, tdmore, regimen, +5 * sqrt(diag(omega)))
 
+  # Process fix vector
+  fixIndexes <- getFixedParametersIndexes(par=par, fix=fix)
+  allIndexes <- seq_len(length(par))
+  parIndexes <- allIndexes[! allIndexes %in% fixIndexes]
+  par <- par[parIndexes]
+  omega <- omega[parIndexes, parIndexes, drop=FALSE]
+  lower <- lower[parIndexes]
+  upper <- upper[parIndexes]
+  fix <- list(indexes=fixIndexes, values=fix)
+  updatedParNames <- parNames[parIndexes]
+
   # First try to estimate at starting values, as a precaution
-  value <- ll(par=par, omega=omega, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)
+  value <- ll(par=par, omega=omega, fix=fix, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)
   if(!is.finite(value))
     stop("Log-likelihood is ", value, " at starting values `par`. Cannot start optimization routine.")
 
   # Function to optimise
   fn <- function(par, ...) {
     tryCatch({
-      -2 * ll(par = par, omega = omega, ...)
+      -2 * ll(par=par, omega=omega, fix=fix, ...)
     }, error = function(e) {
       999999
     })
@@ -134,18 +153,61 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     ...
   )
   res <- pointEstimate$par
-  names(res) <- parNames
+  names(res) <- updatedParNames
 
   # Observed fisher information matrix = -hessian(ll)
   if(se.fit) {
     OFIM <- pointEstimate$hessian * 1/2
     varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
   } else {
-    varcov <- diag(0, nrow=length(parNames)) #vcov not calculated, so assumed '0'
+    varcov <- diag(0, nrow=length(updatedParNames)) #very small value, to keep matrix semi-definite
   }
-  dimnames(varcov) = list(parNames, parNames)
+
+  # Re-add fixed parameters in res and omega
+  updatedRes <- rep(0, length(parNames))
+  names(updatedRes) <- parNames
+  updatedRes[parIndexes] <- res
+  for(name in unique(names(fix$values))) {
+    indexesInFix <- which(names(fix$values)==name)
+    indexesInUpdatedRes <- which(names(updatedRes) == name)
+    updatedRes[indexesInUpdatedRes[1:length(indexesInFix)]] <- fix$values[indexesInFix]
+  }
+  if(is.null(fix$indexes)) {
+    updatedVarcov <- varcov # nothing to do
+  } else {
+    updatedVarcov <- matrix(0, nrow=length(parNames), ncol=length(parNames))
+    updatedVarcov[-fixIndexes, -fixIndexes] <- varcov
+  }
+
+  dimnames(updatedVarcov) = list(parNames, parNames)
   ofv <- pointEstimate$value
-  tdmorefit(tdmore, observed, regimen, covariates, ofv, res, varcov, nlmresult=pointEstimate, call=match.call())
+  tdmorefit(tdmore, observed, regimen, covariates, ofv, updatedRes, updatedVarcov, fix$values, nlmresult=pointEstimate, call=match.call())
+}
+
+#' Get the indexes of the fixed parameters.
+#'
+#' @param par named vector with the parameters in the right order
+#' @param fix named vector with the fixed parameters (user input)
+#'
+#' @return the fixed parameters indexes
+getFixedParametersIndexes <- function(par, fix) {
+  if(length(fix) == 0) {
+    return(c())
+  }
+  parNames <- names(par)
+  fixNames <- names(fix)
+  fixedParametersIndexes <- sort(unique(unlist(plyr::adply(unique(fixNames), 1, .fun = function(name) {
+    howMany <- sum(fixNames==name)
+    res <- which(parNames==name)
+    if(length(res) < howMany) {
+      stop("Inconsistent fix argument")
+    }
+    res[seq_len(howMany)]
+  }))))
+  if(length(fixedParametersIndexes) >=length(parNames)) {
+    stop("Parameters can't be all fixed")
+  }
+  return(fixedParametersIndexes)
 }
 
 #' Create a tdmorefit object manually
@@ -157,12 +219,13 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
 #' @param ofv (optional) the OFV value
 #' @param res the found parameter values, as a named vector, or NULL to use 0
 #' @param varcov the found varcov matrix, or NULL to use a diagonal matrix
+#' @param fix the fixed parameters
 #' @param nlmresult the result of the non-linear minimization
 #' @param call a informative string that gives the arguments that were used in estimate()
 #'
 #' @return A tdmorefit object, manually created
 #' @export
-tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, res=NULL, varcov=NULL, nlmresult=NULL, call=NULL) {
+tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, res=NULL, varcov=NULL, fix=NULL, nlmresult=NULL, call=NULL) {
   N <- length(tdmore$parameters)
   if(is.null(res)) {
     res <- rep(0, N) #population prediction
@@ -183,6 +246,7 @@ tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, r
       logLik=ofv/-2,
       res=res,
       varcov=varcov,
+      fix=fix,
       nlmresult=nlmresult,
       call=call
     ), class=c("tdmorefit"))
@@ -412,6 +476,7 @@ logLik.tdmorefit <- function(object, type=c('ll', 'pop', 'pred'), ...) {
   fun <- getLikelihoodFun(type)
   fun(par=estimate,
       omega=expandOmega(tdmore, getMaxOccasion(regimen)),
+      fix=list(indexes=c(), values=c()),
       tdmore=tdmore,
       observed=observed,
       regimen=regimen,
@@ -449,19 +514,19 @@ profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c
   list <- lapply(
     profiledParameters,
     FUN = function(profiledParameter) {
-        if (limitsAsNumeric) {
-          return(seq(limits[1], limits[2], length.out=maxpts))
+      if (limitsAsNumeric) {
+        return(seq(limits[1], limits[2], length.out=maxpts))
 
-        } else if (limitsAsList){
-          parameterRange <- unlist(limits[profiledParameter])
-          if(!is.null(parameterRange)) {
-            cat()
-            return(seq(parameterRange[1], parameterRange[2], length.out=maxpts))
-          }
+      } else if (limitsAsList){
+        parameterRange <- unlist(limits[profiledParameter])
+        if(!is.null(parameterRange)) {
+          cat()
+          return(seq(parameterRange[1], parameterRange[2], length.out=maxpts))
         }
-        # Default case, take omega value to generate a 95% range of possible eta's
-        omega <- omegas[profiledParameter]
-        return(seq(-1.96 * sqrt(omega), 1.96 * sqrt(omega), length.out = maxpts))
+      }
+      # Default case, take omega value to generate a 95% range of possible eta's
+      omega <- omegas[profiledParameter]
+      return(seq(-1.96 * sqrt(omega), 1.96 * sqrt(omega), length.out = maxpts))
     }
   )
   grid <- expand.grid(list)
@@ -473,7 +538,7 @@ profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c
     eta <- as.numeric(estimate)
     names(eta) <- model$parameters
     omega <- expandOmega(model, getMaxOccasion(tdmorefit$regimen))
-    c(logLik=fun(eta, omega, model, tdmorefit$observed, tdmorefit$regimen, tdmorefit$covariates))
+    c(logLik=fun(eta, omega, NULL, model, tdmorefit$observed, tdmorefit$regimen, tdmorefit$covariates))
   }, .progress=.progress)
 
   return(structure(

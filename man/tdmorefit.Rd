@@ -5,8 +5,8 @@
 \title{Create a tdmorefit object manually}
 \usage{
 tdmorefit(tdmore, observed = NULL, regimen, covariates = NULL,
-  ofv = NA, res = NULL, varcov = NULL, nlmresult = NULL,
-  call = NULL)
+  ofv = NA, res = NULL, varcov = NULL, fix = NULL,
+  nlmresult = NULL, call = NULL)
 }
 \arguments{
 \item{tdmore}{the tdmore object}
@@ -22,6 +22,8 @@ tdmorefit(tdmore, observed = NULL, regimen, covariates = NULL,
 \item{res}{the found parameter values, as a named vector, or NULL to use 0}
 
 \item{varcov}{the found varcov matrix, or NULL to use a diagonal matrix}
+
+\item{fix}{the fixed parameters}
 
 \item{nlmresult}{the result of the non-linear minimization}
 
