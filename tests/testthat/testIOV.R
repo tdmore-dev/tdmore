@@ -57,22 +57,24 @@ plot(fit, newdata=0:96)
 
 # Check OMEGA matrix transformation
 omega <- tdmore$omega
-omega[2,1] <- 0.1
-omega[1,2] <- 0.1
-omega[3,1] <- 0.11
-omega[1,3] <- 0.11
+#omega[2,1] <- 0.1
+#omega[1,2] <- 0.1
+#omega[3,1] <- 0.11
+#omega[1,3] <- 0.11
 omega[4,1] <- 0.12
 omega[1,4] <- 0.12
 omega[3,2] <- 0.13
 omega[2,3] <- 0.13
-omega[4,2] <- 0.14
-omega[2,4] <- 0.14
-omega[4,3] <- 0.15
-omega[3,4] <- 0.15
+#omega[4,2] <- 0.14
+#omega[2,4] <- 0.14
+#omega[4,3] <- 0.15
+#omega[3,4] <- 0.15
 
 tdmore$omega <- omega
 expandedOmega <- expandOmega(tdmore, 2)
-expectedOmega <- matrix(c(0.09,0.13,0.1,0.14,0.1,0.14,0.13,0.08,0.11,0.15,0.11,0.15,0.1,0.11,0.03,0.12,0,0.12,0.14,0.15,0.12,0.02,0.12,0,0.1,0.11,0,0.12,0.03,0.12,0.14,0.15,0.12,0,0.12,0.02), nrow = 6, ncol = 6)
+expectedOmega <- matrix(c(0.09, 0.13, 0, 0, 0, 0, 0.13, 0.08, 0, 0, 0, 0, 0,
+                          0, 0.03, 0.12, 0, 0, 0, 0, 0.12, 0.02, 0, 0, 0, 0, 0, 0, 0.03,
+                          0.12, 0, 0, 0, 0, 0.12, 0.02), nrow = 6, ncol = 6)
 dimnames(expectedOmega) = list(names(expectedValues), names(expectedValues))
 expect_equal(expandedOmega, expectedOmega)
 
@@ -107,9 +109,9 @@ mod_1cpt_1 <- nlmixrUI(function(){
     TVV <- 70
     TVKA <- 1
     TVCL <- 4
-    ECL_IOV ~ 0.03
     ECL ~ 0.09
     EKA ~ 0.08
+    ECL_IOV ~ 0.03
     EKA_IOV ~ 0.02
     EPS_PROP <- 0.1
   })
@@ -132,3 +134,33 @@ ggplot(data4, aes(x = TIME, y=CONC, group=type, color=type)) + geom_line() +
 
 data4Check <- data4 %>% filter(TIME==55) %>% select(CONC)
 expect_equal(data4Check, data.frame(CONC=c(1.717376, 1.460061)), tolerance=1e-6)
+
+tdmore$omega[1,2] <- tdmore$omega[2,1] <- sqrt(0.09)*sqrt(0.08)*-0.1 #IIV correlation
+tdmore$omega[3,4] <- tdmore$omega[4,3] <- sqrt(0.03)*sqrt(0.02)*0.3 #IOV correlation
+tdmore$omega
+
+test_that("expandOmega works as intended", {
+  iovIndex <- rownames(tdmore$omega) %in% tdmore$iov
+  expect_equal(
+    expandOmega(tdmore, 0),
+    tdmore$omega[!iovIndex, !iovIndex]
+  )
+  expect_equal(
+    expandOmega(tdmore, 1),
+    tdmore$omega
+  )
+
+  expectedResult <- Matrix::bdiag(
+    tdmore$omega[!iovIndex, !iovIndex],
+    tdmore$omega[iovIndex, iovIndex],
+    tdmore$omega[iovIndex, iovIndex]
+  ) %>% as.matrix()
+  myNames <- rownames(tdmore$omega)
+  myNames <- c(myNames[!iovIndex], rep(myNames[iovIndex], 2) )
+  rownames( expectedResult ) <- myNames
+  colnames( expectedResult ) <- myNames
+  expect_equal(
+    expandOmega(tdmore, 2),
+    expectedResult
+  )
+})

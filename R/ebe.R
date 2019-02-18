@@ -611,31 +611,19 @@ expandOmega <- function(tdmore, occasions) {
   omega <- tdmore$omega
 
   if(is.null(iov)) {
-    retValue <- omega
-  } else {
-    indexes <- seq_len(ncol(omega))
-    iovIndexes <- indexes[(colnames(omega) %in% iov)]
-    noIovIndexes <- indexes[!(colnames(omega) %in% iov)]
-    mat_tmp <- omega[c(noIovIndexes, iovIndexes), c(noIovIndexes, iovIndexes)]
-
-    for(occasion in seq_len(occasions - 1)) {
-      indexesToCopy <- (ncol(mat_tmp)-(length(iov) - 1)):ncol(mat_tmp)
-      # Copy vertical IOV columns at the end
-      matV <- mat_tmp[,indexesToCopy]
-      mat_tmp <- cbind(mat_tmp, matV)
-
-      # Copy horizontal IOV columns at the end
-      matH <- mat_tmp[indexesToCopy,]
-      mat_tmp <- rbind(mat_tmp, matH)
-
-      # Remove initial IOV correlations
-      for(sourceIndex in indexesToCopy) {
-        destIndex <- sourceIndex + length(iov)
-        mat_tmp[sourceIndex, destIndex] <- 0
-        mat_tmp[destIndex, sourceIndex] <- 0
-      }
-    }
-    retValue <- mat_tmp
+    return(omega)
   }
-  return(retValue)
+
+  iov <- colnames(omega) %in% iov
+
+  elements <- list(omega[!iov, !iov], omega[iov, iov] )
+  result <- Matrix::.bdiag(
+    elements[c(1, rep(2, occasions) ) ]
+  ) %>% as.matrix()
+
+  myNames <- rownames(tdmore$omega)
+  myNames <- c(myNames[!iov], rep(myNames[iov], occasions) )
+  dimnames(result) <- list(myNames, myNames)
+
+  result
 }

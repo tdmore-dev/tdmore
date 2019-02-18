@@ -20,7 +20,7 @@ Description: Easily define a Nonlinear Mixed-Effects Model,
     in a clinical setting.
 Depends: R (>= 3.5.0)
 Imports: assertthat, mnormt, plyr, dplyr, numDeriv, reshape, stats, RxODE, nlmixr, deSolve, ggplot2 (>= 3.0.0), magrittr, 
- gridExtra, mvtnorm, zoo, rlang, purrr
+ gridExtra, mvtnorm, zoo, rlang, purrr, Matrix
 License: file LICENSE
 Encoding: UTF-8
 Language: en-US

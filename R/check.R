@@ -37,6 +37,9 @@ checkOmegaMatrix <- function(tdmore) {
     omega <- omega[parameters, , drop=FALSE]
   }
 
+  ## Double check that omega is symmetric
+  assert_that( isSymmetric(omega), msg="Omega matrix not symmetric")
+
   tdmore$omega <- omega
   return(tdmore)
 }
@@ -110,6 +113,10 @@ checkIOV <- function(tdmore) {
       condition <- iov %in% parameters
       assert_that(all(condition), msg=paste("IOV term(s)", paste(iov[!condition], collapse=",")  ,"not defined in model"))
       tdmore$iov <- parameters[(parameters %in% iov)] # Reorder IOV params in iov attribute
+
+      ## Check that no correlation exists in OMEGA
+      iovI <- parameters %in% iov
+      assert_that( all(tdmore$omega[ iovI, !iovI ] == 0), msg="No correlation between IOV and non-IOV term can exist in OMEGA." )
     } else {
       stop("IOV should be a character or character array")
     }
