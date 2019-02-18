@@ -36,15 +36,12 @@ findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), tar
 
   } else {
     # Find the dose for each Monte-Carlo sample
-    mc <- as.data.frame(mnormt::rmnorm(mc.maxpts, mean = coef(tdmorefit), varcov = vcov(tdmorefit)))
-    pNames <- names(coef(tdmorefit))
-    colnames(mc) <- pNames
-    mc <- cbind( sample=1:mc.maxpts, mc ) #make sure 'sample' is first column
+    mc <- generateMonteCarloMatrix(tdmorefit, fix = tdmorefit$fix, mc.maxpts = mc.maxpts)
     uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
 
     mcResult <- plyr::ddply(mc, 1, function(row) {
       res <- unlist(row[-1]) # Remove 'sample'
-      names(res) <- pNames
+      names(res) <- names(coef(tdmorefit))
 
       mcRootFunction <- function(AMT) {
         myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)

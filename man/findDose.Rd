@@ -4,9 +4,9 @@
 \alias{findDose}
 \title{Find the dose required (quick and dirty, to be optimised)}
 \usage{
-findDose(tdmorefit, regimen, doseRows = NULL, interval = c(0, 1e+10),
-  target, se.fit = FALSE, level = 0.95, mc.maxpts = 100,
-  .progress = "none", .parallel = FALSE, ...)
+findDose(tdmorefit, regimen, doseRows = NULL, interval = c(0,
+  10000000000), target, se.fit = FALSE, level = 0.95,
+  mc.maxpts = 100, .progress = "none", .parallel = FALSE, ...)
 }
 \arguments{
 \item{tdmorefit}{the tdmorefit object}
