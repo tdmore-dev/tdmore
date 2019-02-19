@@ -134,15 +134,20 @@ covariates <- theta ##TODO: time-varying covariates
 
 N <- length(m1$iov) #how many IOV parameters there are
 
+pred <- estimate(m1, regimen=regimen, covariates=theta, control=list(trace=1, REPORT=1, factr=1e12), se.fit=FALSE)
+
 ## First iteration
 i <- 1
 fixedParameters <- c()
 covariates <- theta
 input <- observed[i,]
 #debugonce(tdmore:::plot.tdmorefit)
-ipred <- estimate(m1, regimen=regimen %>% filter(OCC <= 1), observed=input, covariates=covariates, # Add filter on OCC
-                  control=list(trace=1, REPORT=1))
+myRegimen <- regimen %>% filter(OCC <= 1)
+#myRegimen <- regimen
+ipred <- estimate(m1, regimen=myRegimen, observed=input, covariates=covariates, # Add filter on OCC
+                  control=list(trace=1, REPORT=1, factr=1e12))
 plot(ipred)
+ipreds <- list(ipred)
 
 ## Second iteration
 for(i in 2:5) {
@@ -154,8 +159,9 @@ for(i in 2:5) {
   names(previousEbe) <- paste0("TV", names(previousEbe)) #use these as the typical values for the new estimation
   previousEbe$TIME <- observed$TIME[i-1]
 
-  ## TODO: take the right rows from vcov (the ones that refer to the uncertainty on the current occasion)
-  m1$omega <- vcov(ipred)[seq(1,N)+(i-2)*N, seq(1,N)+(i-2)*N] #adapt OMEGA
+  ## Adapt OMEGA based on the uncertainty of the parameter estimates
+  ## XXX: Point of scientific discussion: what to do here?
+  #m1$omega <- vcov(ipred)[seq(1,N)+(i-2)*N, seq(1,N)+(i-2)*N] #adapt OMEGA
 
   input <- observed[i,]
   covariates <- bind_rows(covariates, previousEbe)
@@ -163,9 +169,22 @@ for(i in 2:5) {
   # And in occasion 2, we estimate the new ETA using an OMEGA of vcov, and the THETA that is the previous EBE
 
   #debugonce(tdmore:::estimate)
-  ipred <- estimate(m1, regimen=regimen %>% filter(OCC <= i), observed=input, covariates=covariates,
+
+  myRegimen <- regimen %>% filter(OCC <= i)
+  ipred <- estimate(m1, regimen=myRegimen, observed=input, covariates=covariates,
                     fix=fixedParameters,  ## TODO: add a mechanism to FIX parameters
                     control=list(trace=1, REPORT=1))
   #debugonce(tdmore:::plot.tdmorefit)
   print(plot(ipred, se.fit=NA))
+  ipreds[[i]] <- ipred
 }
+
+plot(ipreds[[length(ipreds)]], se.fit=NA) +
+  lapply(seq_along(ipreds), function(i) {
+    myRegimen <- regimen %>% mutate(OCC=ifelse(OCC>=i, i, OCC))
+    geom_line(
+      data=predict(ipreds[[i]], regimen=myRegimen, newdata=seq(0, 200, by=0.5)),
+      aes(y=Cwb),
+      color=i
+    )
+  }) + geom_point(data=observed, aes(x=TIME, y=Cwb), shape=3, alpha=0.3)
