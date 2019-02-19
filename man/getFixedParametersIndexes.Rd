@@ -4,12 +4,12 @@
 \alias{getFixedParametersIndexes}
 \title{Get the indexes of the fixed parameters.}
 \usage{
-getFixedParametersIndexes(par, fix)
+getFixedParametersIndexes(parNames, fix)
 }
 \arguments{
-\item{par}{named vector with the parameters in the right order}
+\item{parNames}{parameter names in the right order}
 
-\item{fix}{named vector with the fixed parameters (user input)}
+\item{fix}{named numeric vector with the fixed parameters (user input)}
 }
 \value{
 the fixed parameters indexes

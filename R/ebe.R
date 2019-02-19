@@ -114,7 +114,7 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   upper <- processParameters(upper, tdmore, regimen, +5 * sqrt(diag(omega)))
 
   # Process fix vector
-  fixIndexes <- getFixedParametersIndexes(par=par, fix=fix)
+  fixIndexes <- getFixedParametersIndexes(parNames=names(par), fix=fix)
   allIndexes <- seq_len(length(par))
   parIndexes <- allIndexes[! allIndexes %in% fixIndexes]
   par <- par[parIndexes]
@@ -186,15 +186,14 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
 
 #' Get the indexes of the fixed parameters.
 #'
-#' @param par named vector with the parameters in the right order
-#' @param fix named vector with the fixed parameters (user input)
+#' @param parNames parameter names in the right order
+#' @param fix named numeric vector with the fixed parameters (user input)
 #'
 #' @return the fixed parameters indexes
-getFixedParametersIndexes <- function(par, fix) {
+getFixedParametersIndexes <- function(parNames, fix) {
   if(length(fix) == 0) {
     return(c())
   }
-  parNames <- names(par)
   fixNames <- names(fix)
   fixedParametersIndexes <- sort(unique(unlist(plyr::adply(unique(fixNames), 1, .fun = function(name) {
     howMany <- sum(fixNames==name)
@@ -356,6 +355,34 @@ fitted.tdmorefit <- function(object, ...) {
   predict.tdmore(object=object$tdmore, newdata=object$observed, regimen=object$regimen, parameters=object$res, covariates=object$covariate)
 }
 
+#' Generate the Monte-Carlo matrix.
+#'
+#' @param tdmorefit a tdmorefit object
+#' @param fix named numeric vector with the fixed parameters
+#' @param mc.maxpts number of Monte-Carlo samples
+#'
+#' @return the Monte-Carlo matrix, first column is always the 'sample' column
+#'
+generateMonteCarloMatrix <- function(tdmorefit, fix, mc.maxpts) {
+  parNames <- names(coef(tdmorefit))
+  fixIndexes <- getFixedParametersIndexes(parNames = parNames, fix = fix)
+
+  if(is.null(fixIndexes)) {
+    mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit), varcov=vcov(tdmorefit)) )
+    colnames(mc) <- parNames
+  } else {
+    mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit)[-fixIndexes], varcov=vcov(tdmorefit)[-fixIndexes, -fixIndexes]) )
+    if(length(fix) > 1) {
+      mc_fix <- t(replicate(n=nrow(mc), expr=fix))
+    } else {
+      mc_fix <- replicate(n=nrow(mc), expr=fix)
+    }
+    mc <- cbind(mc_fix, mc)
+    colnames(mc) <- c(names(fix), parNames[-fixIndexes])
+  }
+  mc <- cbind( sample=1:mc.maxpts, mc )
+}
+
 #' Predict new data using the current model
 #'
 #' @param object A tdmorefit object
@@ -383,20 +410,17 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
   if(is.null(regimen)) regimen=tdmorefit$regimen
   if(is.null(newdata)) newdata <- model.frame(tdmorefit)
 
-  pars <- processParameters(parameters, tdmorefit$tdmore, regimen, defaultValues=coef(tdmorefit))
+  par <- processParameters(parameters, tdmorefit$tdmore, regimen, defaultValues=coef(tdmorefit))
   if(is.null(covariates)) covariates <- tdmorefit$covariates
 
-  ipred <- predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=pars, covariates=covariates)
+  ipred <- predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=par, covariates=covariates)
   if(se.fit) {
-    mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit), varcov=vcov(tdmorefit)) )
-    colnames(mc) <- names(pars)
-    mc <- cbind( sample=1:mc.maxpts, mc ) #make sure 'sample' is first column
+    mc <- generateMonteCarloMatrix(tdmorefit, fix = parameters, mc.maxpts = mc.maxpts)
     uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
 
-    for(i in names(parameters)) mc[, i] <- parameters[i] # TODO: adapt because of same names
     fittedMC <- plyr::ddply(mc, 1, function(row) {
       res <- unlist(row[-1]) # Remove 'sample'
-      names(res) <- names(pars)
+      names(res) <- names(coef(tdmorefit))
       pred <- predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=res, covariates=covariates)
       colnames(row) <- uniqueColnames
       resArray <- cbind(row, pred)
