@@ -41,6 +41,14 @@ algebraic <- function(fun, output="CONC") {
 
       if(anyNA(regimen)) stop("The provided regimen contains NA. Cannot calculate algebraic model...")
 
+      if(length(times) ==0) {
+        df <- data.frame(TIME=numeric(0))
+        df[, output] <- numeric(0)
+        return(df)
+      }
+
+      regimen <- regimen[ regimen$TIME <= max(times, -Inf), ]
+
       df <- data.frame(TIME=times)
       if(nrow(regimen) == 0) {
         df[, output] <- rep(0, length.out=length(times))
