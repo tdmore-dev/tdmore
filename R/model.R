@@ -315,11 +315,16 @@ processParameters <- function(parameters, tdmore, regimen, defaultValues=NULL) {
 
   if(is.null(defaultValues)) {
     par <- rep(0, length(parameterNames)) # start with population
+    names(par) <- parameterNames
   } else {
-    par <- defaultValues
+    ## Use the defaultValues, but possibly extend with 0 for e.g. IOV
+    assert_that(identical(
+      names(defaultValues),
+      parameterNames[seq_along(defaultValues)] ))
+    Nmissing <- length(parameterNames) - length(defaultValues)
+    par <- c(defaultValues, rep(0, Nmissing))
+    names(par) <- parameterNames
   }
-  assert_that(length(par)==length(parameterNames))
-  names(par) <- parameterNames
 
   if(!is.null(parameters)) {
     assert_that(is.numeric(parameters))
