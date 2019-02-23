@@ -4,6 +4,30 @@
 
 assert_that <- assertthat::assert_that
 # Structural model: how to predict --------------------------------------------------------
+#' Prepare a cache object
+#'
+#' @param model The model itself.
+#' @param times The times at which to generate predictions. May be empty, but never NULL.
+#' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)
+#' @param parameters named vector
+#' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
+#' @param iov IOV terms
+#' @param extraArguments named list with extra arguments to use for call
+#'
+#' @return
+#' A list of cached values
+#'
+#' @export
+#' @keywords internal
+#'
+model_prepare <- function(model, times, regimen, parameters, covariates, iov, extraArguments) {
+  UseMethod("model_prepare")
+}
+
+model_prepare.default <- function(model, times, regimen, parameters, covariates, iov, extraArguments) {
+  NULL
+}
+
 #' Prototype predict function. Implement this to add your own model type to tdmore.
 #'
 #' @param model The model itself.

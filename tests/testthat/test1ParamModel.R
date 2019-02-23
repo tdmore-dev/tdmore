@@ -21,7 +21,7 @@ regimen <- data.frame(
 # Estimate and plot IPRED
 observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
 ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
-
+plot(ipred)
 test_that("Prediction results makes sense", {
   vdiffr::expect_doppelganger("ipred_1cmt", plot(ipred))
   vdiffr::expect_doppelganger("ipred_1cmt_profile", plot(profile(ipred)))

@@ -27,7 +27,8 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, 
   return(checkTdmore(tdmore))
 }
 
-#' Predict for RxODE
+
+#' Prepare a cache object for RxODE simulation
 #'
 #' @param model The model itself.
 #' @param newdata
@@ -42,23 +43,25 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, 
 #' @export
 #'
 #' @return
-#' A data.frame similar to the observed data frame, but with predicted values.
+#' A list, to be used as a cache object for model_predict
+#'
 #' @importFrom RxODE eventTable rxSolve
 #' @importFrom dplyr transmute left_join bind_rows arrange mutate_all
 #' @importFrom rlang .data
 #'
 #' @keywords internal
 #'
-model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric()), parameters=numeric(), covariates=NULL, iov=NULL, extraArguments=list(), cache=NULL) {
+model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric()), parameters=numeric(), covariates=NULL, iov=NULL, extraArguments=list(), cache=NULL) {
   modVars <- model$get.modelVars()
   # RxODE does not allow to simulate 'nothing'
   # Manually construct an empty data.frame with the right columns
   if(length(times) == 0) {
     colNames <- c("TIME", modVars$lhs, modVars$state)
     df <- data.frame(matrix(numeric(), nrow=0, ncol=length(colNames),
-                           dimnames=list(c(), colNames)),
-                    stringsAsFactors=F)
-    return(df)
+                            dimnames=list(c(), colNames)),
+                     stringsAsFactors=F)
+    cache <- list(output=df)
+    return(cache)
   }
 
   ### RxODE sometimes errors out...
@@ -119,7 +122,7 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   ## Make sure that all model input is defined now
   i <- modVars$params %in% c(names(parameters), colnames(covariates))
   if( any(!i) ) {
-    stop("Model parameter(s) ", paste(modVars$params[i], collapse=", "), " is missing.")
+    stop("Model parameter(s) ", paste(modVars$params[!i], collapse=", "), " is missing.")
   }
 
   # All arguments look good, let's prepare the simulation
@@ -138,8 +141,68 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
       covariates[, i] <- zoo::na.locf(covariates[,i]) # last observation carried forward for NA values
   }
 
+  covariates <- data.table::as.data.table(covariates)
+  cache <- list()
+  cache$ev <- ev
+  cache$parameters <- function(x) {
+    x <- x[ ! names(x) %in% iov ]
+    parameters[names(x)] <- x
+    parameters
+  }
+  cache$covs <- function(x) {
+    ### We assume the order of parameters matches the IOV order
+    x <- x[ names(x) %in% iov ]
+    if(length(x)==0) return(covariates)
+
+    ## Update the IOV terms in the covs data.frame
+    NOcc <- length(x) / length(iov)
+    Niov <- length(iov)
+    for(i in seq_len(NOcc)) {
+      thisOcc <- seq_len(Niov) + (i-1)*Niov
+      for(j in seq_along(iov)) {
+        data.table::set(covariates, which(covariates$OCC==i), iov[j], x[ (i-1)*Niov + j] )
+      }
+      #covariates[ covariates$OCC==i, iov ] <- x[ thisOcc ]
+    }
+    covariates
+  }
+
+  return(cache)
+}
+
+
+
+#' Predict for RxODE
+#'
+#' @param model The model itself.
+#' @param newdata
+#' A dataframe with at least a column 'TIME' and other values that should be observed,
+#' or a numeric TIME vector to produce all values that can be observed by this model
+#' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT).
+#' @param parameters named numeric vector with the parameters
+#' @param covariates named vector, or data.frame with column 'TIME', and at least TIME 0
+#' @param iov character array with the parameters that should change for every different OCC, can be NULL
+#' @param extraArguments extra arguments to use
+#'
+#' @export
+#'
+#' @return
+#' A data.frame similar to the observed data frame, but with predicted values.
+#' @importFrom RxODE eventTable rxSolve
+#' @importFrom dplyr transmute left_join bind_rows arrange mutate_all
+#' @importFrom rlang .data
+#'
+#' @keywords internal
+#'
+model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric()), parameters=numeric(), covariates=NULL, iov=NULL, extraArguments=list(), cache=NULL) {
+  if(is.null(cache)) {
+    cache <- model_prepare(model, times, regimen, parameters, covariates, iov, extraArguments)
+  }
+
+  if(!is.null( cache$output) ) return(cache$output) ## output always same, no matter the parameters
+
   # Run the simulation
-  result <- do.call(RxODE::rxSolve, c( list(object=model, events=ev, params=parameters, covs=covariates), extraArguments))
+  result <- do.call(RxODE::rxSolve, c( list(object=model, events=cache$ev, params=cache$parameters(parameters), covs=cache$covs(parameters)), extraArguments))
 
   # Only get the values we want
   result <- as.data.frame(result, row.names=NULL)

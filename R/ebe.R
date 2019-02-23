@@ -131,8 +131,12 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   fix <- list(indexes=fixIndexes, values=fix)
   updatedParNames <- parNames[parIndexes]
 
+  # Prepare the tdmore cache
+  cTdmore <- tdmore
+  cTdmore$cache <- model_prepare(tdmore$model, times=observed$TIME, regimen=regimen, parameters=par, covariates=covariates, iov=tdmore$iov, extraArguments=tdmore$extraArguments)
+
   # First try to estimate at starting values, as a precaution
-  value <- ll(par=par, omega=omega, fix=fix, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates)
+  value <- ll(par=par, omega=omega, fix=fix, tdmore=cTdmore, observed=observed, regimen=regimen, covariates=covariates)
   if(!is.finite(value))
     stop("Log-likelihood is ", value, " at starting values `par`. Cannot start optimization routine.")
 
@@ -155,7 +159,7 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     lower = lower,
     upper = upper,
     hessian = se.fit, #only calculate the hessian if we want the vcov
-    tdmore = tdmore,
+    tdmore = cTdmore,
     observed = observed,
     regimen = regimen,
     covariates = covariates,

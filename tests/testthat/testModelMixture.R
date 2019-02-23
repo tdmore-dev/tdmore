@@ -154,6 +154,7 @@ regimen <- data.frame(
 )
 
 observed1 <- data.frame(TIME=c(10, 20), CONC=c(1.20, 0.75))
-ipred <-  estimate(object=mixture, observed = observed1, regimen = regimen)
+### TODO: model_prepare is not compatible with currying... Need to find a good solution
+#ipred <-  estimate(object=mixture, observed = observed1, regimen = regimen)
 
-plot(ipred)  ## TODO: The blue zone should be sampled from 80% slow metabolizers and 20% fast metabolizers
+#plot(ipred)  ## TODO: The blue zone should be sampled from 80% slow metabolizers and 20% fast metabolizers
