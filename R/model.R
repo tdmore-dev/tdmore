@@ -29,7 +29,7 @@ assert_that <- assertthat::assert_that
 #' @export
 #' @keywords internal
 #'
-model_predict <- function(model, times, regimen, parameters, covariates, iov, extraArguments) {
+model_predict <- function(model, times, regimen, parameters, covariates, iov, extraArguments, cache=NULL) {
   UseMethod("model_predict")
 }
 
@@ -92,7 +92,7 @@ predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covar
   else times <- as.numeric(newdata)
 
   # Call to model_predict
-  predicted <- model_predict(model=tdmore$model, times=times, regimen=regimen, parameters=par, covariates=covariates, iov=tdmore$iov, extraArguments=c(..., tdmore$extraArguments))
+  predicted <- model_predict(model=tdmore$model, times=times, regimen=regimen, parameters=par, covariates=covariates, iov=tdmore$iov, extraArguments=c(..., tdmore$extraArguments), cache=tdmore$cache)
 
   if (is.data.frame(newdata)) {
     assert_that(all(colnames(newdata) %in% colnames(predicted)), msg="newdata contains unknown column(s)")

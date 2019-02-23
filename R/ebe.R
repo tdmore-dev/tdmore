@@ -7,10 +7,12 @@
 #' @param observed the observed data, not used in the population log likelihood
 #' @param regimen data frame describing the treatment regimen
 #' @param covariates the model covariates, not used in the population log likelihood
+#' @param isChol was omega specified as the Cholesky decomposition?
 #'
 #' @return the population log likelihood
-pop_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
-  sum <- sum( mvtnorm::dmvnorm(par, sigma=omega, log=TRUE) )
+pop_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FALSE) {
+  pdf <- mvnfast::dmvn( par, mu=par*0, sigma=omega, log=TRUE, isChol=isChol )
+  sum <- sum( pdf )
   return(sum)
 }
 
@@ -46,16 +48,21 @@ pred_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
 #' If not specified, we estimate the population prediction
 #' @param regimen data frame describing the treatment regimen.
 #' @param covariates the model covariates
+#' @param isChol was omega specified as the Cholesky decomposition?
 #'
 #' @return the log likelihood
-ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
+ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FALSE) {
   parNames <- getParameterNames(tdmore, regimen)
   if(!is.null(fix$indexes)) {
     parNames <- parNames[-fix$indexes]
     names(par) <- parNames
   }
-  pop_ll <- pop_ll(par, omega, fix, tdmore, observed, regimen, covariates)
-  pred_ll <- pred_ll(par, omega, fix, tdmore, observed, regimen, covariates)
+  pop_ll <- pop_ll(par, omega, fix, tdmore, observed, regimen, covariates, isChol=isChol)
+  if(nrow(observed) == 0) {
+    pred_ll <- 0
+  } else {
+    pred_ll <- pred_ll(par, omega, fix, tdmore, observed, regimen, covariates)
+  }
   return(pop_ll + pred_ll)
 }
 
@@ -132,11 +139,13 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   # Function to optimise
   fn <- function(par, ...) {
     tryCatch({
-      -2 * ll(par=par, omega=omega, fix=fix, ...)
+      -2 * ll(par=par, ...)
     }, error = function(e) {
       999999
     })
   }
+
+  omegaChol <- Matrix::chol(omega)
 
   # Then do the full optimisation
   pointEstimate <- stats::optim(
@@ -150,6 +159,9 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     observed = observed,
     regimen = regimen,
     covariates = covariates,
+    isChol=TRUE,
+    omega=omegaChol,
+    fix=fix,
     ...
   )
   res <- pointEstimate$par

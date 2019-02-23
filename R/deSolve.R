@@ -43,7 +43,7 @@ tdmore_deSolve <- function(parameters, add=0, prop=0, exp=0, ...) {
 #' @importFrom deSolve ode
 #'
 #' @keywords internal
-model_predict.tdmore_deSolve <- function(model, times, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, iov=NULL, extraArguments=list()) {
+model_predict.tdmore_deSolve <- function(model, times, regimen=data.frame(TIME=c()), parameters=c(), covariates=NULL, iov=NULL, extraArguments=list(), cache=NULL) {
   if(any(parameters > 10 | parameters < -10)) {
     stop("Solver requested with highly unlikely parameters, returning NA")
   }

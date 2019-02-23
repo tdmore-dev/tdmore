@@ -508,7 +508,7 @@ ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m2, <span c
 <p>Based on only ALT/AST values, we managed to define the PK inter-individual variability a little better. Indeed, these high ALT/AST values can be best explained through a combination of high sensitivity (EKpd), and a lower clearance (ECL) of the drug.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(ipred)</code></pre></div>
 <pre><code>##         ECL         EVc         EKa   EBASE_AST   EBASE_ALT   EKout_AST 
-## -0.13927141 -0.01279161  0.02257760  0.03233717  0.04497159  0.22456560 
+## -0.13927141 -0.01279161  0.02257760  0.03233717  0.04497159  0.22456561 
 ##   EKout_ALT    EKpd_AST    EKpd_ALT 
 ##  0.22778905  0.24279322  0.37291944</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(m2<span class="op">$</span>omega))</code></pre></div>
@@ -616,7 +616,7 @@ ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m1, observe
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">standardDeviations &lt;-<span class="st"> </span><span class="kw">coef</span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(m1<span class="op">$</span>omega))
 standardDeviations</code></pre></div>
 <pre><code>##           EKa           ECL           EV1           EV2            EQ 
-##  0.0000000000  2.1137644184  0.1167452994 -0.0004410079  0.0046735564</code></pre>
+##  0.0000000000  2.1137644184  0.1167452994 -0.0004410078  0.0046735565</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">i &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">pnorm</span>(<span class="kw">abs</span>(standardDeviations)) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.975</span>)
 <span class="cf">if</span>(<span class="kw">length</span>(i) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {
   <span class="kw">cat</span>(<span class="st">&quot;This patient has unlikely (outside 95% CI) parameter estimates for &quot;</span>, <span class="kw">names</span>(i),<span class="st">&quot;. There may be a treatment adherence issue.&quot;</span>)

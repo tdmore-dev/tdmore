@@ -6,7 +6,7 @@
 \usage{
 \method{model_predict}{algebraic}(model, times, regimen = NULL,
   parameters = numeric(), covariates = NULL, iov = NULL,
-  extraArguments = list())
+  extraArguments = list(), cache = NULL)
 }
 \arguments{
 \item{model}{the algebraic model}

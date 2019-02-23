@@ -4,7 +4,8 @@
 \alias{ll}
 \title{Calculate the log likelihood as the sum of the population likelihood and the prediction likelihood.}
 \usage{
-ll(par, omega, fix, tdmore, observed, regimen, covariates)
+ll(par, omega, fix, tdmore, observed, regimen, covariates,
+  isChol = FALSE)
 }
 \arguments{
 \item{par}{the current estimate of the parameters}
@@ -21,6 +22,8 @@ If not specified, we estimate the population prediction}
 \item{regimen}{data frame describing the treatment regimen.}
 
 \item{covariates}{the model covariates}
+
+\item{isChol}{was omega specified as the Cholesky decomposition?}
 }
 \value{
 the log likelihood

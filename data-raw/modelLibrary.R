@@ -1,3 +1,16 @@
+use_data <- function (...) {
+  usethis::use_data(..., overwrite=TRUE, compress="bzip2")
+  # Use the below to create clear-text versions
+  # objs <- usethis:::get_objs_from_dots(usethis:::dots(...))
+  # usethis:::use_directory("data")
+  # paths <- fs::path("data", objs, ext = "rda")
+  #
+  # envir <- new.env(parent=emptyenv())
+  # assign(objs, value=..., envir=envir)
+  # mapply(save, list = objs, file = usethis:::proj_path(paths), MoreArgs = list(envir = envir, ascii=TRUE))
+  # invisible()
+}
+
 default_model <- nlmixrUI(function(){
   ini({
     TVKA <- 3.7
@@ -25,7 +38,8 @@ default_model <- nlmixrUI(function(){
     CONC ~ prop(EPS_PROP)
   })
 })
-usethis::use_data(default_model, overwrite=TRUE)
+use_data(default_model)
+
 
 two_error_models <- nlmixrUI(function(){
   ini({
@@ -58,7 +72,7 @@ two_error_models <- nlmixrUI(function(){
     CONC_P ~ prop(EPS_PROP2) | periph
   })
 })
-usethis::use_data(two_error_models, overwrite=TRUE)
+use_data(two_error_models)
 
 meropenem_model <- nlmixrUI(function(){
   ini({
@@ -85,7 +99,8 @@ meropenem_model <- nlmixrUI(function(){
     CONC ~ prop(EPS_PROP) # Proportional error linked to the PK model
   })
 })
-usethis::use_data(meropenem_model, overwrite=TRUE)
+use_data(meropenem_model)
+
 
 meropenem_model_wt <- nlmixrUI(function(){
   ini({
@@ -112,7 +127,8 @@ meropenem_model_wt <- nlmixrUI(function(){
     CONC ~ prop(EPS_PROP) # Proportional error linked to the PK model
   })
 })
-usethis::use_data(meropenem_model_wt, overwrite=TRUE)
+use_data(meropenem_model_wt)
+
 
 meropenem_omega0_model <- nlmixrUI(function(){
   ini({
@@ -139,7 +155,8 @@ meropenem_omega0_model <- nlmixrUI(function(){
     CONC ~ prop(EPS_PROP) # Proportional error linked to the PK model
   })
 })
-usethis::use_data(meropenem_omega0_model, overwrite=TRUE)
+use_data(meropenem_omega0_model)
+
 
 meropenem_1param_model <- nlmixrUI(function(){
   ini({
@@ -166,11 +183,12 @@ meropenem_1param_model <- nlmixrUI(function(){
     CONC ~ prop(EPS_PROP) # Proportional error linked to the PK model
   })
 })
-usethis::use_data(meropenem_1param_model, overwrite=TRUE)
+use_data(meropenem_1param_model)
 
 # Model taken from literature: Soulele, K., et al.
 # 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'
 # European Journal of Pharmaceutical Sciences 80 (2015): 33-42."
+
 
 fluticasone_model <- nlmixrUI(function(){
   ini({
@@ -205,9 +223,10 @@ fluticasone_model <- nlmixrUI(function(){
     CONC ~ prop(EPS_PROP) + add(EPS_ADD)
   })
 })
-usethis::use_data(fluticasone_model, overwrite=TRUE)
+use_data(fluticasone_model)
 
 # Khosravan, Reza, et al. "Population pharmacokinetic/pharmacodynamic modeling of sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor." Clinical pharmacokinetics 55.10 (2016): 1251-1269.
+
 sunitinib_pkpd_model <- nlmixrUI(function(){
   ini({
     ## PK model sunitinib
@@ -253,6 +272,8 @@ sunitinib_pkpd_model <- nlmixrUI(function(){
     Ktol <- TVKtol * exp(EKtol)
     Kin <- Kout*BASE
 
+    SLD(0) = BASE;
+
     d/dt(depot) = -Ka*depot
     d/dt(center) = Ka*depot - Ke*center - K12*center + K21*periph
     d/dt(periph) = K12*center - K21*periph
@@ -262,11 +283,10 @@ sunitinib_pkpd_model <- nlmixrUI(function(){
     CONC = center/Vc
     CONC ~ prop(EPS_Prop) | center
 
-    SLD(0) = BASE
     SLD ~ prop(EPS_Prop_SLD) | SLD
   })
 })
-usethis::use_data(sunitinib_pkpd_model, overwrite=TRUE)
+use_data(sunitinib_pkpd_model)
 
 
 
@@ -275,6 +295,7 @@ usethis::use_data(sunitinib_pkpd_model, overwrite=TRUE)
 # Fat free mass was determined by:
 #Janmahasatian, Sarayut, et al. "Quantification of lean bodyweight." Clinical pharmacokinetics 44.10 (2005): 1051-1065.
 #36/205 for CYP3A=0, CYP3A=1
+
 tacrolimus_storset <- nlmixrUI(function(){
   ini({
     TVKa <- 1.01
@@ -330,12 +351,68 @@ tacrolimus_storset <- nlmixrUI(function(){
 
     Bmax = 418 #ug/L erythrocytes
     Kd=3.8 #ug/L plasma
-    Cp = center/V1p #free concentration in plasma
+    Cp = center/V1p * 1000 #free concentration in plasma, in ng/mL or ug/L
     Crbc = Cp * HCT * Bmax / (Kd + Cp)
-    Cwb = Cp + Crbc
+    Cwb = (Cp + Crbc) #in ng/mL
     Cwb ~ prop(EPS_PROP)
   })
 }) %>% tdmore(iov=c("EF_IOV", "EKa_IOV"))
-#RxODE compiled the model, so the 'wd' registered is all wrong...
 assign("wd", ".", envir=tacrolimus_storset$model)
-usethis::use_data(tacrolimus_storset, overwrite=TRUE)
+use_data(tacrolimus_storset)
+
+
+
+
+OMEGA <- matrix(
+  c(0.14842, 0.08379814, 0.1380948, 0, 0, 0,
+    0.08379814, 0.2558818, 0, 0, 0, 0,
+    0.1380948,  0,         0.3342555, 0, 0, 0,
+    0,          0,          0,  0.281337, 0, 0,
+    0,          0,          0,  0, 0.05154826, 0,
+    0,          0,          0,  0, 0, 0.891998),
+  nrow=6, ncol=6, dimnames=list(c("ECL", "EV1", "EQ", "EF", "EF_IOV", "EKa_IOV"), c("ECL", "EV1", "EQ", "EF", "EF_IOV", "EKa_IOV"))
+)
+tacrolimus_storset_algebraic <- algebraic(function(t, TIME, AMT,
+                                                   ECL, EV1, EQ, EF, EF_IOV, EKa_IOV,
+                                                   WT, HT, FEMALE, CYP3A5, PredDose, FirstDay, HCT) {
+    TVKa <- 1.01
+    TVTLag <- 0.41
+
+    TVCLp = 811
+    TVCLp_CYP3A5 = 1.30
+    TVV1p = 6290
+    TVQp=1200
+    TVV2p=32100
+
+    TVF_PredEMax = 0.67 #relative
+    TVF_Pred50 = 35 #mg
+    TVF_FirstDay = 2.68 #relative
+    TVF_CYP3A5  = 0.82
+
+    BMI = WT / HT^2 ;
+    FFM = 9.27E3 * WT / (6.68E3 + 216*BMI);
+    if(FEMALE) FFM=9.27E3 * WT / (8.78E3 + 244*BMI);
+    Ka <- TVKa*exp(EKa_IOV)
+
+    CLp <- TVCLp * (FFM/60)^0.75 * TVCLp_CYP3A5^CYP3A5 * exp(ECL)
+    V1p <- TVV1p * exp(EV1)
+    V2p <- TVV2p
+    Qp <- TVQp * exp(EQ)
+
+    K12 <- Qp/V1p
+    K21 <- Qp/V2p
+    Ke <- CLp/V1p
+
+    #Covariates: PredDose, FirstDay, CYP3A5
+    TVF = 1 * (1 - TVF_PredEMax*PredDose / (PredDose + TVF_Pred50)) * TVF_FirstDay^FirstDay * TVF_CYP3A5^CYP3A5
+    F = TVF * exp(EF + EF_IOV)
+    Cp = pk2cptoral_(t, TIME+TVTLag, F*AMT, V, K, Ka, K12, K21)
+
+    Bmax = 418 #ug/L erythrocytes
+    Kd=3.8 #ug/L plasma
+    Crbc = Cp * HCT * Bmax / (Kd + Cp)
+    Cwb = Cp + Crbc
+    Cwb*1000 #in ng/mL
+  }) %>% tdmore(omega=OMEGA, iov=c("EF_IOV", "EKa_IOV"),
+                res_var=errorModel(prop=0.149))
+use_data(tacrolimus_storset_algebraic)

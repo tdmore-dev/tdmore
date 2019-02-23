@@ -4,7 +4,8 @@
 \alias{pop_ll}
 \title{Calculate the population log likelihood.}
 \usage{
-pop_ll(par, omega, fix, tdmore, observed, regimen, covariates)
+pop_ll(par, omega, fix, tdmore, observed, regimen, covariates,
+  isChol = FALSE)
 }
 \arguments{
 \item{par}{the current estimate of the parameters}
@@ -20,6 +21,8 @@ pop_ll(par, omega, fix, tdmore, observed, regimen, covariates)
 \item{regimen}{data frame describing the treatment regimen}
 
 \item{covariates}{the model covariates, not used in the population log likelihood}
+
+\item{isChol}{was omega specified as the Cholesky decomposition?}
 }
 \value{
 the population log likelihood

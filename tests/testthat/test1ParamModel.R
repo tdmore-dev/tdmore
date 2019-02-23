@@ -22,7 +22,8 @@ regimen <- data.frame(
 observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
 ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
 
-plot(ipred)
-plot(profile(ipred))
-
-expect_equal(round(ipred$res, digits=3), c(EV1=0.578))
+test_that("Prediction results makes sense", {
+  vdiffr::expect_doppelganger("ipred_1cmt", plot(ipred))
+  vdiffr::expect_doppelganger("ipred_1cmt_profile", plot(profile(ipred)))
+  expect_equal(round(ipred$res, digits=3), c(EV1=0.578))
+})

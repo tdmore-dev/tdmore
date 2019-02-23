@@ -1,3 +1,8 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 # TDMore API
 
 The following section shows an overview of the main methods of the TDMore API and tells you how to use them.

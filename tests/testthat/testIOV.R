@@ -36,7 +36,8 @@ mod_1cpt_1 <- nlmixrUI(function(){
   })
 })
 
-expect_error(mod_1cpt_1 %>% tdmore(iov="EKA_IOV2")) # Error is raised: 'IOV term(s) EKA_IOV2 not defined in model'
+expect_error(mod_1cpt_1 %>% tdmore(iov="EKA_IOV2"),
+             regexp = "IOV term.*EKA_IOV2 not defined in model") # Error is raised: 'IOV term(s) EKA_IOV2 not defined in model'
 tdmore <- mod_1cpt_1 %>% tdmore(iov=c("EKA_IOV", "ECL_IOV"))
 
 # Simple prediction test with IOV

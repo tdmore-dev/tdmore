@@ -121,7 +121,10 @@ test_that("predict.tdmore() se", {
   expect_setequal(names(prediction) , c("TIME", "CONC", "periph", "CONC.upper", "CONC.lower"))
 })
 
-expect_error( estimate(m2, regimen=regimen) ) #covariates not specified
+estimate(m2, regimen=regimen) #This does not give an error, because the model_predict routine is not even called
+expect_error( estimate(m2, regimen=regimen, observed=data.frame(TIME=15, CONC=4)) ) #covariates not specified
+
+
 pred <- estimate(m2, regimen=regimen, covariates=c(WT=70))
 test_that("predict.tdmorefit() inherits parameters from the fit, even with no observed values", {
   expect_equal(

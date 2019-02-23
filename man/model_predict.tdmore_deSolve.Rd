@@ -6,7 +6,8 @@
 \usage{
 \method{model_predict}{tdmore_deSolve}(model, times,
   regimen = data.frame(TIME = c()), parameters = c(),
-  covariates = NULL, iov = NULL, extraArguments = list())
+  covariates = NULL, iov = NULL, extraArguments = list(),
+  cache = NULL)
 }
 \arguments{
 \item{model}{The model function}

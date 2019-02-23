@@ -155,7 +155,7 @@ algebraic <- function(fun, output="CONC") {
 #'
 #' @export
 #' @keywords internal
-model_predict.algebraic <- function(model, times, regimen=NULL, parameters=numeric(), covariates=NULL, iov=NULL, extraArguments=list()) {
+model_predict.algebraic <- function(model, times, regimen=NULL, parameters=numeric(), covariates=NULL, iov=NULL, extraArguments=list(), cache=NULL) {
   if(is.null(regimen)){
     regimen <- data.frame(TIME=numeric(), AMT=numeric())
     if(!is.null(iov)) regimen$OCC <- numeric()
