@@ -1,3 +1,8 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 # TDMore API
 
 The following section shows an overview of the main methods of the TDMore API and tells you how to use them.
@@ -405,7 +410,7 @@ summary(tdmorefit)
 ## estimate(object = m1, observed = observed, regimen = regimen1)
 ## Coef:
 ##        EKA         EV        ECL 
-## 0.01971374 0.02308428 0.24015815 
+## 0.01971396 0.02308433 0.24015816 
 ## 
 ## OFV: -6.51 (pop=2.1, pred=-8.61)
 ## 
@@ -560,7 +565,7 @@ summary(recommendation3)
 ```
 ## $dose
 ## dose.median  dose.lower  dose.upper 
-##    249.8224    210.9476    316.6066 
+##    249.8228    210.9483    316.6054 
 ## 
 ## $regimen
 ##   TIME      AMT
@@ -570,7 +575,7 @@ summary(recommendation3)
 ## 4   72 150.0000
 ## 5   96 150.0000
 ## 6  120 150.0000
-## 7  144 249.8224
+## 7  144 249.8228
 ```
 
 A 95% confidence interval is returned.
