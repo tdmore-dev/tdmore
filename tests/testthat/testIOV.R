@@ -86,17 +86,11 @@ regimen <- data.frame(
   OCC=c(1,2,2,3)
 )
 
-expect_error(findDose(fit, regimen, target=data.frame(TIME=120, CONC=1))) # Error: Number of occasions is different in tdmorefit regimen and findDose regimen
-
-regimen <- data.frame(
-  TIME=c(0,24,48,96),
-  AMT=c(150,150,150,NA),
-  OCC=c(1,2,2,2)
-)
-
-dose <- findDose(fit, regimen, target=data.frame(TIME=120, CONC=1), se.fit = T)
+# Number of occasions is different in tdmorefit regimen and findDose regimen
+# No worries, future occasions are estimated at '0'
+dose <- findDose(fit, regimen, target=data.frame(TIME=120, CONC=1), se.fit=T)
 plot(fit, newdata=0:120, regimen = dose$regimen)
-expect_equal(dose$dose[["dose.median"]], 206, tolerance=0.01)
+expect_equal(dose$dose[["dose.median"]], 242, tolerance=0.01)
 
 # Test timevarying covariates
 regimen <- data.frame(

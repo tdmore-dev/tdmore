@@ -20,8 +20,9 @@ findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), tar
   iov <- tdmorefit$tdmore$iov
   if (!is.null(iov)) {
     tdmorefitRegimen <- tdmorefit$regimen
-    assert_that(getMaxOccasion(tdmorefitRegimen) == getMaxOccasion(regimen),
-                msg="Number of occasions is different in tdmorefit regimen and findDose regimen")
+    ## this is not required!
+    #assert_that(getMaxOccasion(tdmorefitRegimen)  getMaxOccasion(regimen),
+    #            msg="Number of occasions is different in tdmorefit regimen and findDose regimen")
   }
 
   if (!se.fit) {
