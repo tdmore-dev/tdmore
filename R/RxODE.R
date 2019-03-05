@@ -51,7 +51,7 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, 
 #'
 #' @keywords internal
 #'
-model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric()), parameters=numeric(), covariates=NULL, iov=NULL, extraArguments=list(), cache=NULL) {
+model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric()), parameters=numeric(), covariates=NULL, iov=NULL, extraArguments=list()) {
   modVars <- model$get.modelVars()
   # RxODE does not allow to simulate 'nothing'
   # Manually construct an empty data.frame with the right columns
@@ -141,18 +141,17 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
       covariates[, i] <- zoo::na.locf(covariates[,i]) # last observation carried forward for NA values
   }
 
-  covariates <- data.table::as.data.table(covariates)
   cache <- list()
-  cache$ev <- ev
   cache$parameters <- function(x) {
     x <- x[ ! names(x) %in% iov ]
     parameters[names(x)] <- x
     parameters
   }
-  cache$covs <- function(x) {
+
+  update_table <- function(dt, x) {
     ### We assume the order of parameters matches the IOV order
     x <- x[ names(x) %in% iov ]
-    if(length(x)==0) return(covariates)
+    if(length(x)==0) return(dt)
 
     ## Update the IOV terms in the covs data.frame
     NOcc <- length(x) / length(iov)
@@ -160,11 +159,31 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     for(i in seq_len(NOcc)) {
       thisOcc <- seq_len(Niov) + (i-1)*Niov
       for(j in seq_along(iov)) {
-        data.table::set(covariates, which(covariates$OCC==i), iov[j], x[ (i-1)*Niov + j] )
+        data.table::set(dt, which(dt$OCC==i), iov[j], x[ (i-1)*Niov + j] )
       }
-      #covariates[ covariates$OCC==i, iov ] <- x[ thisOcc ]
     }
-    covariates
+  }
+
+  cutoffVersion <- base::package_version("0.8.1")
+  rxVersion <- utils::packageVersion('RxODE')
+  if(rxVersion >= cutoffVersion) {
+    ## new version of RxODE
+    if(!is.null(covariates)) ev <- cbind(ev, covariates)
+    ev <- data.table::as.data.table(ev)
+    cache$covs <- function(x) { NULL }
+    cache$ev <- function(x) {
+      update_table(ev, x)
+      ev
+    }
+  } else {
+    ## old version, covariates via 'covs' argument
+    if(!is.null(covariates)) covariates <- data.table::as.data.table(covariates)
+    cache$covs <- function(x) {
+      if(is.null(covariates)) return(NULL)
+      update_table(covariates, x)
+      covariates
+    }
+    cache$ev <- function(x) { ev }
   }
 
   return(cache)
@@ -202,7 +221,7 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   if(!is.null( cache$output) ) return(cache$output) ## output always same, no matter the parameters
 
   # Run the simulation
-  result <- do.call(RxODE::rxSolve, c( list(object=model, events=cache$ev, params=cache$parameters(parameters), covs=cache$covs(parameters)), extraArguments))
+  result <- do.call(RxODE::rxSolve, c( list(object=model, events=cache$ev(parameters), params=cache$parameters(parameters), covs=cache$covs(parameters)), extraArguments))
 
   # Only get the values we want
   result <- as.data.frame(result, row.names=NULL)

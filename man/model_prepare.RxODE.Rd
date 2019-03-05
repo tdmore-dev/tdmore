@@ -6,7 +6,7 @@
 \usage{
 \method{model_prepare}{RxODE}(model, times, regimen = data.frame(TIME =
   numeric()), parameters = numeric(), covariates = NULL, iov = NULL,
-  extraArguments = list(), cache = NULL)
+  extraArguments = list())
 }
 \arguments{
 \item{model}{The model itself.}

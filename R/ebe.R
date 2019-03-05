@@ -433,11 +433,14 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
   if(se.fit) {
     mc <- generateMonteCarloMatrix(tdmorefit, fix = parameters, mc.maxpts = mc.maxpts)
     uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
+    # Prepare the tdmore cache
+    cTdmore <- tdmorefit$tdmore
+    cTdmore$cache <- model_prepare(cTdmore$model, times=ipred$TIME, regimen=regimen, parameters=par, covariates=covariates, iov=cTdmore$iov, extraArguments=cTdmore$extraArguments)
 
     fittedMC <- plyr::ddply(mc, 1, function(row) {
       res <- unlist(row[-1]) # Remove 'sample'
       names(res) <- names(coef(tdmorefit))
-      pred <- predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=res, covariates=covariates)
+      pred <- predict(object=cTdmore, newdata=newdata, regimen=regimen, parameters=res, covariates=covariates)
       colnames(row) <- uniqueColnames
       resArray <- cbind(row, pred)
       resArray
