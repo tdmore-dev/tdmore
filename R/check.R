@@ -8,6 +8,7 @@ checkTdmore <- function(tdmore) {
   return(tdmore)
 }
 
+#' @importFrom utils str
 checkOmegaMatrix <- function(tdmore) {
   omega <- tdmore$omega
   parameters <- tdmore$parameters
@@ -29,8 +30,10 @@ checkOmegaMatrix <- function(tdmore) {
     colnames(omega) <- parameters
     rownames(omega) <- parameters
   } else {
-    assert_that(all(parameters %in% colnames), msg = "Inconsistent omega column and parameter names")
-    assert_that(all(parameters %in% rownames), msg = "Inconsistent omega row and parameter names")
+    assert_that(all(parameters %in% colnames),
+                msg = paste0("Inconsistent omega column (", utils::str(colnames) , ") and parameter names (", utils::str(parameters) ,")"))
+    assert_that(all(parameters %in% rownames),
+                msg = paste0("Inconsistent omega row (", utils::str(rownames), ") and parameter names (", utils::str(parameters), ")"))
 
     # Reorder omega column and row names
     omega <- omega[, parameters, drop=FALSE]
