@@ -38,7 +38,7 @@ demoPath <- file.path(mlxDirectory, "resources/demos/monolix/1.creating_and_usin
 MlxConnectors::loadProject(file.path(demoPath, "theophylline_project.mlxtran") )
 MlxConnectors::getContinuousObservationModel()
 MlxConnectors::getObservationInformation()
-MlxConnectors::setErrorModel(CONC="combined2")
+#MlxConnectors::setErrorModel(CONC="combined2")
 data <- MlxConnectors::getData()
 
 MlxConnectors::runPopulationParameterEstimation()
@@ -103,7 +103,8 @@ test_that("Prediction using same EBE gives same results", {
 omega <- theta[4:6] ^ 2
 names(omega) <- names(omega) %>% stringr::str_replace("omega", "eta")
 m2 <- m1 %>% tdmore(
-  res_var=list( errorModel("CONC", add=theta['a'], prop=theta['b'], type="combined2") ),
+  #res_var=list( errorModel("CONC", add=theta['a'], prop=theta['b'], type="combined2") ),
+  res_var=list( errorModel("CONC", add=theta['a'], prop=theta['b'], type="combined1") ),
   omega=omega,
   parameters=names(omega)
 )
