@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get the residual values of a predicted value vs the observed value
-This is based on the log-likelihood of the observed value in the residual error model — residuals.tdmore • tdmore</title>
+<title>Get the residual values of a predicted value vs the observed value — residuals.tdmore • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -31,11 +30,9 @@ This is based on the log-likelihood of the observed value in the residual error 
 
 
 
-<meta property="og:title" content="Get the residual values of a predicted value vs the observed value
-This is based on the log-likelihood of the observed value in the residual error model — residuals.tdmore" />
+<meta property="og:title" content="Get the residual values of a predicted value vs the observed value — residuals.tdmore" />
 
-<meta property="og:description" content="Get the residual values of a predicted value vs the observed value
-This is based on the log-likelihood of the observed value in the residual error model" />
+<meta property="og:description" content="Get the residual values of a predicted value vs the observed value" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -130,21 +127,20 @@ This is based on the log-likelihood of the observed value in the residual error 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get the residual values of a predicted value vs the observed value
-This is based on the log-likelihood of the observed value in the residual error model</h1>
+    <h1>Get the residual values of a predicted value vs the observed value</h1>
     <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/model.R'><code>R/model.R</code></a></small>
     <div class="hidden name"><code>residuals.tdmore.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Get the residual values of a predicted value vs the observed value
-This is based on the log-likelihood of the observed value in the residual error model</p>
+    <p>Get the residual values of a predicted value vs the observed value</p>
     
     </div>
 
     <pre class="usage"><span class='co'># S3 method for tdmore</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/residuals'>residuals</a></span>(<span class='no'>object</span>, <span class='no'>observed</span>, <span class='no'>predicted</span>, <span class='kw'>log</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/residuals'>residuals</a></span>(<span class='no'>object</span>, <span class='no'>observed</span>, <span class='no'>predicted</span>, <span class='kw'>weighted</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -162,8 +158,8 @@ This is based on the log-likelihood of the observed value in the residual error 
       <td><p>What was predicted, as data.frame</p></td>
     </tr>
     <tr>
-      <th>log</th>
-      <td><p>if TRUE, report as logPdf</p></td>
+      <th>weighted</th>
+      <td><p>Should the residuals be divided by the standard deviation of the error model?</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -173,7 +169,7 @@ This is based on the log-likelihood of the observed value in the residual error 
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A numeric vector</p>
+    <p>A numeric vector, equivalent to IRES or IWRES</p>
     
 
   </div>

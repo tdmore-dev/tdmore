@@ -130,46 +130,29 @@ predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covar
 }
 
 #' Get the residual values of a predicted value vs the observed value
-#' This is based on the log-likelihood of the observed value in the residual error model
 #'
 #' @param object A TDMore object
 #' @param observed The observed values, as data.frame
 #' @param predicted What was predicted, as data.frame
-#' @param log if TRUE, report as logPdf
+#' @param weighted Should the residuals be divided by the standard deviation of the error model?
 #' @param ... ignored
 #'
-#' @return A numeric vector
+#' @return A numeric vector, equivalent to IRES or IWRES
 #' @export
 #'
 #' @importFrom stats dnorm
-residuals.tdmore <- function(object, observed, predicted, log=TRUE, ...) {
-  tdmore <- object
-  oNames <- colnames(observed)
-  oNames <- oNames[oNames %in% colnames(predicted)
-                   & oNames != "TIME"]
+residuals.tdmore <- function(object, observed, predicted, weighted=FALSE, ...) {
   result <- c()
   for (err in tdmore$res_var) {
     var <- err$var
-    if (!(var %in% oNames)) next
 
-    ipredColumn <- predicted[, var, drop=TRUE]
-    obsColumn <- observed[, var, drop=TRUE]
-    obsTimes <- observed[!is.na(obsColumn) , "TIME", drop=TRUE]
+    ipred <- predicted[, var, drop=TRUE]
+    obs <- observed[, var, drop=TRUE]
 
-    obs <- obsColumn[!is.na(obsColumn)]
-    ipred <- ipredColumn[predicted$TIME %in% obsTimes]
-
-    assert_that(length(obs)==length(ipred), msg = "All observed samples haven't been predicted")
-
-    if(err$exp != 0) {
-      sd <- err$exp
-      tmp <- dnorm(log(ipred), log(obs), sd, log=log) #calculate residual in the log domain
+    if(weighted) {
+      tmp <- err$wres(ipred, obs)
     } else {
-      sd <- sqrt(err$add**2 + (err$prop * ipred)**2)
-      tmp <- ifelse(sd == 0 &
-                      ipred == obs, #treat points with 0 res. error special
-                    0, #ignore point
-                    dnorm(ipred, obs, sd, log = log)) # calculate residual)
+      tmp <- err$res(ipred, obs)
     }
     result <- c(result, tmp)
   }
@@ -217,14 +200,10 @@ model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, ...) {
   for (err in tdmore$res_var) {
     var <- err$var
     if (!(var %in% oNames)) next
-    obs <- data[, var]
-    if(err$exp != 0) {
-      data[, paste0(var, ".lower")] <- obs * exp(-err$exp * q)
-      data[, paste0(var, ".upper")] <- obs * exp(err$exp * q)
-    } else {
-      data[, paste0(var, ".lower")] <- obs * (1 - err$prop*q) - err$add*q
-      data[, paste0(var, ".upper")] <- obs * (1 + err$prop*q) + err$add*q
-    }
+    obs <- data[, var, drop=TRUE]
+    sd <- err$sigma(obs)
+    data[, paste0(var, ".lower")] <- obs - sd*q
+    data[, paste0(var, ".upper")] <- obs + sd*q
   }
   return(data)
 }
@@ -240,11 +219,11 @@ print.tdmore <- function(x, ...) {
   cat("Structural model:", class(x$model), "\n")
   cat("Parameters:", x$parameters, "\n")
   cat("Covariates:", if(length(x$covariates)==0) "/" else x$covariates, "\n")
-  vars <- c()
+  cat("Output(s):\n")
   for (err in x$res_var) {
-    vars <- c(vars, err$var)
+    print(err)
   }
-  cat("Output(s):", vars, "\n")
+  invisible(x)
 }
 
 #' Summarise a tdmore object.
@@ -276,7 +255,7 @@ print.summary.tdmore <- function(x, ...) {
   errorDf <- data.frame(name=character(0), additiveError=numeric(0), proportionalError=numeric(0), exponentialError=numeric(0))
   for (index in 1:length(x$res_var)) {
     err <- x$res_var[[index]]
-    errDf <- data.frame(name=err$var, additiveError=err$add, proportionalError=err$prop, exponentialError=err$exp)
+    errDf <- data.frame(name=err$var, type=err$type, additiveError=err$add, proportionalError=err$prop)
     errorDf <- rbind(errorDf, errDf)
   }
   cat("Residual error model:\n")

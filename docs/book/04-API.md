@@ -77,8 +77,8 @@ summary(m1)
 ## Covariates: / 
 ## 
 ## Residual error model:
-##  name additiveError proportionalError exponentialError
-##  CONC             0               0.1                0
+##  name         type additiveError proportionalError
+##  CONC proportional             0               0.1
 ```
 
 This summary tells you the model contains 3 parameters: EKA, EV and ECL. These parameters will be estimated by TDMore to fit individual observations as best as possible. The model does not have any covariates (to see how covariates are included, go to section X). Output variable is the `CONC` variable. The residual error model on this variable is proportional. Please note that the underlying structural model is `RxODE`, not `nlxmir`. This is because the `nlxmir` model is automatically converted into a RxODE model. The `RxODE` package is used extensively in TDMore to simulate data. 
@@ -132,8 +132,8 @@ summary(m2)
 ## Covariates: / 
 ## 
 ## Residual error model:
-##  name additiveError proportionalError exponentialError
-##  CONC             0               0.1                0
+##  name         type additiveError proportionalError
+##  CONC proportional             0               0.1
 ```
 
 This summary is the exact same copy as the previous one!
@@ -172,8 +172,8 @@ summary(m3)
 ## Covariates: / 
 ## 
 ## Residual error model:
-##  name additiveError proportionalError exponentialError
-##  CONC             0               0.1                0
+##  name         type additiveError proportionalError
+##  CONC proportional             0               0.1
 ```
 
 ### Add model covariates
@@ -226,7 +226,8 @@ print(m1_WT) # Print may be seen as a short 'summary'
 ## Structural model: RxODE 
 ## Parameters: EKA EV ECL 
 ## Covariates: WT 
-## Output(s): CONC
+## Output(s):
+## CONC  : proportional  ( prop= 0.1  )
 ```
 
 Weight covariate has been well detected by TDMore!
@@ -402,6 +403,25 @@ Assume we have collected 2 concentrations at 24h and 48h. In the following code,
 ```r
 observed <- data.frame(TIME=c(24,48), CONC=c(0.4,0.5))
 tdmorefit <- estimate(object = m1, observed = observed, regimen = regimen1)
+```
+
+```
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+```
+
+```r
 summary(tdmorefit)
 ```
 
@@ -410,7 +430,7 @@ summary(tdmorefit)
 ## estimate(object = m1, observed = observed, regimen = regimen1)
 ## Coef:
 ##        EKA         EV        ECL 
-## 0.01971396 0.02308433 0.24015816 
+## 0.01972336 0.02310260 0.24016578 
 ## 
 ## OFV: -6.51 (pop=2.1, pred=-8.61)
 ## 
@@ -497,11 +517,11 @@ summary(recommendation1)
 
 ```
 ## $dose
-## [1] 224.7092
+## [1] 224.7086
 ## 
 ## $regimen
 ##   TIME      AMT II ADDL
-## 1    0 224.7092 24    7
+## 1    0 224.7086 24    7
 ```
 
 A daily dose of 225mg is recommended for this specific subject.
@@ -526,7 +546,7 @@ summary(recommendation2)
 
 ```
 ## $dose
-## [1] 241.3276
+## [1] 241.3273
 ## 
 ## $regimen
 ##   TIME      AMT
@@ -536,7 +556,7 @@ summary(recommendation2)
 ## 4   72 150.0000
 ## 5   96 150.0000
 ## 6  120 150.0000
-## 7  144 241.3276
+## 7  144 241.3273
 ```
 
 A last dose of 241mg is recommended for this specific subject.
@@ -565,7 +585,7 @@ summary(recommendation3)
 ```
 ## $dose
 ## dose.median  dose.lower  dose.upper 
-##    249.8228    210.9483    316.6054 
+##    249.8222    210.9477    316.6021 
 ## 
 ## $regimen
 ##   TIME      AMT
@@ -575,7 +595,7 @@ summary(recommendation3)
 ## 4   72 150.0000
 ## 5   96 150.0000
 ## 6  120 150.0000
-## 7  144 249.8228
+## 7  144 249.8222
 ```
 
 A 95% confidence interval is returned.

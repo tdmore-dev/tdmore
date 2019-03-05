@@ -8,5 +8,5 @@ Parameters:
 Covariates: / 
 
 Residual error model:
- name additiveError proportionalError exponentialError
- CONC             0              0.23                0
+ name         type additiveError proportionalError
+ CONC proportional             0              0.23

@@ -11,22 +11,6 @@ regimen <- data.frame(
   TIME=seq(0, 1)*24,
   AMT=5 #5mg
 )
-test_that("Crazy parameter estimates give fixed log likelihood", {
-  res <- coef(m1)
-  res[1] <- 1E6
-  res[2] <- -1E6
-
-  expect_error(
-    estimate(m1,
-             par = res, #crazy starting estimates
-             observed = data.frame(TIME = 0:10, CONC = 10),
-             regimen = regimen,
-             covariates = c(WT = 70) )
-  )
-
-  crazyEstimate <- tdmorefit(m1, res=res, observed=data.frame(TIME=1,CONC=10),regimen=regimen,covariates=c(WT=70))
-  expect_equal(logLik(crazyEstimate), as.numeric(NA))
-})
 
 test_that("Test all other ebe methods", {
   observed <- data.frame(TIME=10, CONC=0.04)

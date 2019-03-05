@@ -51,18 +51,14 @@ checkErrorModel <- function(tdmore) {
   for (errorModel in tdmore$res_var) {
     add <- errorModel$add
     prop <- errorModel$prop
-    exp <- errorModel$exp
 
     assertthat::is.number(add)
     assertthat::is.number(prop)
-    assertthat::is.number(exp)
-
-    if (exp != 0) assert_that(add==0 & prop==0, msg = "Exponential and add/prop are not mutually exclusive")
-    if (add != 0 || prop != 0) assert_that(exp == 0, msg = "Exponential and add/prop are not mutually exclusive")
 
     if (c("RxODE") %in% class(tdmore$model)) {
       modVars <- tdmore$model$get.modelVars()
-      assert_that(errorModel$var %in% c(modVars$lhs, modVars$state), msg = "Unknown variable defined in error model")
+      assert_that(errorModel$var %in% c(modVars$lhs, modVars$state),
+                  msg = paste0("Error model variable `", errorModel$var, "' is not predicted by the model"))
     }
   }
   return(tdmore)

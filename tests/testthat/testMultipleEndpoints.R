@@ -9,8 +9,11 @@ set.seed(0)
 tdmore <- (sunitinib_pkpd_model) %>% tdmore(maxsteps=1E3*500)
 
 # Checking the error model
-expect_equal(unlist(tdmore$res_var[1]) , c(var="CONC", add=0, prop=0.417, exp=0))
-expect_equal(unlist(tdmore$res_var[2]) , c(var="SLD", add=0, prop=0.143, exp=0))
+expect_output(print(tdmore$res_var[[1]]) ,
+              "CONC  : proportional  \\( prop= 0\\.417  \\)")
+expect_output(print(tdmore$res_var[[2]]),
+              "SLD.*proportional.*prop= 0\\.143.*"
+              )
 
 # Estimation example
 regimen <- data.frame(

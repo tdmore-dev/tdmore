@@ -2,10 +2,10 @@
 % Please edit documentation in R/model.R
 \name{residuals.tdmore}
 \alias{residuals.tdmore}
-\title{Get the residual values of a predicted value vs the observed value
-This is based on the log-likelihood of the observed value in the residual error model}
+\title{Get the residual values of a predicted value vs the observed value}
 \usage{
-\method{residuals}{tdmore}(object, observed, predicted, log = TRUE, ...)
+\method{residuals}{tdmore}(object, observed, predicted, weighted = FALSE,
+  ...)
 }
 \arguments{
 \item{object}{A TDMore object}
@@ -14,14 +14,13 @@ This is based on the log-likelihood of the observed value in the residual error 
 
 \item{predicted}{What was predicted, as data.frame}
 
-\item{log}{if TRUE, report as logPdf}
+\item{weighted}{Should the residuals be divided by the standard deviation of the error model?}
 
 \item{...}{ignored}
 }
 \value{
-A numeric vector
+A numeric vector, equivalent to IRES or IWRES
 }
 \description{
 Get the residual values of a predicted value vs the observed value
-This is based on the log-likelihood of the observed value in the residual error model
 }

@@ -34,8 +34,15 @@ pop_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isCho
 #' @return the prediction log likelihood
 pred_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
   pred <- predict(object=tdmore, newdata=observed, regimen=regimen, parameters=c(fix$values,par), covariates=covariates)
-  res <- residuals(tdmore, observed, pred, log=TRUE)
-  return(sum(res))
+  ll <- 0
+  for(res_var in tdmore$res_var) {
+    i <- res_var$var
+    ipred <- pred[, i, drop=TRUE]
+    obs <- observed[, i, drop=TRUE]
+    thisLL <- res_var$ll(ipred, obs)
+    ll <- ll + sum(thisLL, na.rm=TRUE )
+  }
+  return(ll)
 }
 
 #' Calculate the log likelihood as the sum of the population likelihood and the prediction likelihood.

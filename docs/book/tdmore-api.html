@@ -234,8 +234,8 @@ m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <s
 ## Covariates: / 
 ## 
 ## Residual error model:
-##  name additiveError proportionalError exponentialError
-##  CONC             0               0.1                0</code></pre>
+##  name         type additiveError proportionalError
+##  CONC proportional             0               0.1</code></pre>
 <p>This summary tells you the model contains 3 parameters: EKA, EV and ECL. These parameters will be estimated by TDMore to fit individual observations as best as possible. The model does not have any covariates (to see how covariates are included, go to section X). Output variable is the <code>CONC</code> variable. The residual error model on this variable is proportional. Please note that the underlying structural model is <code>RxODE</code>, not <code>nlxmir</code>. This is because the <code>nlxmir</code> model is automatically converted into a RxODE model. The <code>RxODE</code> package is used extensively in TDMore to simulate data.</p>
 </div>
 <div id="build-a-tdmore-object-from-an-rxode-model" class="section level3">
@@ -270,8 +270,8 @@ m2 &lt;-<span class="st"> </span><span class="kw">RxODE</span>(modelCode2) <span
 ## Covariates: / 
 ## 
 ## Residual error model:
-##  name additiveError proportionalError exponentialError
-##  CONC             0               0.1                0</code></pre>
+##  name         type additiveError proportionalError
+##  CONC proportional             0               0.1</code></pre>
 <p>This summary is the exact same copy as the previous one!</p>
 </div>
 <div id="build-your-own-algebraic-model" class="section level3">
@@ -303,8 +303,8 @@ m3 &lt;-<span class="st"> </span><span class="kw">tdmore</span>(<span class="kw"
 ## Covariates: / 
 ## 
 ## Residual error model:
-##  name additiveError proportionalError exponentialError
-##  CONC             0               0.1                0</code></pre>
+##  name         type additiveError proportionalError
+##  CONC proportional             0               0.1</code></pre>
 </div>
 <div id="add-model-covariates" class="section level3">
 <h3><span class="header-section-number">5.1.4</span> Add model covariates</h3>
@@ -341,7 +341,8 @@ m1_WT &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1_
 <pre><code>## Structural model: RxODE 
 ## Parameters: EKA EV ECL 
 ## Covariates: WT 
-## Output(s): CONC</code></pre>
+## Output(s):
+## CONC  : proportional  ( prop= 0.1  )</code></pre>
 <p>Weight covariate has been well detected by TDMore!</p>
 </div>
 </div>
@@ -461,13 +462,26 @@ data4<span class="op">$</span>model &lt;-<span class="st"> </span><span class="k
 <p><strong>Example</strong>: Find individual parameters knowing some observed data.</p>
 <p>Assume we have collected 2 concentrations at 24h and 48h. In the following code, we’d like to estimate the parameters for this individual.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">observed &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">24</span>,<span class="dv">48</span>), <span class="dt">CONC=</span><span class="kw">c</span>(<span class="fl">0.4</span>,<span class="fl">0.5</span>))
-tdmorefit &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span class="dt">object =</span> m1, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen1)
-<span class="kw">summary</span>(tdmorefit)</code></pre></div>
+tdmorefit &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span class="dt">object =</span> m1, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen1)</code></pre></div>
+<pre><code>## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(tdmorefit)</code></pre></div>
 <pre><code>## Call:
 ## estimate(object = m1, observed = observed, regimen = regimen1)
 ## Coef:
 ##        EKA         EV        ECL 
-## 0.01971396 0.02308433 0.24015816 
+## 0.01972336 0.02310260 0.24016578 
 ## 
 ## OFV: -6.51 (pop=2.1, pred=-8.61)
 ## 
@@ -531,11 +545,11 @@ recommendation1 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 
 <span class="kw">summary</span>(recommendation1)</code></pre></div>
 <pre><code>## $dose
-## [1] 224.7092
+## [1] 224.7086
 ## 
 ## $regimen
 ##   TIME      AMT II ADDL
-## 1    0 224.7092 24    7</code></pre>
+## 1    0 224.7086 24    7</code></pre>
 <p>A daily dose of 225mg is recommended for this specific subject.</p>
 <p><strong>Example 2</strong>: Reach the population trough concentration (second solution)</p>
 <p>Another possible way is to adapt the last dose only. This can be specified using the following regimen:</p>
@@ -550,7 +564,7 @@ recommendation2 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 
 <span class="kw">summary</span>(recommendation2)</code></pre></div>
 <pre><code>## $dose
-## [1] 241.3276
+## [1] 241.3273
 ## 
 ## $regimen
 ##   TIME      AMT
@@ -560,7 +574,7 @@ recommendation2 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 ## 4   72 150.0000
 ## 5   96 150.0000
 ## 6  120 150.0000
-## 7  144 241.3276</code></pre>
+## 7  144 241.3273</code></pre>
 <p>A last dose of 241mg is recommended for this specific subject.</p>
 <p><strong>Example 3</strong>: Ask for a confidence interval around the dose</p>
 <p>Use argument <code>se.fit</code> as follows:</p>
@@ -577,7 +591,7 @@ recommendation3 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 <span class="kw">summary</span>(recommendation3)</code></pre></div>
 <pre><code>## $dose
 ## dose.median  dose.lower  dose.upper 
-##    249.8228    210.9483    316.6054 
+##    249.8222    210.9477    316.6021 
 ## 
 ## $regimen
 ##   TIME      AMT
@@ -587,7 +601,7 @@ recommendation3 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 ## 4   72 150.0000
 ## 5   96 150.0000
 ## 6  120 150.0000
-## 7  144 249.8228</code></pre>
+## 7  144 249.8222</code></pre>
 <p>A 95% confidence interval is returned.</p>
 </div>
 <div id="visualise-a-recommendation" class="section level3">

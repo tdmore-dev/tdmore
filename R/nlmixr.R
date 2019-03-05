@@ -30,11 +30,9 @@ tdmore.nlmixrUI <- function(model, iov=NULL, ...) {
     row <- predDf[index,]
     add <- errorDf %>% subset(errorDf$cond==as.character(row$cond) & errorDf$errorType=="add")
     prop <- errorDf %>% subset(errorDf$cond==as.character(row$cond) & errorDf$errorType=="prop")
-    exp <- errorDf %>% subset(errorDf$cond==as.character(row$cond) & errorDf$errorType=="exp")
     err <- errorModel(var = as.character(row$var),
                       add = if(nrow(add) > 0) as.numeric(add$value) else 0,
-                      prop = if(nrow(prop) > 0) as.numeric(prop$value) else 0,
-                      exp = if(nrow(exp) > 0) as.numeric(exp$value) else 0)
+                      prop = if(nrow(prop) > 0) as.numeric(prop$value) else 0)
     errorModels[[length(errorModels) + 1]] <- err
   }
 

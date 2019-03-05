@@ -283,7 +283,7 @@ ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estim
 <p>Based on only ALT/AST values, we managed to define the PK inter-individual variability a little better. Indeed, these high ALT/AST values can be best explained through a combination of high sensitivity (EKpd), and a lower clearance (ECL) of the drug.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</code></pre></div>
 <pre><code>##         ECL         EVc         EKa   EBASE_AST   EBASE_ALT   EKout_AST 
-## -0.13927141 -0.01279161  0.02257760  0.03233717  0.04497159  0.22456561 
+## -0.13927141 -0.01279161  0.02257760  0.03233717  0.04497158  0.22456560 
 ##   EKout_ALT    EKpd_AST    EKpd_ALT 
 ##  0.22778905  0.24279322  0.37291944</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">sqrt</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/diag">diag</a></span>(m2<span class="op">$</span>omega))</code></pre></div>
