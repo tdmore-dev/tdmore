@@ -11,3 +11,4 @@
 ^.github$
 ^CONTRIBUTING.md$
 ^index.Rmd$
+^Dockerfile$
