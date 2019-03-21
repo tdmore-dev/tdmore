@@ -88,6 +88,18 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #' Putting this to FALSE can reduce computation time.
 #' @param lower the lower bounds of the parameters, if null, -5 * sqrt(diag(model$omega)) is used
 #' @param upper the upper bounds of the parameters, if null, +5 * sqrt(diag(model$omega)) is used
+#' @param multistart if TRUE, perform optimization using many different starting conditions.
+#' A combination of -sd, +sd for each non-IOV parameter is explored.
+#' This avoids returning a local optimum, and strengthens the belief
+#' that the found optimum is a global optimum.
+#'
+#' Alternatively, a named vector with the requested perturbations to parameters
+#' can be provided: \code{estimate(multistart=c(eta_Tlag=0.5))}. This will evaluate
+#' the provided starting value for eta_Tlag +- 0.5, without also perturbing the other initial values.
+#'
+#' WARNING: This may lead to extremely long computation times. It is recommended to use a control argument to
+#' reduce accuracy and report estimation progress.
+#'
 #' @param ... extra parameters to pass to the optim function
 #' A good example is to specify `control=list(trace=1, REPORT=10, factr=1e13)` to improve performance.
 #' This will `trace` the estimation progress
@@ -99,7 +111,7 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #' @return A tdmorefit object
 #' @importFrom stats optim
 #' @export
-estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, ...) {
+estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, ...) {
 
   if (inherits(object, "tdmore_set")) {
     # Either a tdmore or tdmore_mixture
@@ -107,11 +119,15 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   }
   if (inherits(object, "tdmore")) {
     tdmore <- object
-  }
-  else if (inherits(object, "tdmore_mixture")) {
+  } else if (inherits(object, "tdmore_mixture")) {
     return(estimateMixtureModel(object, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix, method=method, lower=lower, upper=upper, ...))
-  }
-  else {
+  } else if (inherits(object, "tdmorefit")) {
+    ## Re-estimate with different parameters/options
+    return(
+      estimate(object$tdmore, object$observed, object$regimen, object$covariates,
+               par=par, fix=fix, method=method, se.fit=se.fit, lower=lower, upper=upper, multistart=multistart, ...)
+      )
+  } else {
     stop("Object not an instance of 'tdmore', 'tdmore_set' or 'tdmore_mixture")
   }
   observed <- model.frame(tdmore, data=observed) #ensure "observed" in right format for estimation
@@ -127,6 +143,14 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   lower <- processParameters(lower, tdmore, regimen, -5 * sqrt(diag(omega)))
   upper <- processParameters(upper, tdmore, regimen, +5 * sqrt(diag(omega)))
 
+  # Prepare the tdmore cache
+  cTdmore <- tdmore
+  if(is.null(cTdmore$cache)) {
+    cTdmore$cache <- model_prepare(tdmore$model, times=observed$TIME, regimen=regimen, parameters=par, covariates=covariates, iov=tdmore$iov, extraArguments=tdmore$extraArguments)
+  } else {
+    ## TODO: Check if cache is still valid?
+  }
+
   # Process fix vector
   fixIndexes <- getFixedParametersIndexes(parNames=names(par), fix=fix)
   allIndexes <- seq_len(length(par))
@@ -137,10 +161,6 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   upper <- upper[parIndexes]
   fix <- list(indexes=fixIndexes, values=fix)
   updatedParNames <- parNames[parIndexes]
-
-  # Prepare the tdmore cache
-  cTdmore <- tdmore
-  cTdmore$cache <- model_prepare(tdmore$model, times=observed$TIME, regimen=regimen, parameters=par, covariates=covariates, iov=tdmore$iov, extraArguments=tdmore$extraArguments)
 
   # First try to estimate at starting values, as a precaution
   value <- ll(par=par, omega=omega, fix=fix, tdmore=cTdmore, observed=observed, regimen=regimen, covariates=covariates)
@@ -159,7 +179,7 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   omegaChol <- Matrix::chol(omega)
 
   # Then do the full optimisation
-  pointEstimate <- stats::optim(
+  arg <- list(
     par = par,
     fn = fn,
     method = method,
@@ -175,6 +195,31 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     fix=fix,
     ...
   )
+  if(!isFALSE(multistart)) {
+    if(isTRUE(multistart)) {
+      multistart <- sqrt( diag(omega)[ names(arg$par) ] )
+      names(multistart) <- arg$par
+    } else {
+      stopifnot(all(names(multistart) %in% names(arg$par)))
+    }
+
+    parmat <- do.call( expand.grid, lapply(names(multistart), function(x){arg$par[x] + c(-1, 1) * multistart[x]}) )
+    colnames(parmat) <- names(multistart)
+    # The other ones do not change
+
+    for(i in setdiff(names(arg$par), colnames(parmat))) {
+      parmat[,i] <- arg$par[i]
+    }
+    parmat <- parmat[, names(arg$par)] #ensure same order
+    multiArg <- arg
+    multiArg$parmat <- parmat
+    multiArg$par <- NULL
+    multiArg$hessian <- FALSE
+    pointEstimates <- do.call(optimr::multistart, multiArg)
+    pointEstimate <- pointEstimates[ which.min(pointEstimates$value), ]
+    arg$par <- unlist(pointEstimate[ 1, seq_along(par)] ) ## use found 'global' optimum
+  }
+  pointEstimate <- do.call(optimr::optimr, arg)
   res <- pointEstimate$par
   names(res) <- updatedParNames
 
