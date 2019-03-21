@@ -583,15 +583,20 @@ logLik.tdmorefit <- function(object, type=c('ll', 'pop', 'pred'), ...) {
 #'
 #' @param fitted A tdmorefit object
 #' @param fix Which parameters to fix? Named vector of the parameters that are fixed and should not be profiled
+#' Specify a FIX of NA to estimate the optimal value at that specific grid-point.
 #' @param maxpts Maximum number of points per parameter
 #' @param limits limits to explore (numeric vector of form c(min, max) or specific limits per parameter in the form list(ETA1=c(min,max), ETA2=c(min,max), etc))
 #' @param type log-lokelihood function type, 3 possible values: 'pop', 'pred' or 'll' (= pop + pred)
-#' @param .progress See plyr::ddply
+#' @param .progress Allows to specify a plyr-like progress object
+#' A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
+#' This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.
+#'
 #' @param ... ignored
 #'
 #' @return a tdmore profile object. It namely contains a data.frame with each parameter value tested, and an additional `logLik` column with the log-likelihood for each parameter combination.
 #' @export
-profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c('ll', 'pop', 'pred'), .progress="none", ...) {
+profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c('ll', 'pop', 'pred'), .progress=TRUE,
+                              ...) {
   tdmorefit <- fitted
   model <- tdmorefit$tdmore
   omegas <- diag(tdmorefit$tdmore$omega)
@@ -629,16 +634,45 @@ profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c
   for(i in names(fix)) grid[,i] <- fix[i]
   grid <- grid[, model$parameters, drop=FALSE] # Reorder the columns
 
-  profile <- plyr::adply(grid, 1, function(estimate) {
+  cModel <- model
+  cModel$cache <- model_prepare(model=model$model,
+                                times=tdmorefit$observed$TIME,
+                                regimen=tdmorefit$regimen,
+                                parameters=coef(tdmorefit),
+                                covariates=tdmorefit$covariates,
+                                iov=model$iov,
+                                extraArguments=model$extraArguments)
+  tdmorefit$model <- cModel
+
+  omega <- expandOmega(model, getMaxOccasion(tdmorefit$regimen))
+  omega <- chol(omega) #performance improvement
+
+  p <- to_dplyr_progress(.progress)
+  p$initialize(n=nrow(grid), min_time=3)
+
+  profile <- apply(grid, 1, function(estimate) {
+    p$tick()$print()
     eta <- as.numeric(estimate)
     names(eta) <- model$parameters
-    omega <- expandOmega(model, getMaxOccasion(tdmorefit$regimen))
-    c(logLik=fun(eta, omega, NULL, model, tdmorefit$observed, tdmorefit$regimen, tdmorefit$covariates))
-  }, .progress=.progress)
+    if(anyNA(eta)) {
+      i <- is.na(eta)
+      eta[i] <- 0
+      eta <- estimate(tdmorefit, par=eta, fix=eta[!i])$res
+    }
+    c(eta,
+      logLik=fun(par=eta,
+                 omega=omega,
+                 fix=NULL,
+                 tdmore=cModel,
+                 observed=tdmorefit$observed,
+                 regimen=tdmorefit$regimen,
+                 covariates=tdmorefit$covariates,
+                 isChol=TRUE))
+  })
 
   return(structure(
     list(
-      profile = profile,
+      profile = as.data.frame(t(profile)),
       profiledParameters = profiledParameters,
       tdmorefit = tdmorefit
     ),
