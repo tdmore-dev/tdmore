@@ -170,10 +170,16 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     ## new version of RxODE
     if(!is.null(covariates)) ev <- cbind(ev, covariates)
     ev <- data.table::as.data.table(ev)
-    cache$covs <- function(x) { NULL }
     cache$ev <- function(x) {
       update_table(ev, x)
       ev
+    }
+    cache$rxSolveArgs <- function(parameters) {
+      list(
+        events=cache$ev(parameters),
+        params=cache$parameters(parameters)
+        ## covs cannot even be specified anymore!!
+      )
     }
   } else {
     ## old version, covariates via 'covs' argument
@@ -184,6 +190,13 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
       covariates
     }
     cache$ev <- function(x) { ev }
+    cache$rxSolveArgs <- function(parameters) {
+      list(
+        events=cache$ev(parameters),
+        params=cache$parameters(parameters),
+        covs=cache$covs(parameters)
+      )
+    }
   }
 
   return(cache)
@@ -221,7 +234,7 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   if(!is.null( cache$output) ) return(cache$output) ## output always same, no matter the parameters
 
   # Run the simulation
-  result <- do.call(RxODE::rxSolve, c( list(object=model, events=cache$ev(parameters), params=cache$parameters(parameters), covs=cache$covs(parameters)), extraArguments))
+  result <- do.call(RxODE::rxSolve, c( list(object=model), cache$rxSolveArgs(parameters), extraArguments))
 
   # Only get the values we want
   result <- as.data.frame(result, row.names=NULL)
