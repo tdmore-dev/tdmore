@@ -7,7 +7,7 @@ a given dataset using the model}
 \usage{
 estimate(object, observed = NULL, regimen, covariates = NULL,
   par = NULL, fix = NULL, method = "L-BFGS-B", se.fit = TRUE,
-  lower = NULL, upper = NULL, ...)
+  lower = NULL, upper = NULL, multistart = F, ...)
 }
 \arguments{
 \item{object}{a tdmore, tdmore_set or tdmore_mixture object}
@@ -31,6 +31,18 @@ Putting this to FALSE can reduce computation time.}
 \item{lower}{the lower bounds of the parameters, if null, -5 * sqrt(diag(model$omega)) is used}
 
 \item{upper}{the upper bounds of the parameters, if null, +5 * sqrt(diag(model$omega)) is used}
+
+\item{multistart}{if TRUE, perform optimization using many different starting conditions.
+A combination of -sd, +sd for each non-IOV parameter is explored.
+This avoids returning a local optimum, and strengthens the belief
+that the found optimum is a global optimum.
+
+Alternatively, a named vector with the requested perturbations to parameters
+can be provided: \code{estimate(multistart=c(eta_Tlag=0.5))}. This will evaluate
+the provided starting value for eta_Tlag +- 0.5, without also perturbing the other initial values.
+
+WARNING: This may lead to extremely long computation times. It is recommended to use a control argument to
+reduce accuracy and report estimation progress.}
 
 \item{...}{extra parameters to pass to the optim function
 A good example is to specify `control=list(trace=1, REPORT=10, factr=1e13)` to improve performance.

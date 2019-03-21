@@ -505,8 +505,8 @@ tdmorefit &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span c
 ## Coefficients:
 ##  name  value        (95% CI)    se
 ##   EKA 0.0197   (-1.04, 1.08) 0.541
-##    EV 0.0231 (-0.898, 0.944) 0.470
-##   ECL 0.2400   (-0.17, 0.65) 0.209</code></pre>
+##    EV 0.0231   (-0.9, 0.946) 0.471
+##   ECL 0.2400 (-0.172, 0.652) 0.210</code></pre>
 <p>The above summary shows us how well the observed data was estimated. In particular, the objective function value (OFV) is shown. The higher this value, the better the fit. <code>pop</code> value is the population likelihood (it can be seen as how well the parameters fit the population PK model), <code>pred</code> value is the prediction likelihood (it can be seen as how well the parameters fit the observed data, knowing the population PK model). The summary also shows the coefficient values, as well as their 95% confidence interval (CI) and standard error (se). Because all ETA’s in this model have a standard deviation of <code>sqrt(0.3)=0.547</code>, we can deduce that the observed data only helped estimate ECL (standard errors of EKA and EV are too close from their original standard deviation).</p>
 <p>Predictions on the <code>tdmorefit</code> object can be done as follows (see also <a href="tdmore-api.html#predicttdmorefit">5.3.2</a>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmorefit, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se.fit=</span><span class="ot">TRUE</span>)</code></pre></div>
@@ -591,7 +591,7 @@ recommendation3 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 <span class="kw">summary</span>(recommendation3)</code></pre></div>
 <pre><code>## $dose
 ## dose.median  dose.lower  dose.upper 
-##    249.8222    210.9477    316.6021 
+##    249.8563    210.9439    316.8162 
 ## 
 ## $regimen
 ##   TIME      AMT
@@ -601,7 +601,7 @@ recommendation3 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 ## 4   72 150.0000
 ## 5   96 150.0000
 ## 6  120 150.0000
-## 7  144 249.8222</code></pre>
+## 7  144 249.8563</code></pre>
 <p>A 95% confidence interval is returned.</p>
 </div>
 <div id="visualise-a-recommendation" class="section level3">

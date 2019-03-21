@@ -113,9 +113,9 @@ vcov(pred)
 ```
 
 ```
-##       ECL   EV1
-## ECL 0.194 0.000
-## EV1 0.000 0.287
+##              ECL          EV1
+## ECL 1.940000e-01 1.090438e-13
+## EV1 1.090438e-13 2.870000e-01
 ```
 
 This uncertainty is equal to the population inter-individual variability (OMEGA matrix). Now, let's assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):
@@ -147,8 +147,8 @@ vcov(ipred)
 
 ```
 ##            ECL        EV1
-## ECL 0.03154084 0.04680264
-## EV1 0.04680264 0.12759969
+## ECL 0.03154125 0.04680262
+## EV1 0.04680262 0.12759879
 ```
 
 Predictions for the population (pred) and this specific subject (ipred) can be compared using the following snippet: 

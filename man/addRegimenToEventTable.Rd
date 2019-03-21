@@ -4,7 +4,7 @@
 \alias{addRegimenToEventTable}
 \title{Add the given regimen into the RxODE event table.}
 \usage{
-addRegimenToEventTable(eventTable, regimen)
+addRegimenToEventTable(eventTable, regimen, nbSSDoses = NULL)
 }
 \arguments{
 \item{eventTable}{the RxODE event table}

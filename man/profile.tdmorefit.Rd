@@ -6,13 +6,14 @@
 If arguments `fix` and `limits` are not set for a specific parameter, individual eta's will be generated to cover 95 percent of the population distribution.}
 \usage{
 \method{profile}{tdmorefit}(fitted, fix = NULL, maxpts = 50,
-  limits = NULL, type = c("ll", "pop", "pred"), .progress = "none",
+  limits = NULL, type = c("ll", "pop", "pred"), .progress = TRUE,
   ...)
 }
 \arguments{
 \item{fitted}{A tdmorefit object}
 
-\item{fix}{Which parameters to fix? Named vector of the parameters that are fixed and should not be profiled}
+\item{fix}{Which parameters to fix? Named vector of the parameters that are fixed and should not be profiled
+Specify a FIX of NA to estimate the optimal value at that specific grid-point.}
 
 \item{maxpts}{Maximum number of points per parameter}
 
@@ -20,7 +21,9 @@ If arguments `fix` and `limits` are not set for a specific parameter, individual
 
 \item{type}{log-lokelihood function type, 3 possible values: 'pop', 'pred' or 'll' (= pop + pred)}
 
-\item{.progress}{See plyr::ddply}
+\item{.progress}{Allows to specify a plyr-like progress object
+A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
+This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.}
 
 \item{...}{ignored}
 }

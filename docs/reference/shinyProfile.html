@@ -6,8 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get an overview of the log-likelihood for varying parameter values.
-If arguments `fix` and `limits` are not set for a specific parameter, individual eta's will be generated to cover 95 percent of the population distribution. — profile.tdmorefit • tdmore</title>
+<title>Open a Shiny Gadget to explore the log-likelihood profile
+of a specific fit — shinyProfile • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -31,11 +31,11 @@ If arguments `fix` and `limits` are not set for a specific parameter, individual
 
 
 
-<meta property="og:title" content="Get an overview of the log-likelihood for varying parameter values.
-If arguments `fix` and `limits` are not set for a specific parameter, individual eta's will be generated to cover 95 percent of the population distribution. — profile.tdmorefit" />
+<meta property="og:title" content="Open a Shiny Gadget to explore the log-likelihood profile
+of a specific fit — shinyProfile" />
 
-<meta property="og:description" content="Get an overview of the log-likelihood for varying parameter values.
-If arguments `fix` and `limits` are not set for a specific parameter, individual eta's will be generated to cover 95 percent of the population distribution." />
+<meta property="og:description" content="Open a Shiny Gadget to explore the log-likelihood profile
+of a specific fit" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -130,73 +130,27 @@ If arguments `fix` and `limits` are not set for a specific parameter, individual
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get an overview of the log-likelihood for varying parameter values.
-If arguments `fix` and `limits` are not set for a specific parameter, individual eta's will be generated to cover 95 percent of the population distribution.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
-    <div class="hidden name"><code>profile.tdmorefit.Rd</code></div>
+    <h1>Open a Shiny Gadget to explore the log-likelihood profile
+of a specific fit</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/shinyProfile.R'><code>R/shinyProfile.R</code></a></small>
+    <div class="hidden name"><code>shinyProfile.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Get an overview of the log-likelihood for varying parameter values.
-If arguments `fix` and `limits` are not set for a specific parameter, individual eta's will be generated to cover 95 percent of the population distribution.</p>
+    <p>Open a Shiny Gadget to explore the log-likelihood profile
+of a specific fit</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for tdmorefit</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/profile'>profile</a></span>(<span class='no'>fitted</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>maxpts</span> <span class='kw'>=</span> <span class='fl'>50</span>,
-  <span class='kw'>limits</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"ll"</span>, <span class='st'>"pop"</span>, <span class='st'>"pred"</span>), <span class='kw'>.progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>fitted</th>
-      <td><p>A tdmorefit object</p></td>
-    </tr>
-    <tr>
-      <th>fix</th>
-      <td><p>Which parameters to fix? Named vector of the parameters that are fixed and should not be profiled
-Specify a FIX of NA to estimate the optimal value at that specific grid-point.</p></td>
-    </tr>
-    <tr>
-      <th>maxpts</th>
-      <td><p>Maximum number of points per parameter</p></td>
-    </tr>
-    <tr>
-      <th>limits</th>
-      <td><p>limits to explore (numeric vector of form c(min, max) or specific limits per parameter in the form list(ETA1=c(min,max), ETA2=c(min,max), etc))</p></td>
-    </tr>
-    <tr>
-      <th>type</th>
-      <td><p>log-lokelihood function type, 3 possible values: 'pop', 'pred' or 'll' (= pop + pred)</p></td>
-    </tr>
-    <tr>
-      <th>.progress</th>
-      <td><p>Allows to specify a plyr-like progress object
-A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
-This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>ignored</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>a tdmore profile object. It namely contains a data.frame with each parameter value tested, and an additional `logLik` column with the log-likelihood for each parameter combination.</p>
-    
+    <pre class="usage"><span class='fu'>shinyProfile</span>(<span class='no'>tdmorefit</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+        
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>

@@ -454,8 +454,8 @@ summary(tdmorefit)
 ## Coefficients:
 ##  name  value        (95% CI)    se
 ##   EKA 0.0197   (-1.04, 1.08) 0.541
-##    EV 0.0231 (-0.898, 0.944) 0.470
-##   ECL 0.2400   (-0.17, 0.65) 0.209
+##    EV 0.0231   (-0.9, 0.946) 0.471
+##   ECL 0.2400 (-0.172, 0.652) 0.210
 ```
 
 The above summary shows us how well the observed data was estimated. In particular, the objective function value (OFV) is shown. The higher this value, the better the fit. `pop` value is the population likelihood (it can be seen as how well the parameters fit the population PK model), `pred` value is the prediction likelihood (it can be seen as how well the parameters fit the observed data, knowing the population PK model). The summary also shows the coefficient values, as well as their 95% confidence interval (CI) and standard error (se). Because all ETA's in this model have a standard deviation of `sqrt(0.3)=0.547`, we can deduce that the observed data only helped estimate ECL (standard errors of EKA and EV are too close from their original standard deviation).
@@ -585,7 +585,7 @@ summary(recommendation3)
 ```
 ## $dose
 ## dose.median  dose.lower  dose.upper 
-##    249.8222    210.9477    316.6021 
+##    249.8563    210.9439    316.8162 
 ## 
 ## $regimen
 ##   TIME      AMT
@@ -595,7 +595,7 @@ summary(recommendation3)
 ## 4   72 150.0000
 ## 5   96 150.0000
 ## 6  120 150.0000
-## 7  144 249.8222
+## 7  144 249.8563
 ```
 
 A 95% confidence interval is returned.

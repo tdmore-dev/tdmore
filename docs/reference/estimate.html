@@ -145,7 +145,7 @@ a given dataset using the model</p>
 
     <pre class="usage"><span class='fu'>estimate</span>(<span class='no'>object</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>regimen</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"L-BFGS-B"</span>, <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>multistart</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,6 +191,18 @@ Putting this to FALSE can reduce computation time.</p></td>
     <tr>
       <th>upper</th>
       <td><p>the upper bounds of the parameters, if null, +5 * sqrt(diag(model$omega)) is used</p></td>
+    </tr>
+    <tr>
+      <th>multistart</th>
+      <td><p>if TRUE, perform optimization using many different starting conditions.
+A combination of -sd, +sd for each non-IOV parameter is explored.
+This avoids returning a local optimum, and strengthens the belief
+that the found optimum is a global optimum.</p>
+<p>Alternatively, a named vector with the requested perturbations to parameters
+can be provided: <code>estimate(multistart=c(eta_Tlag=0.5))</code>. This will evaluate
+the provided starting value for eta_Tlag +- 0.5, without also perturbing the other initial values.</p>
+<p>WARNING: This may lead to extremely long computation times. It is recommended to use a control argument to
+reduce accuracy and report estimation progress.</p></td>
     </tr>
     <tr>
       <th>...</th>
