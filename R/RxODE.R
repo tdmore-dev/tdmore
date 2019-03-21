@@ -128,7 +128,7 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   # All arguments look good, let's prepare the simulation
   ev <- RxODE::eventTable()
   if(length(times) > 0) ev$add.sampling(time=times)
-  ev <- addRegimenToEventTable(ev, regimen)
+  ev <- addRegimenToEventTable(ev, regimen, extraArguments$nbSSDoses)
 
   # Treat missing times
   if(!is.null(covariates)) {
@@ -254,28 +254,42 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 #'
 #' @return a completed event table
 #'
-addRegimenToEventTable <- function(eventTable, regimen) {
+addRegimenToEventTable <- function(eventTable, regimen, nbSSDoses=NULL) {
+  if(is.null(nbSSDoses)) nbSSDoses=5 #default
   for(i in seq_len(nrow(regimen))) {
     row <- regimen[i, ,drop=FALSE]
     dosing.to = 1
     rate = NULL
     nbr.doses = 1
     dosing.interval = 24
+    start.time = row$TIME
 
     # dosing interval not used since regimen has been flattened
     if(isTRUE(row$II > 0)) {
-      dosing.interval <- row$II
-      nbr.doses <- row$ADDL
+      if("ADDL" %in% colnames(row)) {
+        dosing.interval <- row$II
+        nbr.doses <- row$ADDL
+      } else if (row$SS == 1) {
+        ## TODO: Use new functionality of new RxODE??
+        nbr.doses=nbSSDoses + 1
+        dosing.interval=row$II
+        start.time = start.time - row$II * nbSSDoses
+        ## TODO: check collision with other treatments??
+        if(any( eventTable$get.dosing()$time > start.time ))
+          warning("Possible collision of steady-state dose on ", row$TIME, " with other treatments...")
+      } else {
+        ## nothing special
+      }
     }
 
-    if(isTRUE(is.finite(row$RATE))) rate=row$RATE
-    if(isTRUE(is.finite(row$DURATION))) {
+    if("RATE" %in% names(row) && isTRUE(is.finite(row$RATE))) rate=row$RATE
+    if("DURATION" %in% names(row) && isTRUE(is.finite(row$DURATION))) {
       if(!is.null(rate)) stop("Cannot specify RATE and DURATION in the same treatment row ", i)
       rate = row$AMT / row$DURATION
     }
 
     if("CMT" %in% names(row)) dosing.to <- row$CMT
-    eventTable$add.dosing(start.time = row$TIME,
+    eventTable$add.dosing(start.time = start.time,
                   dose=row$AMT,
                   dosing.to=dosing.to,
                   rate=rate,

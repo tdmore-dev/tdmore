@@ -126,10 +126,11 @@ checkIOV <- function(tdmore) {
 checkRegimen <- function(regimen, iov) {
   assert_that("data.frame" %in% class(regimen))
   assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
-  assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "DURATION", "CMT", "II", "ADDL", "OCC")))
+  assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "DURATION", "CMT", "II", "ADDL", "SS", "OCC")))
 
-  if ("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))
-    assert_that(all(c("II", "ADDL") %in% colnames(regimen)))
+  # XXX: Not a strict requirement! II + SS is also possible...
+  #if ("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))
+  #  assert_that(all(c("II", "ADDL") %in% colnames(regimen)))
 
   if ("OCC" %in% colnames(regimen)) {
     if (is.null(iov)) {
