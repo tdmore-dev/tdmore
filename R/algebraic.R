@@ -25,7 +25,7 @@ algebraic <- function(fun, output="CONC") {
   tArg <- argNames[1]
   argNames <- argNames[-1] #remove first argument; it is always the evaluation time
 
-  regimenNames <- c("TIME", "AMT", "II", "ADDL", "RATE", "DURATION", "CMT")
+  regimenNames <- c("TIME", "AMT", "II", "ADDL", "RATE", "DURATION", "CMT", "SS")
   regimenNames <- argNames[argNames %in% regimenNames]
   pNames <- argNames[! argNames %in% c(regimenNames)]
 
