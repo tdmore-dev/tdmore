@@ -16,8 +16,6 @@ to_plyr <- function(x) {
 #' @inheritParams profile
 #' @param ... Extra arguments passed to `profile`
 #' @export
-#' @import shiny
-#' @import miniUI
 shinyProfile <- function(tdmorefit, fix=NULL, ...) {
   names <- names(coef(tdmorefit))
   omega <- diag(tdmorefit$tdmore$omega)
