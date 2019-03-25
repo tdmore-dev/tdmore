@@ -12,7 +12,12 @@ to_plyr <- function(x) {
 
 #' Open a Shiny Gadget to explore the log-likelihood profile
 #' of a specific fit
+#' @param a specific fit to profile
+#' @inheritParams profile
+#' @param ... Extra arguments passed to `profile`
 #' @export
+#' @import shiny
+#' @import miniUI
 shinyProfile <- function(tdmorefit, fix=NULL, ...) {
   names <- names(coef(tdmorefit))
   omega <- diag(tdmorefit$tdmore$omega)
@@ -45,16 +50,16 @@ shinyProfile <- function(tdmorefit, fix=NULL, ...) {
   )
 
   server <- function(input, output, session) {
-    prefs <- reactiveValues(
+    prefs <- shiny::reactiveValues(
       zoom=list(xmin=-1, xmax=1, ymin=-1, ymax=1)
     )
-    selected <- reactive({
+    selected <- shiny::reactive({
       res <- sapply(names, function(n){ input[[n]] })
       names(res) <- names
       res
     })
 
-    output$plot <- renderPlot({
+    output$plot <- shiny::renderPlot({
       plotVars <- input$var
       limits=list(
         c(prefs$zoom$xmin, prefs$zoom$xmax),
@@ -65,7 +70,7 @@ shinyProfile <- function(tdmorefit, fix=NULL, ...) {
 
       progress <- shiny::Progress$new()
       on.exit(progress$close())
-      myProfile <- profile(fitted=tdmorefit,
+      myProfile <- stats::profile(fitted=tdmorefit,
                            fix=selected()[! names %in% plotVars],
                            limits=limits,
                            .progress=to_plyr(progress),
@@ -73,7 +78,7 @@ shinyProfile <- function(tdmorefit, fix=NULL, ...) {
       plot(myProfile)
     })
 
-    observeEvent(input$dblclick, {
+    shiny::observeEvent(input$dblclick, {
       ## zoom in, or zoom out
       if(is.null(input$brush)) {
       width <- prefs$zoom$xmax - prefs$zoom$xmin
@@ -95,8 +100,8 @@ shinyProfile <- function(tdmorefit, fix=NULL, ...) {
         )
       }
     })
-    observeEvent(input$done, {
-      stopApp(NULL)
+    shiny::observeEvent(input$done, {
+      shiny::stopApp(NULL)
     })
   }
 

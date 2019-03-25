@@ -7,6 +7,11 @@ of a specific fit}
 \usage{
 shinyProfile(tdmorefit, fix = NULL, ...)
 }
+\arguments{
+\item{...}{Extra arguments passed to `profile`}
+
+\item{a}{specific fit to profile}
+}
 \description{
 Open a Shiny Gadget to explore the log-likelihood profile
 of a specific fit

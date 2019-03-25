@@ -10,6 +10,8 @@ addRegimenToEventTable(eventTable, regimen, nbSSDoses = NULL)
 \item{eventTable}{the RxODE event table}
 
 \item{regimen}{the specified regimen}
+
+\item{nbSSDoses}{number of doses to prepend for simulation of steady-state}
 }
 \value{
 a completed event table

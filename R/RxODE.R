@@ -251,6 +251,7 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 #'
 #' @param eventTable the RxODE event table
 #' @param regimen the specified regimen
+#' @param nbSSDoses number of doses to prepend for simulation of steady-state
 #'
 #' @return a completed event table
 #'
