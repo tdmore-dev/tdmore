@@ -13,7 +13,7 @@ to_plyr <- function(x) {
 #' Open a Shiny Gadget to explore the log-likelihood profile
 #' of a specific fit
 #' @param a specific fit to profile
-#' @inheritParams profile
+#' @inheritParams profile.tdmorefit
 #' @param ... Extra arguments passed to `profile`
 #' @export
 shinyProfile <- function(tdmorefit, fix=NULL, ...) {

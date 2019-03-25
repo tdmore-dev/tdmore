@@ -8,6 +8,9 @@ of a specific fit}
 shinyProfile(tdmorefit, fix = NULL, ...)
 }
 \arguments{
+\item{fix}{Which parameters to fix? Named vector of the parameters that are fixed and should not be profiled
+Specify a FIX of NA to estimate the optimal value at that specific grid-point.}
+
 \item{...}{Extra arguments passed to `profile`}
 
 \item{a}{specific fit to profile}
