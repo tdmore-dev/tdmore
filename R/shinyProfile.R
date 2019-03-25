@@ -17,6 +17,14 @@ to_plyr <- function(x) {
 #' @param ... Extra arguments passed to `profile`
 #' @export
 shinyProfile <- function(tdmorefit, fix=NULL, ...) {
+  if (!requireNamespace("shiny", quietly = TRUE)) {
+    warning("The shiny package must be installed to use this functionality")
+    return(NULL)
+  }
+  if (!requireNamespace("miniUI", quietly = TRUE)) {
+    warning("The miniUI package must be installed to use this functionality")
+    return(NULL)
+  }
   names <- names(coef(tdmorefit))
   omega <- diag(tdmorefit$tdmore$omega)
   init <- coef(tdmorefit)
