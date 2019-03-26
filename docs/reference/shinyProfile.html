@@ -143,18 +143,23 @@ of a specific fit</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>shinyProfile</span>(<span class='no'>tdmorefit</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>shinyProfile</span>(<span class='no'>fitted</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>...</th>
-      <td><p>Extra arguments passed to `profile`</p></td>
+      <th>fitted</th>
+      <td><p>A tdmorefit object</p></td>
     </tr>
     <tr>
-      <th>a</th>
-      <td><p>specific fit to profile</p></td>
+      <th>fix</th>
+      <td><p>Which parameters to fix? Named vector of the parameters that are fixed and should not be profiled
+Specify a FIX of NA to estimate the optimal value at that specific grid-point.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Extra arguments passed to `profile`</p></td>
     </tr>
     </table>
     
