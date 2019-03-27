@@ -8,7 +8,9 @@ options("install.packages.compile.from.source"="no")
 ensureInstalled <- function(x) {tryCatch( find.package(x), error=function(e) install.packages(x) )}
 ensureInstalled("devtools")
 ensureInstalled("tidyverse")
-ensureInstalled("RxODE")
+
+Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
+devtools::install_github("nlmixrdevelopment/RxODE@937597db213208ccef737f2bb532a88416ea139e")
 
 PAT_TOKEN <- "eab9e908f5073f3ff82a7cb77e5fced10ed01d5d"
 devtools::install_github("tdmore-dev/tdmore", user="tdmore-training", auth_token=PAT_TOKEN, upgrade="never")
@@ -26,7 +28,7 @@ You can find this on https://cran.r-project.org/bin/windows/Rtools/Rtools35.exe
 
 if(library(tdmore, logical.return=T)) {
     message("===========================================")
-    message("==== TDMore was installed succesfully! ====") 
+    message("==== TDMore was installed succesfully! ====")
     message("===========================================")
 } else {
     stop("Failed to install tdmore...")

@@ -1,4 +1,3 @@
-
 context("Test algebraic models")
 
 myFunction <- function(t, TIME, AMT, EKA, EV, ECL, WT) {
@@ -54,7 +53,7 @@ test_that("model_predict function generates values as expected", {
                           parameters=c(EKA=0, EV=0, ECL=0),
                           covariates=covariates)
   z1 <- ggplot(result, aes(x=TIME, y=CONC)) + geom_line()
-  vdiffr::expect_doppelganger("Algebraic function model_predict", z1)
+  expect_doppelganger("Algebraic function model_predict", z1)
 })
 
 m2 <- tdmore(m1,
@@ -63,6 +62,6 @@ m2 <- tdmore(m1,
 test_that("predict.tdmore() function generates values as expected", {
   result <- predict(m2, newdata=data.frame(TIME=seq(0, 100, by=0.1), CONC=NA), regimen=regimen, covariates=covariates)
   z1 <- ggplot(result, aes(x=TIME, y=CONC)) + geom_line()
-  vdiffr::expect_doppelganger("Algebraic function predict", z1)
+  expect_doppelganger("Algebraic function predict", z1)
 })
 
