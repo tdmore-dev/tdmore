@@ -90,3 +90,39 @@ output <- function(name, label, unit=NULL) {
     unit=unit
   ), class="tdmore_output")
 }
+
+#' Tdmore_output to string method.
+#'
+#' @param x a tdmore object
+#' @param ... ignored
+#'
+#' @export
+toString.tdmore_output <- function(x, ...) {
+  return(paste0(x$label, " (", x$unit, ")"))
+}
+
+#' Tdmore_covariate to string method.
+#'
+#' @param x a tdmore object
+#' @param ... ignored
+#'
+#' @export
+toString.tdmore_covariate <- function(x, ...) {
+  return(paste0(x$label, " (", x$unit, ")"))
+}
+
+#' Get metadata (output or covariate) by name.
+#'
+#' @param tdmore the tdmore model
+#' @param metaName the name of the metadata
+#' @return the first metadata item that matches the given name
+#' @export
+getMetadataByName <- function(tdmore, metaName) {
+  hasMetadata <- function(x) {if ('name' %in% names(x)) x$name==metaName else FALSE}
+  results <- tdmore$metadata[sapply(tdmore$metadata, hasMetadata)]
+  if(length(results) > 0) {
+    return(results[[1]])
+  } else {
+    return(NULL)
+  }
+}
