@@ -2,7 +2,7 @@
 % Please edit documentation in R/metadata.R
 \name{metadata}
 \alias{metadata}
-\title{metadata is a generic function to append metadata to a TDMore model.}
+\title{Metadata is a generic function to append metadata to a TDMore model.}
 \usage{
 metadata(...)
 }
@@ -13,5 +13,5 @@ metadata(...)
 an object of class tdmore
 }
 \description{
-metadata is a generic function to append metadata to a TDMore model.
+Metadata is a generic function to append metadata to a TDMore model.
 }
