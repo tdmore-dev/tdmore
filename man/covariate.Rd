@@ -2,7 +2,7 @@
 % Please edit documentation in R/metadata.R
 \name{covariate}
 \alias{covariate}
-\title{Create a new covariate.}
+\title{Create a new covariate object.}
 \usage{
 covariate(name, label, unit = NULL, min = NULL, max = NULL,
   choices = NULL)
@@ -24,5 +24,5 @@ covariate(name, label, unit = NULL, min = NULL, max = NULL,
 a tdmore_covariate object
 }
 \description{
-Create a new covariate.
+Create a new covariate object.
 }

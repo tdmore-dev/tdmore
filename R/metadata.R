@@ -39,6 +39,18 @@ metadata.tdmore_output <- function(x, ...) {
   ), class="metadata")
 }
 
+#' Build a dose metadata.
+#'
+#' @param x a tdmore_dose object
+#' @param ... ignored
+#' @return a metadata structure
+#' @export
+metadata.tdmore_dose <- function(x, ...) {
+  structure(list(
+    output=x
+  ), class="metadata")
+}
+
 #' Append metadata to a TDMore model.
 #'
 #' @param tdmore a tdmore_output object
@@ -55,7 +67,7 @@ metadata.tdmore <- function(tdmore, ...) {
   return(tdmore)
 }
 
-#' Create a new covariate.
+#' Create a new covariate object.
 #'
 #' @param name the covariate name
 #' @param label the covariate label
@@ -76,7 +88,7 @@ covariate <- function(name, label, unit=NULL, min=NULL, max=NULL, choices=NULL) 
   ), class="tdmore_covariate")
 }
 
-#' Create a new output
+#' Create a new output object.
 #'
 #' @param name the output name
 #' @param label the output label
@@ -89,6 +101,20 @@ output <- function(name, label, unit=NULL) {
     label=label,
     unit=unit
   ), class="tdmore_output")
+}
+
+#' Create a new dose object.
+#'
+#'
+#' @param unit the unit
+#' @param name by default 'DOSE'
+#' @return a tdmore_dose object
+#' @export
+dose <- function(unit, name="DOSE") {
+  structure(list(
+    name=name,
+    unit=unit
+  ), class="tdmore_dose")
 }
 
 #' Tdmore_output to string method.
@@ -109,6 +135,16 @@ toString.tdmore_output <- function(x, ...) {
 #' @export
 toString.tdmore_covariate <- function(x, ...) {
   return(paste0(x$label, " (", x$unit, ")"))
+}
+
+#' Tdmore_dose to string method.
+#'
+#' @param x a tdmore object
+#' @param ... ignored
+#'
+#' @export
+toString.tdmore_dose <- function(x, ...) {
+  return(x$unit)
 }
 
 #' Get metadata (output or covariate) by name.

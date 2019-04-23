@@ -2,7 +2,7 @@
 % Please edit documentation in R/metadata.R
 \name{output}
 \alias{output}
-\title{Create a new output}
+\title{Create a new output object.}
 \usage{
 output(name, label, unit = NULL)
 }
@@ -17,5 +17,5 @@ output(name, label, unit = NULL)
 a tdmore_output object
 }
 \description{
-Create a new output
+Create a new output object.
 }
