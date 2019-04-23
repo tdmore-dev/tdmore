@@ -5,6 +5,10 @@ links:
   - text: The TDMore book
     href: book/index.html
 
+template:
+  params:
+    noindex: true
+
 development:
   mode: auto  # detect based on version number
   version_label: warning
