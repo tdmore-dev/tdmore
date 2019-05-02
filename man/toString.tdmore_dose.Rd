@@ -7,7 +7,7 @@
 \method{toString}{tdmore_dose}(x, ...)
 }
 \arguments{
-\item{x}{a tdmore object}
+\item{x}{a tdmore_dose object}
 
 \item{...}{ignored}
 }

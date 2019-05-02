@@ -4,7 +4,7 @@
 \alias{output}
 \title{Create a new output object.}
 \usage{
-output(name, label, unit = NULL)
+output(name, label, unit = NULL, default_value = 1)
 }
 \arguments{
 \item{name}{the output name}
@@ -12,6 +12,8 @@ output(name, label, unit = NULL)
 \item{label}{the output label}
 
 \item{unit}{the unit, can be null}
+
+\item{default_value}{the default dose value, same unit as the one provided}
 }
 \value{
 a tdmore_output object

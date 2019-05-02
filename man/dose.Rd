@@ -4,12 +4,14 @@
 \alias{dose}
 \title{Create a new dose object.}
 \usage{
-dose(unit, name = "DOSE")
+dose(unit, dosing_interval = 24, default_value = 1)
 }
 \arguments{
 \item{unit}{the unit}
 
-\item{name}{by default 'DOSE'}
+\item{dosing_interval}{the dosing interval in hours, 24h is the default value}
+
+\item{default_value}{the default dose value, same unit as the one provided}
 }
 \value{
 a tdmore_dose object
