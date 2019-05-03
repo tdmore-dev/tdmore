@@ -139,20 +139,24 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="5.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>5.7</b> Extending TDMore</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>6</b> Vignettes</a><ul>
-<li class="chapter" data-level="6.1" data-path="vignettes.html"><a href="vignettes.html#running-tdmore"><i class="fa fa-check"></i><b>6.1</b> Running TDMore</a><ul>
+<li class="chapter" data-level="6" data-path="validation.html"><a href="validation.html"><i class="fa fa-check"></i><b>6</b> Validation</a><ul>
+<li class="chapter" data-level="6.1" data-path="validation.html"><a href="validation.html#development-process"><i class="fa fa-check"></i><b>6.1</b> Development process</a></li>
+<li class="chapter" data-level="6.2" data-path="validation.html"><a href="validation.html#standards-iec-623042006"><i class="fa fa-check"></i><b>6.2</b> Standards: IEC 62304:2006</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>7</b> Vignettes</a><ul>
+<li class="chapter" data-level="7.1" data-path="vignettes.html"><a href="vignettes.html#running-tdmore"><i class="fa fa-check"></i><b>7.1</b> Running TDMore</a><ul>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#whats-tdmore"><i class="fa fa-check"></i>What’s TDMore?</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#creating-your-model"><i class="fa fa-check"></i>Creating your model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#predicting-new-data"><i class="fa fa-check"></i>Predicting new data</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#finding-the-right-dose-to-give"><i class="fa fa-check"></i>Finding the right dose to give</a></li>
 </ul></li>
-<li class="chapter" data-level="6.2" data-path="vignettes.html"><a href="vignettes.html#multiple-endpoints"><i class="fa fa-check"></i><b>6.2</b> Multiple endpoints</a><ul>
+<li class="chapter" data-level="7.2" data-path="vignettes.html"><a href="vignettes.html#multiple-endpoints"><i class="fa fa-check"></i><b>7.2</b> Multiple endpoints</a><ul>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#writing-and-testing-the-pk-model"><i class="fa fa-check"></i>Writing and testing the PK model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#adding-a-pd-model"><i class="fa fa-check"></i>Adding a PD model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters-1"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="vignettes.html"><a href="vignettes.html#example-detecting-non-adherence"><i class="fa fa-check"></i><b>6.3</b> Example: Detecting non-adherence</a><ul>
+<li class="chapter" data-level="7.3" data-path="vignettes.html"><a href="vignettes.html#example-detecting-non-adherence"><i class="fa fa-check"></i><b>7.3</b> Example: Detecting non-adherence</a><ul>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#about-this-example"><i class="fa fa-check"></i>About this example</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#the-model"><i class="fa fa-check"></i>The model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#is-the-patient-taking-hisher-medication"><i class="fa fa-check"></i>Is the patient taking his/her medication?</a></li>
@@ -189,7 +193,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(devtools)) <span class="kw">install.packages</span>(<span class="st">&#39;devtools&#39;</span>)
 <span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(tidyverse)) <span class="kw">install.packages</span>(<span class="st">&#39;tidyverse&#39;</span>)
 
-PAT_TOKEN &lt;-<span class="st"> &quot;eab9e908f5073f3ff82a7cb77e5fced10ed01d5d&quot;</span>
+PAT_TOKEN &lt;-<span class="st"> &quot;SECRET&quot;</span> <span class="co">#request the PAT_TOKEN from us to access the repository</span>
 devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;tdmore-dev/tdmore&quot;</span>, <span class="dt">user=</span><span class="st">&quot;tdmore-training&quot;</span>, <span class="dt">auth_token=</span>PAT_TOKEN,
                          <span class="dt">upgrade=</span><span class="st">&quot;never&quot;</span>)
 
