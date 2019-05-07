@@ -145,6 +145,7 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   cache$parameters <- function(x) {
     x <- x[ ! names(x) %in% iov ]
     parameters[names(x)] <- x
+    if(length(parameters) == 0) return(NULL)
     parameters
   }
 
