@@ -254,27 +254,31 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
 
 #' Get the indexes of the fixed parameters.
 #'
-#' @param parNames parameter names in the right order
+#' @param parNames parameter names in the right order, possibly with repeated values
 #' @param fix named numeric vector with the fixed parameters (user input)
+#'
+#' @keywords internal
 #'
 #' @return the fixed parameters indexes
 getFixedParametersIndexes <- function(parNames, fix) {
   if(length(fix) == 0) {
     return(c())
   }
-  fixNames <- names(fix)
-  fixedParametersIndexes <- sort(unique(unlist(plyr::adply(unique(fixNames), 1, .fun = function(name) {
-    howMany <- sum(fixNames==name)
-    res <- which(parNames==name)
-    if(length(res) < howMany) {
-      stop("Inconsistent fix argument")
-    }
-    res[seq_len(howMany)]
-  }))))
-  if(length(fixedParametersIndexes) >=length(parNames)) {
-    stop("Parameters can't be all fixed")
+  ## Boolean vector to store which parameters are fixed
+  isFixed <- logical(length=length(parNames))
+
+  for(name in unique(parNames)) {
+    ## Does this name appear in the 'fix' parameters, and how often?
+    N <- sum( names(fix) == name )
+    if(N == 0) next #not fixed
+    i <- which(parNames == name) # Which 'isFixed' should be set to TRUE?
+    if(N > length(i)) stop("Inconsistent fix argument")
+    i <- i[1:N] # only as many as we have 'fix' values for
+    isFixed[i] <- TRUE
   }
-  return(fixedParametersIndexes)
+  if(all(isFixed)) stop("Parameters cannot be all fixed")
+
+  which(isFixed) # return indexes
 }
 
 #' Create a tdmorefit object manually
