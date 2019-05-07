@@ -98,6 +98,12 @@ test_that("Prediction using same EBE gives same results", {
                tolerance=1E-12)
 })
 
+ggplot(mlxPred) +
+  geom_line(aes(x=time, y=IPRED, color="Monolix")) +
+  geom_line(data=tdmorePred, aes(x=time, y=IPRED, color="tdmore")) +
+  facet_wrap(~id) +
+  labs(title="Simulation comparison")
+ggsave("mlx_theophyline_simul.png", width=16, height=9)
 
 
 omega <- theta[4:6] ^ 2
@@ -134,6 +140,15 @@ tdmoreEta <- tdmorePred %>% ungroup() %>% mutate(coef=map(ipred, ~as_tibble(t(co
 test_that("EBE estimation gives same estimates", {
   expect_equal(tdmoreEta, mlxEta, tolerance=1e-5)
 })
+
+tdmoreEta %>% gather(key, monolix, -id) %>% left_join(
+  mlxEta %>% gather(key, tdmore, -id)
+) %>% ggplot() +
+  geom_point(aes(x=tdmore / monolix - 1, y=id)) +
+  geom_vline(xintercept=0) +
+  facet_wrap(~key) +
+  labs(title="Relative difference between ETA estimates", subtitle="tdmore vs monolix")
+ggsave("mlx_theophyline_eta.png", width=16, height=9)
 
 test_that("EBE estimation gives same predictions", {
   expect_equal(mlxPred$IPRED,

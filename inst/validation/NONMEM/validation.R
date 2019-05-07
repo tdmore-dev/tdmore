@@ -38,7 +38,7 @@ phenoPath <- file.path(nmPath, "PHENO")
 file.copy(phenoPath, wd) %>% stopifnot()
 
 ## Copy all NONMEM control streams
-nmCtlFiles <- list.files(pattern="*.CTL", path="inst/validation/", full.names=T)
+nmCtlFiles <- list.files(pattern="*.CTL", path="inst/validation/NONMEM", full.names=T)
 for(f in nmCtlFiles)
   file.copy(f, wd) %>% stopifnot()
 
@@ -133,7 +133,7 @@ modelCode <- function() {
   })
 }
 
-m1 <- nlmixrUI(modelCode)
+m1 <- nlmixr::nlmixrUI(modelCode)
 m1tdm <- tdmore(m1, atol=1e-12, rtol=1e-12) ## We need high precision to match the estimates from the algebraic implementation in nonmem
 
 regimen <- data.frame(TIME=0, AMT=320) ## fixed
@@ -141,19 +141,22 @@ regimen <- data.frame(TIME=0, AMT=320) ## fixed
 input <- read.table(file=theoPath, na=".")
 names(input) <- c("ID", "AMT", "TIME", "DV", "BWT")
 
-results_m1 <- plyr::ddply(input, plyr::.(ID), function(observed) {
+results_m1 <- input %>% group_by(ID) %>% do({
+  observed <- .data
   obs <- observed[, c("TIME", "DV")]
   colnames(obs) <- c("TIME", "CONC")
   est <- estimate(m1tdm, obs, regimen)
 
+  # tibble(ipred=list(est))
   cbind(asPhi(est),
-        data.frame(
-          ID=observed$ID[1],
-          OBJ=est$ofv,
-          type="THEO",
-          method="tdmore"
-  ))
-}, .progress="text")
+       data.frame(
+         ID=observed$ID[1],
+         OBJ=est$ofv,
+         type="THEO",
+         method="tdmore"
+      ))
+})
+
 # TDMore estimation results: Theophylline -----------------------------------------------
 ## From C11FOCEi.ext
 #ITERATION    THETA1       THETA2       THETA3       SIGMA(1,1)   SIGMA(2,1)   SIGMA(2,2)   OMEGA(1,1)   OMEGA(2,1)   OMEGA(2,2)   OBJ
@@ -190,7 +193,8 @@ m2tdm <- tdmore(m2)
 input <- read.table(file=phenoPath, na=".", nrows=744) ## PHENO has 'FIN' as the last line...
 names(input) <- c("ID", "TIME", "AMT", "BWT", "APGR", "DV", "MDV", "EVID")
 
-results_m2 <- plyr::ddply(input, plyr::.(ID), function(input) {
+results_m2 <- input %>% group_by(ID) %>% do({
+  input <- .data
   observed <- filter(input, EVID==0 & MDV==0)
   obs <- observed[, c("TIME", "DV")]
   colnames(obs) <- c("TIME", "CONC")
@@ -209,7 +213,7 @@ results_m2 <- plyr::ddply(input, plyr::.(ID), function(input) {
           type="PHENO",
           method="tdmore"
         ))
-}, .progress="text")
+})
 
 
 # Compare results ---------------------------------------------------------
@@ -229,5 +233,6 @@ ggplot(comparison, aes(x=ID, y=delta, size=abs(delta))) +
   scale_y_continuous(labels=scales::percent, limits=c(-ymax, ymax)) +
   scale_x_continuous(breaks=seq(1, 100, by=2)) +
   geom_hline(yintercept=0) +
-  coord_flip()
-ggsave("eta_profiles_delta.png", width=12, height=8)
+  coord_flip() +
+  labs(title="TDMore vs FOCEi", x="delta", size="delta")
+ggsave("eta_profiles_delta.png", width=16, height=9)
