@@ -4,7 +4,7 @@ output:
   html_document:
     keep_md: true
 vignette: >
-  %\VignetteIndexEntry{TDMore, a global framework for Therapeutic Drug Monitoring (TDM)}
+  %\VignetteIndexEntry{Visualizing tdmore results}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
