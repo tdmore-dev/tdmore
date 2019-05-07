@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Chapter 6 Vignettes | TDMore: an R package for therapeutic drug monitoring</title>
+  <title>Chapter 7 Vignettes | TDMore: an R package for therapeutic drug monitoring</title>
   <meta name="description" content="TDMore reference manual">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Chapter 6 Vignettes | TDMore: an R package for therapeutic drug monitoring" />
+  <meta property="og:title" content="Chapter 7 Vignettes | TDMore: an R package for therapeutic drug monitoring" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 6 Vignettes | TDMore: an R package for therapeutic drug monitoring" />
+  <meta name="twitter:title" content="Chapter 7 Vignettes | TDMore: an R package for therapeutic drug monitoring" />
   
   <meta name="twitter:description" content="TDMore reference manual" />
   
@@ -31,7 +31,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="tdmore-api.html">
+<link rel="prev" href="validation.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -139,20 +139,24 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="5.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>5.7</b> Extending TDMore</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>6</b> Vignettes</a><ul>
-<li class="chapter" data-level="6.1" data-path="vignettes.html"><a href="vignettes.html#running-tdmore"><i class="fa fa-check"></i><b>6.1</b> Running TDMore</a><ul>
+<li class="chapter" data-level="6" data-path="validation.html"><a href="validation.html"><i class="fa fa-check"></i><b>6</b> Validation</a><ul>
+<li class="chapter" data-level="6.1" data-path="validation.html"><a href="validation.html#development-process"><i class="fa fa-check"></i><b>6.1</b> Development process</a></li>
+<li class="chapter" data-level="6.2" data-path="validation.html"><a href="validation.html#standards-iec-623042006"><i class="fa fa-check"></i><b>6.2</b> Standards: IEC 62304:2006</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>7</b> Vignettes</a><ul>
+<li class="chapter" data-level="7.1" data-path="vignettes.html"><a href="vignettes.html#running-tdmore"><i class="fa fa-check"></i><b>7.1</b> Running TDMore</a><ul>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#whats-tdmore"><i class="fa fa-check"></i>What’s TDMore?</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#creating-your-model"><i class="fa fa-check"></i>Creating your model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#predicting-new-data"><i class="fa fa-check"></i>Predicting new data</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#finding-the-right-dose-to-give"><i class="fa fa-check"></i>Finding the right dose to give</a></li>
 </ul></li>
-<li class="chapter" data-level="6.2" data-path="vignettes.html"><a href="vignettes.html#multiple-endpoints"><i class="fa fa-check"></i><b>6.2</b> Multiple endpoints</a><ul>
+<li class="chapter" data-level="7.2" data-path="vignettes.html"><a href="vignettes.html#multiple-endpoints"><i class="fa fa-check"></i><b>7.2</b> Multiple endpoints</a><ul>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#writing-and-testing-the-pk-model"><i class="fa fa-check"></i>Writing and testing the PK model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#adding-a-pd-model"><i class="fa fa-check"></i>Adding a PD model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters-1"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="vignettes.html"><a href="vignettes.html#example-detecting-non-adherence"><i class="fa fa-check"></i><b>6.3</b> Example: Detecting non-adherence</a><ul>
+<li class="chapter" data-level="7.3" data-path="vignettes.html"><a href="vignettes.html#example-detecting-non-adherence"><i class="fa fa-check"></i><b>7.3</b> Example: Detecting non-adherence</a><ul>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#about-this-example"><i class="fa fa-check"></i>About this example</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#the-model"><i class="fa fa-check"></i>The model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#is-the-patient-taking-hisher-medication"><i class="fa fa-check"></i>Is the patient taking his/her medication?</a></li>
@@ -179,9 +183,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="vignettes" class="section level1">
-<h1><span class="header-section-number">Chapter 6</span> Vignettes</h1>
+<h1><span class="header-section-number">Chapter 7</span> Vignettes</h1>
 <div id="running-tdmore" class="section level2">
-<h2><span class="header-section-number">6.1</span> Running TDMore</h2>
+<h2><span class="header-section-number">7.1</span> Running TDMore</h2>
 <div id="whats-tdmore" class="section level3 unnumbered">
 <h3>What’s TDMore?</h3>
 <p>TDMore is an R package that attemps to provide a global framework for making Therapeutic Drug Monitoring software. It is designed not only for the pharmacometricians but also for the physicians.</p>
@@ -330,7 +334,7 @@ pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <spa
 </div>
 </div>
 <div id="multiple-endpoints" class="section level2">
-<h2><span class="header-section-number">6.2</span> Multiple endpoints</h2>
+<h2><span class="header-section-number">7.2</span> Multiple endpoints</h2>
 <div id="writing-and-testing-the-pk-model" class="section level3 unnumbered">
 <h3>Writing and testing the PK model</h3>
 <p>In this vignette, we will learn how TDMore can deal with multiple endpoints. The PK/PD models chosen to illustrate this section are based on the following paper: “Population PK/PD modeling of Sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor.”.</p>
@@ -519,7 +523,7 @@ ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m2, <span c
 </div>
 </div>
 <div id="example-detecting-non-adherence" class="section level2">
-<h2><span class="header-section-number">6.3</span> Example: Detecting non-adherence</h2>
+<h2><span class="header-section-number">7.3</span> Example: Detecting non-adherence</h2>
 <div id="about-this-example" class="section level3 unnumbered">
 <h3>About this example</h3>
 <p>Non-compliance is an important issue endangering the effectiveness of treatments. In COPD, it is estimated that there is a non-compliance of more than 98% for inhaled treatments.</p>
@@ -631,7 +635,7 @@ standardDeviations</code></pre></div>
           </div>
         </div>
       </div>
-<a href="tdmore-api.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="validation.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
     </div>
   </div>

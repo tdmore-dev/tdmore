@@ -7,7 +7,7 @@
 \method{toString}{tdmore_output}(x, ...)
 }
 \arguments{
-\item{x}{a tdmore object}
+\item{x}{a tdmore_output object}
 
 \item{...}{ignored}
 }

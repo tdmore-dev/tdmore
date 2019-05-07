@@ -17,6 +17,7 @@
     Provide value by automatically generating a Shiny app for use
     in a clinical setting.">
 <meta name="twitter:card" content="summary">
+<meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -165,11 +166,11 @@ ipred &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span cl
 <p><img src="figures/readme_plot_ipred-1.png" width="768" style="display: block; margin: auto;"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</code></pre></div>
 <pre><code>##        ECL        EV1 
-## 0.07919094 0.16336159</code></pre>
+## 0.07919572 0.16332022</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/vcov">vcov</a></span>(ipred)</code></pre></div>
 <pre><code>##             ECL         EV1
-## ECL 0.012127596 0.009791643
-## EV1 0.009791643 0.031400672</code></pre>
+## ECL 0.011779142 0.009373237
+## EV1 0.009373237 0.030891449</code></pre>
 </div>
 <div id="more-information" class="section level2">
 <h2 class="hasAnchor">

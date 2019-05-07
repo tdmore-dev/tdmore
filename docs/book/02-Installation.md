@@ -32,7 +32,7 @@ You may have to adapt the settings of RStudio in Tools -> Global Options as well
 if(!require(devtools)) install.packages('devtools')
 if(!require(tidyverse)) install.packages('tidyverse')
 
-PAT_TOKEN <- "eab9e908f5073f3ff82a7cb77e5fced10ed01d5d"
+PAT_TOKEN <- "SECRET" #request the PAT_TOKEN from us to access the repository
 devtools::install_github("tdmore-dev/tdmore", user="tdmore-training", auth_token=PAT_TOKEN,
                          upgrade="never")
 

@@ -150,7 +150,7 @@ plot(ipred)
 ipreds <- list(ipred)
 
 ## Second iteration
-for(i in 2:5) {
+for(i in 2:10) {
 
   previousEta <- coef(ipred)[  seq(1, N) + (i-2)*N ] #fix the previous Eta
   fixedParameters <- c(fixedParameters, previousEta)
@@ -161,7 +161,8 @@ for(i in 2:5) {
 
   ## Adapt OMEGA based on the uncertainty of the parameter estimates
   ## XXX: Point of scientific discussion: what to do here?
-  #m1$omega <- vcov(ipred)[seq(1,N)+(i-2)*N, seq(1,N)+(i-2)*N] #adapt OMEGA
+  #ind <- seq(1,N)+(i-2)*N
+  #m1$omega <- vcov(ipred)[ind, ind] #adapt OMEGA
 
   input <- observed[i,]
   covariates <- bind_rows(covariates, previousEbe)
@@ -181,9 +182,11 @@ for(i in 2:5) {
 
 plot(ipreds[[length(ipreds)]], se.fit=NA) +
   lapply(seq_along(ipreds), function(i) {
+    occIndexes <- which(regimen$OCC == i)
     myRegimen <- regimen %>% mutate(OCC=ifelse(OCC>=i, i, OCC))
+
     geom_line(
-      data=predict(ipreds[[i]], regimen=myRegimen, newdata=seq(0, 200, by=0.5)),
+      data=predict(ipreds[[i]], regimen=myRegimen, newdata=seq(regimen$TIME[occIndexes[1]], 300, by=0.5)),
       aes(y=Cwb),
       color=i
     )

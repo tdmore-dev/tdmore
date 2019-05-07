@@ -23,7 +23,7 @@ metadata.default <- function(x, ...) {
 #' @export
 metadata.tdmore_covariate <- function(x, ...) {
   structure(list(
-    covariate=x
+    value=x
   ), class="metadata")
 }
 
@@ -35,7 +35,7 @@ metadata.tdmore_covariate <- function(x, ...) {
 #' @export
 metadata.tdmore_output <- function(x, ...) {
   structure(list(
-    output=x
+    value=x
   ), class="metadata")
 }
 
@@ -47,7 +47,19 @@ metadata.tdmore_output <- function(x, ...) {
 #' @export
 metadata.tdmore_dose <- function(x, ...) {
   structure(list(
-    output=x
+    value=x
+  ), class="metadata")
+}
+
+#' Build a target metadata.
+#'
+#' @param x a tdmore_target object
+#' @param ... ignored
+#' @return a metadata structure
+#' @export
+metadata.tdmore_target <- function(x, ...) {
+  structure(list(
+    value=x
   ), class="metadata")
 }
 
@@ -93,33 +105,51 @@ covariate <- function(name, label, unit=NULL, min=NULL, max=NULL, choices=NULL) 
 #' @param name the output name
 #' @param label the output label
 #' @param unit the unit, can be null
+#' @param default_value the default dose value, same unit as the one provided
 #' @return a tdmore_output object
 #' @export
-output <- function(name, label, unit=NULL) {
+output <- function(name, label, unit=NULL, default_value=1) {
   structure(list(
     name=name,
     label=label,
-    unit=unit
+    unit=unit,
+    default_value=default_value
   ), class="tdmore_output")
 }
 
 #' Create a new dose object.
 #'
-#'
 #' @param unit the unit
-#' @param name by default 'DOSE'
+#' @param dosing_interval the dosing interval in hours, 24h is the default value
+#' @param default_value the default dose value, same unit as the one provided
 #' @return a tdmore_dose object
 #' @export
-dose <- function(unit, name="DOSE") {
+dose <- function(unit, dosing_interval=24, default_value=1) {
   structure(list(
-    name=name,
-    unit=unit
+    name="DOSE",
+    unit=unit,
+    dosing_interval=dosing_interval,
+    default_value=default_value
   ), class="tdmore_dose")
+}
+
+#' Create a new target.
+#'
+#' @param min the min value of the target, same unit as the one defined in output
+#' @param max the max value of the target, same unit as the one defined in output
+#' @return a tdmore_target object
+#' @export
+target <- function(min, max) {
+  structure(list(
+    name="TARGET",
+    min=min,
+    max=max
+  ), class="tdmore_target")
 }
 
 #' Tdmore_output to string method.
 #'
-#' @param x a tdmore object
+#' @param x a tdmore_output object
 #' @param ... ignored
 #'
 #' @export
@@ -129,7 +159,7 @@ toString.tdmore_output <- function(x, ...) {
 
 #' Tdmore_covariate to string method.
 #'
-#' @param x a tdmore object
+#' @param x a tdmore_covariate object
 #' @param ... ignored
 #'
 #' @export
@@ -139,12 +169,22 @@ toString.tdmore_covariate <- function(x, ...) {
 
 #' Tdmore_dose to string method.
 #'
-#' @param x a tdmore object
+#' @param x a tdmore_dose object
 #' @param ... ignored
 #'
 #' @export
 toString.tdmore_dose <- function(x, ...) {
   return(x$unit)
+}
+
+#' Tdmore_target to string method.
+#'
+#' @param x a tdmore_target object
+#' @param ... ignored
+#'
+#' @export
+toString.tdmore_target <- function(x, ...) {
+  return(paste0("Target: [", x$min, ",", x$max, "]"))
 }
 
 #' Get metadata (output or covariate) by name.

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Chapter 6 Validation | TDMore: an R package for therapeutic drug monitoring</title>
+  <meta name="description" content="TDMore reference manual">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+
+  <meta property="og:title" content="Chapter 6 Validation | TDMore: an R package for therapeutic drug monitoring" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="TDMore reference manual" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Validation | TDMore: an R package for therapeutic drug monitoring" />
+  
+  <meta name="twitter:description" content="TDMore reference manual" />
+  
+
+<meta name="author" content="Ruben Faelens, Nicolas Luyckx, Quentin Leirens, Thomas Bouillon">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="tdmore-api.html">
+<link rel="next" href="vignettes.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">TDMore bookdown</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome to TDMore</a></li>
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html#about-this-book"><i class="fa fa-check"></i>About this book</a></li>
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html#acknowledgements"><i class="fa fa-check"></i>Acknowledgements</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#prereq"><i class="fa fa-check"></i><b>1.1</b> Prerequisites</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="install.html"><a href="install.html"><i class="fa fa-check"></i><b>2</b> Installation</a></li>
+<li class="chapter" data-level="3" data-path="installation-script.html"><a href="installation-script.html"><i class="fa fa-check"></i><b>3</b> Installation script</a></li>
+<li class="chapter" data-level="4" data-path="license.html"><a href="license.html"><i class="fa fa-check"></i><b>4</b> License</a></li>
+<li class="chapter" data-level="5" data-path="tdmore-api.html"><a href="tdmore-api.html"><i class="fa fa-check"></i><b>5</b> TDMore API</a><ul>
+<li class="chapter" data-level="5.1" data-path="tdmore-api.html"><a href="tdmore-api.html#model"><i class="fa fa-check"></i><b>5.1</b> Model definition</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-a-nlxmir-model"><i class="fa fa-check"></i><b>5.1.1</b> Build a TDMore object from a nlxmir model</a></li>
+<li class="chapter" data-level="5.1.2" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-an-rxode-model"><i class="fa fa-check"></i><b>5.1.2</b> Build a TDMore object from an RxODE model</a></li>
+<li class="chapter" data-level="5.1.3" data-path="tdmore-api.html"><a href="tdmore-api.html#build-your-own-algebraic-model"><i class="fa fa-check"></i><b>5.1.3</b> Build your own algebraic model</a></li>
+<li class="chapter" data-level="5.1.4" data-path="tdmore-api.html"><a href="tdmore-api.html#add-model-covariates"><i class="fa fa-check"></i><b>5.1.4</b> Add model covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="tdmore-api.html"><a href="tdmore-api.html#regimen"><i class="fa fa-check"></i><b>5.2</b> Regimen definition</a></li>
+<li class="chapter" data-level="5.3" data-path="tdmore-api.html"><a href="tdmore-api.html#model-simulation"><i class="fa fa-check"></i><b>5.3</b> Model simulation</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmore"><i class="fa fa-check"></i><b>5.3.1</b> Predict a tdmore object</a></li>
+<li class="chapter" data-level="5.3.2" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmorefit"><i class="fa fa-check"></i><b>5.3.2</b> Predict a tdmorefit object</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="tdmore-api.html"><a href="tdmore-api.html#estimation"><i class="fa fa-check"></i><b>5.4</b> Parameter estimation</a></li>
+<li class="chapter" data-level="5.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>5.5</b> Dose recommendation</a><ul>
+<li class="chapter" data-level="5.5.1" data-path="tdmore-api.html"><a href="tdmore-api.html#calling-the-finddose-method"><i class="fa fa-check"></i><b>5.5.1</b> Calling the findDose method</a></li>
+<li class="chapter" data-level="5.5.2" data-path="tdmore-api.html"><a href="tdmore-api.html#visualise-a-recommendation"><i class="fa fa-check"></i><b>5.5.2</b> Visualise a recommendation</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>5.6</b> Plotting the intermediate steps</a><ul>
+<li class="chapter" data-level="5.6.1" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmore-object"><i class="fa fa-check"></i><b>5.6.1</b> Plotting a tdmore object</a></li>
+<li class="chapter" data-level="5.6.2" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object"><i class="fa fa-check"></i><b>5.6.2</b> Plotting a tdmorefit object</a></li>
+<li class="chapter" data-level="5.6.3" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object-with-an-adapted-regimen"><i class="fa fa-check"></i><b>5.6.3</b> Plotting a tdmorefit object with an adapted regimen</a></li>
+<li class="chapter" data-level="5.6.4" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmoreprofile-object"><i class="fa fa-check"></i><b>5.6.4</b> Plotting a tdmoreprofile object</a></li>
+</ul></li>
+<li class="chapter" data-level="5.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>5.7</b> Extending TDMore</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="validation.html"><a href="validation.html"><i class="fa fa-check"></i><b>6</b> Validation</a><ul>
+<li class="chapter" data-level="6.1" data-path="validation.html"><a href="validation.html#development-process"><i class="fa fa-check"></i><b>6.1</b> Development process</a></li>
+<li class="chapter" data-level="6.2" data-path="validation.html"><a href="validation.html#standards-iec-623042006"><i class="fa fa-check"></i><b>6.2</b> Standards: IEC 62304:2006</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>7</b> Vignettes</a><ul>
+<li class="chapter" data-level="7.1" data-path="vignettes.html"><a href="vignettes.html#running-tdmore"><i class="fa fa-check"></i><b>7.1</b> Running TDMore</a><ul>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#whats-tdmore"><i class="fa fa-check"></i>What’s TDMore?</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#creating-your-model"><i class="fa fa-check"></i>Creating your model</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#predicting-new-data"><i class="fa fa-check"></i>Predicting new data</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#finding-the-right-dose-to-give"><i class="fa fa-check"></i>Finding the right dose to give</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="vignettes.html"><a href="vignettes.html#multiple-endpoints"><i class="fa fa-check"></i><b>7.2</b> Multiple endpoints</a><ul>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#writing-and-testing-the-pk-model"><i class="fa fa-check"></i>Writing and testing the PK model</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#adding-a-pd-model"><i class="fa fa-check"></i>Adding a PD model</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters-1"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="vignettes.html"><a href="vignettes.html#example-detecting-non-adherence"><i class="fa fa-check"></i><b>7.3</b> Example: Detecting non-adherence</a><ul>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#about-this-example"><i class="fa fa-check"></i>About this example</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#the-model"><i class="fa fa-check"></i>The model</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#is-the-patient-taking-hisher-medication"><i class="fa fa-check"></i>Is the patient taking his/her medication?</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><code>TDMore</code>: an R package for therapeutic drug monitoring</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="validation" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> Validation</h1>
+<p>This section details the development process for TDMore. It also shows the validation (in a Computer Systems Validation GxP-sense) that was performed. Finally, it hints at the requirements should you incorporate the TDMore engine in your dose adaptation software.</p>
+<div id="development-process" class="section level2">
+<h2><span class="header-section-number">6.1</span> Development process</h2>
+<p>TDMore is developed as an R package. The development team tries their best to adhere to international standards such as <code>IEC 62304:2006</code>. This ensures that the software is developed to the highest quality standards.</p>
+<p>New features are first described in a Github ticket. They are discussed between the development team and prioritized.</p>
+<p>The feature is then developed. The API is documented through Roxygen2, and its use is documented in a vignette or in the documentation book. Automated tests are written for every new feature. It is our intention to get code coverage of critical parts up to 100%.</p>
+</div>
+<div id="standards-iec-623042006" class="section level2">
+<h2><span class="header-section-number">6.2</span> Standards: IEC 62304:2006</h2>
+<p><em>It should be stressed that TDMore is not a medical device.</em> The software is for research and educational use only, and should never be directly used in patient care.</p>
+<p>However, we acknowledge that TDMore may be used as a component in a medical device. For integrators or medical device builders, we therefore detail how TDMore may adhere to the <code>IEC 62304:2006 Medical device software - Software life cycle processes</code> standard.</p>
+<p>TDMore is considered a software item of a larger system, as defined in ISO/IEC 90003:2004, definition 3.14. Whether the larger system is Class A, B or C depends on the use case. As an example, a system to aid physicians in quantifying drug non-adherence could be considered Class A (No injury or damage to health is possible), while a closed-loop automated insulin pump will be considered Class C (Death or serious injury is possible). By itself, TDMore cannot directly cause any injury or damage to health.</p>
+<p>The IEC 62304:2006 standard defines several requirements, some general and some specific to the development process. General requirements include Quality Management (ISO 13485), Risk Management (ISO 14971) and Software Safety Classification. These are not considered by the TDMore development team, as they are only applicable to the larger device.</p>
+<p>For Software Development, the standard requires <em>Software development planning</em> (Class A, B and C). This is implemented in TDMore in the Github repository issue tracker. Issues describe features or bugs that are developed. They are grouped together in milestones. The software plan is regularly updated, as can be shown by the github activity tracker.</p>
+<div class="figure">
+<img src="static/milestone_1.png" title="Github issues for milestone Initial Development" alt="Screenshot of GitHub issues list" />
+<p class="caption">Screenshot of GitHub issues list</p>
+</div>
+<p>However, this software is developed as open-source software. In that sense, it is not subject to clear planning. Instead, milestones are delivered as they come, and all standard software development processes apply to these releases.</p>
+<p>The standard requires <em>Software requirements analysis</em>. For TDMore, this consists of a thorough description of the intended feature in the ticket. In some cases, example code is added.</p>
+<p><em>Software architectural design</em> is largely ad-hoc. There is no specific design role or stage. This should not be deemed problematic, as TDMore is not a large software with plenty of layers.</p>
+<p><em>Software detailed design</em> can be considered an essential part of feature implementation. TDMore is not end-user facing, but is built as an R package, to be consumed by developers. APIs are carefully designed.</p>
+<p><em>Unit implementation and verification</em> is done using RStudio and the GIT version control system. Peer review is used to verify all code committed. Automated tests are used to verify features function as expected.</p>
+<p>For now, no formal releases have been executed. It is our intent to release to CRAN regularly.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="tdmore-api.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="vignettes.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

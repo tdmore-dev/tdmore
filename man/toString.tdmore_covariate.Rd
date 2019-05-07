@@ -7,7 +7,7 @@
 \method{toString}{tdmore_covariate}(x, ...)
 }
 \arguments{
-\item{x}{a tdmore object}
+\item{x}{a tdmore_covariate object}
 
 \item{...}{ignored}
 }
