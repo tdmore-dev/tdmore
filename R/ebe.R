@@ -84,6 +84,7 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #' @param par optional starting parameter for the MLE minimization
 #' @param fix named vector with the fixed parameters
 #' @param method the optimisation method, by default, method "L-BFGS-B" is used
+#' Can also be specified as a list, in which case all methods specified will be tried and the one finding the estimate with highest log-likelihood will be returned.
 #' @param se.fit calculate the variance-covariance matrix for the fit
 #' Putting this to FALSE can reduce computation time.
 #' @param lower the lower bounds of the parameters, if null, -5 * sqrt(diag(model$omega)) is used
@@ -100,6 +101,8 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #' WARNING: This may lead to extremely long computation times. It is recommended to use a control argument to
 #' reduce accuracy and report estimation progress.
 #'
+#' @param control control options for `estimate`
+#' If trace > 0, the estimation function also reports errors when calculating log-likelihood.
 #' @param ... extra parameters to pass to the optim function
 #' A good example is to specify `control=list(trace=1, REPORT=10, factr=1e13)` to improve performance.
 #' This will `trace` the estimation progress
@@ -108,10 +111,35 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #' Incidentally, 3 significant digits \href{http://holford.fmhs.auckland.ac.nz/research/sigdig}{is the default value for NONMEM}.
 #' Without the above option, `estimate` will calculate with a relative precision of `1e-8`.
 #'
+#'
 #' @return A tdmorefit object
 #' @importFrom stats optim
 #' @export
-estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, ...) {
+estimate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+  if(is.null(control$trace)) control$trace <- 0
+  if(length(method) > 1) {
+    ## Multiple methods specified
+    ## Try them one at a time
+    ipred <- NULL
+    bestLL <- -Inf
+    call <- match.call()
+    for(m in method) {
+      call$method <- m
+      #thisIpred <- eval(call)
+      thisIpred <- estimate(
+        object, observed, regimen, covariates, par, fix, method=m, se.fit, lower, upper, multistart, control, ...
+      )
+      thisLL <- logLik(thisIpred)
+      if(thisLL > bestLL) {
+        if(control$trace > 0) cat(m," found better fit (LL=", thisLL, ")\n")
+        bestLL <- thisLL
+        ipred <- thisIpred
+      } else {
+        if(control$trace > 0) cat(m," not better (LL=", thisLL, ")\n")
+      }
+    }
+    return(ipred)
+  }
 
   if (inherits(object, "tdmore_set")) {
     # Either a tdmore or tdmore_mixture
@@ -170,8 +198,11 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
   # Function to optimise
   fn <- function(par, ...) {
     tryCatch({
-      -2 * ll(par=par, ...)
+      val <- -2 * ll(par=par, ...)
+      #cat("LL calculated for ", str(par), ": ", val, "\n")
+      val
     }, error = function(e) {
+      if(control$trace > 0) print(e)
       999999
     })
   }
@@ -193,6 +224,7 @@ estimate <- function(object, observed=NULL, regimen, covariates=NULL, par=NULL, 
     isChol=TRUE,
     omega=omegaChol,
     fix=fix,
+    control=control,
     ...
   )
   if(!isFALSE(multistart)) {
