@@ -158,6 +158,13 @@ estimate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=N
   } else {
     stop("Object not an instance of 'tdmore', 'tdmore_set' or 'tdmore_mixture")
   }
+
+  if(!is.null(data)) {
+    observed = loadObserved(tdmore, data)
+    regimen = loadRegimen(tdmore, data)
+    covariates = loadCovariates(tdmore, data)
+  }
+
   observed <- model.frame(tdmore, data=observed) #ensure "observed" in right format for estimation
 
   # Processing IOV
@@ -320,8 +327,8 @@ getFixedParametersIndexes <- function(parNames, fix) {
 #' @param regimen the treatment regimen data.frame
 #' @param covariates the model covariates
 #' @param ofv (optional) the OFV value
-#' @param res the found parameter values, as a named vector, or NULL to use 0
-#' @param varcov the found varcov matrix, or NULL to use a diagonal matrix
+#' @param res the found parameter values, as a named vector, or NULL to use 0.
+#' @param varcov the found varcov matrix, or NULL to use a diagonal matrix.
 #' @param fix the fixed parameters
 #' @param nlmresult the result of the non-linear minimization
 #' @param call a informative string that gives the arguments that were used in estimate()
