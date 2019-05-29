@@ -4,18 +4,16 @@
 #' @param newdata a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times
 #' @inheritParams predict.tdmorefit
 #' @param se.fit add a curve for the confidence interval around the fit
-#' @param mc.maxpts maximum number of points to use for the monte carlo fit
-#' @param .progress either "none" or "text" to see calculation progress of monte carlo simulations
 #' @param population should I plot the population prediction (in blue) ?
 #' @param fit should I plot the fit (in red) ?
-#' @param ... ignored
+#' @param ... passed on to `predict`
 #'
 #' @return a ggplot object with the fitted individual curve, the 95% CI of this curve, the population prediction (with between-subject variability) and the observed data
 #' @importFrom ggplot2 ggplot aes_string geom_line geom_ribbon geom_point geom_errorbar labs
 #' @importFrom stats predict
 #' @importFrom graphics plot
 #' @export
-plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, population=TRUE, fit=TRUE, mc.maxpts=100, .progress="none", ...) {
+plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, population=TRUE, fit=TRUE, ...) {
   if(inherits(x, "tdmorefit_mixture")) {
     tdmorefit <- x$fits[[1]] # Does not matter which one, fit is used for regimen and covariates infos
     tdmore <- x$mixture # tdmore_mixture
@@ -26,14 +24,14 @@ plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, populatio
     mixture <- F
   }
 
-  newdata <- processNewData(newdata, tdmorefit, regimen=regimen, N=1000)
   if(is.null(regimen)) regimen <- tdmorefit$regimen
+  newdata <- processNewData(newdata, tdmorefit, regimen=regimen, N=1000)
 
   # Compute IPRED
   if(fit) {
-    ipred <- predict(x, newdata=newdata, regimen=regimen, parameters=tdmorefit$fix) %>% meltPredictions()
+    ipred <- predict(x, newdata=newdata, regimen=regimen, parameters=tdmorefit$fix, ...) %>% meltPredictions()
     if (!is.na(se.fit) && se.fit) {
-      ipredre_tmp <- predict(x, newdata=newdata, regimen=regimen, parameters=tdmorefit$fix, se.fit=T, level=0.95, mc.maxpts = mc.maxpts, .progress=.progress)
+      ipredre_tmp <- predict(x, newdata=newdata, parameters=tdmorefit$fix, se.fit=T, level=0.95, ...)
       ipredre <- ipredre_tmp %>% meltPredictions(se=T)
     }
   }
@@ -41,20 +39,20 @@ plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, populatio
 
   # Compute PRED
   if(population) {
-    pred_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates, fix=tdmorefit$fix)
+    pred_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates) #TODO: should we respect fixed parameters?
     if(mixture) {
       pred_tmp$fits_prob <- x$fits_prob # Use same fit probabilities as ipred to have a coherent plot
       pred_tmp$winner <- x$winner # Same winner
     }
-    pred <-  predict(pred_tmp, newdata=newdata, parameters=tdmorefit$fix) %>% meltPredictions()
+    pred <-  predict(pred_tmp, newdata=newdata, ...) %>% meltPredictions() #TODO: should we respect fixed parameters?
 
-    predre_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates, fix=tdmorefit$fix)
+    predre_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates) #TODO: should we respect fixed parameters?
     if(mixture) {
       predre_tmp$fits_prob <- x$fits_prob # Use same fit probabilities as ipred to have a coherent plot
       predre_tmp$winner <- x$winner # Same winner
     }
     if(!is.na(se.fit)) {
-      predre <- predict(predre_tmp, newdata=newdata, parameters=tdmorefit$fix, se.fit=T) %>% meltPredictions(se=T)
+      predre <- predict(predre_tmp, newdata=newdata, se.fit=T, ...) %>% meltPredictions(se=T) #TODO: should we respect fixed parameters?
     }
   }
 
