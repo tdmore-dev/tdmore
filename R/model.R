@@ -204,6 +204,20 @@ model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, ...) {
   oNames <- colnames(data)
   oNames <- oNames[oNames != "TIME"]
 
+  if(is.na(level)) {
+    ## Simply add RE
+    for (err in tdmore$res_var) {
+      var <- err$var
+      if (!(var %in% oNames)) next
+      obs <- data[, var, drop=TRUE]
+      sd <- err$sigma(obs)
+      q <- rnorm(1, 0, sd)
+      data[, var] <- obs + sd*q
+    }
+    return(data)
+  }
+
+  ## Calculate limits
   a <- (1 - level) / 2
   q <- qnorm(a) * (-1) # To have a positive value
 
