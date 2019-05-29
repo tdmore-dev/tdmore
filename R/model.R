@@ -127,7 +127,9 @@ predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covar
   predicted <- model_predict(model=tdmore$model, times=times, regimen=regimen, parameters=par, covariates=covariates, iov=tdmore$iov, extraArguments=c(..., tdmore$extraArguments), cache=tdmore$cache)
 
   if (is.data.frame(newdata)) {
-    assert_that(all(colnames(newdata) %in% colnames(predicted)), msg="newdata contains unknown column(s)")
+    i <- colnames(newdata) %in% colnames(predicted)
+    assert_that(all(i), msg=paste0("newdata contains unknown column(s): ",
+                        paste(colnames(newdata)[!i], collapse="; ")))
     # Only use the outputs specified in newdata
     predicted <- predicted[ , colnames(newdata), drop=FALSE ]
   }
