@@ -1,6 +1,8 @@
 Call:
-estimate(object = m1, observed = observed, regimen = regimen, 
-    covariates = c(WT = 70))
+estimateDelegate(object = object, observed = observed, regimen = regimen, 
+    covariates = covariates, par = par, fix = fix, method = method, 
+    se.fit = se.fit, lower = lower, upper = upper, multistart = multistart, 
+    control = control, data = data)
 Coef:
        ECL        EV1 
 -0.1771521 -0.1240100 

@@ -116,6 +116,45 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #' @importFrom stats optim
 #' @export
 estimate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+  UseMethod("estimate")
+}
+
+#'
+#' Calculate the Empirical Bayesian Estimate parameters for a tdmore object.
+#'
+#' @inheritParams estimate
+#' @return a tdmorefit object
+#' @export
+estimate.tdmore <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+  estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
+}
+
+#'
+#' Calculate the Empirical Bayesian Estimate parameters for a tdmore_set object.
+#'
+#' @inheritParams estimate
+#' @return a tdmorefit object
+#' @export
+estimate.tdmore_set <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+  estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
+}
+
+#'
+#' Calculate the Empirical Bayesian Estimate parameters for a tdmore_mixture object.
+#'
+#' @inheritParams estimate
+#' @return a tdmorefit object
+#' @export
+estimate.tdmore_mixture <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+  estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
+}
+
+#'
+#' Delegate method used for EBE estimation.
+#'
+#' @inheritParams estimate
+#' @return a tdmorefit object
+estimateDelegate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
   if(is.null(control$trace)) control$trace <- 0
   if(length(method) > 1) {
     ## Multiple methods specified

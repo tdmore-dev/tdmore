@@ -23,7 +23,8 @@ If not specified, we estimate the population prediction}
 
 \item{fix}{named vector with the fixed parameters}
 
-\item{method}{the optimisation method, by default, method "L-BFGS-B" is used}
+\item{method}{the optimisation method, by default, method "L-BFGS-B" is used
+Can also be specified as a list, in which case all methods specified will be tried and the one finding the estimate with highest log-likelihood will be returned.}
 
 \item{lower}{the lower bounds of the parameters, if null, -5 * sqrt(diag(model$omega)) is used}
 
