@@ -50,7 +50,7 @@ model_predict.tdmore_deSolve <- function(model, times, regimen=data.frame(TIME=c
   # Verify arguments are good
   samplingTimes <- as.numeric(times)
 
-  assert_that("data.frame" %in% class(regimen))
+  assert_that(is.data.frame(regimen))
   assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
   if("RATE" %in% colnames(regimen)) stop("Rate not allowed in deSolve model; use AMT and work this out yourself.")
   #assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "CMT", "II", "ADDL")))
@@ -59,7 +59,7 @@ model_predict.tdmore_deSolve <- function(model, times, regimen=data.frame(TIME=c
   assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "CMT", "II", "ADDL")))
 
   params = NULL
-  if(class(parameters) == "data.frame") {
+  if(is.data.frame(parameters)) {
     stop("Changing parameters is not supported in deSolve")
   } else {
     assert_that(is.numeric(parameters))

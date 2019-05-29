@@ -8,7 +8,7 @@
 #' The model contained within is actually an RxODE object.
 #' @export
 tdmore.nlmixrUI <- function(model, iov=NULL, ...) {
-  assert_that(class(model) %in% c("nlmixrUI"))
+  assert_that(inherits(model, "nlmixrUI"))
 
   # The processing below relies on the nlmixrUI object structure
   # It the structure changes, we'll have to adapt the code

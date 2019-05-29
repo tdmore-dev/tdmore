@@ -145,11 +145,11 @@ estimate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=N
     # Either a tdmore or tdmore_mixture
     object <- findFirstCompatibleModel(object, covariates)
   }
-  if (inherits(object, "tdmore")) {
+  if (is.tdmore(object)) {
     tdmore <- object
   } else if (inherits(object, "tdmore_mixture")) {
     return(estimateMixtureModel(object, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix, method=method, lower=lower, upper=upper, ...))
-  } else if (inherits(object, "tdmorefit")) {
+  } else if (is.tdmorefit(object)) {
     ## Re-estimate with different parameters/options
     return(
       estimate(object$tdmore, object$observed, object$regimen, object$covariates,

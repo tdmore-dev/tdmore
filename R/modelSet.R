@@ -11,8 +11,8 @@
 tdmore_set <- function(...) {
   models <- list(...)
   for (model in models) {
-    assert_that("tdmore" %in% class(model) |
-                  "tdmore_mixture" %in% class(model),
+    assert_that(is.tdmore(model) |
+                  inherits(model, "tdmore_mixture"),
                 msg = "Only tdmore or tdmore_mixture models can be added to a tdmore set")
   }
   assert_that(length(models) >= 1, msg = "You should provide at least one tdmore model")

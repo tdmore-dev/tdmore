@@ -48,7 +48,7 @@ plotpossibilities <- function(tdmorefit, regimen, searchspace, evaluators) {
 #'
 evaluate <- function(tdmorefit, regimen, searchspace, evaluators) {
   ## In case we only provide a single searchSpace, attribute it to all treatment rows occuring after
-  if(class(searchspace) == "searchspace") {
+  if(inherits(searchspace, "searchspace")) {
     tmax <- max(tdmorefit$observed$TIME)
 
     ## Split any SS regimens
@@ -61,7 +61,7 @@ evaluate <- function(tdmorefit, regimen, searchspace, evaluators) {
     tmp[[ which(lastDose > tmax) ]] <- searchspace
     searchspace <- tmp
   }
-  sapply(searchspace, function(x) {assert_that(is.null(x) || class(x) == "searchspace")})
+  sapply(searchspace, function(x) {assert_that(is.null(x) || inherits(x, "searchspace"))})
 
   ## We need a table with all possibilities for all rows
   ## 1.AMT 1.II 2.AMT 3.AMT

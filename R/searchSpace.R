@@ -19,7 +19,7 @@ searchspace <- function() {
 #' @return A search space with the discrete options in `options` added
 #' @export
 discrete.searchspace <- function(searchspace, options=NULL) {
-  assert_that(class(options) == "data.frame")
+  assert_that(is.data.frame(options))
   assert_that(nrow(options) > 0)
   assert_that(ncol(options) > 0)
 
@@ -48,8 +48,8 @@ discrete.searchspace <- function(searchspace, options=NULL) {
 #' the Bar value in the first row and the Foo value in the second row.
 #' @export
 possibilitygrid <- function(searchspace) {
-  assert_that(class(searchspace) == "list")
-  sapply(searchspace, function(x) {assert_that(is.null(x) || class(x) == "searchspace")})
+  assert_that(inherits(searchspace, "list"))
+  sapply(searchspace, function(x) {assert_that(is.null(x) || inherits(x, "searchspace"))})
 
   grid <- NULL
   for(i in seq_along(searchspace)) {

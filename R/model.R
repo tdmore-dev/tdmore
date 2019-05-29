@@ -80,6 +80,14 @@ tdmore.default <- function(model, ...) {
   stop("Model of class ", class(model), " not supported.")
 }
 
+#' Test if object is of class `tdmore`
+#'
+#' @param x element to test
+#' @export
+is.tdmore <- function(x) {
+  inherits(x, "tdmore")
+}
+
 #' Predict from a tdmore model
 #'
 #' @param object Object of class inheriting from `tdmore`

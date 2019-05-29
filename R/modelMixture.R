@@ -8,7 +8,7 @@
 tdmore_mixture <- function(..., probs) {
   models <- list(...)
   for (model in models) {
-    assert_that(inherits(model, "tdmore"), msg = "Only tdmore models can be added to the tdmore mixture")
+    assert_that(is.tdmore(model), msg = "Only tdmore models can be added to the tdmore mixture")
   }
   assert_that(length(models) >= 2, msg = "You should provide at least two tdmore models to create a tdmore mixture")
   assert_that(is.numeric(probs), msg = "probs is not numeric")

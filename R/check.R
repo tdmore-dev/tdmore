@@ -1,5 +1,5 @@
 checkTdmore <- function(tdmore) {
-  assert_that("tdmore" %in% class(tdmore))
+  assert_that(is.tdmore(tdmore))
   tdmore <- checkModel(tdmore)
   tdmore <- checkOmegaMatrix(tdmore)
   tdmore <- checkNamesConsistency(tdmore)
@@ -55,7 +55,7 @@ checkErrorModel <- function(tdmore) {
     assertthat::is.number(add)
     assertthat::is.number(prop)
 
-    if (c("RxODE") %in% class(tdmore$model)) {
+    if (inherits(tdmore$model, "RxODE")) {
       modVars <- tdmore$model$get.modelVars()
       assert_that(errorModel$var %in% c(modVars$lhs, modVars$state),
                   msg = paste0("Error model variable `", errorModel$var, "' is not predicted by the model"))
@@ -76,7 +76,7 @@ checkModel <- function(tdmore) {
   model <- tdmore$model
   covariates <- tdmore$covariates
 
-  if (c("RxODE") %in% class(model)) {
+  if (inherits(model, "RxODE")) {
     # Check that parameters + covariates together supplies the parameters needed for the model
     modVars <- model$get.modelVars()
     if(is.null(parameters)) parameters <- modVars$params
@@ -90,7 +90,7 @@ checkModel <- function(tdmore) {
 }
 
 checkCovariates <- function(tdmore, covariates) {
-  if("data.frame" %in% class(covariates)) {
+  if(is.data.frame(covariates)) {
     cNames <- colnames(covariates)
     cNames <- cNames[cNames != "TIME"]
   } else if (is.numeric(covariates)){
@@ -124,7 +124,7 @@ checkIOV <- function(tdmore) {
 }
 
 checkRegimen <- function(regimen, iov) {
-  assert_that("data.frame" %in% class(regimen))
+  assert_that(is.data.frame(regimen))
   assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
   assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "DURATION", "CMT", "II", "ADDL", "SS", "OCC")))
 
