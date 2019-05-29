@@ -6,7 +6,8 @@ detectDataType <- function(data) {
 
 loadObserved <- function(tdmore, data, type=detectDataType(data)) {
   if(type == "monolix") {
-    data <- data %>% select(time, observation)
+    data <- data %>%
+      dplyr::select(.data$time, .data$observation)
     colnames(data) <- c("TIME", tdmore$res_var[[1]]$var )
     return(data)
   } else {
@@ -16,7 +17,9 @@ loadObserved <- function(tdmore, data, type=detectDataType(data)) {
 
 loadRegimen <- function(tdmore, data, type=detectDataType(data)) {
   if(type == "monolix") {
-    data %>% select(time, amount) %>% rename(TIME=time, AMT=amount)
+    data %>%
+      dplyr::select(.data$time, .data$amount) %>%
+      dplyr::rename(TIME=.data$time, AMT=.data$amount)
   } else {
     stop("Data file type ", type, " not supported")
   }
@@ -24,7 +27,7 @@ loadRegimen <- function(tdmore, data, type=detectDataType(data)) {
 
 loadCovariates <- function(tdmore, data, type=detectDataType(data)) {
   if(type == "monolix") {
-    data %>% select(time, !! tdmore$covariates) %>% rename(TIME=time)
+    data %>% dplyr::select(.data$time, !! tdmore$covariates) %>% dplyr::rename(TIME=.data$time)
   } else {
     stop("Data file type ", type, " not supported")
   }
