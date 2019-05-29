@@ -12,10 +12,19 @@ to_plyr <- function(x) {
 
 #' Open a Shiny Gadget to explore the log-likelihood profile
 #' of a specific fit
+#' @inheritParams shinyProfileApp
+#' @export
+shinyProfile <- function(fitted, fix=NULL, ...) {
+  app <- shinyProfileApp(fitted, fix, ...)
+  shiny::runGadget(app)
+}
+
+#' Build a Shiny app to explore the log-likelihood profile
+#' of a specific fit
 #' @inheritParams profile.tdmorefit
 #' @param ... Extra arguments passed to `profile`
 #' @export
-shinyProfile <- function(fitted, fix=NULL, ...) {
+shinyProfileApp <- function(fitted, fix=NULL, ...) {
   tdmorefit <- fitted
   if (!requireNamespace("shiny", quietly = TRUE)) {
     warning("The shiny package must be installed to use this functionality")
@@ -110,6 +119,5 @@ shinyProfile <- function(fitted, fix=NULL, ...) {
       shiny::stopApp(NULL)
     })
   }
-
-  shiny::runGadget(ui, server)
+  shiny::shinyApp(ui=ui, server=server)
 }

@@ -1,0 +1,54 @@
+{
+  "input": {
+    "ECL": -0.258646058390507,
+    "EV1": 0.262452834059378,
+    "var": "ECL",
+    "var-selectized": ""
+  },
+  "output": {
+    "plot": {
+      "src": "[image data sha1: 8f9d2d21749dd594234322cb149786f1c25d8262]",
+      "width": 962,
+      "height": 639,
+      "coordmap": {
+        "panels": [
+          {
+            "panel": 1,
+            "row": 1,
+            "col": 1,
+            "panel_vars": {
+
+            },
+            "log": {
+              "x": null,
+              "y": null
+            },
+            "domain": {
+              "left": -1.1,
+              "right": 1.1,
+              "bottom": -0.000129418256625636,
+              "top": 0.00271778338913836
+            },
+            "mapping": {
+              "x": "ECL",
+              "y": "exp(logLik)"
+            },
+            "range": {
+              "left": 47.1506800301882,
+              "right": 956.520448514795,
+              "bottom": 604.849220412888,
+              "top": 5.47945119729029
+            }
+          }
+        ],
+        "dims": {
+          "width": 962,
+          "height": 639
+        }
+      }
+    }
+  },
+  "export": {
+
+  }
+}
