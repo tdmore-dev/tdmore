@@ -479,10 +479,15 @@ generateMonteCarloMatrix <- function(tdmorefit, fix, mc.maxpts) {
   fixIndexes <- getFixedParametersIndexes(parNames = parNames, fix = fix)
 
   if(is.null(fixIndexes)) {
-    mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit), varcov=vcov(tdmorefit)) )
+    mc <- mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit), varcov=vcov(tdmorefit))
+    if(mc.maxpts == 1) mc <- matrix(mc, nrow=1)
+    mc <- as.data.frame(mc)
     colnames(mc) <- parNames
   } else {
-    mc <- as.data.frame( mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit)[-fixIndexes], varcov=vcov(tdmorefit)[-fixIndexes, -fixIndexes]) )
+    mc <- mnormt::rmnorm(mc.maxpts, mean=coef(tdmorefit)[-fixIndexes], varcov=vcov(tdmorefit)[-fixIndexes, -fixIndexes])
+    if(mc.maxpts == 1) mc <- matrix(mc, nrow=1)
+    mc <- as.data.frame(mc)
+
     if(length(fix) > 1) {
       mc_fix <- t(replicate(n=nrow(mc), expr=fix))
     } else {
@@ -492,6 +497,8 @@ generateMonteCarloMatrix <- function(tdmorefit, fix, mc.maxpts) {
     colnames(mc) <- c(names(fix), parNames[-fixIndexes])
   }
   mc <- cbind( sample=1:mc.maxpts, mc )
+  row.names(mc) <- NULL
+  mc
 }
 
 #' Predict new data using the current model
@@ -508,15 +515,13 @@ generateMonteCarloMatrix <- function(tdmorefit, fix, mc.maxpts) {
 #' @param se.fit TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower
 #' @param level The confidence interval, or NA to return all mc.maxpts results
 #' @param mc.maxpts Maximum number of points to sample in Monte Carlo simulation
-#' @param .progress see plyr::ddply
-#' @param .parallel see plyr::ddply
 #' @param ... ignored
 #'
 #' @return A data.frame
 #' @export
 #'
 #' @importFrom stats coef vcov median quantile
-predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NULL, covariates=NULL, se.fit=FALSE, level=0.95, mc.maxpts=100, .progress="none", .parallel=FALSE, ...) {
+predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NULL, covariates=NULL, se.fit=FALSE, level=0.95, mc.maxpts=100, ...) {
   tdmorefit <- object
   if(is.null(regimen)) regimen=tdmorefit$regimen
   if(is.null(newdata)) newdata <- model.frame(tdmorefit)
@@ -528,18 +533,19 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
   if(se.fit) {
     mc <- generateMonteCarloMatrix(tdmorefit, fix = parameters, mc.maxpts = mc.maxpts)
     uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
+
     # Prepare the tdmore cache
     cTdmore <- tdmorefit$tdmore
     cTdmore$cache <- model_prepare(cTdmore$model, times=ipred$TIME, regimen=regimen, parameters=par, covariates=covariates, iov=cTdmore$iov, extraArguments=cTdmore$extraArguments)
-
-    fittedMC <- plyr::ddply(mc, 1, function(row) {
+    fittedMC <- purrr::map_dfr(mc$sample, function(i) {
+      row <- mc[i,,drop=TRUE] #make vector
       res <- unlist(row[-1]) # Remove 'sample'
       names(res) <- names(coef(tdmorefit))
       pred <- predict(object=cTdmore, newdata=newdata, regimen=regimen, parameters=res, covariates=covariates)
-      colnames(row) <- uniqueColnames
+      names(row) <- uniqueColnames
       resArray <- cbind(row, pred)
       resArray
-    }, .progress=.progress, .parallel=.parallel)
+    })
 
     colnames(fittedMC)[seq_len(length(uniqueColnames))] <- colnames(mc)
 
@@ -583,16 +589,17 @@ getPredictOutputNames <- function(newdata, columnNames, pNames) {
 #' @return a summarised data frame
 summariseFittedMC <- function(fittedMC, ipred, level, oNames) {
   a <- (1-level)/2
-  retValue <- plyr::ddply(fittedMC, "TIME", function(x) {
+  retValue <- fittedMC %>% dplyr::group_by(.data$TIME) %>% dplyr::do({
+    x <- .data
     result <- list(TIME = x$TIME[1])
     for(i in oNames) {
       result[i] <- ipred[ipred$TIME==x$TIME[1], i]
-      result[paste0(i, ".median")] <- median(x[,i])
-      result[paste0(i, ".lower")] <- quantile(x[,i], probs=a)
-      result[paste0(i, ".upper")] <- quantile(x[,i], probs=1-a)
+      result[paste0(i, ".median")] <- median(x[,i,drop=T])
+      result[paste0(i, ".lower")] <- quantile(x[,i,drop=T], probs=a)
+      result[paste0(i, ".upper")] <- quantile(x[,i,drop=T], probs=1-a)
     }
-    unlist(result)
-  })
+    tibble::as_tibble(result)
+  }) %>% dplyr::ungroup()
   return(retValue)
 }
 

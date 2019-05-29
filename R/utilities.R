@@ -27,30 +27,14 @@ vectorToDiagonalMatrix <- function(vector) {
 #' @return the melted dataframe
 #' @keywords internal
 meltPredictions <- function(x, se=FALSE) {
-  #tmp <- reshape::melt(x, id.vars="TIME")
-  if(se) {
-    if(nrow(x)==0) return( data.frame(TIME=numeric(), variable=character(),
-                                      value=numeric(),
-                                      value.median=numeric(), value.lower=numeric(), value.upper=numeric()) )
-    vars <- colnames(x)
-    vars <- vars[vars != "TIME"]
+  gathered <- x %>%
+    tidyr::gather(key = "variable", value="value", -.data$TIME)
+  if(!se) return(gathered)
 
-    trueVars <- paste0(vars, ".median") %in% vars &
-      paste0(vars, ".lower") %in% vars &
-      paste0(vars, ".upper") %in% vars
-    trueVars <- vars[trueVars]
-
-    tmp <- reshape::melt(x, id.vars="TIME")
-
-    result <- tmp[ tmp$variable %in% trueVars, ]
-    result$value.median <- tmp$value[ tmp$variable %in% paste0(trueVars, ".lower") ]
-    result$value.lower <- tmp$value[ tmp$variable %in% paste0(trueVars, ".lower") ]
-    result$value.upper <- tmp$value[ tmp$variable %in% paste0(trueVars, ".upper") ]
-  } else {
-    if(nrow(x)==0) return( data.frame(TIME=numeric(), variable=character(), value=numeric()) )
-    result <- reshape::melt(x, id.vars="TIME")
-  }
-  return(result)
+  gathered %>% tidyr::extract(.data$variable, into=c("variable", "suffix"),
+                              regex="^(.*?)(|\\.lower|\\.upper|\\.median)$") %>%
+    dplyr::mutate(suffix=paste0("value", .data$suffix) ) %>%
+    tidyr::spread(key=.data$suffix, value=.data$value)
 }
 
 #' Compute the TMax value based on the specified regimen and observed data.

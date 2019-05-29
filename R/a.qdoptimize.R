@@ -8,14 +8,12 @@
 #' @param se.fit TRUE to provide a confidence interval on the dose prediction, adding columns dose.median, dose.lower and dose.upper
 #' @param level the confidence interval on the dose, only used if se.fit is true
 #' @param mc.maxpts maximum number of points to sample in Monte Carlo simulation
-#' @param .progress see plyr::ddply
-#' @param .parallel see plyr::ddply
 #' @param ... extra arguments passed to stats::uniroot
 #'
 #' @return a recommendation object
 #' @export
 #' @importFrom stats uniroot
-findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), target, se.fit = FALSE, level = 0.95, mc.maxpts = 100, .progress="none", .parallel=FALSE, ...) {
+findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), target, se.fit = FALSE, level = 0.95, mc.maxpts = 100, ...) {
   # Check if IOV is present in model
   iov <- tdmorefit$tdmore$iov
   if (!is.null(iov)) {
@@ -40,8 +38,9 @@ findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), tar
     mc <- generateMonteCarloMatrix(tdmorefit, fix = tdmorefit$fix, mc.maxpts = mc.maxpts)
     uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
 
-    mcResult <- plyr::ddply(mc, 1, function(row) {
-      res <- unlist(row[-1]) # Remove 'sample'
+    mcResult <- purrr::map_dfr(mc$sample, function(i) {
+      row <- mc[i,,drop=F] #make vector
+      res <- unlist(row[-1]) # Remove 'sample' column
       names(res) <- names(coef(tdmorefit))
 
       mcRootFunction <- function(AMT) {
@@ -51,9 +50,9 @@ findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), tar
       }
 
       result <- runUniroot(mcRootFunction, interval, ...)
-      colnames(row) <- uniqueColnames
+      names(row) <- uniqueColnames
       cbind(row, dose = result$root, f.root = result$f.root, iter = result$iter, estim.prec = result$estim.prec)
-    }, .progress = .progress, .parallel = .parallel)
+    })
 
     colnames(mcResult)[seq_len(length(uniqueColnames))] <- colnames(mc)
 

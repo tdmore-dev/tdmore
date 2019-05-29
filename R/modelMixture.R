@@ -144,7 +144,7 @@ estimateMixtureModel <- function(object, observed=NULL, regimen, covariates=NULL
 #'
 #' @return a data.frame
 #' @export
-predict.tdmorefit_mixture <- function(object, newdata=NULL, regimen=NULL, parameters=NULL, covariates=NULL, se.fit=FALSE, level=0.95, mc.maxpts=100, .progress="none", .parallel=FALSE, ...) {
+predict.tdmorefit_mixture <- function(object, newdata=NULL, regimen=NULL, parameters=NULL, covariates=NULL, se.fit=FALSE, level=0.95, mc.maxpts=100, ...) {
 
   fits <- object$fits
   mixture <- object$mixture
@@ -155,12 +155,12 @@ predict.tdmorefit_mixture <- function(object, newdata=NULL, regimen=NULL, parame
     fits_prob <- object$fits_prob
     mixnum <- sample(seq_along(fits_prob$IPk), size=mc.maxpts, replace=T, prob=fits_prob$IPk)
     fits_prob <- cbind(fit=seq_len(nrow(fits_prob)), fits_prob) # Fit column added with fit index
-
-    fittedMC <- plyr::ddply(fits_prob, 1, function(row) {
+    fittedMC <- purrr::map_dfr(fits_prob$fit, function(i) {
+          row <- fits_prob[i, , drop=FALSE]
               fitIndex <- row[["fit"]]
               samples <- sum(mixnum==fitIndex)
               fit <- fits[[fitIndex]]
-             predict(fit, newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates, se.fit=T, level=NA, mc.maxpts=samples, .progress="none", .parallel=FALSE)
+             predict(fit, newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates, se.fit=T, level=NA, mc.maxpts=samples)
            })
 
     if(is.na(level)) { #user requested full dataframe without summary

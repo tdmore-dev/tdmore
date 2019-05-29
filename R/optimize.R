@@ -84,8 +84,8 @@ evaluate <- function(tdmorefit, regimen, searchspace, evaluators) {
   })
   names(newGrid) <- seq_along(newGrid)
 
-  db <- plyr::ldply(newGrid, function(x) {x$pred})
-  eval <- plyr::ldply(newGrid, function(x) {x$eval})
+  db <- purrr::map_dfr(newGrid, function(x) {x$pred})
+  eval <- purrr::map_dfr(newGrid, function(x) {x$eval})
 
   list(pred=db, table=eval)
 }

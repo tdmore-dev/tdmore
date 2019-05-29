@@ -80,8 +80,8 @@ plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, populatio
 #' @param x the tdmorefit mixture object
 #' @inheritParams plot.tdmorefit
 #' @export
-plot.tdmorefit_mixture <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, population=TRUE, fit=TRUE, mc.maxpts=100, .progress="none", ...) {
-  plot.tdmorefit(x, newdata=newdata, regimen=regimen, se.fit=se.fit, population=population, fit=fit, mc.maxpts=mc.maxpts, .progress=.progress, ...)
+plot.tdmorefit_mixture <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, population=TRUE, fit=TRUE, ...) {
+  plot.tdmorefit(x, newdata=newdata, regimen=regimen, se.fit=se.fit, population=population, fit=fit, ...)
 }
 
 #' Plot a tdmore object (typical profile of the population and between subject variability).
@@ -92,20 +92,18 @@ plot.tdmorefit_mixture <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, p
 #' @param newdata a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times
 #' @param bsv add between subject variability, enabled by default
 #' @param mc.subjects number of subjects in the monte carlo simulation
-#' @param .progress either "none" or "text" to see calculation progress of monte carlo simulations
 #' @param ... ignored
 #'
 #' @return a ggplot object with the the population prediction
-#' @importFrom magrittr "%>%"
 #' @importFrom ggplot2 ggplot aes_string geom_line geom_ribbon geom_point geom_errorbar labs
 #' @importFrom stats predict
 #' @importFrom graphics plot
 #' @export
-plot.tdmore <- function(x, regimen, covariates=NULL, newdata=NULL, bsv=TRUE, mc.subjects=100, .progress="none", ...) {
+plot.tdmore <- function(x, regimen, covariates=NULL, newdata=NULL, bsv=TRUE, mc.subjects=100, ...) {
   tdmore <- x
   tdmorefit <- tdmore %>% estimate(regimen = regimen, covariates = covariates)
   plot <- plot(tdmorefit, newdata=newdata, se.fit=bsv, mc.maxpts=mc.subjects,
-               .progress=.progress, population=TRUE, fit=FALSE)
+               population=TRUE, fit=FALSE)
   return(plot)
 }
 
