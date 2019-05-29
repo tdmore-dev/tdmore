@@ -1,18 +1,31 @@
-## This file configures the building process for devtools::build_site()
-home:
-  strip_header: true
-links:
-  - text: The TDMore book
-    href: book/index.html
-
+## This file configures the building process for pkgdown::build_site()
 template:
   params:
-    noindex: true
+    noindex: true # tells search engines not to index the site
+
+home:
+  strip_header: true
 
 development:
   mode: auto  # detect based on version number
   version_label: warning
   version_tooltip: "Parameter estimation is stable, but dose recommendation API is subject to change"
+
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - news
+    - book
+    right: github
+  components:
+    book:
+      icon: fa-book
+      text: Book
+      href: book/index.html
 
 reference:
 - title: Defining your model
@@ -132,39 +145,3 @@ reference:
   - sunitinib_pkpd_model
   - linCmt
   - pk_
-
-
-navbar:
-  structure:
-    left:
-    - home
-    - intro
-    - reference
-    - articles
-    - tutorials
-    - news
-    right: github
-  components:
-    home:
-      icon: fa-home fa-lg
-      href: index.html
-    book:
-      icon: fa-book
-      text: Book
-      href: book/index.html
-    reference:
-      text: Reference
-      href: reference/index.html
-    intro:
-      text: Get started
-      href: articles/tdmore.html
-    articles:
-      text: Articles
-      menu:
-      - text: Multiple endpoints in TDMore
-        href: articles/tdmore_multiple_endpoints.html
-      - text: Testing adherence using TDMore
-        href: articles/testing_adherence.html
-    github:
-      icon: fa-github fa-lg
-      href: https://github.com/tdmore-dev/tdmore

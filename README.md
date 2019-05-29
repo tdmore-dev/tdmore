@@ -8,7 +8,7 @@
 
 </div>
 
-# TDMore <img src="bookdown/static/tdmore_logo.JPG" align="right" />
+# tdmore <img src="logo.png" align="right" alt="" width="120" />
 
 `tdmore` provides an easy interface to execute post-hoc bayesian
 estimation of individual profiles, and to find the best dose to put the
