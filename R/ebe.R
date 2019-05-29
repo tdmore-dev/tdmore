@@ -152,7 +152,10 @@ estimate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=N
   } else if (is.tdmorefit(object)) {
     ## Re-estimate with different parameters/options
     return(
-      estimate(object$tdmore, object$observed, object$regimen, object$covariates,
+      estimate(object$tdmore,
+               observed %||% object$observed,
+               regimen %||% object$regimen,
+               covariates %||% object$covariates,
                par=par, fix=fix, method=method, se.fit=se.fit, lower=lower, upper=upper, multistart=multistart, ...)
       )
   } else {
