@@ -9,5 +9,5 @@
 NULL
 
 .onAttach <- function(libname, pkgname) {
-  if(interactive()) packageStartupMessage("Welcome to TDMore, more info on https://tdmore-dev.github.io/tdmore.") #nocov
+  if(interactive()) system.file("DISCLAIMER", package="tdmore") %>% readLines() %>% paste(collapse="\n") %>% packageStartupMessage() #nocov
 }
