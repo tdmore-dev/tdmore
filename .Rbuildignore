@@ -12,3 +12,5 @@
 ^CONTRIBUTING.md$
 ^index.Rmd$
 ^Dockerfile$
+^logo.png$
+^logo.svg$
