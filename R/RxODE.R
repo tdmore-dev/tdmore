@@ -263,25 +263,21 @@ addRegimenToEventTable <- function(eventTable, regimen, nbSSDoses=NULL) {
     dosing.to = 1
     rate = NULL
     nbr.doses = 1
-    dosing.interval = 24
+    dosing.interval = row$II
     start.time = row$TIME
 
-    # dosing interval not used since regimen has been flattened
-    if(isTRUE(row$II > 0)) {
-      if("ADDL" %in% colnames(row)) {
-        dosing.interval <- row$II
-        nbr.doses <- row$ADDL
-      } else if (row$SS == 1) {
-        ## TODO: Use new functionality of new RxODE??
-        nbr.doses=nbSSDoses + 1
-        dosing.interval=row$II
-        start.time = start.time - row$II * nbSSDoses
-        ## TODO: check collision with other treatments??
-        if(any( eventTable$get.dosing()$time > start.time ))
-          warning("Possible collision of steady-state dose on ", row$TIME, " with other treatments...")
-      } else {
-        ## nothing special
-      }
+    if("ADDL" %in% colnames(row)) {
+      if(is.null(dosing.interval)) stop("Please define the dosing interval II in order to use ADDL doses")
+      nbr.doses <- nbr.doses + row$ADDL
+    }
+    if (isTRUE(row$SS == 1)) {
+      if(is.null(dosing.interval)) stop("Please define the dosing interval II in order to use SS=1")
+
+      ## TODO: Use new functionality of new RxODE??
+      nbr.doses=nbr.doses + nbSSDoses
+      start.time = start.time - row$II * nbSSDoses
+      if(any( eventTable$get.dosing()$time > start.time ))
+        warning("Possible collision of steady-state dose on ", row$TIME, " with other treatments...")
     }
 
     if("RATE" %in% names(row) && isTRUE(is.finite(row$RATE))) rate=row$RATE
@@ -289,6 +285,10 @@ addRegimenToEventTable <- function(eventTable, regimen, nbSSDoses=NULL) {
       if(!is.null(rate)) stop("Cannot specify RATE and DURATION in the same treatment row ", i)
       rate = row$AMT / row$DURATION
     }
+
+    #strange defaults in RxODE
+    #see https://github.com/nlmixrdevelopment/RxODE/blob/68ecc64b0fd7e231ac0ff38541715bbc8031f583/src/et.cpp#L2485
+    if(nbr.doses == 1) dosing.interval <- 24
 
     if("CMT" %in% names(row)) dosing.to <- row$CMT
     eventTable$add.dosing(start.time = start.time,

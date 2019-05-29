@@ -56,3 +56,38 @@ expect_equal(round(ipred$res, digits=4), c(ECL=0.0336, EVc=0.1175))
 # Default IPRED plot
 plot(ipred)
 
+# Test combinations of ADDL and SS and II
+expect_known_value(
+  predict(tdmore, newdata=seq(0, 14)),
+  "Rxode.empty.regimen.prediction"
+)
+expect_known_value(
+  predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100)),
+  "Rxode.regimen.1dose"
+)
+expect_known_value(
+  predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12)),
+  "Rxode.regimen.1dose"
+)
+expect_known_value(
+  predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, ADDL=0)),
+  "Rxode.regimen.1dose"
+)
+expect_known_value(
+  predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, ADDL=1)),
+  "Rxode.regimen.2dose"
+)
+
+expect_known_value(
+  predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, SS=1)),
+  "Rxode.regimen.1doseSS"
+)
+
+expect_known_value(
+  predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, SS=1, ADDL=0)),
+  "Rxode.regimen.1doseSS"
+)
+expect_known_value(
+ predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, SS=1, ADDL=1)),
+ "Rxode.regimen.2doseSS"
+)
