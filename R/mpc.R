@@ -42,36 +42,50 @@ selectBestCovariates <- function(t, covariates, thetaNames) {
 #' @export
 #'
 estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
-  observedMpc <- addIterationColumn(regimen, observed)
-  theta <- object$theta
+  if (is.numeric(covariates)) {
+    covariates <- as.data.frame(as.list(c(TIME=0, covariates)))
+  }
+
+  # Init
+  theta <- object$mpc_theta
   thetaNames <- names(theta)
   thetaDf <- as.data.frame(as.list(theta)) # Thetas (MPC parameters) specified to tdmore via the covariates dataframe
   thetaDf$TIME <- 0
-  maxIter <- max(observedMpc$ITER)
+  covariatesMpc <- cbind(thetaDf, t(selectBestCovariates(t=0, covariates, thetaNames)))
+  fix <- c()
+
+  # Special case: no observed data
+  if (is.null(observed) || nrow(observed) == 0) {
+    ipred <- estimate.tdmore(object, regimen=regimen, covariates=covariatesMpc, se.fit=FALSE, ...)
+    maxIter <- 0
+  # Normal case: observed data present
+  } else {
+    observedMpc <- addIterationColumn(regimen, observed)
+    maxIter <- max(observedMpc$ITER)
+  }
 
   for (iterIndex in seq_len(maxIter + 1)) {
-    if (iterIndex == 1) {
-      covariatesMpc <- cbind(thetaDf, t(selectBestCovariates(t=0, covariates, thetaNames)))
-      fix <- c()
-    } else {
-      prevObsTime <- currentObsTime
-      previousEbe <- predict(ipred, newdata=c(prevObsTime))[, paste0(thetaNames, object$suffix)]
+    if (iterIndex > 1) {
+      firstDoseJustAfter <- regimen %>% filter(TIME >= currentObsTime) %>% dplyr::pull(TIME) %>% dplyr::first()
+      if (is.na(firstDoseJustAfter)) {
+        break
+      }
+      previousEbe <- predict(ipred, newdata=c(firstDoseJustAfter))[, paste0(thetaNames, object$mpc_suffix)]
       names(previousEbe) <- paste0(thetaNames)
-      previousEbe$TIME <- prevObsTime
-      covariates_tmp <- cbind(previousEbe, t(selectBestCovariates(t=prevObsTime, covariates, thetaNames)))
+      previousEbe$TIME <- firstDoseJustAfter
+      covariates_tmp <- cbind(previousEbe, t(selectBestCovariates(t=firstDoseJustAfter, covariates, thetaNames)))
       covariatesMpc <- dplyr::bind_rows(covariatesMpc, covariates_tmp)
       fix <- coef(ipred)
     }
     if (iterIndex <= maxIter) {
       currentObsTime <- observedMpc %>% dplyr::filter(ITER==iterIndex) %>% dplyr::pull(TIME) %>% dplyr::last()
-      ipred <- estimate(object$model, regimen=regimen %>% dplyr::filter(TIME < currentObsTime),
+      ipred <- estimate.tdmore(object, regimen=regimen %>% dplyr::filter(TIME < currentObsTime),
                         observed=observedMpc %>% dplyr::filter(ITER==iterIndex) %>% dplyr::select(-one_of("ITER")),
                         covariates=covariatesMpc, fix=fix, se.fit=FALSE, ...)
     } else {
       # Last extra iteration copies final covariates dataframe (with all MPC parameters) to ipred
       ipred$covariates <- covariatesMpc
     }
-
   }
   return(ipred)
 }
@@ -95,9 +109,8 @@ mpc <- function(x, theta, suffix, ...) {
 #' @return an object of class tdmore_mpc
 #' @export
 mpc.tdmore <- function(x, theta, suffix, ...) {
-  structure(list(
-    model=x,
-    theta=theta,
-    suffix=suffix
-  ), class="tdmore_mpc")
+  x$mpc_theta <- theta
+  x$mpc_suffix <- suffix
+  class(x) <- append("tdmore_mpc", "tdmore")
+  return(x)
 }

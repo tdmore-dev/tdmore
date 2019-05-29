@@ -56,7 +56,7 @@ plot(m1, newdata=seq(0, 5*24, by=0.1), regimen=regimen, covariates=covariates, s
 # Estimate with MPC
 m1_mpc <- m1 %>% mpc(theta=theta, suffix="_next")
 
-# debugonce(tdmore:::estimate.tdmore_mpc)
+#debugonce(tdmore:::estimate.tdmore_mpc)
 #debug(tdmore:::model_prepare.RxODE)
 ipred <- estimate(m1_mpc, regimen=regimen, covariates=covariates, observed=observed)
 
@@ -76,4 +76,31 @@ plot <- ggplot(mapping=aes(x=TIME, y=CONC)) +
 print(plot)
 
 # Need a special function to plot ipred mcp?
+class(ipred$tdmore) <- "tdmore" # TEMPORARY
 plot(ipred, se.fit=F)
+
+
+# ---------------------------------------------------------------------
+regimen <- data.frame(
+  TIME=c(0, 24),
+  AMT=5,
+  OCC=c(1,2)
+)
+
+observed <- data.frame(
+  TIME=c(13),
+  CONC=c(5)
+)
+
+ipred <- estimate(m1_mpc, regimen=regimen, covariates=covariates, observed=observed)
+
+times <- seq(0, 48, by=0.2)
+fit <- predict(m1, newdata=times, regimen=regimen, parameters=coef(ipred), covariates=ipred$covariates)
+pred <- predict(m1, newdata=times, regimen=regimen, parameters=c(), covariates=covariates)
+
+plot <- ggplot(mapping=aes(x=TIME, y=CONC)) +
+  geom_line(data=pred, color="blue") +
+  geom_line(data=fit, color="red") +
+  geom_point(data=observed)
+
+print(plot)
