@@ -7,7 +7,7 @@
 getFixedParametersIndexes(parNames, fix)
 }
 \arguments{
-\item{parNames}{parameter names in the right order}
+\item{parNames}{parameter names in the right order, possibly with repeated values}
 
 \item{fix}{named numeric vector with the fixed parameters (user input)}
 }
@@ -17,3 +17,4 @@ the fixed parameters indexes
 \description{
 Get the indexes of the fixed parameters.
 }
+\keyword{internal}

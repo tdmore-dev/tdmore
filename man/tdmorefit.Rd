@@ -19,9 +19,9 @@ tdmorefit(tdmore, observed = NULL, regimen, covariates = NULL,
 
 \item{ofv}{(optional) the OFV value}
 
-\item{res}{the found parameter values, as a named vector, or NULL to use 0}
+\item{res}{the found parameter values, as a named vector, or NULL to use 0.}
 
-\item{varcov}{the found varcov matrix, or NULL to use a diagonal matrix}
+\item{varcov}{the found varcov matrix, or NULL to use a diagonal matrix.}
 
 \item{fix}{the fixed parameters}
 
