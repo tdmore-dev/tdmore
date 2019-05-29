@@ -5,8 +5,7 @@
 \title{Find the dose required (quick and dirty, to be optimised)}
 \usage{
 findDose(tdmorefit, regimen, doseRows = NULL, interval = c(0, 1e+10),
-  target, se.fit = FALSE, level = 0.95, mc.maxpts = 100,
-  .progress = "none", .parallel = FALSE, ...)
+  target, se.fit = FALSE, level = 0.95, mc.maxpts = 100, ...)
 }
 \arguments{
 \item{tdmorefit}{the tdmorefit object}
@@ -24,10 +23,6 @@ findDose(tdmorefit, regimen, doseRows = NULL, interval = c(0, 1e+10),
 \item{level}{the confidence interval on the dose, only used if se.fit is true}
 
 \item{mc.maxpts}{maximum number of points to sample in Monte Carlo simulation}
-
-\item{.progress}{see plyr::ddply}
-
-\item{.parallel}{see plyr::ddply}
 
 \item{...}{extra arguments passed to stats::uniroot}
 }

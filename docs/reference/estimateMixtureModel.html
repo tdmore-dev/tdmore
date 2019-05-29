@@ -36,6 +36,8 @@ a given dataset using a mixture model. — estimateMixtureModel" />
 
 <meta property="og:description" content="Calculate the Empirical Bayesian Estimate parameters that predict
 a given dataset using a mixture model." />
+
+<meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 <meta name="robots" content="noindex" />
 
@@ -177,7 +179,8 @@ If not specified, we estimate the population prediction</p></td>
     </tr>
     <tr>
       <th>method</th>
-      <td><p>the optimisation method, by default, method "L-BFGS-B" is used</p></td>
+      <td><p>the optimisation method, by default, method "L-BFGS-B" is used
+Can also be specified as a list, in which case all methods specified will be tried and the one finding the estimate with highest log-likelihood will be returned.</p></td>
     </tr>
     <tr>
       <th>lower</th>

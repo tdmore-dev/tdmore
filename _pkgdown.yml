@@ -44,7 +44,6 @@ reference:
   - errorModel
   - print.tdmore
   - summary.tdmore
-  - formula.tdmore
   - coef.tdmore
 
 - title: "Simulating from the model"

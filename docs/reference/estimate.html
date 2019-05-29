@@ -36,6 +36,8 @@ a given dataset using the model — estimate" />
 
 <meta property="og:description" content="Calculate the Empirical Bayesian Estimate parameters that predict
 a given dataset using the model" />
+
+<meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 <meta name="robots" content="noindex" />
 
@@ -143,9 +145,10 @@ a given dataset using the model</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>estimate</span>(<span class='no'>object</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>regimen</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+    <pre class="usage"><span class='fu'>estimate</span>(<span class='no'>object</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"L-BFGS-B"</span>, <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>multistart</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>multistart</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(),
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -177,7 +180,8 @@ If not specified, we estimate the population prediction</p></td>
     </tr>
     <tr>
       <th>method</th>
-      <td><p>the optimisation method, by default, method "L-BFGS-B" is used</p></td>
+      <td><p>the optimisation method, by default, method "L-BFGS-B" is used
+Can also be specified as a list, in which case all methods specified will be tried and the one finding the estimate with highest log-likelihood will be returned.</p></td>
     </tr>
     <tr>
       <th>se.fit</th>
@@ -203,6 +207,11 @@ can be provided: <code>estimate(multistart=c(eta_Tlag=0.5))</code>. This will ev
 the provided starting value for eta_Tlag +- 0.5, without also perturbing the other initial values.</p>
 <p>WARNING: This may lead to extremely long computation times. It is recommended to use a control argument to
 reduce accuracy and report estimation progress.</p></td>
+    </tr>
+    <tr>
+      <th>control</th>
+      <td><p>control options for `estimate`
+If trace &gt; 0, the estimation function also reports errors when calculating log-likelihood.</p></td>
     </tr>
     <tr>
       <th>...</th>

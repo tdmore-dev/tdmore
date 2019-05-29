@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add variance-covariance information regarding all IOV terms in the omega matrix.
-Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames(). — addIOVToOmegaMatrix • tdmore</title>
+<title>Select most appropriate covariates. — selectBestCovariates • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -31,13 +30,13 @@ Note that the column and row names of the returned matrix are strictly identical
 
 
 
-<meta property="og:title" content="Add variance-covariance information regarding all IOV terms in the omega matrix.
-Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames(). — addIOVToOmegaMatrix" />
+<meta property="og:title" content="Select most appropriate covariates. — selectBestCovariates" />
 
-<meta property="og:description" content="Add variance-covariance information regarding all IOV terms in the omega matrix.
-Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames()." />
+<meta property="og:description" content="Select most appropriate covariates." />
+
+<meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
-
+<meta name="robots" content="noindex" />
 
 
 <!-- mathjax -->
@@ -130,37 +129,39 @@ Note that the column and row names of the returned matrix are strictly identical
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add variance-covariance information regarding all IOV terms in the omega matrix.
-Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames().</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
-    <div class="hidden name"><code>addIOVToOmegaMatrix.Rd</code></div>
+    <h1>Select most appropriate covariates.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/mpc.R'><code>R/mpc.R</code></a></small>
+    <div class="hidden name"><code>selectBestCovariates.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Add variance-covariance information regarding all IOV terms in the omega matrix.
-Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames().</p>
+    <p>Select most appropriate covariates.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>addIOVToOmegaMatrix</span>(<span class='no'>tdmore</span>, <span class='no'>occasions</span>)</pre>
+    <pre class="usage"><span class='fu'>selectBestCovariates</span>(<span class='no'>t</span>, <span class='no'>covariates</span>, <span class='no'>thetaNames</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>tdmore</th>
-      <td><p>the tdmore object</p></td>
+      <th>t</th>
+      <td><p>time</p></td>
     </tr>
     <tr>
-      <th>occasions</th>
-      <td><p>how many occasions</p></td>
+      <th>covariates</th>
+      <td><p>time-varying covariates</p></td>
+    </tr>
+    <tr>
+      <th>thetaNames</th>
+      <td><p>theta names to be removed</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>the omega matrix with the duplicated IOV terms at the end</p>
+    <p>a vector with the covariates</p>
     
 
   </div>

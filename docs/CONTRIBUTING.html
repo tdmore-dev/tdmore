@@ -31,6 +31,9 @@
 
 
 <meta property="og:title" content="Contributing to the tdmore R package" />
+
+<meta property="og:image" content="/logo.png" />
+<meta name="twitter:card" content="summary" />
 <meta name="robots" content="noindex" />
 
 
@@ -170,11 +173,7 @@
 <li>Be compatible with crosstalk</li>
 <li>Ideally, allow the construction <code>plotTemplate %+% newTdmoreFit</code>.</li>
 </ol>
-</div>
-</div>
-<div id="is-not-possible-with-ggplot-3-0-0--with-a-regular-statidentity-object-we-probably-cannot-maintain-anything-in-the-data-argument--statidentity-has-the-following-interesting-functions" class="section level1">
-<h1 class="hasAnchor">
-<a href="#is-not-possible-with-ggplot-3-0-0--with-a-regular-statidentity-object-we-probably-cannot-maintain-anything-in-the-data-argument--statidentity-has-the-following-interesting-functions" class="anchor"></a>4 is not possible with ggplot 3.0.0. With a regular StatIdentity object, we probably cannot maintain anything in the <code>data</code> argument. StatIdentity has the following interesting functions:</h1>
+<p>#4 is not possible with ggplot 3.0.0. With a regular StatIdentity object, we probably cannot maintain anything in the <code>data</code> argument. StatIdentity has the following interesting functions:</p>
 <ul>
 <li><code>setup_params(data, params)</code></li>
 <li><code>setup_data(data, params)</code></li>
@@ -187,9 +186,10 @@
 <p>We can improve on this by creating a special <code>ggplot</code> object: <code>ggtdmore</code>. We do this by creating a special <code>ggplot.tdmorefit</code> function that creates a ggplot with the observations data.frame (similar to <code>fortify.lm</code>), but also adds the tdmorefit and newdata/regimen/covariates parameters to the ggtdmore object.</p>
 <p>We can further improve. Instead of allowing stat_predict to only create a single geom, we can create a special <code>StatPredict</code> object. We can then implement <code>ggplot_add.StatPredict</code> (called during <code>ggplot() + stat_predict()</code>, where we can add multiple specific geom’s to the ggplot.</p>
 <p>Finally, we can go a little further and add a special <code>layer(layer_class=PredictLayer)</code> instead. This will allow us to override <code>setup_data</code>, so the simulation is only performed when we render the plot. This should also allow replacement of the <code>data</code> argument. This works perfectly fine (see ggplot_integration_layer.R), but is only available in the Github version. The ggplot2 release schedule was as follows:</p>
-<div id="version-date" class="section level2">
+</div>
+<div id="-version--date-" class="section level2">
 <h2 class="hasAnchor">
-<a href="#version-date" class="anchor"></a>| Version | Date |</h2>
+<a href="#-version--date-" class="anchor"></a>| Version | Date |</h2>
 <p>| 2.0.0 | December 2015 | | 2.1.0 | February 2016 | | 2.2.0 | November 2016 | | 2.2.1 | December 2016 | | 3.0.0 | June 2018 | | 3.1.0 | October 2018 | | 3.2.0 | ???? |</p>
 <p>We fear that users may wait a very long time for the release of ggplot2 3.2.0. We can depend on ggplot2 3.0.0 instead, which only offers the <code>ggplot_add</code> extension method. This means we can only perform the prediction while the plot is being defined (using <code>ggplot_add</code>), and <em>not</em> when the plot is being built. Things like <code>template %+% newfit</code> are not possible…</p>
 <p>In conclusion:</p>

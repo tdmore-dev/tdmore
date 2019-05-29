@@ -33,6 +33,8 @@
 <meta property="og:title" content="Find the dose required (quick and dirty, to be optimised) — findDose" />
 
 <meta property="og:description" content="Find the dose required (quick and dirty, to be optimised)" />
+
+<meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 <meta name="robots" content="noindex" />
 
@@ -139,8 +141,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>findDose</span>(<span class='no'>tdmorefit</span>, <span class='no'>regimen</span>, <span class='kw'>doseRows</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>1e+10</span>),
-  <span class='no'>target</span>, <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>.progress</span> <span class='kw'>=</span> <span class='st'>"none"</span>, <span class='kw'>.parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+  <span class='no'>target</span>, <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -176,14 +177,6 @@
     <tr>
       <th>mc.maxpts</th>
       <td><p>maximum number of points to sample in Monte Carlo simulation</p></td>
-    </tr>
-    <tr>
-      <th>.progress</th>
-      <td><p>see plyr::ddply</p></td>
-    </tr>
-    <tr>
-      <th>.parallel</th>
-      <td><p>see plyr::ddply</p></td>
     </tr>
     <tr>
       <th>...</th>

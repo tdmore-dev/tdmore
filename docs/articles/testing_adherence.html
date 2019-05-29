@@ -11,6 +11,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Testing adherence using TDMore">
 <meta property="og:description" content="">
+<meta property="og:image" content="/logo.png">
 <meta name="twitter:card" content="summary">
 <meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -113,101 +114,101 @@
 <div id="the-model" class="section level3 unnumbered">
 <h3 class="hasAnchor">
 <a href="#the-model" class="anchor"></a>The model</h3>
-<p>Model taken from literature: Soulele, K., et al. “Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.” European Journal of Pharmaceutical Sciences 80 (2015): 33-42.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nlmixr)
-
-modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
-  <span class="kw">ini</span>({
-    TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span>
-    TVCL &lt;-<span class="st"> </span><span class="dv">659</span> <span class="co">#L/h</span>
-    TVV1 &lt;-<span class="st"> </span><span class="dv">56900</span> <span class="co">#L</span>
-    TVV2 &lt;-<span class="st"> </span><span class="dv">5550</span> <span class="co">#L</span>
-    TVQ &lt;-<span class="st"> </span><span class="dv">259</span> <span class="co">#L/h</span>
-    
-    EKa <span class="op">~</span><span class="st"> </span><span class="fl">0.04507129</span> <span class="co">#0.2123**2</span>
-    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.1535856</span> <span class="co">#0.3919**2</span>
-    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.09223369</span> <span class="co">#0.3037**2</span>
-    EV2 <span class="op">~</span><span class="st"> </span><span class="fl">0.208301</span> <span class="co">#0.4564**2</span>
-    EQ <span class="op">~</span><span class="st"> </span><span class="fl">0.1015697</span><span class="co"># 0.3187**2</span>
-    
-    EPS_ADD &lt;-<span class="st"> </span><span class="fl">1.91</span> <span class="co">#</span>
-    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span>
-  })
-  <span class="kw">model</span>({
-    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)
-    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)
-    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)
-    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV2)
-    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EQ)
-    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1
-    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2
-
-    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
-    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
-
-    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span>
-    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)
-  })
-}
-nlmixrModel &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)
-
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)
-m1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrModel)</code></pre></div>
+<p>Model taken from literature: Soulele, K., et al. “Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.” European Journal of Pharmaceutical Sciences 80 (2015): 33-42.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nlmixr)</a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){</a>
+<a class="sourceLine" id="cb1-4" title="4">  <span class="kw">ini</span>({</a>
+<a class="sourceLine" id="cb1-5" title="5">    TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span></a>
+<a class="sourceLine" id="cb1-6" title="6">    TVCL &lt;-<span class="st"> </span><span class="dv">659</span> <span class="co">#L/h</span></a>
+<a class="sourceLine" id="cb1-7" title="7">    TVV1 &lt;-<span class="st"> </span><span class="dv">56900</span> <span class="co">#L</span></a>
+<a class="sourceLine" id="cb1-8" title="8">    TVV2 &lt;-<span class="st"> </span><span class="dv">5550</span> <span class="co">#L</span></a>
+<a class="sourceLine" id="cb1-9" title="9">    TVQ &lt;-<span class="st"> </span><span class="dv">259</span> <span class="co">#L/h</span></a>
+<a class="sourceLine" id="cb1-10" title="10">    </a>
+<a class="sourceLine" id="cb1-11" title="11">    EKa <span class="op">~</span><span class="st"> </span><span class="fl">0.04507129</span> <span class="co">#0.2123**2</span></a>
+<a class="sourceLine" id="cb1-12" title="12">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.1535856</span> <span class="co">#0.3919**2</span></a>
+<a class="sourceLine" id="cb1-13" title="13">    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.09223369</span> <span class="co">#0.3037**2</span></a>
+<a class="sourceLine" id="cb1-14" title="14">    EV2 <span class="op">~</span><span class="st"> </span><span class="fl">0.208301</span> <span class="co">#0.4564**2</span></a>
+<a class="sourceLine" id="cb1-15" title="15">    EQ <span class="op">~</span><span class="st"> </span><span class="fl">0.1015697</span><span class="co"># 0.3187**2</span></a>
+<a class="sourceLine" id="cb1-16" title="16">    </a>
+<a class="sourceLine" id="cb1-17" title="17">    EPS_ADD &lt;-<span class="st"> </span><span class="fl">1.91</span> <span class="co">#</span></a>
+<a class="sourceLine" id="cb1-18" title="18">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span></a>
+<a class="sourceLine" id="cb1-19" title="19">  })</a>
+<a class="sourceLine" id="cb1-20" title="20">  <span class="kw">model</span>({</a>
+<a class="sourceLine" id="cb1-21" title="21">    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)</a>
+<a class="sourceLine" id="cb1-22" title="22">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
+<a class="sourceLine" id="cb1-23" title="23">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)</a>
+<a class="sourceLine" id="cb1-24" title="24">    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV2)</a>
+<a class="sourceLine" id="cb1-25" title="25">    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EQ)</a>
+<a class="sourceLine" id="cb1-26" title="26">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</a>
+<a class="sourceLine" id="cb1-27" title="27">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</a>
+<a class="sourceLine" id="cb1-28" title="28"></a>
+<a class="sourceLine" id="cb1-29" title="29">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb1-30" title="30">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb1-31" title="31"></a>
+<a class="sourceLine" id="cb1-32" title="32">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span></a>
+<a class="sourceLine" id="cb1-33" title="33">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)</a>
+<a class="sourceLine" id="cb1-34" title="34">  })</a>
+<a class="sourceLine" id="cb1-35" title="35">}</a>
+<a class="sourceLine" id="cb1-36" title="36">nlmixrModel &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)</a>
+<a class="sourceLine" id="cb1-37" title="37"></a>
+<a class="sourceLine" id="cb1-38" title="38"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)</a>
+<a class="sourceLine" id="cb1-39" title="39">m1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrModel)</a></code></pre></div>
 <p>We now define the treatment regimen</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(
-  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dt">by=</span><span class="dv">24</span>, <span class="dt">length.out=</span><span class="dv">30</span>),
-  <span class="dt">AMT=</span><span class="dv">500</span> <span class="co"># 500ug standard dose</span>
-)
-
-adhering &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(m1, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>))
-
-actual &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(
-  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dt">by=</span><span class="dv">24</span>, <span class="dt">length.out=</span><span class="dv">30</span>),
-  <span class="dt">AMT=</span><span class="dv">500</span><span class="op">*</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="dv">30</span>, <span class="dt">replace=</span><span class="ot">TRUE</span>) <span class="co"># probability of 50% to not take the dose</span>
-)
-nonAdhering &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>))
-
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)
-pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1, <span class="dt">regimen=</span>regimen)
-<span class="kw">ggplot</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Adhering"</span>), <span class="dt">data=</span>adhering) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Non-adhering"</span>), <span class="dt">data=</span>nonAdhering)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(</a>
+<a class="sourceLine" id="cb2-2" title="2">  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dt">by=</span><span class="dv">24</span>, <span class="dt">length.out=</span><span class="dv">30</span>),</a>
+<a class="sourceLine" id="cb2-3" title="3">  <span class="dt">AMT=</span><span class="dv">500</span> <span class="co"># 500ug standard dose</span></a>
+<a class="sourceLine" id="cb2-4" title="4">)</a>
+<a class="sourceLine" id="cb2-5" title="5"></a>
+<a class="sourceLine" id="cb2-6" title="6">adhering &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(m1, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>))</a>
+<a class="sourceLine" id="cb2-7" title="7"></a>
+<a class="sourceLine" id="cb2-8" title="8">actual &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(</a>
+<a class="sourceLine" id="cb2-9" title="9">  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dt">by=</span><span class="dv">24</span>, <span class="dt">length.out=</span><span class="dv">30</span>),</a>
+<a class="sourceLine" id="cb2-10" title="10">  <span class="dt">AMT=</span><span class="dv">500</span><span class="op">*</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="dv">30</span>, <span class="dt">replace=</span><span class="ot">TRUE</span>) <span class="co"># probability of 50% to not take the dose</span></a>
+<a class="sourceLine" id="cb2-11" title="11">)</a>
+<a class="sourceLine" id="cb2-12" title="12">nonAdhering &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>))</a>
+<a class="sourceLine" id="cb2-13" title="13"></a>
+<a class="sourceLine" id="cb2-14" title="14"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)</a>
+<a class="sourceLine" id="cb2-15" title="15">pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1, <span class="dt">regimen=</span>regimen)</a>
+<a class="sourceLine" id="cb2-16" title="16"><span class="kw">ggplot</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb2-17" title="17"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Adhering"</span>), <span class="dt">data=</span>adhering) <span class="op">+</span></a>
+<a class="sourceLine" id="cb2-18" title="18"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Non-adhering"</span>), <span class="dt">data=</span>nonAdhering)</a></code></pre></div>
 <p><img src="testing_adherence_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 </div>
 <div id="is-the-patient-taking-hisher-medication" class="section level3 unnumbered">
 <h3 class="hasAnchor">
 <a href="#is-the-patient-taking-hisher-medication" class="anchor"></a>Is the patient taking his/her medication?</h3>
 <p>We can now take a serum sample and evaluate if there is non-adherence.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Take a blood sample</span>
-observed &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">30</span><span class="op">*</span><span class="dv">24</span><span class="op">+</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span><span class="dv">16</span>, <span class="dv">0</span>), <span class="dt">CONC=</span><span class="ot">NA</span>))
-observed</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># Take a blood sample</span></a>
+<a class="sourceLine" id="cb3-2" title="2">observed &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">30</span><span class="op">*</span><span class="dv">24</span><span class="op">+</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span><span class="dv">16</span>, <span class="dv">0</span>), <span class="dt">CONC=</span><span class="ot">NA</span>))</a>
+<a class="sourceLine" id="cb3-3" title="3">observed</a></code></pre></div>
 <pre><code>##   TIME     CONC
 ## 1  704 12.42485
 ## 2  720 10.20530</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># We estimate individual parameters</span>
-<span class="co"># as if the patient took his medication</span>
-<span class="co"># properly</span>
-ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1, observed, regimen)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># We estimate individual parameters</span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="co"># as if the patient took his medication</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co"># properly</span></a>
+<a class="sourceLine" id="cb5-4" title="4">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1, observed, regimen)</a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</a></code></pre></div>
 <pre><code>##          EKa          ECL          EV1          EV2           EQ 
 ##  0.000000000  0.828384249  0.035455547 -0.000201276  0.001489463</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Reality"</span>), <span class="dt">data=</span>nonAdhering) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>observed) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>), <span class="dt">data=</span>adhering) <span class="op">+</span>
-<span class="co">#  geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), </span>
-<span class="co">#    data=predict(m1, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA), se.fit=TRUE), alpha=0.1) +</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Prediction"</span>), 
-    <span class="dt">data=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(ipred, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)))</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">ggplot</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Reality"</span>), <span class="dt">data=</span>nonAdhering) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>observed) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>), <span class="dt">data=</span>adhering) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#  geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), </span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co">#    data=predict(m1, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA), se.fit=TRUE), alpha=0.1) +</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Prediction"</span>), </a>
+<a class="sourceLine" id="cb7-8" title="8">    <span class="dt">data=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(ipred, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)))</a></code></pre></div>
 <p><img src="testing_adherence_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">standardDeviations &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">sqrt</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/diag">diag</a></span>(m1<span class="op">$</span>omega))
-standardDeviations</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">standardDeviations &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">sqrt</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/diag">diag</a></span>(m1<span class="op">$</span>omega))</a>
+<a class="sourceLine" id="cb8-2" title="2">standardDeviations</a></code></pre></div>
 <pre><code>##           EKa           ECL           EV1           EV2            EQ 
 ##  0.0000000000  2.1137644184  0.1167452994 -0.0004410078  0.0046735565</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">i &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/which">which</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Normal">pnorm</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">abs</a></span>(standardDeviations)) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.975</span>)
-<span class="cf">if</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(i) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {
-  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"This patient has unlikely (outside 95% CI) parameter estimates for "</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(i),<span class="st">". There may be a treatment adherence issue."</span>)
-}</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">i &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/which">which</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Normal">pnorm</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">abs</a></span>(standardDeviations)) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.975</span>)</a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="cf">if</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(i) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {</a>
+<a class="sourceLine" id="cb10-3" title="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"This patient has unlikely (outside 95% CI) parameter estimates for "</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(i),<span class="st">". There may be a treatment adherence issue."</span>)</a>
+<a class="sourceLine" id="cb10-4" title="4">}</a></code></pre></div>
 <pre><code>## This patient has unlikely (outside 95% CI) parameter estimates for  ECL . There may be a treatment adherence issue.</code></pre>
 </div>
   </div>

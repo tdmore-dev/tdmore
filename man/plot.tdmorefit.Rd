@@ -5,8 +5,7 @@
 \title{Plot a tdmorefit object.}
 \usage{
 \method{plot}{tdmorefit}(x, newdata = NULL, regimen = NULL,
-  se.fit = TRUE, population = TRUE, fit = TRUE, mc.maxpts = 100,
-  .progress = "none", ...)
+  se.fit = TRUE, population = TRUE, fit = TRUE, ...)
 }
 \arguments{
 \item{x}{the tdmorefit object}
@@ -21,11 +20,7 @@
 
 \item{fit}{should I plot the fit (in red) ?}
 
-\item{mc.maxpts}{maximum number of points to use for the monte carlo fit}
-
-\item{.progress}{either "none" or "text" to see calculation progress of monte carlo simulations}
-
-\item{...}{ignored}
+\item{...}{passed on to `predict`}
 }
 \value{
 a ggplot object with the fitted individual curve, the 95% CI of this curve, the population prediction (with between-subject variability) and the observed data
