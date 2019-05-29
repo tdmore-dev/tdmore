@@ -4,6 +4,7 @@
 #'
 #' @name tdmore
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #' @docType package
 NULL
 

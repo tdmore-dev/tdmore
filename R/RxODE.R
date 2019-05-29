@@ -47,7 +47,6 @@ tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, 
 #'
 #' @importFrom RxODE eventTable rxSolve
 #' @importFrom dplyr transmute left_join bind_rows arrange mutate_all
-#' @importFrom rlang .data
 #'
 #' @keywords internal
 #'
@@ -223,7 +222,6 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 #' A data.frame similar to the observed data frame, but with predicted values.
 #' @importFrom RxODE eventTable rxSolve
 #' @importFrom dplyr transmute left_join bind_rows arrange mutate_all
-#' @importFrom rlang .data
 #'
 #' @keywords internal
 #'
