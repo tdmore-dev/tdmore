@@ -30,7 +30,7 @@ addIterationColumn <- function(regimen, observed) {
 #'
 selectBestCovariates <- function(t, covariates, thetaNames) {
   selectedRow <- utils::tail(which((covariates$TIME <= t)==TRUE), n=1)
-  retValue <- unlist(covariates[selectedRow, ] %>% dplyr::select(-one_of(thetaNames, "TIME")))
+  retValue <- unlist(covariates[selectedRow,,drop=F] %>% dplyr::select(-one_of(thetaNames, "TIME")))
   return(retValue)
 }
 
@@ -42,7 +42,7 @@ selectBestCovariates <- function(t, covariates, thetaNames) {
 #' @export
 #'
 estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
-  if (is.numeric(covariates)) {
+  if (!is.data.frame(covariates)) {
     covariates <- as.data.frame(as.list(c(TIME=0, covariates)))
   }
 
@@ -51,7 +51,8 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
   thetaNames <- names(theta)
   thetaDf <- as.data.frame(as.list(theta)) # Thetas (MPC parameters) specified to tdmore via the covariates dataframe
   thetaDf$TIME <- 0
-  covariatesMpc <- cbind(thetaDf, t(selectBestCovariates(t=0, covariates, thetaNames)))
+  selectedCovs <- selectBestCovariates(t=0, covariates, thetaNames)
+  covariatesMpc <- if(is.null(selectedCovs)) {thetaDf} else {cbind(thetaDf, t(selectedCovs))}
   fix <- c()
 
   # Special case: no observed data
@@ -74,7 +75,8 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
       previousEbe <- predict(ipred, newdata=c(firstDoseJustAfter))[, paste0(thetaNames, object$mpc_suffix)]
       names(previousEbe) <- paste0(thetaNames)
       previousEbe$TIME <- firstDoseJustAfter
-      covariates_tmp <- cbind(previousEbe, t(selectBestCovariates(t=firstDoseJustAfter, covariates, thetaNames)))
+      selectedCovs <- selectBestCovariates(t=firstDoseJustAfter, covariates, thetaNames)
+      covariates_tmp <- if(is.null(selectedCovs)) {previousEbe} else {cbind(previousEbe, t(selectedCovs))}
       covariatesMpc <- dplyr::bind_rows(covariatesMpc, covariates_tmp)
       fix <- coef(ipred)
     }
