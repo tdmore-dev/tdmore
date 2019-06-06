@@ -56,7 +56,7 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
 
   # Special case: no observed data
   if (is.null(observed) || nrow(observed) == 0) {
-    ipred <- estimate.tdmore(object, regimen=regimen, covariates=covariatesMpc, se.fit=FALSE, ...)
+    ipred <- estimate.tdmore(object, regimen=regimen, covariates=covariatesMpc, se.fit=TRUE, control=control, ...)
     maxIter <- 0
   # Normal case: observed data present
   } else {
@@ -81,7 +81,7 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
       currentObsTime <- observedMpc %>% dplyr::filter(ITER==iterIndex) %>% dplyr::pull(TIME) %>% dplyr::last()
       ipred <- estimate.tdmore(object, regimen=regimen %>% dplyr::filter(TIME < currentObsTime),
                         observed=observedMpc %>% dplyr::filter(ITER==iterIndex) %>% dplyr::select(-one_of("ITER")),
-                        covariates=covariatesMpc, fix=fix, se.fit=FALSE, ...)
+                        covariates=covariatesMpc, fix=fix, se.fit=se.fit, control=control, ...)
     } else {
       # Last extra iteration copies final covariates dataframe (with all MPC parameters) to ipred
       ipred$covariates <- covariatesMpc
