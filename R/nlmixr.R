@@ -58,7 +58,8 @@ tdmore.nlmixrUI <- function(model, iov=NULL, ...) {
 
   # Merge model code with model$rxode code
   modelCode <- paste("   ", modelCode, collapse = "\n")
-  rxOdeModelCode <- paste(modelCode, model$rxode, collapse = "\n")
+  rxodeCode <- gsub(paste0("\\n(cmt|dvid)\\(.*\\);\\n"), "", model$rxode)
+  rxOdeModelCode <- paste(modelCode, rxodeCode, collapse = "\n")
 
   # Create RxODE object
   rxModel <- RxODE::RxODE(rxOdeModelCode)

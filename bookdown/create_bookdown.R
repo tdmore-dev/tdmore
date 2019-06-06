@@ -1,4 +1,4 @@
-if(packageVersion('bookdown') != "0.9") stop("Expecting bookdown version 0.9")
+if(packageVersion('bookdown') != "0.11") stop("Expecting bookdown version 0.11")
 setwd(devtools::package_file("bookdown/"))
 bookoutputdir <- devtools::package_file("docs/book/")
 bookoutputdir <- force(bookoutputdir)
