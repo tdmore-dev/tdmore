@@ -309,7 +309,7 @@ estimateDelegate <- function(object, observed=NULL, regimen=NULL, covariates=NUL
     OFIM <- pointEstimate$hessian * 1/2
     varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
   } else {
-    varcov <- diag(0, nrow=length(updatedParNames)) #very small value, to keep matrix semi-definite
+    varcov <- diag(.Machine$double.eps, nrow=length(updatedParNames)) #very small value, to keep matrix semi-definite
   }
 
   # Re-add fixed parameters in res and omega
