@@ -24,6 +24,7 @@ transformRegimen <- function(regimen, x) {
 #' @examples flatten(data.frame(TIME=10, AMT=10, ADDL=8, II=24))
 flatten <- function(regimen) {
   if(! "ADDL" %in% colnames(regimen)) return(regimen)
+  if(! "II" %in% colnames(regimen)) stop("ADDL column detected, but II not present")
   myList <- apply(regimen, 1, function(row) {
     row <- as.list(row)
     row$TIME <- row$TIME + seq(0, row$ADDL)*row$II

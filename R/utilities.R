@@ -48,7 +48,8 @@ meltPredictions <- function(x, se=FALSE) {
 computeTmax <- function(regimen, observed=NULL) {
   values <- c(0)
   if (!is.null(regimen)) {
-    values <- c(values, regimen$TIME, regimen$TIME + (regimen$ADDL+1) * regimen$II)
+    values <- c(values, regimen$TIME)
+    if(all(c("ADDL", "II") %in% names(regimen))) values <- c(values, regimen$TIME + (regimen$ADDL+1) * regimen$II)
   }
   if (!is.null(observed)) {
     values <- c(values, observed$TIME)
