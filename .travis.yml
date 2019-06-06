@@ -18,6 +18,9 @@ before_install:
   - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then hash -r; fi"
   - "phantomjs --version"
 
+apt_packages:
+  - libudunits2-dev
+
 r_packages:
   - covr
   - devtools
