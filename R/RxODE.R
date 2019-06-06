@@ -261,14 +261,14 @@ addRegimenToEventTable <- function(eventTable, regimen, nbSSDoses=NULL) {
     dosing.to = 1
     rate = NULL
     nbr.doses = 1
-    dosing.interval = row$II
+    dosing.interval = if("II" %in% names(row)) row$II else NULL
     start.time = row$TIME
 
     if("ADDL" %in% colnames(row)) {
       if(is.null(dosing.interval)) stop("Please define the dosing interval II in order to use ADDL doses")
       nbr.doses <- nbr.doses + row$ADDL
     }
-    if (isTRUE(row$SS == 1)) {
+    if (isTRUE("SS" %in% names(row) && row$SS == 1)) {
       if(is.null(dosing.interval)) stop("Please define the dosing interval II in order to use SS=1")
 
       ## TODO: Use new functionality of new RxODE??
