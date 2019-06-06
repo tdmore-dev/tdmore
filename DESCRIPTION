@@ -31,3 +31,4 @@ RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 URL: https://github.com/tdmore-dev/tdmore, https://tdmore-dev.github.io/tdmore/
 BugReports: https://github.com/tdmore-dev/tdmore/issues
+Remotes: nlmixrdevelopment/RxODE@d5ecf72b876836d60061a196ee6dc27b830f60c6
