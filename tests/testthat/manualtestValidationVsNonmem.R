@@ -9,7 +9,7 @@
 # Meropenem model 1
 library(RxODE)
 library(tdmore)
-library(plyr)
+library(dplyr)
 library(ggplot2)
 
 modelCode <- "
@@ -35,7 +35,7 @@ d/dt(A2) = K12*A1 - K21 * A2;
 CONC = A1 / V1;
 "
 rxModel <- RxODE::RxODE(modelCode)
-mod <- rxModel %>% tdmore::tdmore(prop=0.371)
+mod <- rxModel %>% tdmore::tdmore(res_var=list(errorModel(prop=0.371)))
 # 2g@0.5h as loading dose, 1g@0.5h at t=8
 regimen <- data.frame(
   TIME=c(0, 8),
@@ -50,7 +50,8 @@ subjects <- data.frame(
   EV1=rnorm(N)
 )
 # Simulate from the model
-db <- plyr::ddply(subjects, 1, function(ETA){
+db <- subjects %>% rowwise() %>% do({
+  ETA <- .data
   myETA <- c(ECL=ETA$ECL, EV1=ETA$EV1)
   result <- mod %>%
     predict(
@@ -61,7 +62,8 @@ db <- plyr::ddply(subjects, 1, function(ETA){
   result
 })
 # Rich simulation profiles
-dbrich <- plyr::ddply(subjects, 1, function(ETA){
+dbrich <- subjects %>% rowwise() %>% do({
+  ETA <- .data
   myETA <- c(ECL=ETA$ECL, EV1=ETA$EV1)
   result <- mod %>%
     predict(
@@ -77,13 +79,14 @@ ggplot(dbrich %>% ddply(.(TIME), summarize, q50=median(CONC))) + geom_line(aes(x
   geom_point(aes(x=TIME, y=CONC), data=db)
 
 ## For each row in DB, perform a TDM estimation
-tdmorefits <- plyr::dlply(db, .(ID), function(obs) {
+tdmorefits <- db %>% group_by(ID) %>% group_map( ~ {
+  obs <- .x
   mod %>% estimate(observed=obs[,c("TIME", "CONC")], regimen=regimen)
-}, .progress="text")
-estimationResults <- plyr::ldply(tdmorefits, function(fit) {
+})
+estimationResults <- map_dfr(tdmorefits, function(fit) {
   fit %>% predict(newdata=data.frame(TIME=seq(0, 16, by=0.5), CONC=NA))
 }, .id="ID")
-coefResults <- plyr::ldply(tdmorefits, coef, .id="ID")
+coefResults <- map_dfr(tdmorefits, coef, .id="ID")
 
 ## Investigate a subject that was difficult to estimate
 problematic <- mod %>% estimate(observed=db[db$ID==53,c("TIME", "CONC")], regimen=regimen, print.level=2)
@@ -205,7 +208,7 @@ ggplot(comparison, aes(x=EV1, y=ETA2)) + geom_point() + geom_abline() + xlab("TD
 ggsave("compare ETA_V1.png", width=12, height=8)
 
 phi <- read.table("nonmem.phi", skip=1, header=TRUE)
-vcovResults <- plyr::ldply(tdmorefits, function(x){
+vcovResults <- map_dfr(tdmorefits, function(x){
   result <- vcov(x)
   coef <- coef(x)
   c(coef, ETC.CL=result["ECL","ECL"], ETC.V1=result["EV1", "EV1"], ETC.CL.V1=result["ECL", "EV1"])

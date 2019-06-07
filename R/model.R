@@ -211,7 +211,7 @@ model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, ...) {
       if (!(var %in% oNames)) next
       obs <- data[, var, drop=TRUE]
       sd <- err$sigma(obs)
-      q <- rnorm(1, 0, sd)
+      q <- stats::rnorm(1, 0, sd)
       data[, var] <- obs + sd*q
     }
     return(data)

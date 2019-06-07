@@ -48,6 +48,8 @@ reduce accuracy and report estimation progress.}
 \item{control}{control options for `estimate`
 If trace > 0, the estimation function also reports errors when calculating log-likelihood.}
 
+\item{data}{Instead of specifying a separate `observed` and `regimen` data, we can also}
+
 \item{...}{extra parameters to pass to the optim function
 A good example is to specify `control=list(trace=1, REPORT=10, factr=1e13)` to improve performance.
 This will `trace` the estimation progress

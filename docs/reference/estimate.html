@@ -214,6 +214,10 @@ reduce accuracy and report estimation progress.</p></td>
 If trace &gt; 0, the estimation function also reports errors when calculating log-likelihood.</p></td>
     </tr>
     <tr>
+      <th>data</th>
+      <td><p>Instead of specifying a separate `observed` and `regimen` data, we can also</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>extra parameters to pass to the optim function
 A good example is to specify `control=list(trace=1, REPORT=10, factr=1e13)` to improve performance.

@@ -3,7 +3,8 @@
 \name{addIterationColumn}
 \alias{addIterationColumn}
 \title{Add an iteration column 'ITER' to the observed dataframe.
-Observations will be grouped by occasions.}
+The iteration column determines in which MPC iteration each observation
+will be included.}
 \usage{
 addIterationColumn(regimen, observed)
 }
@@ -16,6 +17,5 @@ addIterationColumn(regimen, observed)
 modified observed dataframe, with an 'ITER' column
 }
 \description{
-Add an iteration column 'ITER' to the observed dataframe.
-Observations will be grouped by occasions.
+This is calculated by matching the corresponding OCC from the regimen (time-wise).
 }

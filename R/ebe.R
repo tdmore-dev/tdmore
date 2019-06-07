@@ -111,6 +111,7 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #' Incidentally, 3 significant digits \href{http://holford.fmhs.auckland.ac.nz/research/sigdig}{is the default value for NONMEM}.
 #' Without the above option, `estimate` will calculate with a relative precision of `1e-8`.
 #'
+#' @param data Instead of specifying a separate `observed` and `regimen` data, we can also
 #'
 #' @return A tdmorefit object
 #' @importFrom stats optim

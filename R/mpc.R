@@ -1,6 +1,9 @@
 #'
 #' Add an iteration column 'ITER' to the observed dataframe.
-#' Observations will be grouped by occasions.
+#' The iteration column determines in which MPC iteration each observation
+#' will be included.
+#'
+#' This is calculated by matching the corresponding OCC from the regimen (time-wise).
 #'
 #' @param regimen regimen
 #' @param observed observed
@@ -8,16 +11,10 @@
 #' @return modified observed dataframe, with an 'ITER' column
 #'
 addIterationColumn <- function(regimen, observed) {
-  observedMpc <- observed
-  observedMpc$OCC <- 1
-  for (obsIndex in seq_len(nrow(observed))) {
-    obsTime <- observed$TIME[obsIndex]
-    observedMpc$OCC[obsIndex] <- regimen %>% filter(TIME < obsTime) %>% pull(OCC) %>% last()
-  }
-  iterationRow <- !duplicated(observedMpc$OCC)
-  observedMpc[iterationRow, "ITER"] <- seq_len(sum(iterationRow))
-  observedMpc$ITER <- zoo::na.locf(observedMpc$ITER)
-  return(observedMpc %>% dplyr::select(-one_of("OCC")))
+  i <- findInterval(observed$TIME, regimen$TIME)
+  OCC <- regimen$OCC[i]
+  observed$ITER <- as.numeric( factor(OCC) ) #count from 1 to N
+  observed
 }
 
 #'
@@ -30,7 +27,7 @@ addIterationColumn <- function(regimen, observed) {
 #'
 selectBestCovariates <- function(t, covariates, thetaNames) {
   selectedRow <- utils::tail(which((covariates$TIME <= t)==TRUE), n=1)
-  retValue <- unlist(covariates[selectedRow,,drop=F] %>% dplyr::select(-one_of(thetaNames, "TIME")))
+  retValue <- unlist(covariates[selectedRow,,drop=F] %>% dplyr::select(-dplyr::one_of(thetaNames, "TIME")))
   return(retValue)
 }
 
@@ -68,7 +65,7 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
 
   for (iterIndex in seq_len(maxIter + 1)) {
     if (iterIndex > 1) {
-      firstDoseJustAfter <- regimen %>% filter(TIME >= currentObsTime) %>% dplyr::pull(TIME) %>% dplyr::first()
+      firstDoseJustAfter <- regimen$TIME[ match(TRUE, regimen$TIME >= currentObsTime) ]
       if (is.na(firstDoseJustAfter)) {
         break
       }
@@ -81,9 +78,9 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
       fix <- coef(ipred)
     }
     if (iterIndex <= maxIter) {
-      currentObsTime <- observedMpc %>% dplyr::filter(ITER==iterIndex) %>% dplyr::pull(TIME) %>% dplyr::last()
-      ipred <- estimate.tdmore(object, regimen=regimen %>% dplyr::filter(TIME < currentObsTime),
-                        observed=observedMpc %>% dplyr::filter(ITER==iterIndex) %>% dplyr::select(-one_of("ITER")),
+      currentObsTime <- observedMpc %>% dplyr::filter(.data$ITER==iterIndex) %>% dplyr::pull(.data$TIME) %>% dplyr::last()
+      ipred <- estimate.tdmore(object, regimen=regimen %>% dplyr::filter(.data$TIME < currentObsTime),
+                        observed=observedMpc %>% dplyr::filter(.data$ITER==iterIndex) %>% dplyr::select(-dplyr::one_of("ITER")),
                         covariates=covariatesMpc, fix=fix, se.fit=se.fit, control=control, ...)
     } else {
       # Last extra iteration copies final covariates dataframe (with all MPC parameters) to ipred
