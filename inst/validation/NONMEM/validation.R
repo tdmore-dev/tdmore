@@ -219,11 +219,13 @@ results_m2 <- input %>% group_by(ID) %>% do({
 # Compare results ---------------------------------------------------------
 
 fulldb <- plyr::rbind.fill(results_nonmem, results_m1) %>% plyr::rbind.fill(results_m2) %>% filter(method %in% c("tdmore", "FOCEi")) %>%
-  reshape::melt(id.vars=c("ID", "method", "type", "OBJ")) %>% dplyr::rename(meth=method)
+  tidyr::gather(key=variable, value=value, -ID, -method, -type, -OBJ) %>% dplyr::rename(meth=method)
 ggplot(fulldb, aes(x=ID, y=value, color=meth)) + geom_line(na.rm=TRUE) + facet_grid(variable~type, scales="free")
 ggsave("eta_profiles.png", width=12, height=8)
 
-comparison <- reshape::cast(data=fulldb, formula=ID+type+variable~meth) %>% ## cast has a bug when using the 'method' column...
+comparison <- fulldb %>%
+  dplyr::select(-OBJ) %>%
+  tidyr::spread(meth, value) %>% ## cast has a bug when using the 'method' column...
   dplyr::mutate(delta=tdmore-FOCEi)
 ymax <- abs(max(comparison$delta, na.rm=T)) * 5
 

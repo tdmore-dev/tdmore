@@ -59,7 +59,7 @@ melt <- function(x, se=FALSE) {
   if( se ) {
     for(i in c(".upper", ".lower")) vars <-c(vars, paste0(measure.vars, i))
   }
-  tmp <- reshape::melt(x, id.vars="TIME")
+  tmp <- tidyr::gather(x, key=variable, value=value, -TIME)
   if(se) {
     result <- subset(tmp, variable %in% measure.vars)
     result$value.upper <- subset(tmp, variable %in% paste0(measure.vars, ".upper"))$value
