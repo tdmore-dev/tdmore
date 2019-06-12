@@ -151,6 +151,16 @@ estimate.tdmore_mixture <- function(object, observed=NULL, regimen=NULL, covaria
 }
 
 #'
+#' Rerun a tdmorefit with new updated parameters
+#'
+#' @inheritParams estimate
+#' @return a tdmorefit object
+#' @export
+estimate.tdmorefit <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+  estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
+}
+
+#'
 #' Delegate method used for EBE estimation.
 #'
 #' @inheritParams estimate
