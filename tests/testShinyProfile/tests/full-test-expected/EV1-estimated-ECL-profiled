@@ -2,7 +2,7 @@
   "input": {
     "click": null,
     "dblclick": null,
-    "ECL": -0.258646058390507,
+    "ECL": -0.258646227779221,
     "EV1": null,
     "var": "ECL",
     "var-selectized": ""
@@ -28,8 +28,8 @@
             "domain": {
               "left": -1.1,
               "right": 1.1,
-              "bottom": -0.000129461532066188,
-              "top": 0.00271869217338995
+              "bottom": -0.000129461516041164,
+              "top": 0.00271869183686444
             },
             "mapping": {
               "x": "ECL",

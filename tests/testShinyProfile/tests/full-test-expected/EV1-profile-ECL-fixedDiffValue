@@ -9,7 +9,7 @@
   },
   "output": {
     "plot": {
-      "src": "[image data sha1: 77c03ce4fdee20469bd505f464e82c85e1112b08]",
+      "src": "[image data sha1: 2e7cd65486dbaa5dd389c74a30c4642e4d0abd3a]",
       "width": 962,
       "height": 639,
       "coordmap": {
@@ -28,8 +28,8 @@
             "domain": {
               "left": -1.1,
               "right": 1.1,
-              "bottom": -1.54711201322657e-034,
-              "top": 3.33200977678366e-033
+              "bottom": -1.54711204298487e-034,
+              "top": 3.332009837567e-033
             },
             "mapping": {
               "x": "EV1",
