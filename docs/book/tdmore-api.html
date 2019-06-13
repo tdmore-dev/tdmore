@@ -260,9 +260,8 @@ The <code>nlmixr</code> function is implemented as follows:</p>
   })
 }</code></pre>
 <p>A TDMore object can then be instantiated by running the following snippet:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)</code></pre>
-<pre><code>## Warning: S3 method &#39;coef.tdmore&#39; was declared in NAMESPACE but not found</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>()</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
+m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>()</code></pre>
 <p>Your model is ready to use. Have a look at its content by calling:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(m1)</code></pre>
 <pre><code>## Structural model: RxODE 
