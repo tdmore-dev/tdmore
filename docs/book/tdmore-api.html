@@ -167,6 +167,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6" data-path="validation.html"><a href="validation.html"><i class="fa fa-check"></i><b>6</b> Validation</a><ul>
 <li class="chapter" data-level="6.1" data-path="validation.html"><a href="validation.html#development-process"><i class="fa fa-check"></i><b>6.1</b> Development process</a></li>
 <li class="chapter" data-level="6.2" data-path="validation.html"><a href="validation.html#standards-iec-623042006"><i class="fa fa-check"></i><b>6.2</b> Standards: IEC 62304:2006</a></li>
+<li class="chapter" data-level="6.3" data-path="validation.html"><a href="validation.html#validation-requirements-for-use-in-patient-care"><i class="fa fa-check"></i><b>6.3</b> Validation requirements for use in patient care</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="validation.html"><a href="validation.html#valid-clinical-association"><i class="fa fa-check"></i><b>6.3.1</b> Valid Clinical Association</a></li>
+<li class="chapter" data-level="6.3.2" data-path="validation.html"><a href="validation.html#analytical-validation"><i class="fa fa-check"></i><b>6.3.2</b> Analytical Validation</a></li>
+<li class="chapter" data-level="6.3.3" data-path="validation.html"><a href="validation.html#clinical-validation"><i class="fa fa-check"></i><b>6.3.3</b> Clinical Validation</a></li>
+<li class="chapter" data-level="6.3.4" data-path="validation.html"><a href="validation.html#other-requirements"><i class="fa fa-check"></i><b>6.3.4</b> Other requirements</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>7</b> Vignettes</a><ul>
 <li class="chapter" data-level="7.1" data-path="vignettes.html"><a href="vignettes.html#running-tdmore"><i class="fa fa-check"></i><b>7.1</b> Running TDMore</a><ul>
@@ -254,8 +260,9 @@ The <code>nlmixr</code> function is implemented as follows:</p>
   })
 }</code></pre>
 <p>A TDMore object can then be instantiated by running the following snippet:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
-m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>()</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)</code></pre>
+<pre><code>## Warning: S3 method &#39;coef.tdmore&#39; was declared in NAMESPACE but not found</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>()</code></pre>
 <p>Your model is ready to use. Have a look at its content by calling:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(m1)</code></pre>
 <pre><code>## Structural model: RxODE 

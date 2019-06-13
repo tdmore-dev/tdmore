@@ -167,6 +167,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6" data-path="validation.html"><a href="validation.html"><i class="fa fa-check"></i><b>6</b> Validation</a><ul>
 <li class="chapter" data-level="6.1" data-path="validation.html"><a href="validation.html#development-process"><i class="fa fa-check"></i><b>6.1</b> Development process</a></li>
 <li class="chapter" data-level="6.2" data-path="validation.html"><a href="validation.html#standards-iec-623042006"><i class="fa fa-check"></i><b>6.2</b> Standards: IEC 62304:2006</a></li>
+<li class="chapter" data-level="6.3" data-path="validation.html"><a href="validation.html#validation-requirements-for-use-in-patient-care"><i class="fa fa-check"></i><b>6.3</b> Validation requirements for use in patient care</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="validation.html"><a href="validation.html#valid-clinical-association"><i class="fa fa-check"></i><b>6.3.1</b> Valid Clinical Association</a></li>
+<li class="chapter" data-level="6.3.2" data-path="validation.html"><a href="validation.html#analytical-validation"><i class="fa fa-check"></i><b>6.3.2</b> Analytical Validation</a></li>
+<li class="chapter" data-level="6.3.3" data-path="validation.html"><a href="validation.html#clinical-validation"><i class="fa fa-check"></i><b>6.3.3</b> Clinical Validation</a></li>
+<li class="chapter" data-level="6.3.4" data-path="validation.html"><a href="validation.html#other-requirements"><i class="fa fa-check"></i><b>6.3.4</b> Other requirements</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>7</b> Vignettes</a><ul>
 <li class="chapter" data-level="7.1" data-path="vignettes.html"><a href="vignettes.html#running-tdmore"><i class="fa fa-check"></i><b>7.1</b> Running TDMore</a><ul>
@@ -215,11 +221,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>TDMore is developed as an R package. The development team tries their best to adhere to international standards such as <code>IEC 62304:2006</code>. This ensures that the software is developed to the highest quality standards.</p>
 <p>New features are first described in a Github ticket. They are discussed between the development team and prioritized.</p>
 <p>The feature is then developed. The API is documented through Roxygen2, and its use is documented in a vignette or in the documentation book. Automated tests are written for every new feature. It is our intention to get code coverage of critical parts up to 100%.</p>
+<p>A continuous integration infrastructure is in place. GIT commit hooks ensure that all documentation is up-to-date at every commit. A push triggers automated testing in Travis. Furthermore, a Docker image is automatically built at every commit, and automated testing on the docker image is also performed. This ensures a stable environment to build on.</p>
 </div>
 <div id="standards-iec-623042006" class="section level2">
 <h2><span class="header-section-number">6.2</span> Standards: IEC 62304:2006</h2>
 <p><em>It should be stressed that TDMore is not a medical device.</em> The software is for research and educational use only, and should never be directly used in patient care.</p>
-<p>However, we acknowledge that TDMore may be used as a component in a medical device. For integrators or medical device builders, we therefore detail how TDMore may adhere to the <code>IEC 62304:2006 Medical device software - Software life cycle processes</code> standard.</p>
+<p>However, we acknowledge that others may include TDMore as a component in a medical device. For integrators or medical device builders, we therefore detail how TDMore <em>may</em> adhere to the <code>IEC 62304:2006 Medical device software - Software life cycle processes</code> standard. We use ‘<em>may</em>’, because this assessment was not carried out by a competent third party.</p>
 <p>TDMore is considered a software item of a larger system, as defined in ISO/IEC 90003:2004, definition 3.14. Whether the larger system is Class A, B or C depends on the use case. As an example, a system to aid physicians in quantifying drug non-adherence could be considered Class A (No injury or damage to health is possible), while a closed-loop automated insulin pump will be considered Class C (Death or serious injury is possible). By itself, TDMore cannot directly cause any injury or damage to health.</p>
 <p>The IEC 62304:2006 standard defines several requirements, some general and some specific to the development process. General requirements include Quality Management (ISO 13485), Risk Management (ISO 14971) and Software Safety Classification. These are not considered by the TDMore development team, as they are only applicable to the larger device.</p>
 <p>For Software Development, the standard requires <em>Software development planning</em> (Class A, B and C). This is implemented in TDMore in the Github repository issue tracker. Issues describe features or bugs that are developed. They are grouped together in milestones. The software plan is regularly updated, as can be shown by the github activity tracker.</p>
@@ -233,7 +240,55 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><em>Software detailed design</em> can be considered an essential part of feature implementation. TDMore is not end-user facing, but is built as an R package, to be consumed by developers. APIs are carefully designed.</p>
 <p><em>Unit implementation and verification</em> is done using RStudio and the GIT version control system. Peer review is used to verify all code committed. Automated tests are used to verify features function as expected.</p>
 <p>For now, no formal releases have been executed. It is our intent to release to CRAN regularly.</p>
+</div>
+<div id="validation-requirements-for-use-in-patient-care" class="section level2">
+<h2><span class="header-section-number">6.3</span> Validation requirements for use in patient care</h2>
+<p><em>It should be stressed that TDMore is not a medical device.</em> The software is for research and educational use only, and should never be directly used in patient care.</p>
+<p>Should you wish to build a dose adaptation tool, and include the TDMore mathematical engine, please note that any dose adaptation tool is classified as a Medical Device under <a href="https://ec.europa.eu/docsroom/documents/17921/attachments/1/translations/en/renditions/native">MEDDEV July 2016</a>.</p>
+<blockquote>
+<p>[page 20] Drug (e.g.: Chemotherapy) planning systems are intended to calculate the drug dosage to be administered to a specific patient and therefore are qualified as medical devices.</p>
+</blockquote>
+<p>Marketing such a tool for routine clinical use would indeed be subject to a CE-approval. A useful framework for the validation of such a tool could be found in <a href="https://www.fda.gov/medical-devices/digital-health/software-medical-device-samd">FDA Guidance on Software as a Medical Device</a>.</p>
+<div class="figure">
+<img src="static/FDA_Guidance_SaMD_Figure1.png" title="Clinical Evaluation Process for SaMD" alt="Clinical Evaluation Process for SaMD" />
+<p class="caption">Clinical Evaluation Process for SaMD</p>
+</div>
+<p>As described in the figure, the validation process can be viewed in 3 parts:</p>
+<div id="valid-clinical-association" class="section level3">
+<h3><span class="header-section-number">6.3.1</span> Valid Clinical Association</h3>
+<blockquote>
+<p>Is there a valid clinical association between the SaMD output and your SaMD’s targeted clinical condition?</p>
+</blockquote>
+<p>In the case of dose adaptation, you should show a valid association between the PK or PD target and actual clinical outcome. This can be shown on the basis of historical data, as long as the method of drug administration remains similar, and as long as it is causative.</p>
+</div>
+<div id="analytical-validation" class="section level3">
+<h3><span class="header-section-number">6.3.2</span> Analytical Validation</h3>
+<blockquote>
+<p>Does your SaMD correctly process input data to generate accurate, reliable, and precise output data?</p>
+</blockquote>
+<p>Although TDMore has been carefully validated to ensure valid results (within the limitations of the EBE or MPC estimation technique), that does not mean your model predicts individual outcomes accurately or precisely. A prospective evaluation should be performed, ideally on real data. This can be compared to physician performance in hitting the target.</p>
+</div>
+<div id="clinical-validation" class="section level3">
+<h3><span class="header-section-number">6.3.3</span> Clinical Validation</h3>
+<blockquote>
+<p>Does use of your SaMD’s accurate, reliable, and precise output data achieve your intended purpose in your target population in the context of clinical care?</p>
+</blockquote>
+<p>This requirement alludes to a prospective clinical trial. In this trial, you should show use of the software results in superior outcomes as compared to current practices. We strongly recommend you perform an <code>in silico</code> study first, at least to determine sample size.</p>
+</div>
+<div id="other-requirements" class="section level3">
+<h3><span class="header-section-number">6.3.4</span> Other requirements</h3>
+<p>More streneous requirements may also be needed, including but not limited to:</p>
+<ul>
+<li>Server hosting, reliability and data privacy</li>
+<li>Robustness to data entry errors</li>
+<li>Robustness to outliers, e.g. heavily overweight patients</li>
+<li>Robustness to different assays used (e.g. LC/MS-MS vs immuno-assay)</li>
+<li>Protection against hackers or DoS attacks</li>
+<li>Maintenance and support</li>
+</ul>
+<p>We are not lawyers, and are certainly not specialists in Medical Device regulations. Contact a lawyer, a Medical Device expert, or your local regulatory authority.</p>
 
+</div>
 </div>
 </div>
             </section>
