@@ -43,7 +43,7 @@ shinyProfileApp <- function(fitted, fix=NULL, ...) {
     initNames <- setdiff(names, names(fix))
   }
   allButtons <- lapply(names, function(n){
-    shiny::conditionalPanel( condition = paste0("! input.var.includes('",n,"')"),
+    shiny::conditionalPanel( condition = paste0("input.var.indexOf('",n,"') == -1"),
       shiny::numericInput(inputId=n, label=n, value=init[n],
                         step=sqrt(omega[n])/10)
     )
