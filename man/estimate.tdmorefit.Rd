@@ -6,7 +6,7 @@
 \usage{
 \method{estimate}{tdmorefit}(object, observed = NULL, regimen = NULL,
   covariates = NULL, par = NULL, fix = NULL, method = "L-BFGS-B",
-  se.fit = TRUE, lower = NULL, upper = NULL, multistart = F,
+  se.fit = TRUE, lower = NA, upper = NA, multistart = F,
   control = list(), data = NULL, ...)
 }
 \arguments{

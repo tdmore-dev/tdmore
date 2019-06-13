@@ -7,7 +7,7 @@ a given dataset using the model}
 \usage{
 estimate(object, observed = NULL, regimen = NULL, covariates = NULL,
   par = NULL, fix = NULL, method = "L-BFGS-B", se.fit = TRUE,
-  lower = NULL, upper = NULL, multistart = F, control = list(),
+  lower = NA, upper = NA, multistart = F, control = list(),
   data = NULL, ...)
 }
 \arguments{

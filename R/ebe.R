@@ -116,7 +116,7 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #' @return A tdmorefit object
 #' @importFrom stats optim
 #' @export
-estimate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+estimate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
   UseMethod("estimate")
 }
 
@@ -126,7 +126,7 @@ estimate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=N
 #' @inheritParams estimate
 #' @return a tdmorefit object
 #' @export
-estimate.tdmore <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+estimate.tdmore <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
   estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
 }
 
@@ -136,7 +136,7 @@ estimate.tdmore <- function(object, observed=NULL, regimen=NULL, covariates=NULL
 #' @inheritParams estimate
 #' @return a tdmorefit object
 #' @export
-estimate.tdmore_set <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+estimate.tdmore_set <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
   estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
 }
 
@@ -146,7 +146,7 @@ estimate.tdmore_set <- function(object, observed=NULL, regimen=NULL, covariates=
 #' @inheritParams estimate
 #' @return a tdmorefit object
 #' @export
-estimate.tdmore_mixture <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+estimate.tdmore_mixture <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
   estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
 }
 
@@ -156,7 +156,7 @@ estimate.tdmore_mixture <- function(object, observed=NULL, regimen=NULL, covaria
 #' @inheritParams estimate
 #' @return a tdmorefit object
 #' @export
-estimate.tdmorefit <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+estimate.tdmorefit <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
   estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
 }
 
@@ -165,7 +165,7 @@ estimate.tdmorefit <- function(object, observed=NULL, regimen=NULL, covariates=N
 #'
 #' @inheritParams estimate
 #' @return a tdmorefit object
-estimateDelegate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+estimateDelegate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
   if(is.null(control$trace)) control$trace <- 0
   if(length(method) > 1) {
     ## Multiple methods specified
@@ -209,7 +209,8 @@ estimateDelegate <- function(object, observed=NULL, regimen=NULL, covariates=NUL
                par=par, fix=fix, method=method, se.fit=se.fit, lower=lower, upper=upper, multistart=multistart, ...)
       )
   } else {
-    stop("Object not an instance of 'tdmore', 'tdmore_set' or 'tdmore_mixture")
+    #will never happen
+    stop("Object not an instance of 'tdmore', 'tdmore_set' or 'tdmore_mixture") #nocov
   }
 
   if(!is.null(data)) {
@@ -228,8 +229,8 @@ estimateDelegate <- function(object, observed=NULL, regimen=NULL, covariates=NUL
   # Setting optim initial conditions
   par <- processParameters(par, tdmore, regimen)
   omega <- expandOmega(tdmore, occasions)
-  lower <- processParameters(lower, tdmore, regimen, -5 * sqrt(diag(omega)))
-  upper <- processParameters(upper, tdmore, regimen, +5 * sqrt(diag(omega)))
+  if(!is.null(lower)) lower <- processParameters(lower, tdmore, regimen, -5 * sqrt(diag(omega)))
+  if(!is.null(upper)) upper <- processParameters(upper, tdmore, regimen, +5 * sqrt(diag(omega)))
 
   # Prepare the tdmore cache
   cTdmore <- tdmore
@@ -245,8 +246,8 @@ estimateDelegate <- function(object, observed=NULL, regimen=NULL, covariates=NUL
   parIndexes <- allIndexes[! allIndexes %in% fixIndexes]
   par <- par[parIndexes]
   omega <- omega[parIndexes, parIndexes, drop=FALSE]
-  lower <- lower[parIndexes]
-  upper <- upper[parIndexes]
+  if(!is.null(lower)) lower <- lower[parIndexes]
+  if(!is.null(upper)) upper <- upper[parIndexes]
   fix <- list(indexes=fixIndexes, values=fix)
   updatedParNames <- parNames[parIndexes]
 
@@ -302,7 +303,7 @@ estimateDelegate <- function(object, observed=NULL, regimen=NULL, covariates=NUL
     for(i in setdiff(names(arg$par), colnames(parmat))) {
       parmat[,i] <- arg$par[i]
     }
-    parmat <- parmat[, names(arg$par)] #ensure same order
+    parmat <- parmat[, names(arg$par), drop=F] #ensure same order
     multiArg <- arg
     multiArg$parmat <- parmat
     multiArg$par <- NULL
@@ -314,6 +315,8 @@ estimateDelegate <- function(object, observed=NULL, regimen=NULL, covariates=NUL
   pointEstimate <- do.call(optimr::optimr, arg)
   res <- pointEstimate$par
   names(res) <- updatedParNames
+
+  if(anyNA(res)) stop("Method ", method, " resulted in NA coefficients... Not returning result.")
 
   # Observed fisher information matrix = -hessian(ll)
   if(se.fit) {
@@ -395,7 +398,7 @@ tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, r
     names(res) <- tdmore$parameters
   }
   if(is.null(varcov)) {
-    varcov <- diag(1, nrow=N, ncol=N)
+    varcov <- diag(.Machine$double.eps, nrow=N, ncol=N)
     dimnames(varcov) = list(tdmore$parameters, tdmore$parameters)
   }
 
@@ -819,10 +822,11 @@ model.frame.tdmorefit <- function(formula, data=NULL, se=FALSE, level=0.95, ...)
 #' @return the correct tdmore function
 getLikelihoodFun <- function(type) {
   type <- match.arg(type, c('ll', 'pop', 'pred'))
-  if(type == "ll") fun <- ll
-  else if (type == "pop") fun <- pop_ll
-  else if (type == "pred") fun <- pred_ll
-  else stop("Unknown log-likelihood function")
+  switch(type,
+         ll=ll,
+         pop=pop_ll,
+         pred=pred_ll
+  )
 }
 
 #' Check if the given argument is of class `tdmorefit`
@@ -858,4 +862,8 @@ expandOmega <- function(tdmore, occasions) {
   dimnames(result) <- list(myNames, myNames)
 
   result
+}
+
+residuals.tdmorefit <- function(object, weighted=FALSE, ...) {
+  residuals(object$tdmore, model.frame(object), predict(object), weighted=weighted, ...)
 }

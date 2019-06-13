@@ -152,6 +152,7 @@ predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covar
 #'
 #' @importFrom stats dnorm
 residuals.tdmore <- function(object, observed, predicted, weighted=FALSE, ...) {
+  tdmore <- object
   result <- c()
   for (err in tdmore$res_var) {
     var <- err$var
@@ -211,7 +212,7 @@ model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, ...) {
       if (!(var %in% oNames)) next
       obs <- data[, var, drop=TRUE]
       sd <- err$sigma(obs)
-      q <- stats::rnorm(1, 0, sd)
+      q <- stats::rnorm(1)
       data[, var] <- obs + sd*q
     }
     return(data)
@@ -286,22 +287,6 @@ print.summary.tdmore <- function(x, ...) {
   print(errorDf, row.names = FALSE)
 }
 
-
-#' Get the population typical value parameters. This is a numeric vector of 0's, with the appropriate names.
-#'
-#' @param object tdmore object
-#' @param ... ignored
-#'
-#' @return a numeric vector of 0 values, with the appropriate names
-#'
-#' @export
-coef.tdmore <- function(object, ...) {
-  pars <- object$parameters
-  x <- rep(0, length(pars))
-  names(x) <- pars
-  x
-}
-
 #' Check input parameters and return a standardised named num array with the parameter names and values.
 #' If the initial values are not provided, zeroes will be used (=population values for ETAS)
 #' Provided parameters will overwrite initial values.
@@ -317,33 +302,34 @@ processParameters <- function(parameters, tdmore, regimen, defaultValues=NULL) {
   parameterNames <- getParameterNames(tdmore, regimen)
 
   if(is.null(defaultValues)) {
-    par <- rep(0, length(parameterNames)) # start with population
-    names(par) <- parameterNames
-  } else {
-    ## Use the defaultValues, but possibly extend with 0 for e.g. IOV
-    assert_that(identical(
-      names(defaultValues),
-      parameterNames[seq_along(defaultValues)] ))
-    Nmissing <- length(parameterNames) - length(defaultValues)
-    par <- c(defaultValues, rep(0, Nmissing))
-    names(par) <- parameterNames
+    defaultValues <- rep(0, length(parameterNames)) # start with population
+    names(defaultValues) <- parameterNames
   }
 
-  if(!is.null(parameters)) {
-    assert_that(is.numeric(parameters))
-    assert_that(all(names(parameters) %in% names(par)),
-                msg=paste("Unknown parameters", paste(names(parameters[!(names(parameters) %in% names(par))]), collapse = ",")))
-    par[names(parameters)] <- parameters # set par from argument
-    iov <- tdmore$iov
-    if(!is.null(iov)) {
-      for(iov_term in iov) {
-        updatedPar <- parameters[which(names(parameters)==iov_term)]
-        if(length(updatedPar) > 0) {
-          parIndexes <- which(names(par)==iov_term)
-          # assert_that(length(updatedPar) == length(parIndexes),
-          #             msg=paste0("Incorrect number of initial values for IOV term ", iov_term, " (", length(parIndexes), " needed)"))
-          par[parIndexes[1:length(updatedPar)]] <- updatedPar
-        }
+  ## Use the defaultValues, but possibly extend with 0 for e.g. IOV
+  assert_that(identical(
+    names(defaultValues),
+    parameterNames[seq_along(defaultValues)] ))
+  Nmissing <- length(parameterNames) - length(defaultValues)
+  par <- c(defaultValues, rep(0, Nmissing))
+  names(par) <- parameterNames
+
+  if(is.null(parameters)) return(par)
+  if(length(parameters)==1 && is.na(parameters)) return(par)
+
+  assert_that(is.numeric(parameters))
+  assert_that(all(names(parameters) %in% names(par)),
+              msg=paste("Unknown parameters", paste(names(parameters[!(names(parameters) %in% names(par))]), collapse = ",")))
+  par[names(parameters)] <- parameters # set par from argument
+  iov <- tdmore$iov
+  if(!is.null(iov)) {
+    for(iov_term in iov) {
+      updatedPar <- parameters[which(names(parameters)==iov_term)]
+      if(length(updatedPar) > 0) {
+        parIndexes <- which(names(par)==iov_term)
+        # assert_that(length(updatedPar) == length(parIndexes),
+        #             msg=paste0("Incorrect number of initial values for IOV term ", iov_term, " (", length(parIndexes), " needed)"))
+        par[parIndexes[1:length(updatedPar)]] <- updatedPar
       }
     }
   }

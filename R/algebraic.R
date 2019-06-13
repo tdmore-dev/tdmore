@@ -20,6 +20,7 @@
 #' @importFrom utils tail
 #' @export
 algebraic <- function(fun, output="CONC") {
+  if(length(output) != 1) stop("You should only specify a single 'output'")
   argNames <- names(formals(fun))
 
   tArg <- argNames[1]
@@ -35,9 +36,6 @@ algebraic <- function(fun, output="CONC") {
       if(!all(colnames(regimen) %in% c(regimenNames, "OCC")) || !all(regimenNames %in% colnames(regimen)))
         stop("Algebraic function requires regimen names `", paste(regimenNames, collapse=", "), "',
              but regimen provided the following columns: `", paste(colnames(regimen), collapse=", "), "'")
-      if(!all(names(parameters) %in% pNames) || !all(pNames %in% c(names(parameters), names(covariates))))
-        stop("Algebraic function requires parameters `", paste(pNames, collapse=", "), "',
-             but was provided the following: `", paste(names(parameters), collapse=", "), "'")
 
       if(anyNA(regimen)) stop("The provided regimen contains NA. Cannot calculate algebraic model...")
 
@@ -66,10 +64,9 @@ algebraic <- function(fun, output="CONC") {
           occasion <- regimenRow[['OCC']]
           for(iov_term in iov) {
             iovValueIndexes <- which(names(iovParameters)==iov_term)
-            iovValue <- iovParameters[[iovValueIndexes[occasion]]]
-            if(is.null(iovValue)) {
+            if(occasion > length(iovValueIndexes))
               stop(paste("Missing IOV values for", iov_term))
-            }
+            iovValue <- iovParameters[[iovValueIndexes[occasion]]]
             parameters[iov_term] <- iovValue
           }
         }
@@ -179,8 +176,10 @@ model_predict.algebraic <- function(model, times, regimen=NULL, parameters=numer
   } else {
     stop("Covariates should be either a numeric vector or data frame")
   }
-  assertthat::assert_that(all(pNames %in% model$parameters))
-  assertthat::assert_that(all(model$parameters %in% pNames))
+
+  if(!setequal(pNames, model$parameters))
+    stop("Algebraic function requires parameters `", paste(model$parameters, collapse=", "), "',
+             but was provided the following: `", paste(pNames, collapse=", "), "'")
 
   # Predict concentrations
   model$predictFunction(times, regimen, parameters, covariates, iov)

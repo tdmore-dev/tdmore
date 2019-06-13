@@ -21,6 +21,11 @@ regimen <- data.frame(
 # Estimate and plot IPRED
 observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
 ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
+test_that("IRES and IWRES make sense", {
+  expect_known_value(residuals(ipred, weighted=FALSE), "1-param-IRES")
+  expect_known_value(residuals(ipred, weighted=TRUE), "1-param-IWRES")
+})
+
 plot(ipred)
 test_that("Prediction results makes sense", {
   expect_doppelganger_RxODE("ipred_1cmt", plot(ipred))

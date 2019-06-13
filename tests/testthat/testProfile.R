@@ -33,6 +33,14 @@ plot(profile)
 plot(profile, raster = F)
 plot(profile, contour = F)
 plot(profile, parameters="ECL") #TODO: Gives the wrong figure
+
+# You can specify NA to estimate the parameter at every step
+profile <- profile(ipred, maxpts = 20, fix=c(ECL=NA))
+plot(profile)
+# Or simply provide a FIX parameter so it is the same throughout
+profile <- profile(ipred, maxpts = 20, fix=coef(ipred)['ECL'])
+plot(profile)
+
 #TODO: specifying 3 parameters does not give an error message
 #Instead, the first 2 are drawn while silently ignoring the 3rd parameter
 plot(profile, parameters=c("ECL", "EV1") )
