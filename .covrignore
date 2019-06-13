@@ -1,0 +1,3 @@
+# Unfortunately, shinytest tests are not covered by covr
+# See https://github.com/r-lib/covr/issues/277
+R/shinyProfile.R
