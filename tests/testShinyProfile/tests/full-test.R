@@ -25,7 +25,7 @@ expect_equal(app$getValue("var"), list("ECL"))
 expect_equal(app$getValue("EV1"), unname(coef(env$ipred)["EV1"]) )
 
 ## When I remove the fix for EV1
-expectUpdate(timeout=10000, output="plot", EV1="")
+expectUpdate(timeout=30*1000, output="plot", EV1="")
 ## Then EV1 is optimized for every profiled ECL value
 app$snapshot(filename="EV1-estimated-ECL-profiled")
 
@@ -35,18 +35,18 @@ expectUpdate(timeout=30*1000, output="plot", var=c("ECL", "EV1")) #long wait!
 app$snapshot(filename="EV1,ECL-profiled")
 
 ## When I profile only EV1
-expectUpdate(timeout=10000, output="plot", var="EV1")
+expectUpdate(timeout=10*1000, output="plot", var="EV1")
 ## Then EV1 is profiled in 1D, and ECL is fixed
 app$snapshot(filename="EV1-profiled-ECL-fixed")
 expect_equal(app$getValue("ECL"), unname(coef(env$ipred)["ECL"]))
 
 ## When I remove the fix for ECL
-expectUpdate(timeout=10000, output="plot", ECL="")
+expectUpdate(timeout=30*1000, output="plot", ECL="")
 ## Then ECL is optimized for every profiled EV1 value
 app$snapshot(filename="EV1-profile-ECL-estimated")
 
 ## When ECL is fixed to -5
-expectUpdate(timeout=10000, output="plot", ECL=-5)
+expectUpdate(timeout=10*1000, output="plot", ECL=-5)
 ## Then EV1 is profiled for that ECL value
 app$snapshot(filename="EV1-profile-ECL-fixedDiffValue")
 

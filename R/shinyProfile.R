@@ -74,7 +74,7 @@ shinyProfileApp <- function(fitted, fix=NULL, ...) {
       res
     })
 
-    output$plot <- shiny::renderPlot({
+    myProfile <- shiny::reactive({
       plotVars <- input$var
       limits=list(
         c(prefs$zoom$xmin, prefs$zoom$xmax),
@@ -85,13 +85,22 @@ shinyProfileApp <- function(fitted, fix=NULL, ...) {
 
       progress <- shiny::Progress$new()
       on.exit(progress$close())
-      myProfile <- stats::profile(fitted=tdmorefit,
-                           fix=selected()[! names %in% plotVars],
-                           limits=limits,
-                           .progress=to_plyr(progress),
-                           ...)
-      plot(myProfile)
+      profile <- stats::profile(fitted=tdmorefit,
+                                  fix=selected()[! names %in% plotVars],
+                                  limits=limits,
+                                  .progress=to_plyr(progress),
+                                  ...)
+      profile
     })
+    shiny::exportTestValues( profile = {
+      foo <- myProfile()
+      foo$tdmorefit <- NULL
+      foo$profile <- signif( foo$profile, digits=6 ) #round, so tests always get same result
+      foo
+      })
+    output$plot <- shiny::snapshotExclude(shiny::renderPlot({
+      plot(myProfile())
+    }))
 
     shiny::observeEvent(input$dblclick, {
       ## zoom in, or zoom out
