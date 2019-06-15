@@ -51,45 +51,53 @@
 #' NlmixrUI object describing the Tacrolimus model from Størset, Elisabet, et al.
 #'
 #' @format an nlmixrUI model
-'tacrolimus_storset'
-
-
-#' Default example model
-#' TODO: Better documentation required
-#' @format an nlmixrUI model
-'default_model'
+#' @export
+tacrolimus_storset <- NULL
 
 #' Default example model
 #' TODO: Better documentation required
 #' @format an nlmixrUI model
-'fluticasone_model'
+#' @export
+default_model <- NULL
 
 #' Default example model
 #' TODO: Better documentation required
 #' @format an nlmixrUI model
-'meropenem_1param_model'
+#' @export
+fluticasone_model <- NULL
 
 #' Default example model
 #' TODO: Better documentation required
 #' @format an nlmixrUI model
-'meropenem_model'
+#' @export
+meropenem_1param_model <- NULL
 
 #' Default example model
 #' TODO: Better documentation required
 #' @format an nlmixrUI model
-'meropenem_model_wt'
+#' @export
+meropenem_model <- NULL
 
 #' Default example model
 #' TODO: Better documentation required
 #' @format an nlmixrUI model
-'meropenem_omega0_model'
+#' @export
+meropenem_model_wt <- NULL
 
 #' Default example model
 #' TODO: Better documentation required
 #' @format an nlmixrUI model
-'sunitinib_pkpd_model'
+#' @export
+meropenem_omega0_model <- NULL
 
 #' Default example model
 #' TODO: Better documentation required
 #' @format an nlmixrUI model
-'two_error_models'
+#' @export
+sunitinib_pkpd_model <- NULL
+
+#' Default example model
+#' TODO: Better documentation required
+#' @format an nlmixrUI model
+#' @export
+two_error_models <- NULL
