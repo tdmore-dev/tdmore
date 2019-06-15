@@ -53,8 +53,10 @@ test_that("We can use multiple methods and pick the best one", {
   fit <- estimate(m1, observed=observed, regimen=regimen, covariates=c(WT=70))
   # Try with an invalid method...
   expect_error({
-    estimate(fit, method="SANN")
-  })
+    expect_warning({
+      estimate(fit, method="SANN")
+    }, regexp="optimr: optim\\(\\) with bounds ONLY uses L-BFGS-B")
+  }, )
 
   cg <- estimate(fit, lower=NULL, upper=NULL, method="CG")
   expect_equal( coef(cg), coef(fit), tolerance=1e-6 )
