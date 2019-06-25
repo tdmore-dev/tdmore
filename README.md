@@ -10,12 +10,10 @@
 
 # tdmore <img src="logo.png" align="right" alt="" width="120" />
 
-`tdmore` provides an easy interface to execute post-hoc bayesian
-estimation of individual profiles, and to find the best dose to put the
-patient on target.
+`tdmore` provides an easy interface for the execution of post-hoc bayesian
+estimation of parameter vectors of virtual individuals given a population model and for the in silico assessment of dose individualization strategies.
 
-The package is intended to make it easy to define your own models, and
-easily create a dose decision support tool for physicians.
+The package is intended to make it easy to define your own models and use them for in silico assessments and educational purposes.
 
 # License
 
@@ -31,7 +29,9 @@ Please see <https://choosealicense.com/no-permission/> for more
 information.
 
 Through publishing, we allow others to use this R package and to perform
-dose adaptation. Installing this package using
+in silico evaluation of individualized dosing strategies. Under no circumstances
+should the software in its current state be used for patient care.
+Installing this package using
 `devtools::install_github` is allowed.
 
 The official copyright holder of this work is the KU Leuven university.
@@ -39,7 +39,7 @@ The official copyright holder of this work is the KU Leuven university.
 # Limitations
 
 This software is a research project, and cannot be considered as a
-medical device. It is not a substitute for clinical reasoning.
+medical device.
 
 # Contribution guidelines
 Currently, the license does not allow to modify the code any further. Once this changes, refer to the below for contribution.

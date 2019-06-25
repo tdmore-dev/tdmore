@@ -4,9 +4,9 @@ editor_options:
 chunk_output_type: console
 ---
 # Preface {-}
-`TDMore` provides an easy interface to execute post-hoc bayesian estimation of individual profiles, and to find the best dose to put the patient on target.
+`TDMore` is a software solely for training and in silico research purposes that provides an easy interface to execute post-hoc bayesian estimation of parameter vectors of virtual individuals. For training purposes, a dose finding tool to achieve a certain concentration target in a virtual individual is included.
 
-The package is intended to make it easy to define your own models, and easily create a dose decision support tool for physicians.
+The package is intended to make it easy to define your own models, and easily create an educational tool to support dosing decisions decision by physicians via in silico training.
 
 ## About this book {-}
 This book provides guidance on the use of `TDMore` and serves as a basic reference manual.

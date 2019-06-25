@@ -4,7 +4,8 @@ editor_options:
   chunk_output_type: console
 ---
 # Validation  {#validation}
-This section details the development process for TDMore. It also shows the validation (in a Computer Systems Validation GxP-sense) that was performed. Finally, it hints at the requirements should you incorporate the TDMore engine in your dose adaptation software.
+This section details the development process for TDMore. It also shows the validation (in a Computer Systems Validation GxP-sense,
+explicitly not in a clinical sense) that was performed. Finally, it hints at the requirements should you decide to develop this tool for in silico simulation and teaching into a in your dose adaptation software incorporating the TDMore engine on your own account (we explicitly discourage the use of the software provided for clinical purposes and deny any responsibility for it).
 
 ## Development process
 TDMore is developed as an R package. The development team tries their best to adhere to international standards such as `IEC 62304:2006`. This ensures that the software is developed to the highest quality standards.
@@ -18,11 +19,7 @@ A continuous integration infrastructure is in place. GIT commit hooks ensure tha
 ## Standards: IEC 62304:2006
 *It should be stressed that TDMore is not a medical device.* The software is for research and educational use only, and should never be directly used in patient care.
 
-However, we acknowledge that others may include TDMore as a component in a medical device. For integrators or medical device builders, we therefore detail how TDMore *may* adhere to the `IEC 62304:2006 Medical device software - Software life cycle processes` standard. We use '*may*', because this assessment was not carried out by a competent third party.
-
-TDMore is considered a software item of a larger system, as defined in ISO/IEC 90003:2004, definition 3.14. Whether the larger system is Class A, B or C depends on the use case. As an example, a system to aid physicians in quantifying drug non-adherence could be considered Class A (No injury or damage to health is possible), while a closed-loop automated insulin pump will be considered Class C (Death or serious injury is possible). By itself, TDMore cannot directly cause any injury or damage to health.
-
-The IEC 62304:2006 standard defines several requirements, some general and some specific to the development process. General requirements include Quality Management (ISO 13485), Risk Management (ISO 14971) and Software Safety Classification. These are not considered by the TDMore development team, as they are only applicable to the larger device.
+The IEC 62304:2006 standard defines several requirements, some general and some specific to the development process. General requirements include Quality Management (ISO 13485), Risk Management (ISO 14971) and Software Safety Classification. These are not considered by the TDMore development team, as TDMore is not a medical device and clinical use is effectively discouraged by the developers.
 
 For Software Development, the standard requires *Software development planning* (Class A, B and C). This is implemented in TDMore in the Github repository issue tracker. Issues describe features or bugs that are developed. They are grouped together in milestones. The software plan is regularly updated, as can be shown by the github activity tracker.
 
@@ -34,16 +31,16 @@ The standard requires *Software requirements analysis*. For TDMore, this consist
 
 *Software architectural design* is largely ad-hoc. There is no specific design role or stage. This should not be deemed problematic, as TDMore is not a large software with plenty of layers.
 
-*Software detailed design* can be considered an essential part of feature implementation. TDMore is not end-user facing, but is built as an R package, to be consumed by developers. APIs are carefully designed.
+*Software detailed design* can be considered an essential part of feature implementation. TDMore is not clinical user facing, but is built as an R package, to be consumed by developers and/or pharmacometricians for in silico work. APIs are carefully designed.
 
 *Unit implementation and verification* is done using RStudio and the GIT version control system. Peer review is used to verify all code committed. Automated tests are used to verify features function as expected.
 
-For now, no formal releases have been executed. It is our intent to release to CRAN regularly.
+For now, no formal releases have been executed. It is our intent to release to CRAN regularly, starting september 2019.
 
 ## Validation requirements for use in patient care
 *It should be stressed that TDMore is not a medical device.* The software is for research and educational use only, and should never be directly used in patient care.
 
-Should you wish to build a dose adaptation tool, and include the TDMore mathematical engine, please note that any dose adaptation tool is classified as a Medical Device under [MEDDEV July 2016](https://ec.europa.eu/docsroom/documents/17921/attachments/1/translations/en/renditions/native).
+Should you wish to build a dose adaptation tool, and include the TDMore mathematical engine, please note that we deny any responsibility and that any dose adaptation tool is classified as a Medical Device under [MEDDEV July 2016](https://ec.europa.eu/docsroom/documents/17921/attachments/1/translations/en/renditions/native).
 
 > [page 20] Drug (e.g.: Chemotherapy) planning systems are intended to calculate the drug dosage to be administered to a specific patient and therefore are qualified as medical devices.
 
@@ -69,7 +66,7 @@ Although TDMore has been carefully validated to ensure valid results (within the
 
 > Does use of your SaMD’s accurate, reliable, and precise output data achieve your intended purpose in your target population in the context of clinical care?
 
-This requirement alludes to a prospective clinical trial. In this trial, you should show use of the software results in superior outcomes as compared to current practices. We strongly recommend you perform an `in silico` study first, at least to determine sample size.
+This requirement alludes to a prospective clinical trial. In this trial, you should show use of the software results in superior outcomes as compared to current practices. We strongly recommend to perform an `in silico` study first, at least to determine sample size.
 
 ### Other requirements
 More streneous requirements may also be needed, including but not limited to:
@@ -81,4 +78,4 @@ More streneous requirements may also be needed, including but not limited to:
 - Protection against hackers or DoS attacks
 - Maintenance and support
 
-We are not lawyers, and are certainly not specialists in Medical Device regulations. Contact a lawyer, a Medical Device expert, or your local regulatory authority.
+In essence, if you want to build software geared towards clinical application based on TDMore, we deny any responsibility and suggest you to contact a lawyer, a Medical Device expert, and/or your local regulatory authority.

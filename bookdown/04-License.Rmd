@@ -1,6 +1,6 @@
 # License {#license}
 
-This project does not include a license. This means that all work is under exclusive copyright. Nobody else can use, copy, distribute or modify this work.
+This project does not include a license. This means that all work is under exclusive copyright. Nobody can use, copy, distribute or modify this work.
 
 The Github terms of service apply. We allow others to view and fork the repository. Please note that this is not sufficient to then copy, distribute or modify this work further.
 
