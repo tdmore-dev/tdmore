@@ -16,9 +16,9 @@ output:
 # tdmore <img src="logo.svg" align="right" alt="" width="120" />
  
 ## Overview
-`tdmore` provides an easy interface to execute post-hoc bayesian estimation of individual profiles, and to find the best dose to put the patient on target.
+`tdmore` provides an easy interface for the execution of post-hoc bayesian estimation of parameter vectors of virtual individuals given a population model and for the in silico assessment of dose individualization strategies.
 
-The package is intended to make it easy to define your own models, and easily create a dose decision support tool for physicians.
+The package is intended to make it easy to define your own models and use them for in silico assessments and educational purposes.
 
 ## How to install
 TDMore depends on package `RxODE`, which requires a working C and fortran compiler to work. Installation procedure can be found [here](https://github.com/nlmixrdevelopment/RxODE). Once `RxODE` installed, simply execute the following command in the R console:
