@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 6 TDMore API | TDMore: an R package for therapeutic drug monitoring</title>
+  <title>Chapter 6 TDMore API | TDMore: an R package for in silico assessment of dose individualization strategies</title>
   <meta name="description" content="TDMore reference manual" />
   <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 6 TDMore API | TDMore: an R package for therapeutic drug monitoring" />
+  <meta property="og:title" content="Chapter 6 TDMore API | TDMore: an R package for in silico assessment of dose individualization strategies" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 6 TDMore API | TDMore: an R package for therapeutic drug monitoring" />
+  <meta name="twitter:title" content="Chapter 6 TDMore API | TDMore: an R package for in silico assessment of dose individualization strategies" />
   
   <meta name="twitter:description" content="TDMore reference manual" />
   
@@ -186,7 +186,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><code>TDMore</code>: an R package for therapeutic drug monitoring</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><code>TDMore</code>: an R package for in silico assessment of dose individualization strategies</a>
           </h1>
         </div>
 
@@ -252,7 +252,7 @@ m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <s
 ## Residual error model:
 ##  name         type additiveError proportionalError
 ##  CONC proportional             0               0.1</code></pre>
-<p>This summary tells you the model contains 3 parameters: EKA, EV and ECL. These parameters will be estimated by TDMore to fit individual observations as best as possible. The model does not have any covariates (to see how covariates are included, go to section X). Output variable is the <code>CONC</code> variable. The residual error model on this variable is proportional. Please note that the underlying structural model is <code>RxODE</code>, not <code>nlxmir</code>. This is because the <code>nlxmir</code> model is automatically converted into a RxODE model. The <code>RxODE</code> package is used extensively in TDMore to simulate data.</p>
+<p>This summary tells you the model contains 3 parameters: EKA, EV and ECL. These parameters will be estimated by TDMore to fit virtual individual observations as best as possible. The model does not have any covariates (to see how covariates are included, go to section X). Output variable is the <code>CONC</code> variable. The residual error model on this variable is proportional. Please note that the underlying structural model is <code>RxODE</code>, not <code>nlxmir</code>. This is because the <code>nlxmir</code> model is automatically converted into a RxODE model. The <code>RxODE</code> package is used extensively in TDMore to simulate data.</p>
 </div>
 <div id="build-a-tdmore-object-from-an-rxode-model" class="section level3">
 <h3><span class="header-section-number">6.1.2</span> Build a TDMore object from an RxODE model</h3>
@@ -475,8 +475,8 @@ data4<span class="op">$</span>model &lt;-<span class="st"> </span><span class="k
 <li>par (optional): starting parameters for the MLE minimization. This must be a numeric vector. Parameters must be ordered.</li>
 </ul>
 <p>The <code>estimate()</code> function contains a few more arguments allowing to configure the optimisation method. These are detailled in the documentation (try <code>?tdmore::estimate</code> in the R console).</p>
-<p><strong>Example</strong>: Find individual parameters knowing some observed data.</p>
-<p>Assume we have collected 2 concentrations at 24h and 48h. In the following code, we’d like to estimate the parameters for this individual.</p>
+<p><strong>Example</strong>: Find parameters of a virtual individual based on virtual observations.</p>
+<p>Assume we have collected 2 concentrations at 24h and 48h. In the following code, we’d like to estimate the parameters for this virtual individual.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">observed &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">24</span>,<span class="dv">48</span>), <span class="dt">CONC=</span><span class="kw">c</span>(<span class="fl">0.4</span>,<span class="fl">0.5</span>))
 tdmorefit &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span class="dt">object =</span> m1, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen1)</code></pre></div>
 <pre><code>## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
@@ -529,7 +529,7 @@ tdmorefit &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span c
 <p>The above summary shows us how well the observed data was estimated. In particular, the objective function value (OFV) is shown. The higher this value, the better the fit. <code>pop</code> value is the population likelihood (it can be seen as how well the parameters fit the population PK model), <code>pred</code> value is the prediction likelihood (it can be seen as how well the parameters fit the observed data, knowing the population PK model). The summary also shows the coefficient values, as well as their 95% confidence interval (CI) and standard error (se). Because all ETA’s in this model have a standard deviation of <code>sqrt(0.3)=0.547</code>, we can deduce that the observed data only helped estimate ECL (standard errors of EKA and EV are too close from their original standard deviation).</p>
 <p>Predictions on the <code>tdmorefit</code> object can be done as follows (see also <a href="tdmore-api.html#predicttdmorefit">6.3.2</a>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmorefit, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se.fit=</span><span class="ot">TRUE</span>)</code></pre></div>
-<p>Let’s now see what the individual prediction <code>tdmorefit</code> looks like on a plot.</p>
+<p>Let’s now see what the virtual individual prediction <code>tdmorefit</code> looks like on a plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME))  <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Individual&quot;</span>, <span class="dt">y=</span>CONC.median)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">&quot;Individual&quot;</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">&quot;tomato1&quot;</span>, <span class="dt">alpha=</span><span class="fl">0.10</span>) <span class="op">+</span>
@@ -542,7 +542,7 @@ tdmorefit &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span c
 <h2><span class="header-section-number">6.5</span> Dose recommendation</h2>
 <div id="calling-the-finddose-method" class="section level3">
 <h3><span class="header-section-number">6.5.1</span> Calling the findDose method</h3>
-<p>The <code>findDose()</code> method allows you to find the right dose to use according to one or multiple targets. Its main arguments are:</p>
+<p>The <code>findDose()</code> method allows you to find the optimal virtual dose to use according to one or multiple targets. Its main arguments are:</p>
 <ul>
 <li>tdmorefit: the <code>tdmorefit</code> object</li>
 <li>regimen: the regimen (see section <a href="tdmore-api.html#regimen">6.2</a>)</li>
@@ -552,7 +552,7 @@ tdmorefit &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span c
 </ul>
 <p>The <code>findDose()</code> function contains a few more arguments, namely, to build a confidence interval on the returned dose using Monte-Carlo simulation. These are detailled in the documentation (try <code>?tdmore::findDose</code> in the R console).</p>
 <p><strong>Example 1</strong>: Reach the population trough concentration (first solution)</p>
-<p>Assume your indidual needs to reach a concentration of 0.75 after 1 week. A first solution is to find a daily dose that will achieve this. This can be done as follows:</p>
+<p>Assume your virtual individual needs to reach a concentration of 0.75 after 1 week. A first solution is to find a daily dose that will achieve this. This can be done as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="ot">NA</span>, <span class="dt">II=</span><span class="dv">24</span>, <span class="dt">ADDL=</span><span class="dv">7</span>)
 
 recommendation1 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
@@ -569,7 +569,7 @@ recommendation1 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 ## $regimen
 ##   TIME      AMT II ADDL
 ## 1    0 224.7086 24    7</code></pre>
-<p>A daily dose of 225mg is recommended for this specific subject.</p>
+<p>A daily dose of 225mg is recommended for this specific virtual subject.</p>
 <p><strong>Example 2</strong>: Reach the population trough concentration (second solution)</p>
 <p>Another possible way is to adapt the last dose only. This can be specified using the following regimen:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dt">AMT=</span><span class="kw">c</span>(<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="ot">NA</span>))
@@ -594,7 +594,7 @@ recommendation2 &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 ## 5   96 150.0000
 ## 6  120 150.0000
 ## 7  144 241.3273</code></pre>
-<p>A last dose of 241mg is recommended for this specific subject.</p>
+<p>A last dose of 241mg is recommended for this specific virtual subject.</p>
 <p><strong>Example 3</strong>: Ask for a confidence interval around the dose</p>
 <p>Use argument <code>se.fit</code> as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dt">AMT=</span><span class="kw">c</span>(<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="ot">NA</span>))
@@ -639,7 +639,7 @@ data2<span class="op">$</span>solution &lt;-<span class="st"> </span><span class
 <span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="fl">0.75</span>, <span class="dt">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x=</span><span class="dv">168</span>, <span class="dt">y=</span><span class="fl">0.75</span>), <span class="dt">shape=</span><span class="dv">1</span>, <span class="dt">size=</span><span class="dv">3</span>)</code></pre></div>
 <p><img src="05-API_files/figure-html/plot_tdmorefit_recommendation-1.png" width="768" style="display: block; margin: auto;" /></p>
-<p>Both solutions achieve the target at the right time.</p>
+<p>Both solutions achieve the target in the virtual subject at the right time.</p>
 </div>
 </div>
 <div id="plotting-the-intermediate-steps" class="section level2">

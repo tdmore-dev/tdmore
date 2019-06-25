@@ -81,7 +81,7 @@ summary(m1)
 ##  CONC proportional             0               0.1
 ```
 
-This summary tells you the model contains 3 parameters: EKA, EV and ECL. These parameters will be estimated by TDMore to fit individual observations as best as possible. The model does not have any covariates (to see how covariates are included, go to section X). Output variable is the `CONC` variable. The residual error model on this variable is proportional. Please note that the underlying structural model is `RxODE`, not `nlxmir`. This is because the `nlxmir` model is automatically converted into a RxODE model. The `RxODE` package is used extensively in TDMore to simulate data. 
+This summary tells you the model contains 3 parameters: EKA, EV and ECL. These parameters will be estimated by TDMore to fit virtual individual observations as best as possible. The model does not have any covariates (to see how covariates are included, go to section X). Output variable is the `CONC` variable. The residual error model on this variable is proportional. Please note that the underlying structural model is `RxODE`, not `nlxmir`. This is because the `nlxmir` model is automatically converted into a RxODE model. The `RxODE` package is used extensively in TDMore to simulate data. 
 
 ### Build a TDMore object from an RxODE model
 
@@ -395,9 +395,9 @@ Parameter estimation is done using the `estimate()` function. This function retu
 
 The `estimate()` function contains a few more arguments allowing to configure the optimisation method. These are detailled in the documentation (try `?tdmore::estimate` in the R console).
 
-**Example**: Find individual parameters knowing some observed data.
+**Example**: Find parameters of a virtual individual based on virtual observations.
 
-Assume we have collected 2 concentrations at 24h and 48h. In the following code, we'd like to estimate the parameters for this individual.
+Assume we have collected 2 concentrations at 24h and 48h. In the following code, we'd like to estimate the parameters for this virtual  individual.
 
 
 ```r
@@ -472,7 +472,7 @@ Predictions on the `tdmorefit` object can be done as follows (see also \@ref(pre
 data <- predict(tdmorefit, newdata=data.frame(TIME=times, CONC=NA), se.fit=TRUE)
 ```
 
-Let's now see what the individual prediction `tdmorefit` looks like on a plot.
+Let's now see what the virtual individual prediction `tdmorefit` looks like on a plot.
 
 
 ```r
@@ -490,7 +490,7 @@ ggplot(data, aes(x=TIME))  +
 
 ### Calling the findDose method
 
-The `findDose()` method allows you to find the right dose to use according to one or multiple targets. Its main arguments are:
+The `findDose()` method allows you to find the optimal virtual dose to use according to one or multiple targets. Its main arguments are:
 
 - tdmorefit: the `tdmorefit` object
 - regimen: the regimen (see section \@ref(regimen))
@@ -502,7 +502,7 @@ The `findDose()` function contains a few more arguments, namely, to build a conf
 
 **Example 1**: Reach the population trough concentration (first solution)
 
-Assume your indidual needs to reach a concentration of 0.75 after 1 week. A first solution is to find a daily dose that will achieve this. This can be done as follows: 
+Assume your virtual individual needs to reach a concentration of 0.75 after 1 week. A first solution is to find a daily dose that will achieve this. This can be done as follows: 
 
 
 ```r
@@ -527,7 +527,7 @@ summary(recommendation1)
 ## 1    0 224.7086 24    7
 ```
 
-A daily dose of 225mg is recommended for this specific subject.
+A daily dose of 225mg is recommended for this specific virtual subject.
 
 **Example 2**: Reach the population trough concentration (second solution)
 
@@ -562,7 +562,7 @@ summary(recommendation2)
 ## 7  144 241.3273
 ```
 
-A last dose of 241mg is recommended for this specific subject.
+A last dose of 241mg is recommended for this specific virtual subject.
 
 **Example 3**: Ask for a confidence interval around the dose
 
@@ -625,7 +625,7 @@ ggplot(rbind(data1, data2), aes(x=TIME, group=solution))  +
 
 <img src="05-API_files/figure-html/plot_tdmorefit_recommendation-1.png" width="768" style="display: block; margin: auto;" />
 
-Both solutions achieve the target at the right time.
+Both solutions achieve the target in the virtual subject at the right time.
 
 ## Plotting the intermediate steps
 

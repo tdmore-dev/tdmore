@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 7 Validation | TDMore: an R package for therapeutic drug monitoring</title>
+  <title>Chapter 7 Validation | TDMore: an R package for in silico assessment of dose individualization strategies</title>
   <meta name="description" content="TDMore reference manual" />
   <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 7 Validation | TDMore: an R package for therapeutic drug monitoring" />
+  <meta property="og:title" content="Chapter 7 Validation | TDMore: an R package for in silico assessment of dose individualization strategies" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 7 Validation | TDMore: an R package for therapeutic drug monitoring" />
+  <meta name="twitter:title" content="Chapter 7 Validation | TDMore: an R package for in silico assessment of dose individualization strategies" />
   
   <meta name="twitter:description" content="TDMore reference manual" />
   
@@ -186,7 +186,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><code>TDMore</code>: an R package for therapeutic drug monitoring</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><code>TDMore</code>: an R package for in silico assessment of dose individualization strategies</a>
           </h1>
         </div>
 
@@ -196,7 +196,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="validation" class="section level1">
 <h1><span class="header-section-number">Chapter 7</span> Validation</h1>
-<p>This section details the development process for TDMore. It also shows the validation (in a Computer Systems Validation GxP-sense) that was performed. Finally, it hints at the requirements should you incorporate the TDMore engine in your dose adaptation software.</p>
+<p>This section details the development process for TDMore. It also shows the validation (in a Computer Systems Validation GxP-sense, explicitly not in a clinical sense) that was performed. Finally, it hints at the requirements should you decide to develop this tool for in silico simulation and teaching into a in your dose adaptation software incorporating the TDMore engine on your own account (we explicitly discourage the use of the software provided for clinical purposes and deny any responsibility for it).</p>
 <div id="development-process" class="section level2">
 <h2><span class="header-section-number">7.1</span> Development process</h2>
 <p>TDMore is developed as an R package. The development team tries their best to adhere to international standards such as <code>IEC 62304:2006</code>. This ensures that the software is developed to the highest quality standards.</p>
@@ -207,9 +207,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="standards-iec-623042006" class="section level2">
 <h2><span class="header-section-number">7.2</span> Standards: IEC 62304:2006</h2>
 <p><em>It should be stressed that TDMore is not a medical device.</em> The software is for research and educational use only, and should never be directly used in patient care.</p>
-<p>However, we acknowledge that others may include TDMore as a component in a medical device. For integrators or medical device builders, we therefore detail how TDMore <em>may</em> adhere to the <code>IEC 62304:2006 Medical device software - Software life cycle processes</code> standard. We use ‘<em>may</em>’, because this assessment was not carried out by a competent third party.</p>
-<p>TDMore is considered a software item of a larger system, as defined in ISO/IEC 90003:2004, definition 3.14. Whether the larger system is Class A, B or C depends on the use case. As an example, a system to aid physicians in quantifying drug non-adherence could be considered Class A (No injury or damage to health is possible), while a closed-loop automated insulin pump will be considered Class C (Death or serious injury is possible). By itself, TDMore cannot directly cause any injury or damage to health.</p>
-<p>The IEC 62304:2006 standard defines several requirements, some general and some specific to the development process. General requirements include Quality Management (ISO 13485), Risk Management (ISO 14971) and Software Safety Classification. These are not considered by the TDMore development team, as they are only applicable to the larger device.</p>
+<p>The IEC 62304:2006 standard defines several requirements, some general and some specific to the development process. General requirements include Quality Management (ISO 13485), Risk Management (ISO 14971) and Software Safety Classification. These are not considered by the TDMore development team, as TDMore is not a medical device and clinical use is effectively discouraged by the developers.</p>
 <p>For Software Development, the standard requires <em>Software development planning</em> (Class A, B and C). This is implemented in TDMore in the Github repository issue tracker. Issues describe features or bugs that are developed. They are grouped together in milestones. The software plan is regularly updated, as can be shown by the github activity tracker.</p>
 <div class="figure">
 <img src="static/milestone_1.png" title="Github issues for milestone Initial Development" alt="Screenshot of GitHub issues list" />
@@ -218,14 +216,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>However, this software is developed as open-source software. In that sense, it is not subject to clear planning. Instead, milestones are delivered as they come, and all standard software development processes apply to these releases.</p>
 <p>The standard requires <em>Software requirements analysis</em>. For TDMore, this consists of a thorough description of the intended feature in the ticket. In some cases, example code is added.</p>
 <p><em>Software architectural design</em> is largely ad-hoc. There is no specific design role or stage. This should not be deemed problematic, as TDMore is not a large software with plenty of layers.</p>
-<p><em>Software detailed design</em> can be considered an essential part of feature implementation. TDMore is not end-user facing, but is built as an R package, to be consumed by developers. APIs are carefully designed.</p>
+<p><em>Software detailed design</em> can be considered an essential part of feature implementation. TDMore is not clinical user facing, but is built as an R package, to be consumed by developers and/or pharmacometricians for in silico work. APIs are carefully designed.</p>
 <p><em>Unit implementation and verification</em> is done using RStudio and the GIT version control system. Peer review is used to verify all code committed. Automated tests are used to verify features function as expected.</p>
-<p>For now, no formal releases have been executed. It is our intent to release to CRAN regularly.</p>
+<p>For now, no formal releases have been executed. It is our intent to release to CRAN regularly, starting september 2019.</p>
 </div>
 <div id="validation-requirements-for-use-in-patient-care" class="section level2">
 <h2><span class="header-section-number">7.3</span> Validation requirements for use in patient care</h2>
 <p><em>It should be stressed that TDMore is not a medical device.</em> The software is for research and educational use only, and should never be directly used in patient care.</p>
-<p>Should you wish to build a dose adaptation tool, and include the TDMore mathematical engine, please note that any dose adaptation tool is classified as a Medical Device under <a href="https://ec.europa.eu/docsroom/documents/17921/attachments/1/translations/en/renditions/native">MEDDEV July 2016</a>.</p>
+<p>Should you wish to build a dose adaptation tool, and include the TDMore mathematical engine, please note that we deny any responsibility and that any dose adaptation tool is classified as a Medical Device under <a href="https://ec.europa.eu/docsroom/documents/17921/attachments/1/translations/en/renditions/native">MEDDEV July 2016</a>.</p>
 <blockquote>
 <p>[page 20] Drug (e.g.: Chemotherapy) planning systems are intended to calculate the drug dosage to be administered to a specific patient and therefore are qualified as medical devices.</p>
 </blockquote>
@@ -254,7 +252,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <blockquote>
 <p>Does use of your SaMD’s accurate, reliable, and precise output data achieve your intended purpose in your target population in the context of clinical care?</p>
 </blockquote>
-<p>This requirement alludes to a prospective clinical trial. In this trial, you should show use of the software results in superior outcomes as compared to current practices. We strongly recommend you perform an <code>in silico</code> study first, at least to determine sample size.</p>
+<p>This requirement alludes to a prospective clinical trial. In this trial, you should show use of the software results in superior outcomes as compared to current practices. We strongly recommend to perform an <code>in silico</code> study first, at least to determine sample size.</p>
 </div>
 <div id="other-requirements" class="section level3">
 <h3><span class="header-section-number">7.3.4</span> Other requirements</h3>
@@ -267,7 +265,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Protection against hackers or DoS attacks</li>
 <li>Maintenance and support</li>
 </ul>
-<p>We are not lawyers, and are certainly not specialists in Medical Device regulations. Contact a lawyer, a Medical Device expert, or your local regulatory authority.</p>
+<p>In essence, if you want to build software geared towards clinical application based on TDMore, we deny any responsibility and suggest you to contact a lawyer, a Medical Device expert, and/or your local regulatory authority.</p>
 
 </div>
 </div>

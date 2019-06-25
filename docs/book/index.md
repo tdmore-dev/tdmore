@@ -1,5 +1,5 @@
 --- 
-title: "`TDMore`: an R package for therapeutic drug monitoring"
+title: "`TDMore`: an R package for in silico assessment of dose individualization strategies"
 author: "Ruben Faelens, Nicolas Luyckx, Quentin Leirens, Thomas Bouillon"
 bibliography: [book.bib, packages.bib]
 description: "TDMore reference manual"
@@ -15,7 +15,7 @@ urlcolor: blue
 
 We'd like to welcome you on the `TDMore` bookdown site.
 
-Get started as quick as possible with [tdmore](https://github.com/tdmore-dev/tdmore), an R package that provides a global framework for making Therapeutic Drug Monitoring easy. You'll get information on the package itself, its installation, interesting use cases and much more.
+Get started as quick as possible with [tdmore](https://github.com/tdmore-dev/tdmore), an R package that provides a global framework for the in silico assessment of dose individualization strategies. You'll get information on the package itself, its installation, interesting use cases and much more.
 
 <img src="figures/tdmore_logo.JPG" width="80%" style="display: block; margin: auto;" />
 
