@@ -44,7 +44,7 @@ the other parameters are taken from the tdmorefit object}
 
 \item{xlim}{Optionally, restrict the range of the function to this range.}
 
-\item{n}{number of points to interpolate along}
+\item{n}{Number of points to interpolate along}
 
 \item{se.fit}{TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower}
 

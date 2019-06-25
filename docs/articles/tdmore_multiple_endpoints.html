@@ -110,60 +110,56 @@
 <a href="#writing-and-testing-the-pk-model" class="anchor"></a>Writing and testing the PK model</h3>
 <p>In this vignette, we will learn how TDMore can deal with multiple endpoints. The PK/PD models chosen to illustrate this section are based on the following paper: “Population PK/PD modeling of Sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor.”.</p>
 <p>Let’s start writing the Sunitinib PK model.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nlmixr)</a></code></pre></div>
-<pre><code>## Registered S3 methods overwritten by 'ggplot2':
-##   method         from 
-##   [.quosures     rlang
-##   c.quosures     rlang
-##   print.quosures rlang</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){</a>
-<a class="sourceLine" id="cb3-2" title="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/ini">ini</a></span>({</a>
-<a class="sourceLine" id="cb3-3" title="3">    TVCL &lt;-<span class="st"> </span><span class="fl">34.1</span></a>
-<a class="sourceLine" id="cb3-4" title="4">    TVVc &lt;-<span class="st"> </span><span class="dv">2700</span></a>
-<a class="sourceLine" id="cb3-5" title="5">    TVKa &lt;-<span class="st"> </span><span class="fl">0.126</span></a>
-<a class="sourceLine" id="cb3-6" title="6">    TVVp &lt;-<span class="st"> </span><span class="dv">774</span></a>
-<a class="sourceLine" id="cb3-7" title="7">    TVQ &lt;-<span class="st"> </span><span class="fl">0.688</span></a>
-<a class="sourceLine" id="cb3-8" title="8"></a>
-<a class="sourceLine" id="cb3-9" title="9">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.060516</span> <span class="co"># 24.6%</span></a>
-<a class="sourceLine" id="cb3-10" title="10">    EVc <span class="op">~</span><span class="st"> </span><span class="fl">0.052900</span> <span class="co"># 23.0%</span></a>
-<a class="sourceLine" id="cb3-11" title="11">    EKa <span class="op">~</span><span class="st"> </span><span class="fl">2.755600</span> <span class="co"># 166%</span></a>
-<a class="sourceLine" id="cb3-12" title="12"></a>
-<a class="sourceLine" id="cb3-13" title="13">    EPS_Prop &lt;-<span class="st"> </span><span class="fl">0.417</span></a>
-<a class="sourceLine" id="cb3-14" title="14">  })</a>
-<a class="sourceLine" id="cb3-15" title="15">  <span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/model">model</a></span>({</a>
-<a class="sourceLine" id="cb3-16" title="16">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
-<a class="sourceLine" id="cb3-17" title="17">    Vc &lt;-<span class="st"> </span>TVVc <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EVc)</a>
-<a class="sourceLine" id="cb3-18" title="18">    Vp &lt;-<span class="st"> </span>TVVp</a>
-<a class="sourceLine" id="cb3-19" title="19">    Q &lt;-<span class="st"> </span>TVQ</a>
-<a class="sourceLine" id="cb3-20" title="20">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>Vc</a>
-<a class="sourceLine" id="cb3-21" title="21">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>Vp</a>
-<a class="sourceLine" id="cb3-22" title="22">    Ke &lt;-<span class="st"> </span>CL<span class="op">/</span>Vc</a>
-<a class="sourceLine" id="cb3-23" title="23">    Ka &lt;-<span class="st"> </span>TVKa<span class="op">*</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)</a>
-<a class="sourceLine" id="cb3-24" title="24"></a>
-<a class="sourceLine" id="cb3-25" title="25">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(depot) =<span class="st"> </span><span class="op">-</span>Ka<span class="op">*</span>depot</a>
-<a class="sourceLine" id="cb3-26" title="26">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span>Ka<span class="op">*</span>depot <span class="op">-</span><span class="st"> </span>Ke<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21<span class="op">*</span>periph</a>
-<a class="sourceLine" id="cb3-27" title="27">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21<span class="op">*</span>periph</a>
-<a class="sourceLine" id="cb3-28" title="28"></a>
-<a class="sourceLine" id="cb3-29" title="29">    CONC =<span class="st"> </span>center<span class="op">/</span>Vc</a>
-<a class="sourceLine" id="cb3-30" title="30">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_Prop)</a>
-<a class="sourceLine" id="cb3-31" title="31">  })</a>
-<a class="sourceLine" id="cb3-32" title="32">}</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nlmixr)
+
+modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
+  <span class="kw">ini</span>({
+    TVCL &lt;-<span class="st"> </span><span class="fl">34.1</span>
+    TVVc &lt;-<span class="st"> </span><span class="dv">2700</span>
+    TVKa &lt;-<span class="st"> </span><span class="fl">0.126</span>
+    TVVp &lt;-<span class="st"> </span><span class="dv">774</span>
+    TVQ &lt;-<span class="st"> </span><span class="fl">0.688</span>
+
+    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.060516</span> <span class="co"># 24.6%</span>
+    EVc <span class="op">~</span><span class="st"> </span><span class="fl">0.052900</span> <span class="co"># 23.0%</span>
+    EKa <span class="op">~</span><span class="st"> </span><span class="fl">2.755600</span> <span class="co"># 166%</span>
+
+    EPS_Prop &lt;-<span class="st"> </span><span class="fl">0.417</span>
+  })
+  <span class="kw">model</span>({
+    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)
+    Vc &lt;-<span class="st"> </span>TVVc <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EVc)
+    Vp &lt;-<span class="st"> </span>TVVp
+    Q &lt;-<span class="st"> </span>TVQ
+    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>Vc
+    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>Vp
+    Ke &lt;-<span class="st"> </span>CL<span class="op">/</span>Vc
+    Ka &lt;-<span class="st"> </span>TVKa<span class="op">*</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)
+
+    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(depot) =<span class="st"> </span><span class="op">-</span>Ka<span class="op">*</span>depot
+    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span>Ka<span class="op">*</span>depot <span class="op">-</span><span class="st"> </span>Ke<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21<span class="op">*</span>periph
+    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21<span class="op">*</span>periph
+
+    CONC =<span class="st"> </span>center<span class="op">/</span>Vc
+    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_Prop)
+  })
+}</code></pre></div>
 <p>The TDMore object is instantiated as follows:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)</a>
-<a class="sourceLine" id="cb4-2" title="2"></a>
-<a class="sourceLine" id="cb4-3" title="3">nlmixrModel &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(modelCode)</a>
-<a class="sourceLine" id="cb4-4" title="4">m1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrModel)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)
+
+nlmixrModel &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)
+m1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrModel)</code></pre></div>
 <p>A basic regimen can be created to test that the model is running properly. The standard regimen of Sunitinib is 50mg daily for 4 weeks.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(</a>
-<a class="sourceLine" id="cb5-2" title="2">  <span class="dt">TIME=</span><span class="dv">0</span>,     <span class="co"># First dose time: t=0h</span></a>
-<a class="sourceLine" id="cb5-3" title="3">  <span class="dt">AMT=</span><span class="dv">50</span>,     <span class="co"># Dose amount: 50 mg</span></a>
-<a class="sourceLine" id="cb5-4" title="4">  <span class="dt">II=</span><span class="dv">24</span>,      <span class="co"># Dose interval: 24h</span></a>
-<a class="sourceLine" id="cb5-5" title="5">  <span class="dt">ADDL=</span><span class="dv">4</span><span class="op">*</span><span class="dv">7-1</span>  <span class="co"># Additional doses: 4 weeks</span></a>
-<a class="sourceLine" id="cb5-6" title="6">)</a>
-<a class="sourceLine" id="cb5-7" title="7"></a>
-<a class="sourceLine" id="cb5-8" title="8">times &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">6</span><span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>) <span class="co"># Observation times</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(
+  <span class="dt">TIME=</span><span class="dv">0</span>,     <span class="co"># First dose time: t=0h</span>
+  <span class="dt">AMT=</span><span class="dv">50</span>,     <span class="co"># Dose amount: 50 mg</span>
+  <span class="dt">II=</span><span class="dv">24</span>,      <span class="co"># Dose interval: 24h</span>
+  <span class="dt">ADDL=</span><span class="dv">4</span><span class="op">*</span><span class="dv">7</span><span class="op">-</span><span class="dv">1</span>  <span class="co"># Additional doses: 4 weeks</span>
+)
+
+times &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">6</span><span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>) <span class="co"># Observation times</span></code></pre></div>
 <p>This regimen can be plotted using the default TDMore plotting function. It shows the typical value of the population and the between-subject variability (95% confidence interval).</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(m1, regimen, <span class="dt">newdata=</span>times)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(m1, regimen, <span class="dt">newdata=</span>times)</code></pre></div>
 <p><img src="tdmore_multiple_endpoints_files/figure-html/sunitinib_pk_model-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
 <div id="adding-a-pd-model" class="section level3 unnumbered">
@@ -171,128 +167,128 @@
 <a href="#adding-a-pd-model" class="anchor"></a>Adding a PD model</h3>
 <p>Suppose we received a full blood workup: Sunitinib concentration, Alanine aminotransferase (ALT), Aspartate aminotransferase (AST), Absolute neutrophil count (ANC), Platelet count (PC) and Lymphocyte count (LC). We also measured the patient’s diastolic blood pressure (DBP).</p>
 <p>We can create a single model to predict all of these aspects. In the example below, we will focus on ALT and AST. Please note the mandatory ‘|’ nlmixr syntax used to describe the residual variability of different endpoints.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){</a>
-<a class="sourceLine" id="cb7-2" title="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/ini">ini</a></span>({</a>
-<a class="sourceLine" id="cb7-3" title="3">    <span class="co"># PK model sunitinib</span></a>
-<a class="sourceLine" id="cb7-4" title="4">    TVCL &lt;-<span class="st"> </span><span class="fl">34.1</span></a>
-<a class="sourceLine" id="cb7-5" title="5">    TVVc &lt;-<span class="st"> </span><span class="dv">2700</span></a>
-<a class="sourceLine" id="cb7-6" title="6">    TVKa &lt;-<span class="st"> </span><span class="fl">0.126</span></a>
-<a class="sourceLine" id="cb7-7" title="7">    TVVp &lt;-<span class="st"> </span><span class="dv">774</span></a>
-<a class="sourceLine" id="cb7-8" title="8">    TVQ &lt;-<span class="st"> </span><span class="fl">0.688</span></a>
-<a class="sourceLine" id="cb7-9" title="9"></a>
-<a class="sourceLine" id="cb7-10" title="10">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.060516</span> <span class="co"># 24.6%</span></a>
-<a class="sourceLine" id="cb7-11" title="11">    EVc <span class="op">~</span><span class="st"> </span><span class="fl">0.052900</span> <span class="co"># 23.0%</span></a>
-<a class="sourceLine" id="cb7-12" title="12">    EKa <span class="op">~</span><span class="st"> </span><span class="fl">2.755600</span> <span class="co"># 166%</span></a>
-<a class="sourceLine" id="cb7-13" title="13"></a>
-<a class="sourceLine" id="cb7-14" title="14">    EPS_Prop &lt;-<span class="st"> </span><span class="fl">0.417</span> <span class="co"># Proportional error 1 (related to CONC)</span></a>
-<a class="sourceLine" id="cb7-15" title="15"></a>
-<a class="sourceLine" id="cb7-16" title="16">    <span class="co"># PD model ALT</span></a>
-<a class="sourceLine" id="cb7-17" title="17">    TVBASE_AST &lt;-<span class="st"> </span><span class="fl">21.5</span></a>
-<a class="sourceLine" id="cb7-18" title="18">    TVKout_AST &lt;-<span class="st"> </span><span class="fl">0.0142</span></a>
-<a class="sourceLine" id="cb7-19" title="19">    TVKpd_AST &lt;-<span class="st"> </span><span class="fl">0.00572</span></a>
-<a class="sourceLine" id="cb7-20" title="20">    </a>
-<a class="sourceLine" id="cb7-21" title="21">    EPS_Prop_AST =<span class="st"> </span><span class="fl">0.257</span> <span class="co">#25.7%</span></a>
-<a class="sourceLine" id="cb7-22" title="22"></a>
-<a class="sourceLine" id="cb7-23" title="23">    <span class="co"># PD model AST</span></a>
-<a class="sourceLine" id="cb7-24" title="24">    TVBASE_ALT &lt;-<span class="st"> </span><span class="fl">21.2</span></a>
-<a class="sourceLine" id="cb7-25" title="25">    TVKout_ALT &lt;-<span class="st"> </span><span class="fl">0.00916</span></a>
-<a class="sourceLine" id="cb7-26" title="26">    TVKpd_ALT &lt;-<span class="st"> </span><span class="fl">0.00401</span></a>
-<a class="sourceLine" id="cb7-27" title="27">    </a>
-<a class="sourceLine" id="cb7-28" title="28">    EPS_Prop_ALT =<span class="st"> </span><span class="fl">0.373</span> <span class="co">#37.3%</span></a>
-<a class="sourceLine" id="cb7-29" title="29"></a>
-<a class="sourceLine" id="cb7-30" title="30">    <span class="co"># We assume 0.5 correlations in IIV, even though they are not reported in the original paper    </span></a>
-<a class="sourceLine" id="cb7-31" title="31">    EBASE_AST <span class="op">+</span><span class="st"> </span>EBASE_ALT <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.101124</span>,</a>
-<a class="sourceLine" id="cb7-32" title="32">                              <span class="fl">0.05028021</span>, <span class="fl">0.164025</span>)  <span class="co"># 31.8% #40.5%</span></a>
-<a class="sourceLine" id="cb7-33" title="33">    EKout_AST <span class="op">+</span><span class="st"> </span>EKout_ALT <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">1.440000</span>,</a>
-<a class="sourceLine" id="cb7-34" title="34">                  <span class="fl">0.1897367</span>, <span class="fl">1.638400</span>)<span class="co">#120%  #128%</span></a>
-<a class="sourceLine" id="cb7-35" title="35">    EKpd_AST <span class="op">+</span><span class="st"> </span>EKpd_ALT <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.114244</span>,</a>
-<a class="sourceLine" id="cb7-36" title="36">                  <span class="fl">0.05344249</span>, <span class="fl">0.324900</span>) <span class="co">#33.8% #57.0%</span></a>
-<a class="sourceLine" id="cb7-37" title="37">  })</a>
-<a class="sourceLine" id="cb7-38" title="38">  <span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/model">model</a></span>({</a>
-<a class="sourceLine" id="cb7-39" title="39">    <span class="co"># PK parameters</span></a>
-<a class="sourceLine" id="cb7-40" title="40">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
-<a class="sourceLine" id="cb7-41" title="41">    Vc &lt;-<span class="st"> </span>TVVc <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EVc)</a>
-<a class="sourceLine" id="cb7-42" title="42">    Vp &lt;-<span class="st"> </span>TVVp</a>
-<a class="sourceLine" id="cb7-43" title="43">    Q &lt;-<span class="st"> </span>TVQ</a>
-<a class="sourceLine" id="cb7-44" title="44">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>Vc</a>
-<a class="sourceLine" id="cb7-45" title="45">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>Vp</a>
-<a class="sourceLine" id="cb7-46" title="46">    Ke &lt;-<span class="st"> </span>CL<span class="op">/</span>Vc</a>
-<a class="sourceLine" id="cb7-47" title="47">    Ka &lt;-<span class="st"> </span>TVKa<span class="op">*</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)</a>
-<a class="sourceLine" id="cb7-48" title="48"></a>
-<a class="sourceLine" id="cb7-49" title="49">    <span class="co"># AST parameters    </span></a>
-<a class="sourceLine" id="cb7-50" title="50">    BASE_AST &lt;-<span class="st"> </span>TVBASE_AST <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EBASE_AST)</a>
-<a class="sourceLine" id="cb7-51" title="51">    Kout_AST &lt;-<span class="st"> </span>TVKout_AST <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKout_AST)</a>
-<a class="sourceLine" id="cb7-52" title="52">    Kpd_AST &lt;-<span class="st"> </span>TVKpd_AST <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKpd_AST) <span class="co">#mL/ng</span></a>
-<a class="sourceLine" id="cb7-53" title="53">    Kin_AST &lt;-<span class="st"> </span>Kout_AST <span class="op">*</span><span class="st"> </span>BASE_AST</a>
-<a class="sourceLine" id="cb7-54" title="54">    </a>
-<a class="sourceLine" id="cb7-55" title="55">    <span class="co"># ALT parameters</span></a>
-<a class="sourceLine" id="cb7-56" title="56">    BASE_ALT &lt;-<span class="st"> </span>TVBASE_ALT <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EBASE_ALT)</a>
-<a class="sourceLine" id="cb7-57" title="57">    Kout_ALT &lt;-<span class="st"> </span>TVKout_ALT <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKout_ALT)</a>
-<a class="sourceLine" id="cb7-58" title="58">    Kpd_ALT &lt;-<span class="st"> </span>TVKpd_ALT <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKpd_ALT) <span class="co">#mL/ng</span></a>
-<a class="sourceLine" id="cb7-59" title="59">    Kin_ALT &lt;-<span class="st"> </span>Kout_ALT <span class="op">*</span><span class="st"> </span>BASE_ALT</a>
-<a class="sourceLine" id="cb7-60" title="60"></a>
-<a class="sourceLine" id="cb7-61" title="61">    <span class="co"># PK model</span></a>
-<a class="sourceLine" id="cb7-62" title="62">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(depot) =<span class="st"> </span><span class="op">-</span>Ka<span class="op">*</span>depot</a>
-<a class="sourceLine" id="cb7-63" title="63">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span>Ka<span class="op">*</span>depot <span class="op">-</span><span class="st"> </span>Ke<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21<span class="op">*</span>periph</a>
-<a class="sourceLine" id="cb7-64" title="64">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21<span class="op">*</span>periph</a>
-<a class="sourceLine" id="cb7-65" title="65">    CONC =<span class="st"> </span>center<span class="op">/</span>Vc <span class="op">*</span><span class="st"> </span><span class="dv">1000</span> <span class="co">#ng/mL</span></a>
-<a class="sourceLine" id="cb7-66" title="66">        </a>
-<a class="sourceLine" id="cb7-67" title="67">    <span class="co"># AST model</span></a>
-<a class="sourceLine" id="cb7-68" title="68">    <span class="kw">AST</span>(<span class="dv">0</span>) =<span class="st"> </span>BASE_AST</a>
-<a class="sourceLine" id="cb7-69" title="69">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(AST) =<span class="st"> </span>Kin_AST <span class="op">-</span><span class="st"> </span>Kout_AST<span class="op">*</span>AST<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>Kpd_AST<span class="op">*</span>CONC)</a>
-<a class="sourceLine" id="cb7-70" title="70">    </a>
-<a class="sourceLine" id="cb7-71" title="71">    <span class="co"># ALT model</span></a>
-<a class="sourceLine" id="cb7-72" title="72">    <span class="kw">ALT</span>(<span class="dv">0</span>) =<span class="st"> </span>BASE_ALT</a>
-<a class="sourceLine" id="cb7-73" title="73">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(ALT) =<span class="st"> </span>Kin_ALT <span class="op">-</span><span class="st"> </span>Kout_ALT<span class="op">*</span>ALT<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>Kpd_ALT<span class="op">*</span>CONC)</a>
-<a class="sourceLine" id="cb7-74" title="74">    </a>
-<a class="sourceLine" id="cb7-75" title="75">    <span class="co"># Residual error models</span></a>
-<a class="sourceLine" id="cb7-76" title="76">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_Prop) <span class="op">|</span><span class="st"> </span>center <span class="co"># Define error model 1</span></a>
-<a class="sourceLine" id="cb7-77" title="77">    AST <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_Prop_AST) <span class="op">|</span><span class="st"> </span>AST <span class="co"># error model 2</span></a>
-<a class="sourceLine" id="cb7-78" title="78">    ALT <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_Prop_ALT) <span class="op">|</span><span class="st"> </span>ALT <span class="co"># error model 3</span></a>
-<a class="sourceLine" id="cb7-79" title="79">  })</a>
-<a class="sourceLine" id="cb7-80" title="80">}</a>
-<a class="sourceLine" id="cb7-81" title="81">nlmixrModel &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(modelCode)</a>
-<a class="sourceLine" id="cb7-82" title="82">m2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrModel, <span class="dt">maxsteps=</span><span class="fl">1E3</span><span class="op">*</span><span class="dv">500</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
+  <span class="kw">ini</span>({
+    <span class="co"># PK model sunitinib</span>
+    TVCL &lt;-<span class="st"> </span><span class="fl">34.1</span>
+    TVVc &lt;-<span class="st"> </span><span class="dv">2700</span>
+    TVKa &lt;-<span class="st"> </span><span class="fl">0.126</span>
+    TVVp &lt;-<span class="st"> </span><span class="dv">774</span>
+    TVQ &lt;-<span class="st"> </span><span class="fl">0.688</span>
+
+    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.060516</span> <span class="co"># 24.6%</span>
+    EVc <span class="op">~</span><span class="st"> </span><span class="fl">0.052900</span> <span class="co"># 23.0%</span>
+    EKa <span class="op">~</span><span class="st"> </span><span class="fl">2.755600</span> <span class="co"># 166%</span>
+
+    EPS_Prop &lt;-<span class="st"> </span><span class="fl">0.417</span> <span class="co"># Proportional error 1 (related to CONC)</span>
+
+    <span class="co"># PD model ALT</span>
+    TVBASE_AST &lt;-<span class="st"> </span><span class="fl">21.5</span>
+    TVKout_AST &lt;-<span class="st"> </span><span class="fl">0.0142</span>
+    TVKpd_AST &lt;-<span class="st"> </span><span class="fl">0.00572</span>
+    
+    EPS_Prop_AST =<span class="st"> </span><span class="fl">0.257</span> <span class="co">#25.7%</span>
+
+    <span class="co"># PD model AST</span>
+    TVBASE_ALT &lt;-<span class="st"> </span><span class="fl">21.2</span>
+    TVKout_ALT &lt;-<span class="st"> </span><span class="fl">0.00916</span>
+    TVKpd_ALT &lt;-<span class="st"> </span><span class="fl">0.00401</span>
+    
+    EPS_Prop_ALT =<span class="st"> </span><span class="fl">0.373</span> <span class="co">#37.3%</span>
+
+    <span class="co"># We assume 0.5 correlations in IIV, even though they are not reported in the original paper    </span>
+    EBASE_AST <span class="op">+</span><span class="st"> </span>EBASE_ALT <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.101124</span>,
+                              <span class="fl">0.05028021</span>, <span class="fl">0.164025</span>)  <span class="co"># 31.8% #40.5%</span>
+    EKout_AST <span class="op">+</span><span class="st"> </span>EKout_ALT <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">1.440000</span>,
+                  <span class="fl">0.1897367</span>, <span class="fl">1.638400</span>)<span class="co">#120%  #128%</span>
+    EKpd_AST <span class="op">+</span><span class="st"> </span>EKpd_ALT <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.114244</span>,
+                  <span class="fl">0.05344249</span>, <span class="fl">0.324900</span>) <span class="co">#33.8% #57.0%</span>
+  })
+  <span class="kw">model</span>({
+    <span class="co"># PK parameters</span>
+    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)
+    Vc &lt;-<span class="st"> </span>TVVc <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EVc)
+    Vp &lt;-<span class="st"> </span>TVVp
+    Q &lt;-<span class="st"> </span>TVQ
+    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>Vc
+    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>Vp
+    Ke &lt;-<span class="st"> </span>CL<span class="op">/</span>Vc
+    Ka &lt;-<span class="st"> </span>TVKa<span class="op">*</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)
+
+    <span class="co"># AST parameters    </span>
+    BASE_AST &lt;-<span class="st"> </span>TVBASE_AST <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EBASE_AST)
+    Kout_AST &lt;-<span class="st"> </span>TVKout_AST <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKout_AST)
+    Kpd_AST &lt;-<span class="st"> </span>TVKpd_AST <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKpd_AST) <span class="co">#mL/ng</span>
+    Kin_AST &lt;-<span class="st"> </span>Kout_AST <span class="op">*</span><span class="st"> </span>BASE_AST
+    
+    <span class="co"># ALT parameters</span>
+    BASE_ALT &lt;-<span class="st"> </span>TVBASE_ALT <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EBASE_ALT)
+    Kout_ALT &lt;-<span class="st"> </span>TVKout_ALT <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKout_ALT)
+    Kpd_ALT &lt;-<span class="st"> </span>TVKpd_ALT <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKpd_ALT) <span class="co">#mL/ng</span>
+    Kin_ALT &lt;-<span class="st"> </span>Kout_ALT <span class="op">*</span><span class="st"> </span>BASE_ALT
+
+    <span class="co"># PK model</span>
+    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(depot) =<span class="st"> </span><span class="op">-</span>Ka<span class="op">*</span>depot
+    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span>Ka<span class="op">*</span>depot <span class="op">-</span><span class="st"> </span>Ke<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21<span class="op">*</span>periph
+    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21<span class="op">*</span>periph
+    CONC =<span class="st"> </span>center<span class="op">/</span>Vc <span class="op">*</span><span class="st"> </span><span class="dv">1000</span> <span class="co">#ng/mL</span>
+        
+    <span class="co"># AST model</span>
+    <span class="kw">AST</span>(<span class="dv">0</span>) =<span class="st"> </span>BASE_AST
+    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(AST) =<span class="st"> </span>Kin_AST <span class="op">-</span><span class="st"> </span>Kout_AST<span class="op">*</span>AST<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>Kpd_AST<span class="op">*</span>CONC)
+    
+    <span class="co"># ALT model</span>
+    <span class="kw">ALT</span>(<span class="dv">0</span>) =<span class="st"> </span>BASE_ALT
+    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(ALT) =<span class="st"> </span>Kin_ALT <span class="op">-</span><span class="st"> </span>Kout_ALT<span class="op">*</span>ALT<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>Kpd_ALT<span class="op">*</span>CONC)
+    
+    <span class="co"># Residual error models</span>
+    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_Prop) <span class="op">|</span><span class="st"> </span>center <span class="co"># Define error model 1</span>
+    AST <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_Prop_AST) <span class="op">|</span><span class="st"> </span>AST <span class="co"># error model 2</span>
+    ALT <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_Prop_ALT) <span class="op">|</span><span class="st"> </span>ALT <span class="co"># error model 3</span>
+  })
+}
+nlmixrModel &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)
+m2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrModel, <span class="dt">maxsteps=</span><span class="fl">1E3</span><span class="op">*</span><span class="dv">500</span>)</code></pre></div>
 <p>Let’s now have a look at the evolution of these safety signals over time. To have a good overview, we will observe ALT/AST for 4 weeks treatment. The default plot shows once again the typical value and the between-subject variability (95% CI).</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(</a>
-<a class="sourceLine" id="cb8-2" title="2">  <span class="dt">TIME=</span><span class="dv">0</span>,</a>
-<a class="sourceLine" id="cb8-3" title="3">  <span class="dt">AMT=</span><span class="dv">50</span>,</a>
-<a class="sourceLine" id="cb8-4" title="4">  <span class="dt">II=</span><span class="dv">24</span>,</a>
-<a class="sourceLine" id="cb8-5" title="5">  <span class="dt">ADDL=</span><span class="dv">4</span><span class="op">*</span><span class="dv">7</span></a>
-<a class="sourceLine" id="cb8-6" title="6">)</a>
-<a class="sourceLine" id="cb8-7" title="7">times &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">6</span><span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb8-8" title="8"></a>
-<a class="sourceLine" id="cb8-9" title="9"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(m2, regimen, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>))</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(
+  <span class="dt">TIME=</span><span class="dv">0</span>,
+  <span class="dt">AMT=</span><span class="dv">50</span>,
+  <span class="dt">II=</span><span class="dv">24</span>,
+  <span class="dt">ADDL=</span><span class="dv">4</span><span class="op">*</span><span class="dv">7</span>
+)
+times &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">6</span><span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">1</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(m2, regimen, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="tdmore_multiple_endpoints_files/figure-html/sunitinib_pd_model-1.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(m2, regimen, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">ALT=</span><span class="ot">NA</span>))</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(m2, regimen, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">ALT=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="tdmore_multiple_endpoints_files/figure-html/sunitinib_pd_model-2.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(m2, regimen, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">AST=</span><span class="ot">NA</span>))</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(m2, regimen, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">AST=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="tdmore_multiple_endpoints_files/figure-html/sunitinib_pd_model-3.png" width="768" style="display: block; margin: auto;"></p>
 </div>
 <div id="estimating-individual-parameters" class="section level3 unnumbered">
 <h3 class="hasAnchor">
 <a href="#estimating-individual-parameters" class="anchor"></a>Estimating individual parameters</h3>
 <p>We get the values for ALT/AST for a specific individual. These are quite high!</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">observed &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(</a>
-<a class="sourceLine" id="cb11-2" title="2">  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>)<span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>, </a>
-<a class="sourceLine" id="cb11-3" title="3">  <span class="dt">CONC=</span><span class="ot">NA</span>,</a>
-<a class="sourceLine" id="cb11-4" title="4">  <span class="dt">ALT=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">21</span>, <span class="dv">40</span>, <span class="dv">42</span>, <span class="dv">43</span>),</a>
-<a class="sourceLine" id="cb11-5" title="5">  <span class="dt">AST=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">21</span>, <span class="dv">45</span>, <span class="dv">47</span>, <span class="dv">49</span>))</a>
-<a class="sourceLine" id="cb11-6" title="6">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m2, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)</a>
-<a class="sourceLine" id="cb11-7" title="7"></a>
-<a class="sourceLine" id="cb11-8" title="8"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>))</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">observed &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(
+  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>)<span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>, 
+  <span class="dt">CONC=</span><span class="ot">NA</span>,
+  <span class="dt">ALT=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">21</span>, <span class="dv">40</span>, <span class="dv">42</span>, <span class="dv">43</span>),
+  <span class="dt">AST=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">21</span>, <span class="dv">45</span>, <span class="dv">47</span>, <span class="dv">49</span>))
+ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m2, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="tdmore_multiple_endpoints_files/figure-html/sunitinib_pd_ipred_sld-1.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">ALT=</span><span class="ot">NA</span>))</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">ALT=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="tdmore_multiple_endpoints_files/figure-html/sunitinib_pd_ipred_sld-2.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">AST=</span><span class="ot">NA</span>))</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span>times, <span class="dt">AST=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="tdmore_multiple_endpoints_files/figure-html/sunitinib_pd_ipred_sld-3.png" width="768" style="display: block; margin: auto;"></p>
 <p>Based on only ALT/AST values, we managed to define the PK inter-individual variability a little better. Indeed, these high ALT/AST values can be best explained through a combination of high sensitivity (EKpd), and a lower clearance (ECL) of the drug.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</code></pre></div>
 <pre><code>##         ECL         EVc         EKa   EBASE_AST   EBASE_ALT   EKout_AST 
 ## -0.13927141 -0.01279161  0.02257760  0.03233717  0.04497158  0.22456560 
 ##   EKout_ALT    EKpd_AST    EKpd_ALT 
 ##  0.22778905  0.24279322  0.37291944</code></pre>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">sqrt</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/diag">diag</a></span>(m2<span class="op">$</span>omega))</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">sqrt</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/diag">diag</a></span>(m2<span class="op">$</span>omega))</code></pre></div>
 <pre><code>##         ECL         EVc         EKa   EBASE_AST   EBASE_ALT   EKout_AST 
 ## -0.56614395 -0.05561569  0.01360096  0.10168920  0.11104095  0.18713800 
 ##   EKout_ALT    EKpd_AST    EKpd_ALT 
