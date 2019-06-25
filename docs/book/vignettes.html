@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 7 Vignettes | TDMore: an R package for therapeutic drug monitoring</title>
+  <title>Chapter 8 Vignettes | TDMore: an R package for therapeutic drug monitoring</title>
   <meta name="description" content="TDMore reference manual" />
   <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 7 Vignettes | TDMore: an R package for therapeutic drug monitoring" />
+  <meta property="og:title" content="Chapter 8 Vignettes | TDMore: an R package for therapeutic drug monitoring" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 7 Vignettes | TDMore: an R package for therapeutic drug monitoring" />
+  <meta name="twitter:title" content="Chapter 8 Vignettes | TDMore: an R package for therapeutic drug monitoring" />
   
   <meta name="twitter:description" content="TDMore reference manual" />
   
@@ -49,67 +49,41 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
-}
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {  }
-@media screen {
-a.sourceLine::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -133,61 +107,68 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="preface.html"><a href="preface.html#about-this-book"><i class="fa fa-check"></i>About this book</a></li>
 <li class="chapter" data-level="" data-path="preface.html"><a href="preface.html#acknowledgements"><i class="fa fa-check"></i>Acknowledgements</a></li>
 </ul></li>
-<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
-<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#prereq"><i class="fa fa-check"></i><b>1.1</b> Prerequisites</a></li>
+<li class="chapter" data-level="1" data-path="legal-notices.html"><a href="legal-notices.html"><i class="fa fa-check"></i><b>1</b> Legal Notices</a><ul>
+<li class="chapter" data-level="1.1" data-path="legal-notices.html"><a href="legal-notices.html#disclaimer"><i class="fa fa-check"></i><b>1.1</b> Disclaimer</a></li>
+<li class="chapter" data-level="1.2" data-path="legal-notices.html"><a href="legal-notices.html#content"><i class="fa fa-check"></i><b>1.2</b> Content</a></li>
+<li class="chapter" data-level="1.3" data-path="legal-notices.html"><a href="legal-notices.html#referrals-and-links"><i class="fa fa-check"></i><b>1.3</b> Referrals and links</a></li>
+<li class="chapter" data-level="1.4" data-path="legal-notices.html"><a href="legal-notices.html#copyright"><i class="fa fa-check"></i><b>1.4</b> Copyright</a></li>
+<li class="chapter" data-level="1.5" data-path="legal-notices.html"><a href="legal-notices.html#legal-validity-of-this-disclaimer"><i class="fa fa-check"></i><b>1.5</b> Legal validity of this disclaimer</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="install.html"><a href="install.html"><i class="fa fa-check"></i><b>2</b> Installation</a></li>
-<li class="chapter" data-level="3" data-path="installation-script.html"><a href="installation-script.html"><i class="fa fa-check"></i><b>3</b> Installation script</a></li>
-<li class="chapter" data-level="4" data-path="license.html"><a href="license.html"><i class="fa fa-check"></i><b>4</b> License</a></li>
-<li class="chapter" data-level="5" data-path="tdmore-api.html"><a href="tdmore-api.html"><i class="fa fa-check"></i><b>5</b> TDMore API</a><ul>
-<li class="chapter" data-level="5.1" data-path="tdmore-api.html"><a href="tdmore-api.html#model"><i class="fa fa-check"></i><b>5.1</b> Model definition</a><ul>
-<li class="chapter" data-level="5.1.1" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-a-nlxmir-model"><i class="fa fa-check"></i><b>5.1.1</b> Build a TDMore object from a nlxmir model</a></li>
-<li class="chapter" data-level="5.1.2" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-an-rxode-model"><i class="fa fa-check"></i><b>5.1.2</b> Build a TDMore object from an RxODE model</a></li>
-<li class="chapter" data-level="5.1.3" data-path="tdmore-api.html"><a href="tdmore-api.html#build-your-own-algebraic-model"><i class="fa fa-check"></i><b>5.1.3</b> Build your own algebraic model</a></li>
-<li class="chapter" data-level="5.1.4" data-path="tdmore-api.html"><a href="tdmore-api.html#add-model-covariates"><i class="fa fa-check"></i><b>5.1.4</b> Add model covariates</a></li>
+<li class="chapter" data-level="2" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>2</b> Introduction</a><ul>
+<li class="chapter" data-level="2.1" data-path="intro.html"><a href="intro.html#prereq"><i class="fa fa-check"></i><b>2.1</b> Prerequisites</a></li>
 </ul></li>
-<li class="chapter" data-level="5.2" data-path="tdmore-api.html"><a href="tdmore-api.html#regimen"><i class="fa fa-check"></i><b>5.2</b> Regimen definition</a></li>
-<li class="chapter" data-level="5.3" data-path="tdmore-api.html"><a href="tdmore-api.html#model-simulation"><i class="fa fa-check"></i><b>5.3</b> Model simulation</a><ul>
-<li class="chapter" data-level="5.3.1" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmore"><i class="fa fa-check"></i><b>5.3.1</b> Predict a tdmore object</a></li>
-<li class="chapter" data-level="5.3.2" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmorefit"><i class="fa fa-check"></i><b>5.3.2</b> Predict a tdmorefit object</a></li>
+<li class="chapter" data-level="3" data-path="install.html"><a href="install.html"><i class="fa fa-check"></i><b>3</b> Installation</a></li>
+<li class="chapter" data-level="4" data-path="installation-script.html"><a href="installation-script.html"><i class="fa fa-check"></i><b>4</b> Installation script</a></li>
+<li class="chapter" data-level="5" data-path="license.html"><a href="license.html"><i class="fa fa-check"></i><b>5</b> License</a></li>
+<li class="chapter" data-level="6" data-path="tdmore-api.html"><a href="tdmore-api.html"><i class="fa fa-check"></i><b>6</b> TDMore API</a><ul>
+<li class="chapter" data-level="6.1" data-path="tdmore-api.html"><a href="tdmore-api.html#model"><i class="fa fa-check"></i><b>6.1</b> Model definition</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-a-nlxmir-model"><i class="fa fa-check"></i><b>6.1.1</b> Build a TDMore object from a nlxmir model</a></li>
+<li class="chapter" data-level="6.1.2" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-an-rxode-model"><i class="fa fa-check"></i><b>6.1.2</b> Build a TDMore object from an RxODE model</a></li>
+<li class="chapter" data-level="6.1.3" data-path="tdmore-api.html"><a href="tdmore-api.html#build-your-own-algebraic-model"><i class="fa fa-check"></i><b>6.1.3</b> Build your own algebraic model</a></li>
+<li class="chapter" data-level="6.1.4" data-path="tdmore-api.html"><a href="tdmore-api.html#add-model-covariates"><i class="fa fa-check"></i><b>6.1.4</b> Add model covariates</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="tdmore-api.html"><a href="tdmore-api.html#estimation"><i class="fa fa-check"></i><b>5.4</b> Parameter estimation</a></li>
-<li class="chapter" data-level="5.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>5.5</b> Dose recommendation</a><ul>
-<li class="chapter" data-level="5.5.1" data-path="tdmore-api.html"><a href="tdmore-api.html#calling-the-finddose-method"><i class="fa fa-check"></i><b>5.5.1</b> Calling the findDose method</a></li>
-<li class="chapter" data-level="5.5.2" data-path="tdmore-api.html"><a href="tdmore-api.html#visualise-a-recommendation"><i class="fa fa-check"></i><b>5.5.2</b> Visualise a recommendation</a></li>
+<li class="chapter" data-level="6.2" data-path="tdmore-api.html"><a href="tdmore-api.html#regimen"><i class="fa fa-check"></i><b>6.2</b> Regimen definition</a></li>
+<li class="chapter" data-level="6.3" data-path="tdmore-api.html"><a href="tdmore-api.html#model-simulation"><i class="fa fa-check"></i><b>6.3</b> Model simulation</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmore"><i class="fa fa-check"></i><b>6.3.1</b> Predict a tdmore object</a></li>
+<li class="chapter" data-level="6.3.2" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmorefit"><i class="fa fa-check"></i><b>6.3.2</b> Predict a tdmorefit object</a></li>
 </ul></li>
-<li class="chapter" data-level="5.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>5.6</b> Plotting the intermediate steps</a><ul>
-<li class="chapter" data-level="5.6.1" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmore-object"><i class="fa fa-check"></i><b>5.6.1</b> Plotting a tdmore object</a></li>
-<li class="chapter" data-level="5.6.2" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object"><i class="fa fa-check"></i><b>5.6.2</b> Plotting a tdmorefit object</a></li>
-<li class="chapter" data-level="5.6.3" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object-with-an-adapted-regimen"><i class="fa fa-check"></i><b>5.6.3</b> Plotting a tdmorefit object with an adapted regimen</a></li>
-<li class="chapter" data-level="5.6.4" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmoreprofile-object"><i class="fa fa-check"></i><b>5.6.4</b> Plotting a tdmoreprofile object</a></li>
+<li class="chapter" data-level="6.4" data-path="tdmore-api.html"><a href="tdmore-api.html#estimation"><i class="fa fa-check"></i><b>6.4</b> Parameter estimation</a></li>
+<li class="chapter" data-level="6.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>6.5</b> Dose recommendation</a><ul>
+<li class="chapter" data-level="6.5.1" data-path="tdmore-api.html"><a href="tdmore-api.html#calling-the-finddose-method"><i class="fa fa-check"></i><b>6.5.1</b> Calling the findDose method</a></li>
+<li class="chapter" data-level="6.5.2" data-path="tdmore-api.html"><a href="tdmore-api.html#visualise-a-recommendation"><i class="fa fa-check"></i><b>6.5.2</b> Visualise a recommendation</a></li>
 </ul></li>
-<li class="chapter" data-level="5.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>5.7</b> Extending TDMore</a></li>
+<li class="chapter" data-level="6.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>6.6</b> Plotting the intermediate steps</a><ul>
+<li class="chapter" data-level="6.6.1" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmore-object"><i class="fa fa-check"></i><b>6.6.1</b> Plotting a tdmore object</a></li>
+<li class="chapter" data-level="6.6.2" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object"><i class="fa fa-check"></i><b>6.6.2</b> Plotting a tdmorefit object</a></li>
+<li class="chapter" data-level="6.6.3" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object-with-an-adapted-regimen"><i class="fa fa-check"></i><b>6.6.3</b> Plotting a tdmorefit object with an adapted regimen</a></li>
+<li class="chapter" data-level="6.6.4" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmoreprofile-object"><i class="fa fa-check"></i><b>6.6.4</b> Plotting a tdmoreprofile object</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="validation.html"><a href="validation.html"><i class="fa fa-check"></i><b>6</b> Validation</a><ul>
-<li class="chapter" data-level="6.1" data-path="validation.html"><a href="validation.html#development-process"><i class="fa fa-check"></i><b>6.1</b> Development process</a></li>
-<li class="chapter" data-level="6.2" data-path="validation.html"><a href="validation.html#standards-iec-623042006"><i class="fa fa-check"></i><b>6.2</b> Standards: IEC 62304:2006</a></li>
-<li class="chapter" data-level="6.3" data-path="validation.html"><a href="validation.html#validation-requirements-for-use-in-patient-care"><i class="fa fa-check"></i><b>6.3</b> Validation requirements for use in patient care</a><ul>
-<li class="chapter" data-level="6.3.1" data-path="validation.html"><a href="validation.html#valid-clinical-association"><i class="fa fa-check"></i><b>6.3.1</b> Valid Clinical Association</a></li>
-<li class="chapter" data-level="6.3.2" data-path="validation.html"><a href="validation.html#analytical-validation"><i class="fa fa-check"></i><b>6.3.2</b> Analytical Validation</a></li>
-<li class="chapter" data-level="6.3.3" data-path="validation.html"><a href="validation.html#clinical-validation"><i class="fa fa-check"></i><b>6.3.3</b> Clinical Validation</a></li>
-<li class="chapter" data-level="6.3.4" data-path="validation.html"><a href="validation.html#other-requirements"><i class="fa fa-check"></i><b>6.3.4</b> Other requirements</a></li>
+<li class="chapter" data-level="6.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>6.7</b> Extending TDMore</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="validation.html"><a href="validation.html"><i class="fa fa-check"></i><b>7</b> Validation</a><ul>
+<li class="chapter" data-level="7.1" data-path="validation.html"><a href="validation.html#development-process"><i class="fa fa-check"></i><b>7.1</b> Development process</a></li>
+<li class="chapter" data-level="7.2" data-path="validation.html"><a href="validation.html#standards-iec-623042006"><i class="fa fa-check"></i><b>7.2</b> Standards: IEC 62304:2006</a></li>
+<li class="chapter" data-level="7.3" data-path="validation.html"><a href="validation.html#validation-requirements-for-use-in-patient-care"><i class="fa fa-check"></i><b>7.3</b> Validation requirements for use in patient care</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="validation.html"><a href="validation.html#valid-clinical-association"><i class="fa fa-check"></i><b>7.3.1</b> Valid Clinical Association</a></li>
+<li class="chapter" data-level="7.3.2" data-path="validation.html"><a href="validation.html#analytical-validation"><i class="fa fa-check"></i><b>7.3.2</b> Analytical Validation</a></li>
+<li class="chapter" data-level="7.3.3" data-path="validation.html"><a href="validation.html#clinical-validation"><i class="fa fa-check"></i><b>7.3.3</b> Clinical Validation</a></li>
+<li class="chapter" data-level="7.3.4" data-path="validation.html"><a href="validation.html#other-requirements"><i class="fa fa-check"></i><b>7.3.4</b> Other requirements</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>7</b> Vignettes</a><ul>
-<li class="chapter" data-level="7.1" data-path="vignettes.html"><a href="vignettes.html#running-tdmore"><i class="fa fa-check"></i><b>7.1</b> Running TDMore</a><ul>
+<li class="chapter" data-level="8" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>8</b> Vignettes</a><ul>
+<li class="chapter" data-level="8.1" data-path="vignettes.html"><a href="vignettes.html#running-tdmore"><i class="fa fa-check"></i><b>8.1</b> Running TDMore</a><ul>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#whats-tdmore"><i class="fa fa-check"></i>What’s TDMore?</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#creating-your-model"><i class="fa fa-check"></i>Creating your model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#predicting-new-data"><i class="fa fa-check"></i>Predicting new data</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#finding-the-right-dose-to-give"><i class="fa fa-check"></i>Finding the right dose to give</a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="vignettes.html"><a href="vignettes.html#multiple-endpoints"><i class="fa fa-check"></i><b>7.2</b> Multiple endpoints</a><ul>
+<li class="chapter" data-level="8.2" data-path="vignettes.html"><a href="vignettes.html#multiple-endpoints"><i class="fa fa-check"></i><b>8.2</b> Multiple endpoints</a><ul>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#writing-and-testing-the-pk-model"><i class="fa fa-check"></i>Writing and testing the PK model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#adding-a-pd-model"><i class="fa fa-check"></i>Adding a PD model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters-1"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="7.3" data-path="vignettes.html"><a href="vignettes.html#example-detecting-non-adherence"><i class="fa fa-check"></i><b>7.3</b> Example: Detecting non-adherence</a><ul>
+<li class="chapter" data-level="8.3" data-path="vignettes.html"><a href="vignettes.html#example-detecting-non-adherence"><i class="fa fa-check"></i><b>8.3</b> Example: Detecting non-adherence</a><ul>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#about-this-example"><i class="fa fa-check"></i>About this example</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#the-model"><i class="fa fa-check"></i>The model</a></li>
 <li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#is-the-patient-taking-hisher-medication"><i class="fa fa-check"></i>Is the patient taking his/her medication?</a></li>
@@ -214,9 +195,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="vignettes" class="section level1">
-<h1><span class="header-section-number">Chapter 7</span> Vignettes</h1>
+<h1><span class="header-section-number">Chapter 8</span> Vignettes</h1>
 <div id="running-tdmore" class="section level2">
-<h2><span class="header-section-number">7.1</span> Running TDMore</h2>
+<h2><span class="header-section-number">8.1</span> Running TDMore</h2>
 <div id="whats-tdmore" class="section level3 unnumbered">
 <h3>What’s TDMore?</h3>
 <p>TDMore is an R package that attemps to provide a global framework for making Therapeutic Drug Monitoring software. It is designed not only for the pharmacometricians but also for the physicians.</p>
@@ -224,7 +205,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="creating-your-model" class="section level3 unnumbered">
 <h3>Creating your model</h3>
 <p>There are several ways telling TDMore what your model is. The easiest way is to provide the model in the form of a nxlmir model. The following example shows how a 2-compartment-PK model can be written. For the purpose of this demonstration, the ‘Meropenem’ PK model will be used. As Meropenem is given by injection into a vein, the absorption compartment is omitted.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlmixr)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlmixr)
 
 modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
   <span class="kw">ini</span>({
@@ -250,24 +231,24 @@ modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
     CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1
     CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="co"># Proportional error linked to the PK model</span>
   })
-}</code></pre>
+}</code></pre></div>
 <p>Once the model is created, a TDMore object can be instantiated as follows:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
 
 nlmixrUI &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)
-tdmore &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrUI)</code></pre>
+tdmore &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrUI)</code></pre></div>
 <p>The TDMore object is now ready for use.</p>
 </div>
 <div id="predicting-new-data" class="section level3 unnumbered">
 <h3>Predicting new data</h3>
 <p>TDMore can be used to run simulations, based on the model defined in the previous step. For doing so, the regimen first needs to be specified. In the case of Meropenem, an 30-min injection is given into the central compartment every 8 hour. This can be written as follows:</p>
-<pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>),            <span class="co"># Every 8 hour and for 1 day, an injection is given</span>
   <span class="dt">AMT=</span><span class="kw">c</span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>),     <span class="co"># 1g is administered</span>
   <span class="dt">RATE=</span><span class="kw">c</span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span>
-)</code></pre>
+)</code></pre></div>
 <p>Let’s now simulate the population PK model for 1 day. This can be done using the TDMore predict() function. A dataframe with all the times to predict (and respective NA concentration) is given to the ‘newdata’ argument. Field ‘se’ is set to true, it tells TDMore we are interested to simulate the model with residual variability.</p>
-<pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">predict</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">predict</span>(
   <span class="dt">object =</span> tdmore,
   <span class="dt">newdata =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dt">by =</span> <span class="fl">0.5</span>), <span class="dt">CONC =</span> <span class="ot">NA</span>),
   <span class="dt">regimen =</span> regimen,
@@ -279,51 +260,51 @@ tdmore &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrUI)</c
 <span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">&quot;Population&quot;</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">&quot;steelblue2&quot;</span>, <span class="dt">alpha=</span><span class="fl">0.15</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Population&quot;</span>), <span class="dt">data=</span>data) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw">c</span>(<span class="st">&quot;steelblue2&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_y_log10</span>()</code></pre>
+<span class="st">  </span><span class="kw">scale_y_log10</span>()</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/population_prediction-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>The plot above shows the median of the population (typical profile) and its 95% confidence interval. The range of the confidence interval can be changed using the argument ‘level’.</p>
 </div>
 <div id="estimating-individual-parameters" class="section level3 unnumbered">
 <h3>Estimating individual parameters</h3>
 <p>This section will show you how the individual parameters can be estimated, based on some observed data. Let’s first estimate the parameters of a typical individual. This is achieved by calling the estimate() function.</p>
-<pre class="sourceCode r"><code class="sourceCode r">pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">regimen =</span> regimen)
-<span class="kw">coef</span>(pred)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">regimen =</span> regimen)
+<span class="kw">coef</span>(pred)</code></pre></div>
 <pre><code>## ECL EV1 
 ##   0   0</code></pre>
 <p>Both eta’s ECL and EV1 have been estimated to 0. This is not surprising, as zero eta’s best describe the population average. We can also look at the uncertainty on these estimates.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vcov</span>(pred)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vcov</span>(pred)</code></pre></div>
 <pre><code>##              ECL          EV1
 ## ECL 1.940000e-01 1.090438e-13
 ## EV1 1.090438e-13 2.870000e-01</code></pre>
 <p>This uncertainty is equal to the population inter-individual variability (OMEGA matrix). Now, let’s assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):</p>
-<pre class="sourceCode r"><code class="sourceCode r">observed &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">9</span>, <span class="dv">15</span>), <span class="dt">CONC=</span><span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">2</span>))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">observed &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">9</span>, <span class="dv">15</span>), <span class="dt">CONC=</span><span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">2</span>))</code></pre></div>
 <p>We can ask TDMore to re-estimate the parameters for this specific individual:</p>
-<pre class="sourceCode r"><code class="sourceCode r">ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)
-<span class="kw">coef</span>(ipred)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)
+<span class="kw">coef</span>(ipred)</code></pre></div>
 <pre><code>##        ECL        EV1 
 ##  0.2597598 -0.1320256</code></pre>
 <p>Eta’s obtained by calling ‘coef’ on pred maximise altogether the likelihood for this specific subject. The variance-covariance matrix shows the uncertainty of the individual estimates, and their correlation.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vcov</span>(ipred)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vcov</span>(ipred)</code></pre></div>
 <pre><code>##            ECL        EV1
 ## ECL 0.03154125 0.04680262
 ## EV1 0.04680262 0.12759879</code></pre>
 <p>Predictions for the population (pred) and this specific subject (ipred) can be compared using the following snippet:</p>
-<pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">predict</span>(ipred, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se=</span><span class="ot">TRUE</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">predict</span>(ipred, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se=</span><span class="ot">TRUE</span>)
 <span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME))  <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Individual&quot;</span>, <span class="dt">y=</span>CONC.median)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">&quot;Individual&quot;</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">&quot;tomato1&quot;</span>, <span class="dt">alpha=</span><span class="fl">0.10</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Population&quot;</span>, <span class="dt">y=</span>CONC), <span class="dt">data=</span><span class="kw">predict</span>(pred, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>))) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y=</span>CONC), <span class="dt">data=</span>observed) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw">c</span>(<span class="st">&quot;tomato1&quot;</span>, <span class="st">&quot;steelblue2&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_y_log10</span>()</code></pre>
+<span class="st">  </span><span class="kw">scale_y_log10</span>()</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/pred_ipred_predictions-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Ipred and pred are shown respectively in red and blue. A 95% confidence interval has been added around the ipred prediction. Note that the default TDMore plotting function can also be used to obtain the exact same plot in a single line of code:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">seq</span>(<span class="fl">0.1</span>, <span class="dv">24</span>, <span class="dt">by=</span><span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">seq</span>(<span class="fl">0.1</span>, <span class="dv">24</span>, <span class="dt">by=</span><span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</code></pre></div>
 </div>
 <div id="finding-the-right-dose-to-give" class="section level3 unnumbered">
 <h3>Finding the right dose to give</h3>
 <p>A very interesting feature in TDMore is the possibility to ask the framework the next dose to be given knowing all the previous observations that were collected and some known end-points. For example, assume we still collected the same two observations on the first day, we would like to find the best first dose to be given on the second day. We would like to reach the trough concentration of 3.10 mg/L as much as possible. This can be expressed, as follows:</p>
-<pre class="sourceCode r"><code class="sourceCode r">newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">24</span>),              <span class="co"># A fourth dose on the second day is added</span>
   <span class="dt">AMT=</span><span class="kw">c</span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="ot">NA</span>),       <span class="co"># Adding an unknown dose on the second day</span>
   <span class="dt">RATE=</span><span class="kw">c</span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span>
@@ -335,7 +316,7 @@ recommendation &lt;-<span class="st"> </span><span class="kw">findDose</span>(
   <span class="dt">interval =</span> <span class="kw">c</span>(<span class="dv">100</span>, <span class="dv">5000</span>),
   <span class="dt">target =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="dv">32</span>, <span class="dt">CONC =</span> <span class="dv">8</span>)
   )
-<span class="kw">summary</span>(recommendation)</code></pre>
+<span class="kw">summary</span>(recommendation)</code></pre></div>
 <pre><code>## $dose
 ## [1] 4540.072
 ## 
@@ -346,31 +327,31 @@ recommendation &lt;-<span class="st"> </span><span class="kw">findDose</span>(
 ## 3   16 1000.000 2000
 ## 4   24 4540.072 2000</code></pre>
 <p>The result of the findDose() routine is shown above. It tells us that XXX mg (approximately) is the recommended starting dose on the second day. The following code helps up verify this visually.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Recommended regimen for individual can be directly accessed from the recommendation object</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Recommended regimen for individual can be directly accessed from the recommendation object</span>
 ipredRecommendedRegimen &lt;-<span class="st"> </span>recommendation<span class="op">$</span>regimen
 
 <span class="co"># Population regimen can be updated using the &#39;updateRegimen&#39; method, a 4th dose of 1000 is used</span>
 predUpdatedRegimen &lt;-<span class="st"> </span><span class="kw">updateRegimen</span>(<span class="dt">regimen =</span> newRegimen, <span class="dt">newDose =</span> <span class="dv">4500</span>)
-<span class="kw">print</span>(predUpdatedRegimen) <span class="co"># Check pred regimen</span></code></pre>
+<span class="kw">print</span>(predUpdatedRegimen) <span class="co"># Check pred regimen</span></code></pre></div>
 <pre><code>##   TIME  AMT RATE
 ## 1    0 1000 2000
 ## 2    8 1000 2000
 ## 3   16 1000 2000
 ## 4   24 4500 2000</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> ipredRecommendedRegimen)
-pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">regimen =</span> predUpdatedRegimen)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">32</span>, <span class="dt">by=</span><span class="fl">0.1</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="dv">8</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> ipredRecommendedRegimen)
+pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(tdmore, <span class="dt">regimen =</span> predUpdatedRegimen)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">32</span>, <span class="dt">by=</span><span class="fl">0.1</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="dv">8</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/find_dose_pred_ipred_predictions-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day.</p>
 </div>
 </div>
 <div id="multiple-endpoints" class="section level2">
-<h2><span class="header-section-number">7.2</span> Multiple endpoints</h2>
+<h2><span class="header-section-number">8.2</span> Multiple endpoints</h2>
 <div id="writing-and-testing-the-pk-model" class="section level3 unnumbered">
 <h3>Writing and testing the PK model</h3>
 <p>In this vignette, we will learn how TDMore can deal with multiple endpoints. The PK/PD models chosen to illustrate this section are based on the following paper: “Population PK/PD modeling of Sunitinib by dosing schedule in patients with advanced renal cell carcinoma or gastrointestinal stromal tumor.”.</p>
 <p>Let’s start writing the Sunitinib PK model.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlmixr)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlmixr)
 
 modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
   <span class="kw">ini</span>({
@@ -403,30 +384,30 @@ modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
     CONC =<span class="st"> </span>center<span class="op">/</span>Vc
     CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_Prop)
   })
-}</code></pre>
+}</code></pre></div>
 <p>The TDMore object is instantiated as follows:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tdmore)
 
 nlmixrModel &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)
-m1 &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrModel)</code></pre>
+m1 &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrModel)</code></pre></div>
 <p>A basic regimen can be created to test that the model is running properly. The standard regimen of Sunitinib is 50mg daily for 4 weeks.</p>
-<pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">TIME=</span><span class="dv">0</span>,     <span class="co"># First dose time: t=0h</span>
   <span class="dt">AMT=</span><span class="dv">50</span>,     <span class="co"># Dose amount: 50 mg</span>
   <span class="dt">II=</span><span class="dv">24</span>,      <span class="co"># Dose interval: 24h</span>
-  <span class="dt">ADDL=</span><span class="dv">4</span><span class="op">*</span><span class="dv">7-1</span>  <span class="co"># Additional doses: 4 weeks</span>
+  <span class="dt">ADDL=</span><span class="dv">4</span><span class="op">*</span><span class="dv">7</span><span class="op">-</span><span class="dv">1</span>  <span class="co"># Additional doses: 4 weeks</span>
 )
 
-times &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">6</span><span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>) <span class="co"># Observation times</span></code></pre>
+times &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">6</span><span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>) <span class="co"># Observation times</span></code></pre></div>
 <p>This regimen can be plotted using the default TDMore plotting function. It shows the typical value of the population and the between-subject variability (95% confidence interval).</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(m1, regimen, <span class="dt">newdata=</span>times)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(m1, regimen, <span class="dt">newdata=</span>times)</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/sunitinib_pk_model-1.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
 <div id="adding-a-pd-model" class="section level3 unnumbered">
 <h3>Adding a PD model</h3>
 <p>Suppose we received a full blood workup: Sunitinib concentration, Alanine aminotransferase (ALT), Aspartate aminotransferase (AST), Absolute neutrophil count (ANC), Platelet count (PC) and Lymphocyte count (LC). We also measured the patient’s diastolic blood pressure (DBP).</p>
 <p>We can create a single model to predict all of these aspects. In the example below, we will focus on ALT and AST. Please note the mandatory ‘|’ nlmixr syntax used to describe the residual variability of different endpoints.</p>
-<pre class="sourceCode r"><code class="sourceCode r">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
   <span class="kw">ini</span>({
     <span class="co"># PK model sunitinib</span>
     TVCL &lt;-<span class="st"> </span><span class="fl">34.1</span>
@@ -507,9 +488,9 @@ times &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv"
   })
 }
 nlmixrModel &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)
-m2 &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrModel, <span class="dt">maxsteps=</span><span class="fl">1E3</span><span class="op">*</span><span class="dv">500</span>)</code></pre>
+m2 &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrModel, <span class="dt">maxsteps=</span><span class="fl">1E3</span><span class="op">*</span><span class="dv">500</span>)</code></pre></div>
 <p>Let’s now have a look at the evolution of these safety signals over time. To have a good overview, we will observe ALT/AST for 4 weeks treatment. The default plot shows once again the typical value and the between-subject variability (95% CI).</p>
-<pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">TIME=</span><span class="dv">0</span>,
   <span class="dt">AMT=</span><span class="dv">50</span>,
   <span class="dt">II=</span><span class="dv">24</span>,
@@ -517,36 +498,36 @@ m2 &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrModel, <sp
 )
 times &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">6</span><span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">1</span>)
 
-<span class="kw">plot</span>(m2, regimen, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>))</code></pre>
+<span class="kw">plot</span>(m2, regimen, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/sunitinib_pd_model-1.png" width="768" style="display: block; margin: auto;" /></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(m2, regimen, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">ALT=</span><span class="ot">NA</span>))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(m2, regimen, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">ALT=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/sunitinib_pd_model-2.png" width="768" style="display: block; margin: auto;" /></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(m2, regimen, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">AST=</span><span class="ot">NA</span>))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(m2, regimen, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">AST=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/sunitinib_pd_model-3.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
 <div id="estimating-individual-parameters-1" class="section level3 unnumbered">
 <h3>Estimating individual parameters</h3>
 <p>We get the values for ALT/AST for a specific individual. These are quite high!</p>
-<pre class="sourceCode r"><code class="sourceCode r">observed &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">observed &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>)<span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>, 
   <span class="dt">CONC=</span><span class="ot">NA</span>,
   <span class="dt">ALT=</span><span class="kw">c</span>(<span class="dv">21</span>, <span class="dv">40</span>, <span class="dv">42</span>, <span class="dv">43</span>),
   <span class="dt">AST=</span><span class="kw">c</span>(<span class="dv">21</span>, <span class="dv">45</span>, <span class="dv">47</span>, <span class="dv">49</span>))
 ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m2, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)
 
-<span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>))</code></pre>
+<span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/sunitinib_pd_ipred_sld-1.png" width="768" style="display: block; margin: auto;" /></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">ALT=</span><span class="ot">NA</span>))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">ALT=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/sunitinib_pd_ipred_sld-2.png" width="768" style="display: block; margin: auto;" /></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">AST=</span><span class="ot">NA</span>))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ipred, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">AST=</span><span class="ot">NA</span>))</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/sunitinib_pd_ipred_sld-3.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Based on only ALT/AST values, we managed to define the PK inter-individual variability a little better. Indeed, these high ALT/AST values can be best explained through a combination of high sensitivity (EKpd), and a lower clearance (ECL) of the drug.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(ipred)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(ipred)</code></pre></div>
 <pre><code>##         ECL         EVc         EKa   EBASE_AST   EBASE_ALT   EKout_AST 
 ## -0.13927141 -0.01279161  0.02257760  0.03233717  0.04497158  0.22456560 
 ##   EKout_ALT    EKpd_AST    EKpd_ALT 
 ##  0.22778905  0.24279322  0.37291944</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(m2<span class="op">$</span>omega))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(m2<span class="op">$</span>omega))</code></pre></div>
 <pre><code>##         ECL         EVc         EKa   EBASE_AST   EBASE_ALT   EKout_AST 
 ## -0.56614395 -0.05561569  0.01360096  0.10168920  0.11104095  0.18713800 
 ##   EKout_ALT    EKpd_AST    EKpd_ALT 
@@ -554,7 +535,7 @@ ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m2, <span c
 </div>
 </div>
 <div id="example-detecting-non-adherence" class="section level2">
-<h2><span class="header-section-number">7.3</span> Example: Detecting non-adherence</h2>
+<h2><span class="header-section-number">8.3</span> Example: Detecting non-adherence</h2>
 <div id="about-this-example" class="section level3 unnumbered">
 <h3>About this example</h3>
 <p>Non-compliance is an important issue endangering the effectiveness of treatments. In COPD, it is estimated that there is a non-compliance of more than 98% for inhaled treatments.</p>
@@ -562,8 +543,8 @@ ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m2, <span c
 </div>
 <div id="the-model" class="section level3 unnumbered">
 <h3>The model</h3>
-<p>Model taken from literature: Soulele, K., et al. “Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.” European Journal of Pharmaceutical Sciences 80 (2015): 33-42.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlmixr)
+<p>Model taken from literature: Soulele, K., et al. “Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.” European Journal of Pharmaceutical Sciences 80 (2015): 33-42.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlmixr)
 
 modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
   <span class="kw">ini</span>({
@@ -601,9 +582,9 @@ modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
 nlmixrModel &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)
 
 <span class="kw">library</span>(tdmore)
-m1 &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrModel)</code></pre>
+m1 &lt;-<span class="st"> </span><span class="kw">tdmore</span>(nlmixrModel)</code></pre></div>
 <p>We now define the treatment regimen</p>
-<pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">TIME=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dt">by=</span><span class="dv">24</span>, <span class="dt">length.out=</span><span class="dv">30</span>),
   <span class="dt">AMT=</span><span class="dv">500</span> <span class="co"># 500ug standard dose</span>
 )
@@ -620,54 +601,42 @@ nonAdhering &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <s
 pred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m1, <span class="dt">regimen=</span>regimen)
 <span class="kw">ggplot</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Adhering&quot;</span>), <span class="dt">data=</span>adhering) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Non-adhering&quot;</span>), <span class="dt">data=</span>nonAdhering)</code></pre>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Non-adhering&quot;</span>), <span class="dt">data=</span>nonAdhering)</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 </div>
 <div id="is-the-patient-taking-hisher-medication" class="section level3 unnumbered">
 <h3>Is the patient taking his/her medication?</h3>
 <p>We can now take a serum sample and evaluate if there is non-adherence.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Take a blood sample</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Take a blood sample</span>
 observed &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">30</span><span class="op">*</span><span class="dv">24</span><span class="op">+</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">16</span>, <span class="dv">0</span>), <span class="dt">CONC=</span><span class="ot">NA</span>))
-observed</code></pre>
-<table class="huxtable" style="border-collapse: collapse; margin-bottom: 2em; margin-top: 2em; width: 21.1111111111111%; margin-left: 0%; margin-right: auto;  ">
-<col><col><tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">TIME</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CONC</td>
-</tr>
-<tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">704</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">6.16</td>
-</tr>
-<tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">720</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">5.19</td>
-</tr>
-</table>
-
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># We estimate individual parameters</span>
+observed</code></pre></div>
+<pre><code>##   TIME     CONC
+## 1  704 12.42485
+## 2  720 10.20530</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># We estimate individual parameters</span>
 <span class="co"># as if the patient took his medication</span>
 <span class="co"># properly</span>
 ipred &lt;-<span class="st"> </span><span class="kw">estimate</span>(m1, observed, regimen)
-<span class="kw">coef</span>(ipred)</code></pre>
-<pre><code>##           EKa           ECL           EV1           EV2            EQ 
-##  0.0000000000  1.2384564464  0.0233203384 -0.0004283304  0.0022528398</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span>
+<span class="kw">coef</span>(ipred)</code></pre></div>
+<pre><code>##          EKa          ECL          EV1          EV2           EQ 
+##  0.000000000  0.828384249  0.035455547 -0.000201276  0.001489463</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Reality&quot;</span>), <span class="dt">data=</span>nonAdhering) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>observed) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Population&quot;</span>), <span class="dt">data=</span>adhering) <span class="op">+</span>
 <span class="co">#  geom_ribbon(aes(fill=&quot;Population&quot;, ymin=CONC.lower, ymax=CONC.upper), </span>
 <span class="co">#    data=predict(m1, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA), se.fit=TRUE), alpha=0.1) +</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Prediction&quot;</span>), 
-    <span class="dt">data=</span><span class="kw">predict</span>(ipred, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)))</code></pre>
+    <span class="dt">data=</span><span class="kw">predict</span>(ipred, <span class="dt">regimen=</span>regimen, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">30</span><span class="op">*</span><span class="dv">24</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)))</code></pre></div>
 <p><img src="08-Vignettes_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
-<pre class="sourceCode r"><code class="sourceCode r">standardDeviations &lt;-<span class="st"> </span><span class="kw">coef</span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(m1<span class="op">$</span>omega))
-standardDeviations</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">standardDeviations &lt;-<span class="st"> </span><span class="kw">coef</span>(ipred) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(m1<span class="op">$</span>omega))
+standardDeviations</code></pre></div>
 <pre><code>##           EKa           ECL           EV1           EV2            EQ 
-##  0.0000000000  3.1601339289  0.0767874167 -0.0009384978  0.0070688412</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">i &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">pnorm</span>(<span class="kw">abs</span>(standardDeviations)) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.975</span>)
+##  0.0000000000  2.1137644184  0.1167452994 -0.0004410078  0.0046735565</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">i &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">pnorm</span>(<span class="kw">abs</span>(standardDeviations)) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.975</span>)
 <span class="cf">if</span>(<span class="kw">length</span>(i) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {
   <span class="kw">cat</span>(<span class="st">&quot;This patient has unlikely (outside 95% CI) parameter estimates for &quot;</span>, <span class="kw">names</span>(i),<span class="st">&quot;. There may be a treatment adherence issue.&quot;</span>)
-}</code></pre>
+}</code></pre></div>
 <pre><code>## This patient has unlikely (outside 95% CI) parameter estimates for  ECL . There may be a treatment adherence issue.</code></pre>
 
 </div>
