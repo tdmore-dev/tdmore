@@ -5,6 +5,8 @@ library(testthat)
 
 context("Test we get plots as we expected")
 
+set.seed(0)
+
 # Load the default tdmore
 tdmore <- (default_model) %>% tdmore()
 
