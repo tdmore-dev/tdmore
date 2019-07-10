@@ -645,9 +645,8 @@ getPredictOutputNames <- function(newdata, columnNames, pNames) {
 #' @return a summarised data frame
 summariseFittedMC <- function(fittedMC, ipred, level, oNames) {
   a <- (1-level)/2
-  retValue <- fittedMC %>% dplyr::group_by(.data$TIME) %>% dplyr::do({
-    x <- .data
-    result <- list(TIME = x$TIME[1])
+  summarize <- function(x, key) {
+    result <- list()
     for(i in oNames) {
       result[i] <- ipred[ipred$TIME==x$TIME[1], i]
       result[paste0(i, ".median")] <- median(x[,i,drop=T])
@@ -655,7 +654,11 @@ summariseFittedMC <- function(fittedMC, ipred, level, oNames) {
       result[paste0(i, ".upper")] <- quantile(x[,i,drop=T], probs=1-a)
     }
     tibble::as_tibble(result)
-  }) %>% dplyr::ungroup()
+  }
+  retValue <- fittedMC %>%
+    dplyr::group_by(.data$TIME) %>%
+    dplyr::group_modify(summarize, keep=TRUE) %>%
+    dplyr::ungroup()
   return(retValue)
 }
 
