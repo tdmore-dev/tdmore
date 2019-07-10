@@ -587,11 +587,21 @@ observed <- predict(m1, regimen=actual, newdata=data.frame(TIME=30*24+c(-16, 0),
 observed
 ```
 
-```
-##   TIME     CONC
-## 1  704 12.42485
-## 2  720 10.20530
-```
+<!--html_preserve--><table class="huxtable" style="border-collapse: collapse; margin-bottom: 2em; margin-top: 2em; width: 21.1111111111111%; margin-left: 0%; margin-right: auto;  ">
+<col><col><tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">TIME</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CONC</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">704</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">6.16</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">720</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">5.19</td>
+</tr>
+</table>
+<!--/html_preserve-->
 
 ```r
 # We estimate individual parameters
@@ -602,8 +612,8 @@ coef(ipred)
 ```
 
 ```
-##          EKa          ECL          EV1          EV2           EQ 
-##  0.000000000  0.828384249  0.035455547 -0.000201276  0.001489463
+##           EKa           ECL           EV1           EV2            EQ 
+##  0.0000000000  1.2384564464  0.0233203384 -0.0004283304  0.0022528398
 ```
 
 ```r
@@ -626,7 +636,7 @@ standardDeviations
 
 ```
 ##           EKa           ECL           EV1           EV2            EQ 
-##  0.0000000000  2.1137644184  0.1167452994 -0.0004410078  0.0046735565
+##  0.0000000000  3.1601339289  0.0767874167 -0.0009384978  0.0070688412
 ```
 
 ```r

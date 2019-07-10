@@ -39,7 +39,7 @@ test_that("shinyProfile behaves as expected", {
                           quiet = T)
   expect_pass(
     withr::with_libpaths(tmp_lib, {
-      testApp(appDir=appDir, compareImages=interactive(), quiet=interactive())
+      testApp(appDir=appDir, compareImages=!testthat::is_testing())
     }, action="prefix")
   )
 })
