@@ -19,7 +19,27 @@ test_that("shinyProfile behaves as expected", {
   ##    a) export the source data of the plot using exportTestValues()
   ##    b) use a htmlwidget (like plotly) to render the plot
 
+  ## We need to install 'tdmore' as a library
+  ## to run the shiny app in a separate process
+  pkg <- devtools::as.package(".")
+  tmp_lib <- tempfile("R_LIBS")
+  dir.create(tmp_lib)
+  on.exit({
+    unlink(tmp_lib, recursive = TRUE)
+  }, add=T)
+  utils::install.packages(repos = NULL,
+                          lib = tmp_lib,
+                          pkg$path,
+                          type = "source",
+                          INSTALL_opts = c("--example",
+                                           "--install-tests",
+                                           "--with-keep.source",
+                                           "--with-keep.parse.data",
+                                           "--no-multiarch"),
+                          quiet = T)
   expect_pass(
-    testApp(appDir=appDir, compareImages=interactive(), quiet=interactive())
+    withr::with_libpaths(tmp_lib, {
+      testApp(appDir=appDir, compareImages=interactive(), quiet=interactive())
+    }, action="prefix")
   )
 })
