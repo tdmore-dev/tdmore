@@ -644,20 +644,26 @@ getPredictOutputNames <- function(newdata, columnNames, pNames) {
 #'
 #' @return a summarised data frame
 summariseFittedMC <- function(fittedMC, ipred, level, oNames) {
+  if(length(oNames)==0) {
+    return( fittedMC %>% dplyr::distinct(TIME) )
+  }
   a <- (1-level)/2
   summarize <- function(x, key) {
     result <- list()
     for(i in oNames) {
-      result[i] <- ipred[ipred$TIME==x$TIME[1], i]
+      result[i] <- ipred[ipred$TIME==key$TIME, i]
       result[paste0(i, ".median")] <- median(x[,i,drop=T])
       result[paste0(i, ".lower")] <- quantile(x[,i,drop=T], probs=a)
       result[paste0(i, ".upper")] <- quantile(x[,i,drop=T], probs=1-a)
     }
     tibble::as_tibble(result)
   }
+  #dplyr gets confused with multiple 'ECL' columns (in case of IOV)
+  fittedMC <- fittedMC[,c("TIME", oNames)]
+
   retValue <- fittedMC %>%
     dplyr::group_by(.data$TIME) %>%
-    dplyr::group_modify(summarize, keep=TRUE) %>%
+    dplyr::group_modify(summarize) %>%
     dplyr::ungroup()
   return(retValue)
 }
