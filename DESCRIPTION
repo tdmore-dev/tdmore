@@ -26,7 +26,7 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Suggests: knitr, rmarkdown, testthat, roxygen2, devtools, vdiffr, svglite,
- pkgdown, bookdown, miniUI, shiny, readr, stringr, tidyr, shinytest
+ pkgdown, bookdown, miniUI, shiny, readr, stringr, tidyr, shinytest, withr
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 URL: https://github.com/tdmore-dev/tdmore, https://tdmore-dev.github.io/tdmore/
