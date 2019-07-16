@@ -6,7 +6,10 @@ description: "TDMore reference manual"
 documentclass: book
 link-citations: yes
 site: bookdown::bookdown_site
-output: bookdown::gitbook
+output: 
+  bookdown::gitbook:
+    includes:
+      in_header: noindex.html
 biblio-style: "apalike"
 urlcolor: blue
 ---
