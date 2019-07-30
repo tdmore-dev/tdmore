@@ -31,7 +31,7 @@ myModel <- nlmixr::nlmixrUI(function(){
     V1 <- TVV1 * exp(EV1)
     V2 <- TVV2 * exp(EV2)
     Q <- TVQ * exp(EQ)
-    
+
     K12 <- Q/V1
     K21 <- Q/V2
 
@@ -72,21 +72,21 @@ dbPred <- predict(population, newdata=obs, se=T, level=NA, mc.maxpts=N) %>%
 db <- dbPred %>%
   model.frame(m1, data=., se=TRUE, level=NA) #sample residual error
 
-ggplot(dbPred, aes(x=TIME, y=CONC)) + 
+ggplot(dbPred, aes(x=TIME, y=CONC)) +
   geom_point(alpha=0.3) +
   geom_line(aes(group=ID), data=db) +
   geom_smooth()
 
 posthocFit <- posthoc(m1, regimen=regimen, observed=db, se.fit=F, control=list(factr=1e14))
-posthocFit %>% 
-  mutate(coef = map(fit, ~tibble::enframe(coef(.x)))) %>% 
+posthocFit %>%
+  mutate(coef = map(fit, ~tibble::enframe(coef(.x)))) %>%
   tidyr::unnest(coef) %>%
-  ggplot(aes(x=ID, y=value)) + 
-    geom_point() + 
+  ggplot(aes(x=ID, y=value)) +
+    geom_point() +
     facet_wrap(~name) +
     labs(title="Eta estimates for posthoc fit")
 
-ggplot(db, aes(x=TIME, y=CONC)) + 
+ggplot(db, aes(x=TIME, y=CONC)) +
   geom_point() +
   geom_line(data= posthocFit %>% mutate(ipred = map(fit, predict)) %>% tidyr::unnest(ipred) ) +
   facet_wrap(~ID) +
@@ -103,9 +103,9 @@ prosevalPred <- prosevalDb %>%
   left_join(db %>% tidyr::nest(-ID), by="ID") %>%
   mutate(ipred = pmap(list(fit, newdata=data), predict) )
 
-target <- prosevalPred %>% 
+target <- prosevalPred %>%
   tidyr::unnest(data, ipred, .sep=".") %>%
-  group_by(ID, OBS) %>% 
+  group_by(ID, OBS) %>%
   filter(row_number() == OBS[1]+1) %>%  #pick the next week as a target
   mutate(IRES = data.CONC-ipred.CONC)
 
@@ -119,13 +119,13 @@ parameters <- prosevalDb %>%
   group_by(ID, OBS) %>%
   group_modify(~predict(.x$fit[[1]], newdata=0)) %>%
   tidyr::gather(key=key, value=value, Ka:V2) %>%
-  mutate(relative=value / value[1] )
+  group_by(ID, key) %>%
+  mutate(relative=(value-value[1])/value)
 parameters %>%
   ggplot(aes(x=OBS, y=relative*100)) +
   facet_wrap(~key, scales="free") +
   geom_point() +
   geom_line(aes(group=ID)) +
-  scale_y_log10() +
   labs(title="Evolution of parameter values over time",
        y="Relative change (%)")
 
@@ -137,5 +137,3 @@ ggplot(target, aes(x=ipred.CONC / data.CONC)) +
   geom_label(aes(x=1.8, y=0.5, label=label), data=. %>% group_by(OBS) %>% summarize(label=paste0( round(mean(between(ipred.CONC/data.CONC, 0.81, 1.22))*100), "%"))) +
   facet_wrap(~OBS) +
   labs(title="Relative prediction error on day i+1\nUsing on all data available on day i")
-
-## NA

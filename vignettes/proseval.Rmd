@@ -17,7 +17,7 @@ Evaluating how well a model predicts the future for a specific individual is les
 
 This vignette shows how to use `tdmore` in such an evaluation. This is also called a _prospective evaluation_, and has been (rudimentarily) implemented in the  [PsN proseval](https://github.com/UUPharmacometrics/PsN/releases/download/4.9.0/proseval_userguide.pdf "proseval manual page") routine.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(tdmore)
 library(dplyr)
 library(purrr)
@@ -29,7 +29,7 @@ set.seed(1234)
 ### Example model
 We use an example model from literature.
 
-```{r}
+```{r, results='hide', message=FALSE, warning=FALSE}
 # Model taken from literature: Soulele, K., et al.
 # 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'
 # European Journal of Pharmaceutical Sciences 80 (2015): 33-42."
@@ -74,7 +74,7 @@ m1 <- tdmore(myModel)
 ### Source data: in silico simulation
 Without a source dataset, we can generate data from an in silico simulation. Below, we use the standard treatment regimen of 88mcg twice-daily, with blood samples every week.
 
-```{r}
+```{r, results='hide', message=FALSE, warning=FALSE}
 regimen <- rbind(
   data.frame(TIME=0, AMT=500), #loading dose
   data.frame( #maintenance dose
@@ -169,13 +169,13 @@ parameters <- prosevalDb %>%
   group_by(ID, OBS) %>%
   group_modify(~predict(.x$fit[[1]], newdata=0)) %>%
   tidyr::gather(key=key, value=value, Ka:V2) %>%
-  mutate(relative=value / value[1] )
+  group_by(ID, key) %>%
+  mutate(relative=(value-value[1])/value)
 parameters %>%
   ggplot(aes(x=OBS, y=relative*100)) +
   facet_wrap(~key, scales="free") +
   geom_point() +
   geom_line(aes(group=ID)) +
-  scale_y_log10() +
   labs(title="Evolution of parameter values over time",
        y="Relative change (%)")
 ```
@@ -183,7 +183,7 @@ parameters %>%
 ### How does this impact dose adaptation? {-}
 The better a model can predict the future, the more accurate it can calculate the dose to reach a given target. A rough indication for "% on target" is to calculate `IPRED / DV`. If this is higher than 1, then the model is overpredicting (and will underdose). If this is lower than 1, the model is underpredicting (and will overdose). Assuming your target window is e.g. between 10 and 15, the log-mean is `exp( mean( log(c(10,15)) ) )` and the relative error should be between `0.81` and `1.22`.
 
-```{r}
+```{r, warning=F}
 ggplot(target, aes(x=ipred.CONC / data.CONC)) +
   stat_ecdf() +
   scale_x_log10(limits=c(0.5, 2)) +
