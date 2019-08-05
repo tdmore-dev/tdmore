@@ -290,138 +290,130 @@
 <a class="sourceLine" id="cb9-4" title="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tidyr)</a>
 <a class="sourceLine" id="cb9-5" title="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)</a>
 <a class="sourceLine" id="cb9-6" title="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Random">set.seed</a></span>(<span class="dv">1234</span>)</a>
-<a class="sourceLine" id="cb9-7" title="7"></a>
-<a class="sourceLine" id="cb9-8" title="8"><span class="co"># Model taken from literature: Soulele, K., et al.</span></a>
-<a class="sourceLine" id="cb9-9" title="9"><span class="co"># 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'</span></a>
-<a class="sourceLine" id="cb9-10" title="10"><span class="co"># European Journal of Pharmaceutical Sciences 80 (2015): 33-42."</span></a>
-<a class="sourceLine" id="cb9-11" title="11">myModel &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(<span class="cf">function</span>(){</a>
-<a class="sourceLine" id="cb9-12" title="12">  <span class="kw">ini</span>({</a>
-<a class="sourceLine" id="cb9-13" title="13">    TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span></a>
-<a class="sourceLine" id="cb9-14" title="14">    TVCL &lt;-<span class="st"> </span><span class="dv">659</span>    <span class="co"># L/h</span></a>
-<a class="sourceLine" id="cb9-15" title="15">    TVV1 &lt;-<span class="st"> </span><span class="dv">56900</span>  <span class="co"># L</span></a>
-<a class="sourceLine" id="cb9-16" title="16">    TVV2 &lt;-<span class="st"> </span><span class="dv">5550</span>   <span class="co"># L</span></a>
-<a class="sourceLine" id="cb9-17" title="17">    TVQ &lt;-<span class="st"> </span><span class="dv">259</span>     <span class="co"># L/h</span></a>
-<a class="sourceLine" id="cb9-18" title="18"></a>
-<a class="sourceLine" id="cb9-19" title="19">    EKa <span class="op">~</span><span class="st"> </span><span class="fl">0.04507129</span>  <span class="co"># 0.2123**2</span></a>
-<a class="sourceLine" id="cb9-20" title="20">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.1535856</span>   <span class="co"># 0.3919**2</span></a>
-<a class="sourceLine" id="cb9-21" title="21">    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.09223369</span>  <span class="co"># 0.3037**2</span></a>
-<a class="sourceLine" id="cb9-22" title="22">    EV2 <span class="op">~</span><span class="st"> </span><span class="fl">0.208301</span>    <span class="co"># 0.4564**2</span></a>
-<a class="sourceLine" id="cb9-23" title="23">    EQ <span class="op">~</span><span class="st"> </span><span class="fl">0.1015697</span>    <span class="co"># 0.3187**2</span></a>
-<a class="sourceLine" id="cb9-24" title="24"></a>
-<a class="sourceLine" id="cb9-25" title="25">    EPS_ADD &lt;-<span class="st"> </span><span class="fl">1.91</span></a>
-<a class="sourceLine" id="cb9-26" title="26">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span></a>
-<a class="sourceLine" id="cb9-27" title="27">  })</a>
-<a class="sourceLine" id="cb9-28" title="28">  <span class="kw">model</span>({</a>
-<a class="sourceLine" id="cb9-29" title="29">    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)</a>
-<a class="sourceLine" id="cb9-30" title="30">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
-<a class="sourceLine" id="cb9-31" title="31">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)</a>
-<a class="sourceLine" id="cb9-32" title="32">    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV2)</a>
-<a class="sourceLine" id="cb9-33" title="33">    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EQ)</a>
-<a class="sourceLine" id="cb9-34" title="34">    </a>
-<a class="sourceLine" id="cb9-35" title="35">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</a>
-<a class="sourceLine" id="cb9-36" title="36">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</a>
-<a class="sourceLine" id="cb9-37" title="37"></a>
-<a class="sourceLine" id="cb9-38" title="38">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
-<a class="sourceLine" id="cb9-39" title="39">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
-<a class="sourceLine" id="cb9-40" title="40"></a>
-<a class="sourceLine" id="cb9-41" title="41">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span></a>
-<a class="sourceLine" id="cb9-42" title="42">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)</a>
-<a class="sourceLine" id="cb9-43" title="43">  })</a>
-<a class="sourceLine" id="cb9-44" title="44">})</a>
-<a class="sourceLine" id="cb9-45" title="45"></a>
-<a class="sourceLine" id="cb9-46" title="46">m1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(myModel)</a>
-<a class="sourceLine" id="cb9-47" title="47"></a>
-<a class="sourceLine" id="cb9-48" title="48">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(</a>
-<a class="sourceLine" id="cb9-49" title="49">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">500</span>), <span class="co">#loading dose</span></a>
-<a class="sourceLine" id="cb9-50" title="50">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>( <span class="co">#maintenance dose</span></a>
-<a class="sourceLine" id="cb9-51" title="51">    <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">8</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dv">20</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>) ), <span class="co">#at 08:00 and 20:00</span></a>
-<a class="sourceLine" id="cb9-52" title="52">    <span class="dt">AMT=</span><span class="dv">88</span></a>
-<a class="sourceLine" id="cb9-53" title="53">  )</a>
-<a class="sourceLine" id="cb9-54" title="54">)</a>
-<a class="sourceLine" id="cb9-55" title="55">obs &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(</a>
-<a class="sourceLine" id="cb9-56" title="56">  <span class="dt">TIME=</span>(<span class="dv">3</span><span class="op">*</span><span class="dv">24</span><span class="op">+</span><span class="dv">12</span>)<span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">2</span>)<span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>, <span class="co">#observe every 3rd day of the week at noon</span></a>
-<a class="sourceLine" id="cb9-57" title="57">  <span class="dt">CONC=</span><span class="ot">NA</span></a>
-<a class="sourceLine" id="cb9-58" title="58">)</a>
-<a class="sourceLine" id="cb9-59" title="59"></a>
-<a class="sourceLine" id="cb9-60" title="60"><span class="co"># predict generates N samples of a tdmorefit with uncertainty</span></a>
-<a class="sourceLine" id="cb9-61" title="61"><span class="co"># If we use the population fit, then this will represent a sample across the population.</span></a>
-<a class="sourceLine" id="cb9-62" title="62"><span class="co"># I.e. N virtual patients</span></a>
-<a class="sourceLine" id="cb9-63" title="63"><span class="co"># In a model with covariates, you should either sample the covariates from an external database,</span></a>
-<a class="sourceLine" id="cb9-64" title="64"><span class="co"># or generate them from a distribution.</span></a>
-<a class="sourceLine" id="cb9-65" title="65">N &lt;-<span class="st"> </span><span class="dv">10</span></a>
-<a class="sourceLine" id="cb9-66" title="66">population &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1, <span class="dt">regimen=</span>regimen)</a>
-<a class="sourceLine" id="cb9-67" title="67">dbPred &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span>obs, <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-68" title="68"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">ID=</span>sample) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-69" title="69"><span class="st">  </span><span class="kw">select</span>(ID, TIME, CONC)</a>
-<a class="sourceLine" id="cb9-70" title="70"><span class="co"># We add residual error by sampling from the original model</span></a>
-<a class="sourceLine" id="cb9-71" title="71"><span class="co"># This is probably too pessimistic; residual error is rarely truly random...</span></a>
-<a class="sourceLine" id="cb9-72" title="72">db &lt;-<span class="st"> </span>dbPred <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-73" title="73"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/model.frame">model.frame</a></span>(m1, <span class="dt">data=</span>., <span class="dt">se=</span><span class="ot">TRUE</span>, <span class="dt">level=</span><span class="ot">NA</span>) <span class="co">#sample residual error</span></a>
-<a class="sourceLine" id="cb9-74" title="74"></a>
-<a class="sourceLine" id="cb9-75" title="75"><span class="kw">ggplot</span>(dbPred, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-76" title="76"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha=</span><span class="fl">0.3</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-77" title="77"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">group=</span>ID), <span class="dt">data=</span>db) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-78" title="78"><span class="st">  </span><span class="kw">geom_smooth</span>()</a>
-<a class="sourceLine" id="cb9-79" title="79"></a>
-<a class="sourceLine" id="cb9-80" title="80">posthocFit &lt;-<span class="st"> </span><span class="kw"><a href="../reference/posthoc.html">posthoc</a></span>(m1, <span class="dt">regimen=</span>regimen, <span class="dt">observed=</span>db, <span class="dt">se.fit=</span>F, <span class="dt">control=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">factr=</span><span class="fl">1e14</span>))</a>
-<a class="sourceLine" id="cb9-81" title="81">posthocFit <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-82" title="82"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">coef =</span> <span class="kw">map</span>(fit, <span class="op">~</span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/enframe.html">enframe</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(.x)))) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-83" title="83"><span class="st">  </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/unnest.html">unnest</a></span>(coef) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-84" title="84"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>ID, <span class="dt">y=</span>value)) <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-85" title="85"><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-86" title="86"><span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span>name) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-87" title="87"><span class="st">    </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Eta estimates for posthoc fit"</span>)</a>
-<a class="sourceLine" id="cb9-88" title="88"></a>
-<a class="sourceLine" id="cb9-89" title="89"><span class="kw">ggplot</span>(db, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-90" title="90"><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-91" title="91"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data=</span> posthocFit <span class="op">%&gt;%</span><span class="st"> </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/unnest.html">unnest</a></span>(ipred) ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-92" title="92"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>ID) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-93" title="93"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Individual fits using all available data"</span>)</a>
-<a class="sourceLine" id="cb9-94" title="94"></a>
-<a class="sourceLine" id="cb9-95" title="95"><span class="co">## Input data: 'm1', the tdmore model</span></a>
-<a class="sourceLine" id="cb9-96" title="96"><span class="co">## Input data: 'db' with columns ID, TIME and CONC</span></a>
-<a class="sourceLine" id="cb9-97" title="97"><span class="co">## Input data: 'regimen' with columns TIME and AMT.</span></a>
-<a class="sourceLine" id="cb9-98" title="98"><span class="co">## Note that with true retrospective data, the regimen would be different per individual</span></a>
-<a class="sourceLine" id="cb9-99" title="99">prosevalDb &lt;-<span class="st"> </span><span class="kw"><a href="../reference/proseval.html">proseval</a></span>(m1, <span class="dt">regimen=</span>regimen, <span class="dt">observed=</span>db, <span class="dt">control=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">factr=</span><span class="fl">1e14</span>))</a>
-<a class="sourceLine" id="cb9-100" title="100"></a>
-<a class="sourceLine" id="cb9-101" title="101"><span class="co"># Calculate predictions for all data, using the fits</span></a>
-<a class="sourceLine" id="cb9-102" title="102">target &lt;-<span class="st"> </span>prosevalDb <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-103" title="103"><span class="st">  </span><span class="kw">left_join</span>(db <span class="op">%&gt;%</span><span class="st"> </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/nest.html">nest</a></span>(<span class="op">-</span>ID), <span class="dt">by=</span><span class="st">"ID"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># add original data</span></a>
-<a class="sourceLine" id="cb9-104" title="104"><span class="st">  </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/unnest.html">unnest</a></span>(data, ipred, <span class="dt">.sep=</span><span class="st">"."</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># unnest, creating data.CONC and ipred.CONC columns</span></a>
-<a class="sourceLine" id="cb9-105" title="105"><span class="st">  </span><span class="kw">group_by</span>(ID, OBS) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-106" title="106"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/filter">filter</a></span>(<span class="kw">row_number</span>() <span class="op">==</span><span class="st"> </span>OBS[<span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="co">#pick the next week as a target</span></a>
-<a class="sourceLine" id="cb9-107" title="107"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">IRES =</span> data.CONC<span class="op">-</span>ipred.CONC)</a>
-<a class="sourceLine" id="cb9-108" title="108"></a>
-<a class="sourceLine" id="cb9-109" title="109"><span class="kw">ggplot</span>(target, <span class="kw">aes</span>(<span class="dt">x=</span>IRES)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-110" title="110"><span class="st">  </span><span class="kw">stat_ecdf</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-111" title="111"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept=</span><span class="dv">0</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-112" title="112"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>OBS) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-113" title="113"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Absolute prediction error on day i+1</span><span class="ch">\n</span><span class="st">Using on all data available on day i"</span>)</a>
-<a class="sourceLine" id="cb9-114" title="114"></a>
-<a class="sourceLine" id="cb9-115" title="115">parameters &lt;-<span class="st"> </span>prosevalDb <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-116" title="116"><span class="st">  </span><span class="kw">group_by</span>(ID, OBS) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-117" title="117"><span class="st">  </span><span class="kw">group_modify</span>(<span class="op">~</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(.x<span class="op">$</span>fit[[<span class="dv">1</span>]], <span class="dt">newdata=</span><span class="dv">0</span>)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#predict time=0</span></a>
-<a class="sourceLine" id="cb9-118" title="118"><span class="st">  </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="dt">key=</span>key, <span class="dt">value=</span>value, Ka<span class="op">:</span>V2) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-119" title="119"><span class="st">  </span><span class="kw">group_by</span>(ID, key) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-120" title="120"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">relative=</span>(value<span class="op">-</span>value[<span class="dv">1</span>])<span class="op">/</span>value)</a>
-<a class="sourceLine" id="cb9-121" title="121">parameters <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-122" title="122"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>OBS, <span class="dt">y=</span>relative<span class="op">*</span><span class="dv">100</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-123" title="123"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key, <span class="dt">scales=</span><span class="st">"free"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-124" title="124"><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-125" title="125"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">group=</span>ID)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-126" title="126"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Evolution of parameter values over time"</span>,</a>
-<a class="sourceLine" id="cb9-127" title="127">       <span class="dt">y=</span><span class="st">"Relative change (%)"</span>)</a>
-<a class="sourceLine" id="cb9-128" title="128"></a>
-<a class="sourceLine" id="cb9-129" title="129"><span class="kw">ggplot</span>(target, <span class="kw">aes</span>(<span class="dt">x=</span>ipred.CONC <span class="op">/</span><span class="st"> </span>data.CONC)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-130" title="130"><span class="st">  </span><span class="kw">stat_ecdf</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-131" title="131"><span class="st">  </span><span class="kw">scale_x_log10</span>(<span class="dt">limits=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.5</span>, <span class="dv">2</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-132" title="132"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept=</span><span class="dv">1</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-133" title="133"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.81</span>, <span class="fl">1.22</span>), <span class="dt">linetype=</span><span class="dv">2</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-134" title="134"><span class="st">  </span><span class="kw">geom_label</span>(<span class="kw">aes</span>(<span class="dt">x=</span><span class="fl">1.8</span>, <span class="dt">y=</span><span class="fl">0.5</span>, <span class="dt">label=</span>label), <span class="dt">data=</span>. <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(OBS) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(<span class="dt">label=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Round">round</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean</a></span>(<span class="kw">between</span>(ipred.CONC<span class="op">/</span>data.CONC, <span class="fl">0.81</span>, <span class="fl">1.22</span>))<span class="op">*</span><span class="dv">100</span>), <span class="st">"%"</span>))) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-135" title="135"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>OBS) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-136" title="136"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Relative prediction error on day i+1</span><span class="ch">\n</span><span class="st">Using on all data available on day i"</span>, <span class="dt">caption=</span><span class="st">"White boxes represent % of patients in target"</span>)</a>
-<a class="sourceLine" id="cb9-137" title="137"></a>
-<a class="sourceLine" id="cb9-138" title="138"><span class="co">## NA</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-7" title="7"><span class="co"># Model taken from literature: Soulele, K., et al.</span></a>
+<a class="sourceLine" id="cb9-8" title="8"><span class="co"># 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'</span></a>
+<a class="sourceLine" id="cb9-9" title="9"><span class="co"># European Journal of Pharmaceutical Sciences 80 (2015): 33-42."</span></a>
+<a class="sourceLine" id="cb9-10" title="10">myModel &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(<span class="cf">function</span>(){</a>
+<a class="sourceLine" id="cb9-11" title="11">  <span class="kw">ini</span>({</a>
+<a class="sourceLine" id="cb9-12" title="12">    TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span></a>
+<a class="sourceLine" id="cb9-13" title="13">    TVCL &lt;-<span class="st"> </span><span class="dv">659</span>    <span class="co"># L/h</span></a>
+<a class="sourceLine" id="cb9-14" title="14">    TVV1 &lt;-<span class="st"> </span><span class="dv">56900</span>  <span class="co"># L</span></a>
+<a class="sourceLine" id="cb9-15" title="15">    TVV2 &lt;-<span class="st"> </span><span class="dv">5550</span>   <span class="co"># L</span></a>
+<a class="sourceLine" id="cb9-16" title="16">    TVQ &lt;-<span class="st"> </span><span class="dv">259</span>     <span class="co"># L/h</span></a>
+<a class="sourceLine" id="cb9-17" title="17"></a>
+<a class="sourceLine" id="cb9-18" title="18">    EKa <span class="op">~</span><span class="st"> </span><span class="fl">0.04507129</span>  <span class="co"># 0.2123**2</span></a>
+<a class="sourceLine" id="cb9-19" title="19">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.1535856</span>   <span class="co"># 0.3919**2</span></a>
+<a class="sourceLine" id="cb9-20" title="20">    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.09223369</span>  <span class="co"># 0.3037**2</span></a>
+<a class="sourceLine" id="cb9-21" title="21">    EV2 <span class="op">~</span><span class="st"> </span><span class="fl">0.208301</span>    <span class="co"># 0.4564**2</span></a>
+<a class="sourceLine" id="cb9-22" title="22">    EQ <span class="op">~</span><span class="st"> </span><span class="fl">0.1015697</span>    <span class="co"># 0.3187**2</span></a>
+<a class="sourceLine" id="cb9-23" title="23"></a>
+<a class="sourceLine" id="cb9-24" title="24">    EPS_ADD &lt;-<span class="st"> </span><span class="fl">1.91</span></a>
+<a class="sourceLine" id="cb9-25" title="25">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span></a>
+<a class="sourceLine" id="cb9-26" title="26">  })</a>
+<a class="sourceLine" id="cb9-27" title="27">  <span class="kw">model</span>({</a>
+<a class="sourceLine" id="cb9-28" title="28">    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)</a>
+<a class="sourceLine" id="cb9-29" title="29">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
+<a class="sourceLine" id="cb9-30" title="30">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)</a>
+<a class="sourceLine" id="cb9-31" title="31">    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV2)</a>
+<a class="sourceLine" id="cb9-32" title="32">    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EQ)</a>
+<a class="sourceLine" id="cb9-33" title="33">    </a>
+<a class="sourceLine" id="cb9-34" title="34">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</a>
+<a class="sourceLine" id="cb9-35" title="35">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</a>
+<a class="sourceLine" id="cb9-36" title="36"></a>
+<a class="sourceLine" id="cb9-37" title="37">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb9-38" title="38">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb9-39" title="39"></a>
+<a class="sourceLine" id="cb9-40" title="40">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span></a>
+<a class="sourceLine" id="cb9-41" title="41">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)</a>
+<a class="sourceLine" id="cb9-42" title="42">  })</a>
+<a class="sourceLine" id="cb9-43" title="43">})</a>
+<a class="sourceLine" id="cb9-44" title="44"></a>
+<a class="sourceLine" id="cb9-45" title="45">m1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(myModel)</a>
+<a class="sourceLine" id="cb9-46" title="46">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(</a>
+<a class="sourceLine" id="cb9-47" title="47">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">500</span>), <span class="co">#loading dose</span></a>
+<a class="sourceLine" id="cb9-48" title="48">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>( <span class="co">#maintenance dose</span></a>
+<a class="sourceLine" id="cb9-49" title="49">    <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">8</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dv">20</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>) ), <span class="co">#at 08:00 and 20:00</span></a>
+<a class="sourceLine" id="cb9-50" title="50">    <span class="dt">AMT=</span><span class="dv">88</span></a>
+<a class="sourceLine" id="cb9-51" title="51">  )</a>
+<a class="sourceLine" id="cb9-52" title="52">)</a>
+<a class="sourceLine" id="cb9-53" title="53">obs &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(</a>
+<a class="sourceLine" id="cb9-54" title="54">  <span class="dt">TIME=</span>(<span class="dv">3</span><span class="op">*</span><span class="dv">24</span><span class="op">+</span><span class="dv">12</span>)<span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">2</span>)<span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">24</span>, <span class="co">#observe every 3rd day of the week at noon</span></a>
+<a class="sourceLine" id="cb9-55" title="55">  <span class="dt">CONC=</span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb9-56" title="56">)</a>
+<a class="sourceLine" id="cb9-57" title="57"></a>
+<a class="sourceLine" id="cb9-58" title="58"><span class="co"># predict generates N samples of a tdmorefit with uncertainty</span></a>
+<a class="sourceLine" id="cb9-59" title="59"><span class="co"># If we use the population fit, then this will represent a sample across the population.</span></a>
+<a class="sourceLine" id="cb9-60" title="60"><span class="co"># I.e. N virtual patients</span></a>
+<a class="sourceLine" id="cb9-61" title="61"><span class="co"># In a model with covariates, you should either sample the covariates from an external database,</span></a>
+<a class="sourceLine" id="cb9-62" title="62"><span class="co"># or generate them from a distribution.</span></a>
+<a class="sourceLine" id="cb9-63" title="63">N &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb9-64" title="64">population &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1, <span class="dt">regimen=</span>regimen)</a>
+<a class="sourceLine" id="cb9-65" title="65">dbPred &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span>obs, <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-66" title="66"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">ID=</span>sample) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-67" title="67"><span class="st">  </span><span class="kw">select</span>(ID, TIME, CONC)</a>
+<a class="sourceLine" id="cb9-68" title="68"><span class="co"># We add residual error by sampling from the original model</span></a>
+<a class="sourceLine" id="cb9-69" title="69"><span class="co"># This is probably too pessimistic; residual error is rarely truly random...</span></a>
+<a class="sourceLine" id="cb9-70" title="70">db &lt;-<span class="st"> </span>dbPred <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-71" title="71"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/model.frame">model.frame</a></span>(m1, <span class="dt">data=</span>., <span class="dt">se=</span><span class="ot">TRUE</span>, <span class="dt">level=</span><span class="ot">NA</span>) <span class="co">#sample residual error</span></a>
+<a class="sourceLine" id="cb9-72" title="72"></a>
+<a class="sourceLine" id="cb9-73" title="73"><span class="kw">ggplot</span>(dbPred, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-74" title="74"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha=</span><span class="fl">0.3</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-75" title="75"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">group=</span>ID), <span class="dt">data=</span>db) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-76" title="76"><span class="st">  </span><span class="kw">geom_smooth</span>()</a>
+<a class="sourceLine" id="cb9-77" title="77"></a>
+<a class="sourceLine" id="cb9-78" title="78">posthocFit &lt;-<span class="st"> </span><span class="kw"><a href="../reference/posthoc.html">posthoc</a></span>(m1, <span class="dt">regimen=</span>regimen, <span class="dt">observed=</span>db, <span class="dt">se.fit=</span>F, <span class="dt">control=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">factr=</span><span class="fl">1e14</span>))</a>
+<a class="sourceLine" id="cb9-79" title="79">posthocFit <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-80" title="80"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">coef =</span> <span class="kw">map</span>(fit, <span class="op">~</span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/enframe.html">enframe</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(.x)))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-81" title="81"><span class="st">  </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/unnest.html">unnest</a></span>(coef) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-82" title="82"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>ID, <span class="dt">y=</span>value)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-83" title="83"><span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-84" title="84"><span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span>name) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-85" title="85"><span class="st">    </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Eta estimates for posthoc fit"</span>)</a>
+<a class="sourceLine" id="cb9-86" title="86"></a>
+<a class="sourceLine" id="cb9-87" title="87"><span class="kw">ggplot</span>(db, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-88" title="88"><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-89" title="89"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data=</span> posthocFit <span class="op">%&gt;%</span><span class="st"> </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/unnest.html">unnest</a></span>(ipred) ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-90" title="90"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>ID) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-91" title="91"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Individual fits using all available data"</span>)</a>
+<a class="sourceLine" id="cb9-92" title="92"><span class="co">## Input data: 'm1', the tdmore model</span></a>
+<a class="sourceLine" id="cb9-93" title="93"><span class="co">## Input data: 'db' with columns ID, TIME and CONC</span></a>
+<a class="sourceLine" id="cb9-94" title="94"><span class="co">## Input data: 'regimen' with columns TIME and AMT.</span></a>
+<a class="sourceLine" id="cb9-95" title="95"><span class="co">## Note that with true retrospective data, the regimen would be different per individual</span></a>
+<a class="sourceLine" id="cb9-96" title="96">prosevalDb &lt;-<span class="st"> </span><span class="kw"><a href="../reference/proseval.html">proseval</a></span>(m1, <span class="dt">regimen=</span>regimen, <span class="dt">observed=</span>db, <span class="dt">control=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">factr=</span><span class="fl">1e14</span>))</a>
+<a class="sourceLine" id="cb9-97" title="97"><span class="co"># Calculate predictions for all data, using the fits</span></a>
+<a class="sourceLine" id="cb9-98" title="98">target &lt;-<span class="st"> </span>prosevalDb <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-99" title="99"><span class="st">  </span><span class="kw">left_join</span>(db <span class="op">%&gt;%</span><span class="st"> </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/nest.html">nest</a></span>(<span class="op">-</span>ID), <span class="dt">by=</span><span class="st">"ID"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># add original data</span></a>
+<a class="sourceLine" id="cb9-100" title="100"><span class="st">  </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/unnest.html">unnest</a></span>(data, ipred, <span class="dt">.sep=</span><span class="st">"."</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># unnest, creating data.CONC and ipred.CONC columns</span></a>
+<a class="sourceLine" id="cb9-101" title="101"><span class="st">  </span><span class="kw">group_by</span>(ID, OBS) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-102" title="102"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/filter">filter</a></span>(<span class="kw">row_number</span>() <span class="op">==</span><span class="st"> </span>OBS[<span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="co">#pick the next week as a target</span></a>
+<a class="sourceLine" id="cb9-103" title="103"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">IRES =</span> data.CONC<span class="op">-</span>ipred.CONC)</a>
+<a class="sourceLine" id="cb9-104" title="104"></a>
+<a class="sourceLine" id="cb9-105" title="105"><span class="kw">ggplot</span>(target, <span class="kw">aes</span>(<span class="dt">x=</span>IRES)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-106" title="106"><span class="st">  </span><span class="kw">stat_ecdf</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-107" title="107"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept=</span><span class="dv">0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-108" title="108"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>OBS) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-109" title="109"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Absolute prediction error on day i+1</span><span class="ch">\n</span><span class="st">Using on all data available on day i"</span>)</a>
+<a class="sourceLine" id="cb9-110" title="110">parameters &lt;-<span class="st"> </span>prosevalDb <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-111" title="111"><span class="st">  </span><span class="kw">group_by</span>(ID, OBS) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-112" title="112"><span class="st">  </span><span class="kw">group_modify</span>(<span class="op">~</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(.x<span class="op">$</span>fit[[<span class="dv">1</span>]], <span class="dt">newdata=</span><span class="dv">0</span>)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#predict time=0</span></a>
+<a class="sourceLine" id="cb9-113" title="113"><span class="st">  </span>tidyr<span class="op">::</span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="dt">key=</span>key, <span class="dt">value=</span>value, Ka<span class="op">:</span>V2) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-114" title="114"><span class="st">  </span><span class="kw">group_by</span>(ID, key) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-115" title="115"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">relative=</span>(value<span class="op">-</span>value[<span class="dv">1</span>])<span class="op">/</span>value)</a>
+<a class="sourceLine" id="cb9-116" title="116">parameters <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-117" title="117"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>OBS, <span class="dt">y=</span>relative<span class="op">*</span><span class="dv">100</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-118" title="118"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key, <span class="dt">scales=</span><span class="st">"free"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-119" title="119"><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-120" title="120"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">group=</span>ID)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-121" title="121"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Evolution of parameter values over time"</span>,</a>
+<a class="sourceLine" id="cb9-122" title="122">       <span class="dt">y=</span><span class="st">"Relative change (%)"</span>)</a>
+<a class="sourceLine" id="cb9-123" title="123"><span class="kw">ggplot</span>(target, <span class="kw">aes</span>(<span class="dt">x=</span>ipred.CONC <span class="op">/</span><span class="st"> </span>data.CONC)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-124" title="124"><span class="st">  </span><span class="kw">stat_ecdf</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-125" title="125"><span class="st">  </span><span class="kw">scale_x_log10</span>(<span class="dt">limits=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.5</span>, <span class="dv">2</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-126" title="126"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept=</span><span class="dv">1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-127" title="127"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.81</span>, <span class="fl">1.22</span>), <span class="dt">linetype=</span><span class="dv">2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-128" title="128"><span class="st">  </span><span class="kw">geom_label</span>(<span class="kw">aes</span>(<span class="dt">x=</span><span class="fl">1.8</span>, <span class="dt">y=</span><span class="fl">0.5</span>, <span class="dt">label=</span>label), <span class="dt">data=</span>. <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(OBS) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(<span class="dt">label=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Round">round</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean</a></span>(<span class="kw">between</span>(ipred.CONC<span class="op">/</span>data.CONC, <span class="fl">0.81</span>, <span class="fl">1.22</span>))<span class="op">*</span><span class="dv">100</span>), <span class="st">"%"</span>))) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-129" title="129"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>OBS) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-130" title="130"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Relative prediction error on day i+1</span><span class="ch">\n</span><span class="st">Using on all data available on day i"</span>, <span class="dt">caption=</span><span class="st">"White boxes represent % of patients in target"</span>)</a></code></pre></div>
 </div>
   </div>
 

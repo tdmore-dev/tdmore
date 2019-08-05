@@ -238,6 +238,101 @@ plot(ipred, newdata=seq(0, 32, by=0.1)) + geom_hline(yintercept=8) + scale_y_log
 
 The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day. 
 
+### Code appendix
+
+```r
+set.seed(0) 
+library(nlmixr)
+
+modelCode <- function(){
+  ini({
+    TVV1 <- 24.4;
+    TVV2 <- 7.01;
+    TVQ <- 4.97;
+    TVCL <- 9.87;
+    ECL ~ 0.194 # This value corresponds to OMEGA_CL (44% SD)
+    EV1 ~ 0.287 # This value corresponds to OMEGA_V1 (54% SD)
+    EPS_PROP <- 0.371 # Proportional error (37% SD)
+  })
+  model({
+    CL <- TVCL * exp(ECL)
+    V1 <- TVV1 * exp(EV1)
+    V2 <- TVV2
+    Q <- TVQ
+    K12 <- Q/V1
+    K21 <- Q/V2
+
+    d/dt(center) = - CL/V1 * center - K12*center + K21 * periph
+    d/dt(periph) = K12*center - K21 * periph
+
+    CONC = center / V1
+    CONC ~ prop(EPS_PROP) # Proportional error linked to the PK model
+  })
+}
+
+library(tdmore)
+
+nlmixrUI <- nlmixrUI(modelCode)
+tdmore <- tdmore(nlmixrUI)
+regimen <- data.frame(
+  TIME=c(0, 8, 16),            # Every 8 hour and for 1 day, an injection is given
+  AMT=c(1000, 1000, 1000),     # 1g is administered
+  RATE=c(1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
+)
+data <- predict(
+  object = tdmore,
+  newdata = data.frame(TIME = seq(0, 24, by = 0.5), CONC = NA),
+  regimen = regimen,
+  se = TRUE
+  )
+  
+library(ggplot2)
+ggplot(data, aes(x=TIME, y=CONC)) +
+  geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), fill="steelblue2", alpha=0.15) +
+  geom_line(aes(color="Population"), data=data) +
+  scale_color_manual(values=c("steelblue2")) +
+  scale_y_log10()
+  
+pred <- estimate(tdmore, regimen = regimen)
+coef(pred)
+vcov(pred)
+observed <- data.frame(TIME=c(9, 15), CONC=c(30, 2))
+ipred <- estimate(tdmore, observed = observed, regimen = regimen)
+coef(ipred)
+vcov(ipred)
+data <- predict(ipred, newdata=data.frame(TIME=seq(0, 24, 0.1), CONC=NA), se=TRUE)
+ggplot(data, aes(x=TIME))  +
+  geom_line(aes(color="Individual", y=CONC.median)) +
+  geom_ribbon(aes(fill="Individual", ymin=CONC.lower, ymax=CONC.upper), fill="tomato1", alpha=0.10) +
+  geom_line(aes(color="Population", y=CONC), data=predict(pred, newdata=seq(0, 24, 0.1))) +
+  geom_point(aes(y=CONC), data=observed) +
+  scale_color_manual(values=c("tomato1", "steelblue2")) +
+  scale_y_log10()
+plot(ipred, newdata=data.frame(TIME=seq(0.1, 24, by=0.1), CONC=NA)) + scale_y_log10()
+newRegimen <- data.frame(
+  TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
+  AMT=c(1000, 1000, 1000, NA),       # Adding an unknown dose on the second day
+  RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
+)
+
+recommendation <- findDose(
+  ipred,
+  regimen = newRegimen,
+  interval = c(100, 5000),
+  target = data.frame(TIME = 32, CONC = 8)
+  )
+summary(recommendation)
+# Recommended regimen for individual can be directly accessed from the recommendation object
+ipredRecommendedRegimen <- recommendation$regimen
+
+# Population regimen can be updated using the 'updateRegimen' method, a 4th dose of 1000 is used
+predUpdatedRegimen <- updateRegimen(regimen = newRegimen, newDose = 4500)
+print(predUpdatedRegimen) # Check pred regimen
+ipred <- estimate(tdmore, observed = observed, regimen = ipredRecommendedRegimen)
+pred <- estimate(tdmore, regimen = predUpdatedRegimen)
+plot(ipred, newdata=seq(0, 32, by=0.1)) + geom_hline(yintercept=8) + scale_y_log10()
+```
+
 ## Multiple endpoints
 
 ### Writing and testing the PK model {-}
@@ -493,6 +588,254 @@ coef(ipred) / sqrt(diag(m2$omega))
 ##  0.17796020  0.71832312  0.65424462
 ```
 
+### Code appendix
+
+```r
+set.seed(0) 
+library(nlmixr)
+
+modelCode <- function(){
+  ini({
+    TVV1 <- 24.4;
+    TVV2 <- 7.01;
+    TVQ <- 4.97;
+    TVCL <- 9.87;
+    ECL ~ 0.194 # This value corresponds to OMEGA_CL (44% SD)
+    EV1 ~ 0.287 # This value corresponds to OMEGA_V1 (54% SD)
+    EPS_PROP <- 0.371 # Proportional error (37% SD)
+  })
+  model({
+    CL <- TVCL * exp(ECL)
+    V1 <- TVV1 * exp(EV1)
+    V2 <- TVV2
+    Q <- TVQ
+    K12 <- Q/V1
+    K21 <- Q/V2
+
+    d/dt(center) = - CL/V1 * center - K12*center + K21 * periph
+    d/dt(periph) = K12*center - K21 * periph
+
+    CONC = center / V1
+    CONC ~ prop(EPS_PROP) # Proportional error linked to the PK model
+  })
+}
+
+library(tdmore)
+
+nlmixrUI <- nlmixrUI(modelCode)
+tdmore <- tdmore(nlmixrUI)
+regimen <- data.frame(
+  TIME=c(0, 8, 16),            # Every 8 hour and for 1 day, an injection is given
+  AMT=c(1000, 1000, 1000),     # 1g is administered
+  RATE=c(1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
+)
+data <- predict(
+  object = tdmore,
+  newdata = data.frame(TIME = seq(0, 24, by = 0.5), CONC = NA),
+  regimen = regimen,
+  se = TRUE
+  )
+  
+library(ggplot2)
+ggplot(data, aes(x=TIME, y=CONC)) +
+  geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), fill="steelblue2", alpha=0.15) +
+  geom_line(aes(color="Population"), data=data) +
+  scale_color_manual(values=c("steelblue2")) +
+  scale_y_log10()
+  
+pred <- estimate(tdmore, regimen = regimen)
+coef(pred)
+vcov(pred)
+observed <- data.frame(TIME=c(9, 15), CONC=c(30, 2))
+ipred <- estimate(tdmore, observed = observed, regimen = regimen)
+coef(ipred)
+vcov(ipred)
+data <- predict(ipred, newdata=data.frame(TIME=seq(0, 24, 0.1), CONC=NA), se=TRUE)
+ggplot(data, aes(x=TIME))  +
+  geom_line(aes(color="Individual", y=CONC.median)) +
+  geom_ribbon(aes(fill="Individual", ymin=CONC.lower, ymax=CONC.upper), fill="tomato1", alpha=0.10) +
+  geom_line(aes(color="Population", y=CONC), data=predict(pred, newdata=seq(0, 24, 0.1))) +
+  geom_point(aes(y=CONC), data=observed) +
+  scale_color_manual(values=c("tomato1", "steelblue2")) +
+  scale_y_log10()
+plot(ipred, newdata=data.frame(TIME=seq(0.1, 24, by=0.1), CONC=NA)) + scale_y_log10()
+newRegimen <- data.frame(
+  TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
+  AMT=c(1000, 1000, 1000, NA),       # Adding an unknown dose on the second day
+  RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
+)
+
+recommendation <- findDose(
+  ipred,
+  regimen = newRegimen,
+  interval = c(100, 5000),
+  target = data.frame(TIME = 32, CONC = 8)
+  )
+summary(recommendation)
+# Recommended regimen for individual can be directly accessed from the recommendation object
+ipredRecommendedRegimen <- recommendation$regimen
+
+# Population regimen can be updated using the 'updateRegimen' method, a 4th dose of 1000 is used
+predUpdatedRegimen <- updateRegimen(regimen = newRegimen, newDose = 4500)
+print(predUpdatedRegimen) # Check pred regimen
+ipred <- estimate(tdmore, observed = observed, regimen = ipredRecommendedRegimen)
+pred <- estimate(tdmore, regimen = predUpdatedRegimen)
+plot(ipred, newdata=seq(0, 32, by=0.1)) + geom_hline(yintercept=8) + scale_y_log10()
+set.seed(0) 
+library(nlmixr)
+
+modelCode <- function(){
+  ini({
+    TVCL <- 34.1
+    TVVc <- 2700
+    TVKa <- 0.126
+    TVVp <- 774
+    TVQ <- 0.688
+
+    ECL ~ 0.060516 # 24.6%
+    EVc ~ 0.052900 # 23.0%
+    EKa ~ 2.755600 # 166%
+
+    EPS_Prop <- 0.417
+  })
+  model({
+    CL <- TVCL * exp(ECL)
+    Vc <- TVVc * exp(EVc)
+    Vp <- TVVp
+    Q <- TVQ
+    K12 <- Q/Vc
+    K21 <- Q/Vp
+    Ke <- CL/Vc
+    Ka <- TVKa*exp(EKa)
+
+    d/dt(depot) = -Ka*depot
+    d/dt(center) = Ka*depot - Ke*center - K12*center + K21*periph
+    d/dt(periph) = K12*center - K21*periph
+
+    CONC = center/Vc
+    CONC ~ prop(EPS_Prop)
+  })
+}
+
+library(tdmore)
+
+nlmixrModel <- nlmixrUI(modelCode)
+m1 <- tdmore(nlmixrModel)
+regimen <- data.frame(
+  TIME=0,     # First dose time: t=0h
+  AMT=50,     # Dose amount: 50 mg
+  II=24,      # Dose interval: 24h
+  ADDL=4*7-1  # Additional doses: 4 weeks
+)
+
+times <- seq(0, 6*7*24) # Observation times
+plot(m1, regimen, newdata=times)
+modelCode <- function(){
+  ini({
+    # PK model sunitinib
+    TVCL <- 34.1
+    TVVc <- 2700
+    TVKa <- 0.126
+    TVVp <- 774
+    TVQ <- 0.688
+
+    ECL ~ 0.060516 # 24.6%
+    EVc ~ 0.052900 # 23.0%
+    EKa ~ 2.755600 # 166%
+
+    EPS_Prop <- 0.417 # Proportional error 1 (related to CONC)
+
+    # PD model ALT
+    TVBASE_AST <- 21.5
+    TVKout_AST <- 0.0142
+    TVKpd_AST <- 0.00572
+    
+    EPS_Prop_AST = 0.257 #25.7%
+
+    # PD model AST
+    TVBASE_ALT <- 21.2
+    TVKout_ALT <- 0.00916
+    TVKpd_ALT <- 0.00401
+    
+    EPS_Prop_ALT = 0.373 #37.3%
+
+    # We assume 0.5 correlations in IIV, even though they are not reported in the original paper    
+    EBASE_AST + EBASE_ALT ~ c(0.101124,
+                              0.05028021, 0.164025)  # 31.8% #40.5%
+    EKout_AST + EKout_ALT ~ c(1.440000,
+                  0.1897367, 1.638400)#120%  #128%
+    EKpd_AST + EKpd_ALT ~ c(0.114244,
+                  0.05344249, 0.324900) #33.8% #57.0%
+  })
+  model({
+    # PK parameters
+    CL <- TVCL * exp(ECL)
+    Vc <- TVVc * exp(EVc)
+    Vp <- TVVp
+    Q <- TVQ
+    K12 <- Q/Vc
+    K21 <- Q/Vp
+    Ke <- CL/Vc
+    Ka <- TVKa*exp(EKa)
+
+    # AST parameters    
+    BASE_AST <- TVBASE_AST * exp(EBASE_AST)
+    Kout_AST <- TVKout_AST * exp(EKout_AST)
+    Kpd_AST <- TVKpd_AST * exp(EKpd_AST) #mL/ng
+    Kin_AST <- Kout_AST * BASE_AST
+    
+    # ALT parameters
+    BASE_ALT <- TVBASE_ALT * exp(EBASE_ALT)
+    Kout_ALT <- TVKout_ALT * exp(EKout_ALT)
+    Kpd_ALT <- TVKpd_ALT * exp(EKpd_ALT) #mL/ng
+    Kin_ALT <- Kout_ALT * BASE_ALT
+
+    # PK model
+    d/dt(depot) = -Ka*depot
+    d/dt(center) = Ka*depot - Ke*center - K12*center + K21*periph
+    d/dt(periph) = K12*center - K21*periph
+    CONC = center/Vc * 1000 #ng/mL
+        
+    # AST model
+    AST(0) = BASE_AST
+    d/dt(AST) = Kin_AST - Kout_AST*AST*(1-Kpd_AST*CONC)
+    
+    # ALT model
+    ALT(0) = BASE_ALT
+    d/dt(ALT) = Kin_ALT - Kout_ALT*ALT*(1-Kpd_ALT*CONC)
+    
+    # Residual error models
+    CONC ~ prop(EPS_Prop) | center # Define error model 1
+    AST ~ prop(EPS_Prop_AST) | AST # error model 2
+    ALT ~ prop(EPS_Prop_ALT) | ALT # error model 3
+  })
+}
+nlmixrModel <- nlmixrUI(modelCode)
+m2 <- tdmore(nlmixrModel, maxsteps=1E3*500)
+regimen <- data.frame(
+  TIME=0,
+  AMT=50,
+  II=24,
+  ADDL=4*7
+)
+times <- seq(0, 6*7*24, by=1)
+
+plot(m2, regimen, newdata=data.frame(TIME=times, CONC=NA))
+plot(m2, regimen, newdata=data.frame(TIME=times, ALT=NA))
+plot(m2, regimen, newdata=data.frame(TIME=times, AST=NA))
+observed <- data.frame(
+  TIME=c(0, 2,3,4)*7*24, 
+  CONC=NA,
+  ALT=c(21, 40, 42, 43),
+  AST=c(21, 45, 47, 49))
+ipred <- estimate(m2, observed = observed, regimen = regimen)
+
+plot(ipred, newdata=data.frame(TIME=times, CONC=NA))
+plot(ipred, newdata=data.frame(TIME=times, ALT=NA))
+plot(ipred, newdata=data.frame(TIME=times, AST=NA))
+coef(ipred)
+coef(ipred) / sqrt(diag(m2$omega))
+```
 
 ## Example: Detecting non-adherence
 
@@ -575,7 +918,7 @@ ggplot(mapping=aes(x=TIME, y=CONC)) +
   geom_line(aes(color="Non-adhering"), data=nonAdhering)
 ```
 
-<img src="08-Vignettes_files/figure-html/unnamed-chunk-24-1.png" width="672" />
+<img src="08-Vignettes_files/figure-html/unnamed-chunk-26-1.png" width="672" />
 
 ### Is the patient taking his/her medication? {-}
 We can now take a serum sample and evaluate if there is non-adherence.
@@ -627,7 +970,7 @@ ggplot(mapping=aes(x=TIME, y=CONC)) +
     data=predict(ipred, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA)))
 ```
 
-<img src="08-Vignettes_files/figure-html/unnamed-chunk-25-1.png" width="672" />
+<img src="08-Vignettes_files/figure-html/unnamed-chunk-27-1.png" width="672" />
 
 ```r
 standardDeviations <- coef(ipred) / sqrt(diag(m1$omega))
@@ -648,4 +991,339 @@ if(length(i) > 0) {
 
 ```
 ## This patient has unlikely (outside 95% CI) parameter estimates for  ECL . There may be a treatment adherence issue.
+```
+
+### Code appendix
+
+```r
+set.seed(0) 
+library(nlmixr)
+
+modelCode <- function(){
+  ini({
+    TVV1 <- 24.4;
+    TVV2 <- 7.01;
+    TVQ <- 4.97;
+    TVCL <- 9.87;
+    ECL ~ 0.194 # This value corresponds to OMEGA_CL (44% SD)
+    EV1 ~ 0.287 # This value corresponds to OMEGA_V1 (54% SD)
+    EPS_PROP <- 0.371 # Proportional error (37% SD)
+  })
+  model({
+    CL <- TVCL * exp(ECL)
+    V1 <- TVV1 * exp(EV1)
+    V2 <- TVV2
+    Q <- TVQ
+    K12 <- Q/V1
+    K21 <- Q/V2
+
+    d/dt(center) = - CL/V1 * center - K12*center + K21 * periph
+    d/dt(periph) = K12*center - K21 * periph
+
+    CONC = center / V1
+    CONC ~ prop(EPS_PROP) # Proportional error linked to the PK model
+  })
+}
+
+library(tdmore)
+
+nlmixrUI <- nlmixrUI(modelCode)
+tdmore <- tdmore(nlmixrUI)
+regimen <- data.frame(
+  TIME=c(0, 8, 16),            # Every 8 hour and for 1 day, an injection is given
+  AMT=c(1000, 1000, 1000),     # 1g is administered
+  RATE=c(1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
+)
+data <- predict(
+  object = tdmore,
+  newdata = data.frame(TIME = seq(0, 24, by = 0.5), CONC = NA),
+  regimen = regimen,
+  se = TRUE
+  )
+  
+library(ggplot2)
+ggplot(data, aes(x=TIME, y=CONC)) +
+  geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), fill="steelblue2", alpha=0.15) +
+  geom_line(aes(color="Population"), data=data) +
+  scale_color_manual(values=c("steelblue2")) +
+  scale_y_log10()
+  
+pred <- estimate(tdmore, regimen = regimen)
+coef(pred)
+vcov(pred)
+observed <- data.frame(TIME=c(9, 15), CONC=c(30, 2))
+ipred <- estimate(tdmore, observed = observed, regimen = regimen)
+coef(ipred)
+vcov(ipred)
+data <- predict(ipred, newdata=data.frame(TIME=seq(0, 24, 0.1), CONC=NA), se=TRUE)
+ggplot(data, aes(x=TIME))  +
+  geom_line(aes(color="Individual", y=CONC.median)) +
+  geom_ribbon(aes(fill="Individual", ymin=CONC.lower, ymax=CONC.upper), fill="tomato1", alpha=0.10) +
+  geom_line(aes(color="Population", y=CONC), data=predict(pred, newdata=seq(0, 24, 0.1))) +
+  geom_point(aes(y=CONC), data=observed) +
+  scale_color_manual(values=c("tomato1", "steelblue2")) +
+  scale_y_log10()
+plot(ipred, newdata=data.frame(TIME=seq(0.1, 24, by=0.1), CONC=NA)) + scale_y_log10()
+newRegimen <- data.frame(
+  TIME=c(0, 8, 16, 24),              # A fourth dose on the second day is added
+  AMT=c(1000, 1000, 1000, NA),       # Adding an unknown dose on the second day
+  RATE=c(1000, 1000, 1000, 1000)/0.5 # 30-minute infusion (rate=dose/infusion time)
+)
+
+recommendation <- findDose(
+  ipred,
+  regimen = newRegimen,
+  interval = c(100, 5000),
+  target = data.frame(TIME = 32, CONC = 8)
+  )
+summary(recommendation)
+# Recommended regimen for individual can be directly accessed from the recommendation object
+ipredRecommendedRegimen <- recommendation$regimen
+
+# Population regimen can be updated using the 'updateRegimen' method, a 4th dose of 1000 is used
+predUpdatedRegimen <- updateRegimen(regimen = newRegimen, newDose = 4500)
+print(predUpdatedRegimen) # Check pred regimen
+ipred <- estimate(tdmore, observed = observed, regimen = ipredRecommendedRegimen)
+pred <- estimate(tdmore, regimen = predUpdatedRegimen)
+plot(ipred, newdata=seq(0, 32, by=0.1)) + geom_hline(yintercept=8) + scale_y_log10()
+set.seed(0) 
+library(nlmixr)
+
+modelCode <- function(){
+  ini({
+    TVCL <- 34.1
+    TVVc <- 2700
+    TVKa <- 0.126
+    TVVp <- 774
+    TVQ <- 0.688
+
+    ECL ~ 0.060516 # 24.6%
+    EVc ~ 0.052900 # 23.0%
+    EKa ~ 2.755600 # 166%
+
+    EPS_Prop <- 0.417
+  })
+  model({
+    CL <- TVCL * exp(ECL)
+    Vc <- TVVc * exp(EVc)
+    Vp <- TVVp
+    Q <- TVQ
+    K12 <- Q/Vc
+    K21 <- Q/Vp
+    Ke <- CL/Vc
+    Ka <- TVKa*exp(EKa)
+
+    d/dt(depot) = -Ka*depot
+    d/dt(center) = Ka*depot - Ke*center - K12*center + K21*periph
+    d/dt(periph) = K12*center - K21*periph
+
+    CONC = center/Vc
+    CONC ~ prop(EPS_Prop)
+  })
+}
+
+library(tdmore)
+
+nlmixrModel <- nlmixrUI(modelCode)
+m1 <- tdmore(nlmixrModel)
+regimen <- data.frame(
+  TIME=0,     # First dose time: t=0h
+  AMT=50,     # Dose amount: 50 mg
+  II=24,      # Dose interval: 24h
+  ADDL=4*7-1  # Additional doses: 4 weeks
+)
+
+times <- seq(0, 6*7*24) # Observation times
+plot(m1, regimen, newdata=times)
+modelCode <- function(){
+  ini({
+    # PK model sunitinib
+    TVCL <- 34.1
+    TVVc <- 2700
+    TVKa <- 0.126
+    TVVp <- 774
+    TVQ <- 0.688
+
+    ECL ~ 0.060516 # 24.6%
+    EVc ~ 0.052900 # 23.0%
+    EKa ~ 2.755600 # 166%
+
+    EPS_Prop <- 0.417 # Proportional error 1 (related to CONC)
+
+    # PD model ALT
+    TVBASE_AST <- 21.5
+    TVKout_AST <- 0.0142
+    TVKpd_AST <- 0.00572
+    
+    EPS_Prop_AST = 0.257 #25.7%
+
+    # PD model AST
+    TVBASE_ALT <- 21.2
+    TVKout_ALT <- 0.00916
+    TVKpd_ALT <- 0.00401
+    
+    EPS_Prop_ALT = 0.373 #37.3%
+
+    # We assume 0.5 correlations in IIV, even though they are not reported in the original paper    
+    EBASE_AST + EBASE_ALT ~ c(0.101124,
+                              0.05028021, 0.164025)  # 31.8% #40.5%
+    EKout_AST + EKout_ALT ~ c(1.440000,
+                  0.1897367, 1.638400)#120%  #128%
+    EKpd_AST + EKpd_ALT ~ c(0.114244,
+                  0.05344249, 0.324900) #33.8% #57.0%
+  })
+  model({
+    # PK parameters
+    CL <- TVCL * exp(ECL)
+    Vc <- TVVc * exp(EVc)
+    Vp <- TVVp
+    Q <- TVQ
+    K12 <- Q/Vc
+    K21 <- Q/Vp
+    Ke <- CL/Vc
+    Ka <- TVKa*exp(EKa)
+
+    # AST parameters    
+    BASE_AST <- TVBASE_AST * exp(EBASE_AST)
+    Kout_AST <- TVKout_AST * exp(EKout_AST)
+    Kpd_AST <- TVKpd_AST * exp(EKpd_AST) #mL/ng
+    Kin_AST <- Kout_AST * BASE_AST
+    
+    # ALT parameters
+    BASE_ALT <- TVBASE_ALT * exp(EBASE_ALT)
+    Kout_ALT <- TVKout_ALT * exp(EKout_ALT)
+    Kpd_ALT <- TVKpd_ALT * exp(EKpd_ALT) #mL/ng
+    Kin_ALT <- Kout_ALT * BASE_ALT
+
+    # PK model
+    d/dt(depot) = -Ka*depot
+    d/dt(center) = Ka*depot - Ke*center - K12*center + K21*periph
+    d/dt(periph) = K12*center - K21*periph
+    CONC = center/Vc * 1000 #ng/mL
+        
+    # AST model
+    AST(0) = BASE_AST
+    d/dt(AST) = Kin_AST - Kout_AST*AST*(1-Kpd_AST*CONC)
+    
+    # ALT model
+    ALT(0) = BASE_ALT
+    d/dt(ALT) = Kin_ALT - Kout_ALT*ALT*(1-Kpd_ALT*CONC)
+    
+    # Residual error models
+    CONC ~ prop(EPS_Prop) | center # Define error model 1
+    AST ~ prop(EPS_Prop_AST) | AST # error model 2
+    ALT ~ prop(EPS_Prop_ALT) | ALT # error model 3
+  })
+}
+nlmixrModel <- nlmixrUI(modelCode)
+m2 <- tdmore(nlmixrModel, maxsteps=1E3*500)
+regimen <- data.frame(
+  TIME=0,
+  AMT=50,
+  II=24,
+  ADDL=4*7
+)
+times <- seq(0, 6*7*24, by=1)
+
+plot(m2, regimen, newdata=data.frame(TIME=times, CONC=NA))
+plot(m2, regimen, newdata=data.frame(TIME=times, ALT=NA))
+plot(m2, regimen, newdata=data.frame(TIME=times, AST=NA))
+observed <- data.frame(
+  TIME=c(0, 2,3,4)*7*24, 
+  CONC=NA,
+  ALT=c(21, 40, 42, 43),
+  AST=c(21, 45, 47, 49))
+ipred <- estimate(m2, observed = observed, regimen = regimen)
+
+plot(ipred, newdata=data.frame(TIME=times, CONC=NA))
+plot(ipred, newdata=data.frame(TIME=times, ALT=NA))
+plot(ipred, newdata=data.frame(TIME=times, AST=NA))
+coef(ipred)
+coef(ipred) / sqrt(diag(m2$omega))
+set.seed(0) 
+library(nlmixr)
+
+modelCode <- function(){
+  ini({
+    TVKa <- 3.87
+    TVCL <- 659 #L/h
+    TVV1 <- 56900 #L
+    TVV2 <- 5550 #L
+    TVQ <- 259 #L/h
+    
+    EKa ~ 0.04507129 #0.2123**2
+    ECL ~ 0.1535856 #0.3919**2
+    EV1 ~ 0.09223369 #0.3037**2
+    EV2 ~ 0.208301 #0.4564**2
+    EQ ~ 0.1015697# 0.3187**2
+    
+    EPS_ADD <- 1.91 #
+    EPS_PROP <- 0.117
+  })
+  model({
+    Ka <- TVKa * exp(EKa)
+    CL <- TVCL * exp(ECL)
+    V1 <- TVV1 * exp(EV1)
+    V2 <- TVV2 * exp(EV2)
+    Q <- TVQ * exp(EQ)
+    K12 <- Q/V1
+    K21 <- Q/V2
+
+    d/dt(center) = - CL/V1 * center - K12*center + K21 * periph
+    d/dt(periph) = K12*center - K21 * periph
+
+    CONC = center / V1 * 1000
+    CONC ~ prop(EPS_PROP) + add(EPS_ADD)
+  })
+}
+nlmixrModel <- nlmixrUI(modelCode)
+
+library(tdmore)
+m1 <- tdmore(nlmixrModel)
+regimen <- data.frame(
+  TIME=seq(0, by=24, length.out=30),
+  AMT=500 # 500ug standard dose
+)
+
+adhering <- predict(m1, regimen=regimen, newdata=seq(0, 30*24))
+
+actual <- data.frame(
+  TIME=seq(0, by=24, length.out=30),
+  AMT=500*sample(c(0,1), 30, replace=TRUE) # probability of 50% to not take the dose
+)
+nonAdhering <- predict(m1, regimen=actual, newdata=seq(0, 30*24))
+
+library(ggplot2)
+pred <- estimate(m1, regimen=regimen)
+ggplot(mapping=aes(x=TIME, y=CONC)) +
+  geom_line(aes(color="Adhering"), data=adhering) +
+  geom_line(aes(color="Non-adhering"), data=nonAdhering)
+# Take a blood sample
+observed <- predict(m1, regimen=actual, newdata=data.frame(TIME=30*24+c(-16, 0), CONC=NA))
+observed
+
+# We estimate individual parameters
+# as if the patient took his medication
+# properly
+ipred <- estimate(m1, observed, regimen)
+coef(ipred)
+
+ggplot(mapping=aes(x=TIME, y=CONC)) +
+  geom_line(aes(color="Reality"), data=nonAdhering) +
+  geom_point(data=observed) +
+  geom_line(aes(color="Population"), data=adhering) +
+#  geom_ribbon(aes(fill="Population", ymin=CONC.lower, ymax=CONC.upper), 
+#    data=predict(m1, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA), se.fit=TRUE), alpha=0.1) +
+  geom_line(aes(color="Prediction"), 
+    data=predict(ipred, regimen=regimen, newdata=data.frame(TIME=seq(0, 30*24), CONC=NA)))
+
+
+
+standardDeviations <- coef(ipred) / sqrt(diag(m1$omega))
+standardDeviations
+
+i <- which(pnorm(abs(standardDeviations)) > 0.975)
+if(length(i) > 0) {
+  cat("This patient has unlikely (outside 95% CI) parameter estimates for ", names(i),". There may be a treatment adherence issue.")
+}
 ```

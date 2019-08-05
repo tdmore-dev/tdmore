@@ -1,9 +1,6 @@
 ---
 title: "Prospective evaluation"
-output:
-  html_document:
-    keep_md: yes
-  word_document: default
+output: rmarkdown::html_vignette
 editor_options:
   chunk_output_type: console
 vignette: >
@@ -194,5 +191,5 @@ ggplot(target, aes(x=ipred.CONC / data.CONC)) +
 ```
 
 ### Code appendix
-```{r code=readLines(knitr::purl(knitr::current_input(), documentation = 0)), eval = FALSE}
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
 ```

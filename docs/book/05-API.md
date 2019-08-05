@@ -525,20 +525,6 @@ data4 <- predict(m1_WT, newdata=data.frame(TIME=times, CONC=NA), regimen=regimen
 data4$model <- factor("nlxmir model with WT covariate")
 
 library(ggplot2)
-```
-
-```
-## 
-## Attaching package: 'ggplot2'
-```
-
-```
-## The following objects are masked from 'package:RxODE':
-## 
-##     aes, facet_wrap
-```
-
-```r
 ggplot(data=rbind(data1, data2, data3, data4), aes(x=TIME, y=CONC, group=model)) + geom_line(aes(color=model))
 ```
 

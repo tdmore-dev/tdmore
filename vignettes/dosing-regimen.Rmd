@@ -1,9 +1,6 @@
 ---
 title: "Simulating different dosing regimen"
-output:
-  html_document:
-    keep_md: yes
-  word_document: default
+output: rmarkdown::html_vignette
 editor_options:
   chunk_output_type: console
 vignette: >
@@ -107,5 +104,5 @@ ggplot(result, aes(x=TIME, y=CONC, color=regimen, fill=regimen)) +
 ```
 
 ### Code appendix
-```{r code=readLines(knitr::purl(knitr::current_input(), documentation = 0)), eval = FALSE}
+```{r code={file <- knitr::purl(knitr::current_input(), documentation = 0); text <- readLines(file); unlink(file); text}, eval = FALSE}
 ```

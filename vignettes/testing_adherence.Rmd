@@ -1,8 +1,6 @@
 ---
 title: "Testing adherence using TDMore"
-output:
-  html_document:
-    keep_md: true
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Testing adherence using TDMore}
   %\VignetteEncoding{UTF-8}
@@ -121,4 +119,8 @@ i <- which(pnorm(abs(standardDeviations)) > 0.975)
 if(length(i) > 0) {
   cat("This patient has unlikely (outside 95% CI) parameter estimates for ", names(i),". There may be a treatment adherence issue.")
 }
+```
+
+### Code appendix
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
 ```

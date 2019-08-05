@@ -1,4 +1,4 @@
-if(packageVersion('bookdown') != "0.11") stop("Expecting bookdown version 0.11")
+if(packageVersion('bookdown') != "0.12") stop("Expecting bookdown version 0.12")
 
 
 build <- function() {

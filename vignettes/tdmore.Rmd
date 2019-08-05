@@ -1,8 +1,6 @@
 ---
 title: "TDMore, a global framework for Therapeutic Drug Monitoring (TDM)"
-output:
-  html_document:
-    keep_md: true
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{TDMore, a global framework for Therapeutic Drug Monitoring (TDM)}
   %\VignetteEngine{knitr::rmarkdown}
@@ -184,3 +182,7 @@ plot(ipred, newdata=seq(0, 32, by=0.1)) + geom_hline(yintercept=8) + scale_y_log
 ```
 
 The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day. 
+
+### Code appendix
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+```
