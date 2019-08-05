@@ -9,10 +9,12 @@ The next fit will only use one observation.
 The next fit will use an extra observation.
 And so on.}
 \usage{
-proseval(tdmore, observed = NULL, regimen = NULL, covariates = NULL,
-  par = NULL, fix = NULL, ...)
+proseval(object, observed = NULL, regimen = NULL, covariates = NULL,
+  par = NULL, fix = NULL, ..., .prediction = "ipred")
 }
 \arguments{
+\item{object}{a tdmore, tdmore_set or tdmore_mixture object}
+
 \item{observed}{data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 If not specified, we estimate the population prediction}
 
@@ -25,6 +27,9 @@ If not specified, we estimate the population prediction}
 \item{fix}{named vector with the fixed parameters}
 
 \item{...}{passed to \link{estimate} function}
+
+\item{.prediction}{Either a string or NULL. If a string, the output will contain a column
+with that name, storing the predicted values for that specific fit.}
 }
 \value{
 a tibble with columns ID,

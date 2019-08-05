@@ -115,63 +115,63 @@
 <h3 class="hasAnchor">
 <a href="#creating-your-model" class="anchor"></a>Creating your model</h3>
 <p>There are several ways telling TDMore what your model is. The easiest way is to provide the model in the form of a nxlmir model. The following example shows how a 2-compartment-PK model can be written. For the purpose of this demonstration, the ‘Meropenem’ PK model will be used. As Meropenem is given by injection into a vein, the absorption compartment is omitted.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nlmixr)
-
-modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
-  <span class="kw">ini</span>({
-    TVV1 &lt;-<span class="st"> </span><span class="fl">24.4</span>;
-    TVV2 &lt;-<span class="st"> </span><span class="fl">7.01</span>;
-    TVQ &lt;-<span class="st"> </span><span class="fl">4.97</span>;
-    TVCL &lt;-<span class="st"> </span><span class="fl">9.87</span>;
-    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.194</span> <span class="co"># This value corresponds to OMEGA_CL (44% SD)</span>
-    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.287</span> <span class="co"># This value corresponds to OMEGA_V1 (54% SD)</span>
-    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.371</span> <span class="co"># Proportional error (37% SD)</span>
-  })
-  <span class="kw">model</span>({
-    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)
-    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)
-    V2 &lt;-<span class="st"> </span>TVV2
-    Q &lt;-<span class="st"> </span>TVQ
-    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1
-    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2
-
-    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
-    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
-
-    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1
-    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="co"># Proportional error linked to the PK model</span>
-  })
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nlmixr)</a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){</a>
+<a class="sourceLine" id="cb1-4" title="4">  <span class="kw">ini</span>({</a>
+<a class="sourceLine" id="cb1-5" title="5">    TVV1 &lt;-<span class="st"> </span><span class="fl">24.4</span>;</a>
+<a class="sourceLine" id="cb1-6" title="6">    TVV2 &lt;-<span class="st"> </span><span class="fl">7.01</span>;</a>
+<a class="sourceLine" id="cb1-7" title="7">    TVQ &lt;-<span class="st"> </span><span class="fl">4.97</span>;</a>
+<a class="sourceLine" id="cb1-8" title="8">    TVCL &lt;-<span class="st"> </span><span class="fl">9.87</span>;</a>
+<a class="sourceLine" id="cb1-9" title="9">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.194</span> <span class="co"># This value corresponds to OMEGA_CL (44% SD)</span></a>
+<a class="sourceLine" id="cb1-10" title="10">    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.287</span> <span class="co"># This value corresponds to OMEGA_V1 (54% SD)</span></a>
+<a class="sourceLine" id="cb1-11" title="11">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.371</span> <span class="co"># Proportional error (37% SD)</span></a>
+<a class="sourceLine" id="cb1-12" title="12">  })</a>
+<a class="sourceLine" id="cb1-13" title="13">  <span class="kw">model</span>({</a>
+<a class="sourceLine" id="cb1-14" title="14">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
+<a class="sourceLine" id="cb1-15" title="15">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)</a>
+<a class="sourceLine" id="cb1-16" title="16">    V2 &lt;-<span class="st"> </span>TVV2</a>
+<a class="sourceLine" id="cb1-17" title="17">    Q &lt;-<span class="st"> </span>TVQ</a>
+<a class="sourceLine" id="cb1-18" title="18">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</a>
+<a class="sourceLine" id="cb1-19" title="19">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</a>
+<a class="sourceLine" id="cb1-20" title="20"></a>
+<a class="sourceLine" id="cb1-21" title="21">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb1-22" title="22">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb1-23" title="23"></a>
+<a class="sourceLine" id="cb1-24" title="24">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1</a>
+<a class="sourceLine" id="cb1-25" title="25">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="co"># Proportional error linked to the PK model</span></a>
+<a class="sourceLine" id="cb1-26" title="26">  })</a>
+<a class="sourceLine" id="cb1-27" title="27">}</a></code></pre></div>
 <p>Once the model is created, a TDMore object can be instantiated as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)
-
-nlmixrUI &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)
-tdmore &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrUI)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)</a>
+<a class="sourceLine" id="cb2-2" title="2"></a>
+<a class="sourceLine" id="cb2-3" title="3">nlmixrUI &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)</a>
+<a class="sourceLine" id="cb2-4" title="4">tdmore &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrUI)</a></code></pre></div>
 <p>The TDMore object is now ready for use.</p>
 </div>
 <div id="predicting-new-data" class="section level3 unnumbered">
 <h3 class="hasAnchor">
 <a href="#predicting-new-data" class="anchor"></a>Predicting new data</h3>
 <p>TDMore can be used to run simulations, based on the model defined in the previous step. For doing so, the regimen first needs to be specified. In the case of Meropenem, an 30-min injection is given into the central compartment every 8 hour. This can be written as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(
-  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>),            <span class="co"># Every 8 hour and for 1 day, an injection is given</span>
-  <span class="dt">AMT=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>),     <span class="co"># 1g is administered</span>
-  <span class="dt">RATE=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span>
-)</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(</a>
+<a class="sourceLine" id="cb3-2" title="2">  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>),            <span class="co"># Every 8 hour and for 1 day, an injection is given</span></a>
+<a class="sourceLine" id="cb3-3" title="3">  <span class="dt">AMT=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>),     <span class="co"># 1g is administered</span></a>
+<a class="sourceLine" id="cb3-4" title="4">  <span class="dt">RATE=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span></a>
+<a class="sourceLine" id="cb3-5" title="5">)</a></code></pre></div>
 <p>Let’s now simulate the population PK model for 1 day. This can be done using the TDMore predict() function. A dataframe with all the times to predict (and respective NA concentration) is given to the ‘newdata’ argument. Field ‘se’ is set to true, it tells TDMore we are interested to simulate the model with residual variability.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(
-  <span class="dt">object =</span> tdmore,
-  <span class="dt">newdata =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dt">by =</span> <span class="fl">0.5</span>), <span class="dt">CONC =</span> <span class="ot">NA</span>),
-  <span class="dt">regimen =</span> regimen,
-  <span class="dt">se =</span> <span class="ot">TRUE</span>
-  )
-  
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)
-<span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Population"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"steelblue2"</span>, <span class="dt">alpha=</span><span class="fl">0.15</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>), <span class="dt">data=</span>data) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"steelblue2"</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_y_log10</span>()</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">data &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(</a>
+<a class="sourceLine" id="cb4-2" title="2">  <span class="dt">object =</span> tdmore,</a>
+<a class="sourceLine" id="cb4-3" title="3">  <span class="dt">newdata =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dt">by =</span> <span class="fl">0.5</span>), <span class="dt">CONC =</span> <span class="ot">NA</span>),</a>
+<a class="sourceLine" id="cb4-4" title="4">  <span class="dt">regimen =</span> regimen,</a>
+<a class="sourceLine" id="cb4-5" title="5">  <span class="dt">se =</span> <span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb4-6" title="6">  )</a>
+<a class="sourceLine" id="cb4-7" title="7">  </a>
+<a class="sourceLine" id="cb4-8" title="8"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)</a>
+<a class="sourceLine" id="cb4-9" title="9"><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb4-10" title="10"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Population"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"steelblue2"</span>, <span class="dt">alpha=</span><span class="fl">0.15</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb4-11" title="11"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>), <span class="dt">data=</span>data) <span class="op">+</span></a>
+<a class="sourceLine" id="cb4-12" title="12"><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"steelblue2"</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb4-13" title="13"><span class="st">  </span><span class="kw">scale_y_log10</span>()</a></code></pre></div>
 <p><img src="tdmore_files/figure-html/population_prediction-1.png" width="768" style="display: block; margin: auto;"></p>
 <p>The plot above shows the median of the population (typical profile) and its 95% confidence interval. The range of the confidence interval can be changed using the argument ‘level’.</p>
 </div>
@@ -179,57 +179,57 @@ tdmore &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmo
 <h3 class="hasAnchor">
 <a href="#estimating-individual-parameters" class="anchor"></a>Estimating individual parameters</h3>
 <p>This section will show you how the individual parameters can be estimated, based on some observed data. Let’s first estimate the parameters of a typical individual. This is achieved by calling the estimate() function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> regimen)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(pred)</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> regimen)</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(pred)</a></code></pre></div>
 <pre><code>## ECL EV1 
 ##   0   0</code></pre>
 <p>Both eta’s ECL and EV1 have been estimated to 0. This is not surprising, as zero eta’s best describe the population average. We can also look at the uncertainty on these estimates.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/vcov">vcov</a></span>(pred)</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/vcov">vcov</a></span>(pred)</a></code></pre></div>
 <pre><code>##              ECL          EV1
 ## ECL 1.940000e-01 1.090438e-13
 ## EV1 1.090438e-13 2.870000e-01</code></pre>
 <p>This uncertainty is equal to the population inter-individual variability (OMEGA matrix). Now, let’s assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">observed &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">9</span>, <span class="dv">15</span>), <span class="dt">CONC=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">30</span>, <span class="dv">2</span>))</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">observed &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">9</span>, <span class="dv">15</span>), <span class="dt">CONC=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">30</span>, <span class="dv">2</span>))</a></code></pre></div>
 <p>We can ask TDMore to re-estimate the parameters for this specific individual:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)</a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</a></code></pre></div>
 <pre><code>##        ECL        EV1 
 ##  0.2597598 -0.1320256</code></pre>
 <p>Eta’s obtained by calling ‘coef’ on pred maximise altogether the likelihood for this specific subject. The variance-covariance matrix shows the uncertainty of the individual estimates, and their correlation.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/vcov">vcov</a></span>(ipred)</code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/vcov">vcov</a></span>(ipred)</a></code></pre></div>
 <pre><code>##            ECL        EV1
 ## ECL 0.03154125 0.04680262
 ## EV1 0.04680262 0.12759879</code></pre>
 <p>Predictions for the population (pred) and this specific subject (ipred) can be compared using the following snippet:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se=</span><span class="ot">TRUE</span>)
-<span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME))  <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Individual"</span>, <span class="dt">y=</span>CONC.median)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Individual"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"tomato1"</span>, <span class="dt">alpha=</span><span class="fl">0.10</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>, <span class="dt">y=</span>CONC), <span class="dt">data=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(pred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>))) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y=</span>CONC), <span class="dt">data=</span>observed) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"tomato1"</span>, <span class="st">"steelblue2"</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_y_log10</span>()</code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">data &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb14-2" title="2"><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME))  <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-3" title="3"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Individual"</span>, <span class="dt">y=</span>CONC.median)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Individual"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"tomato1"</span>, <span class="dt">alpha=</span><span class="fl">0.10</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-5" title="5"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>, <span class="dt">y=</span>CONC), <span class="dt">data=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(pred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>))) <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-6" title="6"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y=</span>CONC), <span class="dt">data=</span>observed) <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-7" title="7"><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"tomato1"</span>, <span class="st">"steelblue2"</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-8" title="8"><span class="st">  </span><span class="kw">scale_y_log10</span>()</a></code></pre></div>
 <p><img src="tdmore_files/figure-html/pred_ipred_predictions-1.png" width="768" style="display: block; margin: auto;"></p>
 <p>Ipred and pred are shown respectively in red and blue. A 95% confidence interval has been added around the ipred prediction. Note that the default TDMore plotting function can also be used to obtain the exact same plot in a single line of code:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="fl">0.1</span>, <span class="dv">24</span>, <span class="dt">by=</span><span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="fl">0.1</span>, <span class="dv">24</span>, <span class="dt">by=</span><span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</a></code></pre></div>
 </div>
 <div id="finding-the-right-dose-to-give" class="section level3 unnumbered">
 <h3 class="hasAnchor">
 <a href="#finding-the-right-dose-to-give" class="anchor"></a>Finding the right dose to give</h3>
 <p>A very interesting feature in TDMore is the possibility to ask the framework the next dose to be given knowing all the previous observations that were collected and some known end-points. For example, assume we still collected the same two observations on the first day, we would like to find the best first dose to be given on the second day. We would like to reach the trough concentration of 3.10 mg/L as much as possible. This can be expressed, as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newRegimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(
-  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">24</span>),              <span class="co"># A fourth dose on the second day is added</span>
-  <span class="dt">AMT=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="ot">NA</span>),       <span class="co"># Adding an unknown dose on the second day</span>
-  <span class="dt">RATE=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span>
-)
-
-recommendation &lt;-<span class="st"> </span><span class="kw"><a href="../reference/findDose.html">findDose</a></span>(
-  ipred,
-  <span class="dt">regimen =</span> newRegimen,
-  <span class="dt">interval =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">100</span>, <span class="dv">5000</span>),
-  <span class="dt">target =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME =</span> <span class="dv">32</span>, <span class="dt">CONC =</span> <span class="dv">8</span>)
-  )
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary</a></span>(recommendation)</code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">newRegimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(</a>
+<a class="sourceLine" id="cb16-2" title="2">  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">24</span>),              <span class="co"># A fourth dose on the second day is added</span></a>
+<a class="sourceLine" id="cb16-3" title="3">  <span class="dt">AMT=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="ot">NA</span>),       <span class="co"># Adding an unknown dose on the second day</span></a>
+<a class="sourceLine" id="cb16-4" title="4">  <span class="dt">RATE=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span></a>
+<a class="sourceLine" id="cb16-5" title="5">)</a>
+<a class="sourceLine" id="cb16-6" title="6"></a>
+<a class="sourceLine" id="cb16-7" title="7">recommendation &lt;-<span class="st"> </span><span class="kw"><a href="../reference/findDose.html">findDose</a></span>(</a>
+<a class="sourceLine" id="cb16-8" title="8">  ipred,</a>
+<a class="sourceLine" id="cb16-9" title="9">  <span class="dt">regimen =</span> newRegimen,</a>
+<a class="sourceLine" id="cb16-10" title="10">  <span class="dt">interval =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">100</span>, <span class="dv">5000</span>),</a>
+<a class="sourceLine" id="cb16-11" title="11">  <span class="dt">target =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME =</span> <span class="dv">32</span>, <span class="dt">CONC =</span> <span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb16-12" title="12">  )</a>
+<a class="sourceLine" id="cb16-13" title="13"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary</a></span>(recommendation)</a></code></pre></div>
 <pre><code>## $dose
 ## [1] 4540.072
 ## 
@@ -240,20 +240,20 @@ recommendation &lt;-<span class="st"> </span><span class="kw"><a href="../refere
 ## 3   16 1000.000 2000
 ## 4   24 4540.072 2000</code></pre>
 <p>The result of the findDose() routine is shown above. It tells us that XXX mg (approximately) is the recommended starting dose on the second day. The following code helps up verify this visually.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Recommended regimen for individual can be directly accessed from the recommendation object</span>
-ipredRecommendedRegimen &lt;-<span class="st"> </span>recommendation<span class="op">$</span>regimen
-
-<span class="co"># Population regimen can be updated using the 'updateRegimen' method, a 4th dose of 1000 is used</span>
-predUpdatedRegimen &lt;-<span class="st"> </span><span class="kw"><a href="../reference/updateRegimen.html">updateRegimen</a></span>(<span class="dt">regimen =</span> newRegimen, <span class="dt">newDose =</span> <span class="dv">4500</span>)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(predUpdatedRegimen) <span class="co"># Check pred regimen</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="co"># Recommended regimen for individual can be directly accessed from the recommendation object</span></a>
+<a class="sourceLine" id="cb18-2" title="2">ipredRecommendedRegimen &lt;-<span class="st"> </span>recommendation<span class="op">$</span>regimen</a>
+<a class="sourceLine" id="cb18-3" title="3"></a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="co"># Population regimen can be updated using the 'updateRegimen' method, a 4th dose of 1000 is used</span></a>
+<a class="sourceLine" id="cb18-5" title="5">predUpdatedRegimen &lt;-<span class="st"> </span><span class="kw"><a href="../reference/updateRegimen.html">updateRegimen</a></span>(<span class="dt">regimen =</span> newRegimen, <span class="dt">newDose =</span> <span class="dv">4500</span>)</a>
+<a class="sourceLine" id="cb18-6" title="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(predUpdatedRegimen) <span class="co"># Check pred regimen</span></a></code></pre></div>
 <pre><code>##   TIME  AMT RATE
 ## 1    0 1000 2000
 ## 2    8 1000 2000
 ## 3   16 1000 2000
 ## 4   24 4500 2000</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> ipredRecommendedRegimen)
-pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> predUpdatedRegimen)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">32</span>, <span class="dt">by=</span><span class="fl">0.1</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="dv">8</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> ipredRecommendedRegimen)</a>
+<a class="sourceLine" id="cb20-2" title="2">pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> predUpdatedRegimen)</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">32</span>, <span class="dt">by=</span><span class="fl">0.1</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="dv">8</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</a></code></pre></div>
 <p><img src="tdmore_files/figure-html/find_dose_pred_ipred_predictions-1.png" width="768" style="display: block; margin: auto;"></p>
 <p>The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day.</p>
 </div>

@@ -645,7 +645,7 @@ getPredictOutputNames <- function(newdata, columnNames, pNames) {
 #' @return a summarised data frame
 summariseFittedMC <- function(fittedMC, ipred, level, oNames) {
   if(length(oNames)==0) {
-    return( fittedMC %>% dplyr::distinct(TIME) )
+    return( fittedMC %>% dplyr::distinct(.data$TIME) )
   }
   a <- (1-level)/2
   summarize <- function(x, key) {

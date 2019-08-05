@@ -3,13 +3,15 @@
 #'
 #' @inheritParams estimate
 #' @param ... passed to \link{estimate} function
+#' @param .prediction Either a string or NULL. If a string, the output will contain a column
+#' with that name, storing the predicted values for that specific fit.
 #'
 #' @return a tibble with columns ID,
 #' and column `fit` with the tdmorefit object
 #'
 #' @export
-posthoc <- function(tdmore, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, ...) {
-  ._posthoc(tdmore, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix, ..., .proseval=FALSE)
+posthoc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, ..., .prediction="ipred") {
+  ._posthoc(object, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix, ..., .proseval=FALSE, .prediction=.prediction)
 }
 
 #' This function calculates a prospective evaluation.
@@ -19,19 +21,18 @@ posthoc <- function(tdmore, observed=NULL, regimen=NULL, covariates=NULL, par=NU
 #' The next fit will use an extra observation.
 #' And so on.
 #'
-#' @inheritParams estimate
-#' @param ... passed to \link{estimate} function
+#' @inheritParams posthoc
 #'
 #' @return a tibble with columns ID,
 #' OBS (showing how many observations were included in this fit),
 #' and column `fit` with the tdmorefit object (nested in a list)
 #'
 #' @export
-proseval <- function(tdmore, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, ...) {
-  ._posthoc(tdmore, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix, ..., .proseval=TRUE)
+proseval <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, ..., .prediction="ipred") {
+  ._posthoc(object, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix, ..., .proseval=TRUE, .prediction=.prediction)
 }
 
-._posthoc <- function(tdmore, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, ..., .proseval=FALSE) {
+._posthoc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, ..., .proseval=FALSE, .prediction=NULL) {
   check <- function(x) {
     assert_that(
       is.null(x) || {
@@ -50,10 +51,10 @@ proseval <- function(tdmore, observed=NULL, regimen=NULL, covariates=NULL, par=N
   getForId <- function(.x, id) {
     if(is.null(.x)) return(NULL)
     if(! "ID" %in% colnames(.x)) return(.x)
-    .x %>% dplyr::filter(.data$ID == id) %>% select(-.data$ID)
+    .x %>% dplyr::filter(.data$ID == id) %>% dplyr::select(-.data$ID)
   }
   doEstimate <- function(argumentsPerId) {
-    fit <- do.call(estimate, args=c(list(tdmore), argumentsPerId, list(...)))
+    fit <- do.call(estimate, args=c(list(object), argumentsPerId, list(...)))
     do.call( tibble::tibble, args=c(
       #actually, all of these arguments are already in the tdmorefit object!
       #map( argumentsPerId, ~list(.x)),
@@ -82,13 +83,19 @@ proseval <- function(tdmore, observed=NULL, regimen=NULL, covariates=NULL, par=N
         }
         res <- doEstimate(iterationArguments)
         res$OBS <- i
+        if(!is.null(.prediction))
+          res[,.prediction] <- list(list( predict(res$fit[[1]], argumentsPerId$observed) ))
+
         result[[i+1]] <- res
       }
       dplyr::bind_rows(result)
     } else {
-      doEstimate(argumentsPerId)
+      res <- doEstimate(argumentsPerId)
+      if(!is.null(.prediction))
+        res[,.prediction] <- list(list( predict(res$fit[[1]], argumentsPerId$observed) ))
+      res
     }
   }
-  res <- tibble(ID=ID) %>% group_by(ID) %>% dplyr::group_modify(estimateForId)
+  res <- tibble::tibble(ID=ID) %>% dplyr::group_by(ID) %>% dplyr::group_modify(estimateForId)
   res
 }

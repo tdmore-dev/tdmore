@@ -124,7 +124,7 @@
 <h2 class="hasAnchor">
 <a href="#how-to-install" class="anchor"></a>How to install</h2>
 <p>TDMore depends on package <code>RxODE</code>, which requires a working C and fortran compiler to work. Installation procedure can be found <a href="https://github.com/nlmixrdevelopment/RxODE">here</a>. Once <code>RxODE</code> installed, simply execute the following command in the R console:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"tdmore-dev/tdmore"</span>)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"tdmore-dev/tdmore"</span>)</a></code></pre></div>
 </div>
 <div id="legal" class="section level2">
 <h2 class="hasAnchor">
@@ -136,45 +136,45 @@
 <h2 class="hasAnchor">
 <a href="#how-to-use" class="anchor"></a>How to use</h2>
 <p>This example code uses <code>nlmixr</code> to define the model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nlmixr)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)
-
-modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){
-  <span class="kw">ini</span>({
-    TVKA &lt;-<span class="st"> </span><span class="fl">3.7</span>
-    TVVc &lt;-<span class="st"> </span><span class="dv">61</span>
-    TVCL &lt;-<span class="st"> </span><span class="fl">3.7</span>
-    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.0784</span> <span class="co">#OMEGA_CL, 28% SD</span>
-    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.0361</span> <span class="co">#OMEGA_V1, 19% SD</span>
-    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.23</span> <span class="co"># Proportional error, 23% SD</span>
-  })
-  <span class="kw">model</span>({
-    KA &lt;-<span class="st"> </span>TVKA
-    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)
-    Vc &lt;-<span class="st"> </span>TVVc <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)
-    
-    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(depot) =<span class="st"> </span><span class="op">-</span>KA<span class="op">*</span>depot
-    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span>KA<span class="op">*</span>depot <span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>Vc <span class="op">*</span><span class="st"> </span>center
-    
-    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>Vc
-    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP)
-  })
-}
-model &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(modelCode) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="reference/tdmore.html">tdmore</a></span>()
-
-regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(
-  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">7</span>)<span class="op">*</span><span class="dv">24</span>,
-  <span class="dt">AMT=</span><span class="dv">5</span> <span class="co">#5mg</span>
-)
-
-observed &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">24</span>, <span class="dv">72</span>), <span class="dt">CONC=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.04</span>, <span class="fl">0.02</span>, <span class="fl">0.025</span>))
-ipred &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="reference/estimate.html">estimate</a></span>(observed, regimen)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nlmixr)</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)</a>
+<a class="sourceLine" id="cb2-3" title="3"></a>
+<a class="sourceLine" id="cb2-4" title="4">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){</a>
+<a class="sourceLine" id="cb2-5" title="5">  <span class="kw">ini</span>({</a>
+<a class="sourceLine" id="cb2-6" title="6">    TVKA &lt;-<span class="st"> </span><span class="fl">3.7</span></a>
+<a class="sourceLine" id="cb2-7" title="7">    TVVc &lt;-<span class="st"> </span><span class="dv">61</span></a>
+<a class="sourceLine" id="cb2-8" title="8">    TVCL &lt;-<span class="st"> </span><span class="fl">3.7</span></a>
+<a class="sourceLine" id="cb2-9" title="9">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.0784</span> <span class="co">#OMEGA_CL, 28% SD</span></a>
+<a class="sourceLine" id="cb2-10" title="10">    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.0361</span> <span class="co">#OMEGA_V1, 19% SD</span></a>
+<a class="sourceLine" id="cb2-11" title="11">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.23</span> <span class="co"># Proportional error, 23% SD</span></a>
+<a class="sourceLine" id="cb2-12" title="12">  })</a>
+<a class="sourceLine" id="cb2-13" title="13">  <span class="kw">model</span>({</a>
+<a class="sourceLine" id="cb2-14" title="14">    KA &lt;-<span class="st"> </span>TVKA</a>
+<a class="sourceLine" id="cb2-15" title="15">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
+<a class="sourceLine" id="cb2-16" title="16">    Vc &lt;-<span class="st"> </span>TVVc <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)</a>
+<a class="sourceLine" id="cb2-17" title="17">    </a>
+<a class="sourceLine" id="cb2-18" title="18">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(depot) =<span class="st"> </span><span class="op">-</span>KA<span class="op">*</span>depot</a>
+<a class="sourceLine" id="cb2-19" title="19">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span>KA<span class="op">*</span>depot <span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>Vc <span class="op">*</span><span class="st"> </span>center</a>
+<a class="sourceLine" id="cb2-20" title="20">    </a>
+<a class="sourceLine" id="cb2-21" title="21">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>Vc</a>
+<a class="sourceLine" id="cb2-22" title="22">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP)</a>
+<a class="sourceLine" id="cb2-23" title="23">  })</a>
+<a class="sourceLine" id="cb2-24" title="24">}</a>
+<a class="sourceLine" id="cb2-25" title="25">model &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(modelCode) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="reference/tdmore.html">tdmore</a></span>()</a>
+<a class="sourceLine" id="cb2-26" title="26"></a>
+<a class="sourceLine" id="cb2-27" title="27">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(</a>
+<a class="sourceLine" id="cb2-28" title="28">  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">7</span>)<span class="op">*</span><span class="dv">24</span>,</a>
+<a class="sourceLine" id="cb2-29" title="29">  <span class="dt">AMT=</span><span class="dv">5</span> <span class="co">#5mg</span></a>
+<a class="sourceLine" id="cb2-30" title="30">)</a>
+<a class="sourceLine" id="cb2-31" title="31"></a>
+<a class="sourceLine" id="cb2-32" title="32">observed &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">24</span>, <span class="dv">72</span>), <span class="dt">CONC=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.04</span>, <span class="fl">0.02</span>, <span class="fl">0.025</span>))</a>
+<a class="sourceLine" id="cb2-33" title="33">ipred &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="reference/estimate.html">estimate</a></span>(observed, regimen)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred)</a></code></pre></div>
 <p><img src="figures/readme_plot_ipred-1.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</a></code></pre></div>
 <pre><code>##        ECL        EV1 
 ## 0.07919572 0.16332022</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/vcov">vcov</a></span>(ipred)</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/vcov">vcov</a></span>(ipred)</a></code></pre></div>
 <pre><code>##             ECL         EV1
 ## ECL 0.011779142 0.009373237
 ## EV1 0.009373237 0.030891449</code></pre>

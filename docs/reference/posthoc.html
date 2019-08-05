@@ -151,12 +151,16 @@ All parameters may have an additional ID column to identify every individual.</p
     
     </div>
 
-    <pre class="usage"><span class='fu'>posthoc</span>(<span class='no'>tdmore</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>posthoc</span>(<span class='no'>object</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>.prediction</span> <span class='kw'>=</span> <span class='st'>"ipred"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>object</th>
+      <td><p>a tdmore, tdmore_set or tdmore_mixture object</p></td>
+    </tr>
     <tr>
       <th>observed</th>
       <td><p>data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
@@ -181,6 +185,11 @@ If not specified, we estimate the population prediction</p></td>
     <tr>
       <th>...</th>
       <td><p>passed to <a href='estimate.html'>estimate</a> function</p></td>
+    </tr>
+    <tr>
+      <th>.prediction</th>
+      <td><p>Either a string or NULL. If a string, the output will contain a column
+with that name, storing the predicted values for that specific fit.</p></td>
     </tr>
     </table>
     

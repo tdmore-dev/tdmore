@@ -132,168 +132,168 @@
 <h3 class="hasAnchor">
 <a href="#example-model" class="anchor"></a>Example model</h3>
 <p>We use an example model from literature.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Model taken from literature: Soulele, K., et al.</span>
-<span class="co"># 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'</span>
-<span class="co"># European Journal of Pharmaceutical Sciences 80 (2015): 33-42."</span>
-myModel &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(<span class="cf">function</span>(){
-  <span class="kw">ini</span>({
-    TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span>
-    TVCL &lt;-<span class="st"> </span><span class="dv">659</span>    <span class="co"># L/h</span>
-    TVV1 &lt;-<span class="st"> </span><span class="dv">56900</span>  <span class="co"># L</span>
-    TVV2 &lt;-<span class="st"> </span><span class="dv">5550</span>   <span class="co"># L</span>
-    TVQ &lt;-<span class="st"> </span><span class="dv">259</span>     <span class="co"># L/h</span>
-
-    EKa <span class="op">~</span><span class="st"> </span><span class="fl">0.04507129</span>  <span class="co"># 0.2123**2</span>
-    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.1535856</span>   <span class="co"># 0.3919**2</span>
-    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.09223369</span>  <span class="co"># 0.3037**2</span>
-    EV2 <span class="op">~</span><span class="st"> </span><span class="fl">0.208301</span>    <span class="co"># 0.4564**2</span>
-    EQ <span class="op">~</span><span class="st"> </span><span class="fl">0.1015697</span>    <span class="co"># 0.3187**2</span>
-
-    EPS_ADD &lt;-<span class="st"> </span><span class="fl">1.91</span>
-    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span>
-  })
-  <span class="kw">model</span>({
-    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)
-    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)
-    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)
-    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV2)
-    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EQ)
-    
-    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1
-    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2
-
-    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
-    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
-
-    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span>
-    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)
-  })
-})
-
-m1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(myModel)</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="co"># Model taken from literature: Soulele, K., et al.</span></a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="co"># 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co"># European Journal of Pharmaceutical Sciences 80 (2015): 33-42."</span></a>
+<a class="sourceLine" id="cb6-4" title="4">myModel &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(<span class="cf">function</span>(){</a>
+<a class="sourceLine" id="cb6-5" title="5">  <span class="kw">ini</span>({</a>
+<a class="sourceLine" id="cb6-6" title="6">    TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span></a>
+<a class="sourceLine" id="cb6-7" title="7">    TVCL &lt;-<span class="st"> </span><span class="dv">659</span>    <span class="co"># L/h</span></a>
+<a class="sourceLine" id="cb6-8" title="8">    TVV1 &lt;-<span class="st"> </span><span class="dv">56900</span>  <span class="co"># L</span></a>
+<a class="sourceLine" id="cb6-9" title="9">    TVV2 &lt;-<span class="st"> </span><span class="dv">5550</span>   <span class="co"># L</span></a>
+<a class="sourceLine" id="cb6-10" title="10">    TVQ &lt;-<span class="st"> </span><span class="dv">259</span>     <span class="co"># L/h</span></a>
+<a class="sourceLine" id="cb6-11" title="11"></a>
+<a class="sourceLine" id="cb6-12" title="12">    EKa <span class="op">~</span><span class="st"> </span><span class="fl">0.04507129</span>  <span class="co"># 0.2123**2</span></a>
+<a class="sourceLine" id="cb6-13" title="13">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.1535856</span>   <span class="co"># 0.3919**2</span></a>
+<a class="sourceLine" id="cb6-14" title="14">    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.09223369</span>  <span class="co"># 0.3037**2</span></a>
+<a class="sourceLine" id="cb6-15" title="15">    EV2 <span class="op">~</span><span class="st"> </span><span class="fl">0.208301</span>    <span class="co"># 0.4564**2</span></a>
+<a class="sourceLine" id="cb6-16" title="16">    EQ <span class="op">~</span><span class="st"> </span><span class="fl">0.1015697</span>    <span class="co"># 0.3187**2</span></a>
+<a class="sourceLine" id="cb6-17" title="17"></a>
+<a class="sourceLine" id="cb6-18" title="18">    EPS_ADD &lt;-<span class="st"> </span><span class="fl">1.91</span></a>
+<a class="sourceLine" id="cb6-19" title="19">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span></a>
+<a class="sourceLine" id="cb6-20" title="20">  })</a>
+<a class="sourceLine" id="cb6-21" title="21">  <span class="kw">model</span>({</a>
+<a class="sourceLine" id="cb6-22" title="22">    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)</a>
+<a class="sourceLine" id="cb6-23" title="23">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
+<a class="sourceLine" id="cb6-24" title="24">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)</a>
+<a class="sourceLine" id="cb6-25" title="25">    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV2)</a>
+<a class="sourceLine" id="cb6-26" title="26">    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EQ)</a>
+<a class="sourceLine" id="cb6-27" title="27">    </a>
+<a class="sourceLine" id="cb6-28" title="28">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</a>
+<a class="sourceLine" id="cb6-29" title="29">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</a>
+<a class="sourceLine" id="cb6-30" title="30"></a>
+<a class="sourceLine" id="cb6-31" title="31">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb6-32" title="32">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb6-33" title="33"></a>
+<a class="sourceLine" id="cb6-34" title="34">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span></a>
+<a class="sourceLine" id="cb6-35" title="35">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)</a>
+<a class="sourceLine" id="cb6-36" title="36">  })</a>
+<a class="sourceLine" id="cb6-37" title="37">})</a>
+<a class="sourceLine" id="cb6-38" title="38"></a>
+<a class="sourceLine" id="cb6-39" title="39">m1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(myModel)</a></code></pre></div>
 </div>
 <div id="in-silico-simulation-of-different-regimen" class="section level3">
 <h3 class="hasAnchor">
 <a href="#in-silico-simulation-of-different-regimen" class="anchor"></a>In silico simulation of different regimen</h3>
 <p>Below, we compare the standard treatment regimen of 88mcg twice-daily to a treatment regimen with a loading dose.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regimenA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>( <span class="co">#only maintenance dose</span>
-    <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">8</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dv">20</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>) ), <span class="co">#at 08:00 and 20:00</span>
-    <span class="dt">AMT=</span><span class="dv">88</span>
-  )
-regimenB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(
-  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">500</span>), <span class="co">#loading dose</span>
-  regimenA <span class="co">#maintenance dose</span>
-)
-
-<span class="co"># predict generates N samples of a tdmorefit with uncertainty</span>
-<span class="co"># If we use the population fit, then this will represent a sample across the population.</span>
-<span class="co"># I.e. N virtual patients</span>
-<span class="co"># In a model with covariates, you should either sample the covariates from an external database,</span>
-<span class="co"># or generate them from a distribution.</span>
-N &lt;-<span class="st"> </span><span class="dv">300</span>
-population &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1)
-resultA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), 
-                  <span class="dt">regimen=</span>regimenA,
-                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)
-resultB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), 
-                  <span class="dt">regimen=</span>regimenB,
-                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)
-
-result &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(
-  resultA <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"No loading dose"</span>),
-  resultB <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"200ug loading dose"</span>)
-)
-
-<span class="kw">ggplot</span>(result, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC, <span class="dt">color=</span>regimen, <span class="dt">fill=</span>regimen)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.data=</span>median_hilow, <span class="dt">geom=</span><span class="st">"ribbon"</span>, <span class="dt">alpha=</span><span class="fl">0.3</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y=</span>median, <span class="dt">geom=</span><span class="st">"line"</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Concentration over time"</span>)</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">regimenA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>( <span class="co">#only maintenance dose</span></a>
+<a class="sourceLine" id="cb7-2" title="2">    <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">8</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dv">20</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>) ), <span class="co">#at 08:00 and 20:00</span></a>
+<a class="sourceLine" id="cb7-3" title="3">    <span class="dt">AMT=</span><span class="dv">88</span></a>
+<a class="sourceLine" id="cb7-4" title="4">  )</a>
+<a class="sourceLine" id="cb7-5" title="5">regimenB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(</a>
+<a class="sourceLine" id="cb7-6" title="6">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">500</span>), <span class="co">#loading dose</span></a>
+<a class="sourceLine" id="cb7-7" title="7">  regimenA <span class="co">#maintenance dose</span></a>
+<a class="sourceLine" id="cb7-8" title="8">)</a>
+<a class="sourceLine" id="cb7-9" title="9"></a>
+<a class="sourceLine" id="cb7-10" title="10"><span class="co"># predict generates N samples of a tdmorefit with uncertainty</span></a>
+<a class="sourceLine" id="cb7-11" title="11"><span class="co"># If we use the population fit, then this will represent a sample across the population.</span></a>
+<a class="sourceLine" id="cb7-12" title="12"><span class="co"># I.e. N virtual patients</span></a>
+<a class="sourceLine" id="cb7-13" title="13"><span class="co"># In a model with covariates, you should either sample the covariates from an external database,</span></a>
+<a class="sourceLine" id="cb7-14" title="14"><span class="co"># or generate them from a distribution.</span></a>
+<a class="sourceLine" id="cb7-15" title="15">N &lt;-<span class="st"> </span><span class="dv">300</span></a>
+<a class="sourceLine" id="cb7-16" title="16">population &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1)</a>
+<a class="sourceLine" id="cb7-17" title="17">resultA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
+<a class="sourceLine" id="cb7-18" title="18">                  <span class="dt">regimen=</span>regimenA,</a>
+<a class="sourceLine" id="cb7-19" title="19">                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)</a>
+<a class="sourceLine" id="cb7-20" title="20">resultB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
+<a class="sourceLine" id="cb7-21" title="21">                  <span class="dt">regimen=</span>regimenB,</a>
+<a class="sourceLine" id="cb7-22" title="22">                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)</a>
+<a class="sourceLine" id="cb7-23" title="23"></a>
+<a class="sourceLine" id="cb7-24" title="24">result &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(</a>
+<a class="sourceLine" id="cb7-25" title="25">  resultA <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"No loading dose"</span>),</a>
+<a class="sourceLine" id="cb7-26" title="26">  resultB <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"200ug loading dose"</span>)</a>
+<a class="sourceLine" id="cb7-27" title="27">)</a>
+<a class="sourceLine" id="cb7-28" title="28"></a>
+<a class="sourceLine" id="cb7-29" title="29"><span class="kw">ggplot</span>(result, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC, <span class="dt">color=</span>regimen, <span class="dt">fill=</span>regimen)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-30" title="30"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.data=</span>median_hilow, <span class="dt">geom=</span><span class="st">"ribbon"</span>, <span class="dt">alpha=</span><span class="fl">0.3</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-31" title="31"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y=</span>median, <span class="dt">geom=</span><span class="st">"line"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-32" title="32"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Concentration over time"</span>)</a></code></pre></div>
 <p><img src="dosing-regimen_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 </div>
 <div id="code-appendix" class="section level3">
 <h3 class="hasAnchor">
 <a href="#code-appendix" class="anchor"></a>Code appendix</h3>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(purrr)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tidyr)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Random">set.seed</a></span>(<span class="dv">1234</span>)
-
-<span class="co"># Model taken from literature: Soulele, K., et al.</span>
-<span class="co"># 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'</span>
-<span class="co"># European Journal of Pharmaceutical Sciences 80 (2015): 33-42."</span>
-myModel &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(<span class="cf">function</span>(){
-  <span class="kw">ini</span>({
-    TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span>
-    TVCL &lt;-<span class="st"> </span><span class="dv">659</span>    <span class="co"># L/h</span>
-    TVV1 &lt;-<span class="st"> </span><span class="dv">56900</span>  <span class="co"># L</span>
-    TVV2 &lt;-<span class="st"> </span><span class="dv">5550</span>   <span class="co"># L</span>
-    TVQ &lt;-<span class="st"> </span><span class="dv">259</span>     <span class="co"># L/h</span>
-
-    EKa <span class="op">~</span><span class="st"> </span><span class="fl">0.04507129</span>  <span class="co"># 0.2123**2</span>
-    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.1535856</span>   <span class="co"># 0.3919**2</span>
-    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.09223369</span>  <span class="co"># 0.3037**2</span>
-    EV2 <span class="op">~</span><span class="st"> </span><span class="fl">0.208301</span>    <span class="co"># 0.4564**2</span>
-    EQ <span class="op">~</span><span class="st"> </span><span class="fl">0.1015697</span>    <span class="co"># 0.3187**2</span>
-
-    EPS_ADD &lt;-<span class="st"> </span><span class="fl">1.91</span>
-    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span>
-  })
-  <span class="kw">model</span>({
-    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)
-    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)
-    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)
-    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV2)
-    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EQ)
-    
-    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1
-    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2
-
-    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
-    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph
-
-    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span>
-    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)
-  })
-})
-
-m1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(myModel)
-
-regimenA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>( <span class="co">#only maintenance dose</span>
-    <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">8</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dv">20</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>) ), <span class="co">#at 08:00 and 20:00</span>
-    <span class="dt">AMT=</span><span class="dv">88</span>
-  )
-regimenB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(
-  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">500</span>), <span class="co">#loading dose</span>
-  regimenA <span class="co">#maintenance dose</span>
-)
-
-<span class="co"># predict generates N samples of a tdmorefit with uncertainty</span>
-<span class="co"># If we use the population fit, then this will represent a sample across the population.</span>
-<span class="co"># I.e. N virtual patients</span>
-<span class="co"># In a model with covariates, you should either sample the covariates from an external database,</span>
-<span class="co"># or generate them from a distribution.</span>
-N &lt;-<span class="st"> </span><span class="dv">300</span>
-population &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1)
-resultA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), 
-                  <span class="dt">regimen=</span>regimenA,
-                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)
-resultB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), 
-                  <span class="dt">regimen=</span>regimenB,
-                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)
-
-result &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(
-  resultA <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"No loading dose"</span>),
-  resultB <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"200ug loading dose"</span>)
-)
-
-<span class="kw">ggplot</span>(result, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC, <span class="dt">color=</span>regimen, <span class="dt">fill=</span>regimen)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.data=</span>median_hilow, <span class="dt">geom=</span><span class="st">"ribbon"</span>, <span class="dt">alpha=</span><span class="fl">0.3</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y=</span>median, <span class="dt">geom=</span><span class="st">"line"</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Concentration over time"</span>)
-
-## NA</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr)</a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(purrr)</a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tidyr)</a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)</a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Random">set.seed</a></span>(<span class="dv">1234</span>)</a>
+<a class="sourceLine" id="cb8-7" title="7"></a>
+<a class="sourceLine" id="cb8-8" title="8"><span class="co"># Model taken from literature: Soulele, K., et al.</span></a>
+<a class="sourceLine" id="cb8-9" title="9"><span class="co"># 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'</span></a>
+<a class="sourceLine" id="cb8-10" title="10"><span class="co"># European Journal of Pharmaceutical Sciences 80 (2015): 33-42."</span></a>
+<a class="sourceLine" id="cb8-11" title="11">myModel &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(<span class="cf">function</span>(){</a>
+<a class="sourceLine" id="cb8-12" title="12">  <span class="kw">ini</span>({</a>
+<a class="sourceLine" id="cb8-13" title="13">    TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span></a>
+<a class="sourceLine" id="cb8-14" title="14">    TVCL &lt;-<span class="st"> </span><span class="dv">659</span>    <span class="co"># L/h</span></a>
+<a class="sourceLine" id="cb8-15" title="15">    TVV1 &lt;-<span class="st"> </span><span class="dv">56900</span>  <span class="co"># L</span></a>
+<a class="sourceLine" id="cb8-16" title="16">    TVV2 &lt;-<span class="st"> </span><span class="dv">5550</span>   <span class="co"># L</span></a>
+<a class="sourceLine" id="cb8-17" title="17">    TVQ &lt;-<span class="st"> </span><span class="dv">259</span>     <span class="co"># L/h</span></a>
+<a class="sourceLine" id="cb8-18" title="18"></a>
+<a class="sourceLine" id="cb8-19" title="19">    EKa <span class="op">~</span><span class="st"> </span><span class="fl">0.04507129</span>  <span class="co"># 0.2123**2</span></a>
+<a class="sourceLine" id="cb8-20" title="20">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.1535856</span>   <span class="co"># 0.3919**2</span></a>
+<a class="sourceLine" id="cb8-21" title="21">    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.09223369</span>  <span class="co"># 0.3037**2</span></a>
+<a class="sourceLine" id="cb8-22" title="22">    EV2 <span class="op">~</span><span class="st"> </span><span class="fl">0.208301</span>    <span class="co"># 0.4564**2</span></a>
+<a class="sourceLine" id="cb8-23" title="23">    EQ <span class="op">~</span><span class="st"> </span><span class="fl">0.1015697</span>    <span class="co"># 0.3187**2</span></a>
+<a class="sourceLine" id="cb8-24" title="24"></a>
+<a class="sourceLine" id="cb8-25" title="25">    EPS_ADD &lt;-<span class="st"> </span><span class="fl">1.91</span></a>
+<a class="sourceLine" id="cb8-26" title="26">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span></a>
+<a class="sourceLine" id="cb8-27" title="27">  })</a>
+<a class="sourceLine" id="cb8-28" title="28">  <span class="kw">model</span>({</a>
+<a class="sourceLine" id="cb8-29" title="29">    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)</a>
+<a class="sourceLine" id="cb8-30" title="30">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
+<a class="sourceLine" id="cb8-31" title="31">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)</a>
+<a class="sourceLine" id="cb8-32" title="32">    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV2)</a>
+<a class="sourceLine" id="cb8-33" title="33">    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EQ)</a>
+<a class="sourceLine" id="cb8-34" title="34">    </a>
+<a class="sourceLine" id="cb8-35" title="35">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</a>
+<a class="sourceLine" id="cb8-36" title="36">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</a>
+<a class="sourceLine" id="cb8-37" title="37"></a>
+<a class="sourceLine" id="cb8-38" title="38">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb8-39" title="39">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb8-40" title="40"></a>
+<a class="sourceLine" id="cb8-41" title="41">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span></a>
+<a class="sourceLine" id="cb8-42" title="42">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)</a>
+<a class="sourceLine" id="cb8-43" title="43">  })</a>
+<a class="sourceLine" id="cb8-44" title="44">})</a>
+<a class="sourceLine" id="cb8-45" title="45"></a>
+<a class="sourceLine" id="cb8-46" title="46">m1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(myModel)</a>
+<a class="sourceLine" id="cb8-47" title="47"></a>
+<a class="sourceLine" id="cb8-48" title="48">regimenA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>( <span class="co">#only maintenance dose</span></a>
+<a class="sourceLine" id="cb8-49" title="49">    <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">8</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dv">20</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>) ), <span class="co">#at 08:00 and 20:00</span></a>
+<a class="sourceLine" id="cb8-50" title="50">    <span class="dt">AMT=</span><span class="dv">88</span></a>
+<a class="sourceLine" id="cb8-51" title="51">  )</a>
+<a class="sourceLine" id="cb8-52" title="52">regimenB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(</a>
+<a class="sourceLine" id="cb8-53" title="53">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">500</span>), <span class="co">#loading dose</span></a>
+<a class="sourceLine" id="cb8-54" title="54">  regimenA <span class="co">#maintenance dose</span></a>
+<a class="sourceLine" id="cb8-55" title="55">)</a>
+<a class="sourceLine" id="cb8-56" title="56"></a>
+<a class="sourceLine" id="cb8-57" title="57"><span class="co"># predict generates N samples of a tdmorefit with uncertainty</span></a>
+<a class="sourceLine" id="cb8-58" title="58"><span class="co"># If we use the population fit, then this will represent a sample across the population.</span></a>
+<a class="sourceLine" id="cb8-59" title="59"><span class="co"># I.e. N virtual patients</span></a>
+<a class="sourceLine" id="cb8-60" title="60"><span class="co"># In a model with covariates, you should either sample the covariates from an external database,</span></a>
+<a class="sourceLine" id="cb8-61" title="61"><span class="co"># or generate them from a distribution.</span></a>
+<a class="sourceLine" id="cb8-62" title="62">N &lt;-<span class="st"> </span><span class="dv">300</span></a>
+<a class="sourceLine" id="cb8-63" title="63">population &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1)</a>
+<a class="sourceLine" id="cb8-64" title="64">resultA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
+<a class="sourceLine" id="cb8-65" title="65">                  <span class="dt">regimen=</span>regimenA,</a>
+<a class="sourceLine" id="cb8-66" title="66">                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)</a>
+<a class="sourceLine" id="cb8-67" title="67">resultB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
+<a class="sourceLine" id="cb8-68" title="68">                  <span class="dt">regimen=</span>regimenB,</a>
+<a class="sourceLine" id="cb8-69" title="69">                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)</a>
+<a class="sourceLine" id="cb8-70" title="70"></a>
+<a class="sourceLine" id="cb8-71" title="71">result &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(</a>
+<a class="sourceLine" id="cb8-72" title="72">  resultA <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"No loading dose"</span>),</a>
+<a class="sourceLine" id="cb8-73" title="73">  resultB <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"200ug loading dose"</span>)</a>
+<a class="sourceLine" id="cb8-74" title="74">)</a>
+<a class="sourceLine" id="cb8-75" title="75"></a>
+<a class="sourceLine" id="cb8-76" title="76"><span class="kw">ggplot</span>(result, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC, <span class="dt">color=</span>regimen, <span class="dt">fill=</span>regimen)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-77" title="77"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.data=</span>median_hilow, <span class="dt">geom=</span><span class="st">"ribbon"</span>, <span class="dt">alpha=</span><span class="fl">0.3</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-78" title="78"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun.y=</span>median, <span class="dt">geom=</span><span class="st">"line"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-79" title="79"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">"Concentration over time"</span>)</a>
+<a class="sourceLine" id="cb8-80" title="80"></a>
+<a class="sourceLine" id="cb8-81" title="81"><span class="co">## NA</span></a></code></pre></div>
 </div>
   </div>
 
