@@ -88,7 +88,7 @@ obs <- data.frame(
 
 # predict generates N samples of a tdmorefit with uncertainty
 # If we use the population fit, then this will represent a sample across the population.
-# I.e. N virtual patients
+# I.e. N virtual subjects
 # In a model with covariates, you should either sample the covariates from an external database,
 # or generate them from a distribution.
 N <- 10
@@ -127,8 +127,8 @@ A retrospective dataset can also be used. Aggregating this data across individua
 
 As an example: If we evaluate how well we predict day3 using day 1+2 data, should we...
 
-a) discard patients with missing data on day3 (target), as there is no point of reference in this case?
-b) discard patients with missing data on day1 or day2, as there is less data to calculate an accurate fit?
+a) discard subjects with missing data on day3 (target), as there is no point of reference in this case?
+b) discard subjects with missing data on day1 or day2, as there is less data to calculate an accurate fit?
 
 This can be solved by using all data to generate an individual fit, and predicting (interpolating) missing data.
 

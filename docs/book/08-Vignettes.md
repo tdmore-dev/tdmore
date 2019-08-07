@@ -416,7 +416,7 @@ plot(m1, regimen, newdata=times)
 
 ### Adding a PD model {-}
 
-Suppose we received a full blood workup: Sunitinib concentration, Alanine aminotransferase (ALT), Aspartate aminotransferase (AST), Absolute neutrophil count (ANC), Platelet count (PC) and Lymphocyte count (LC). We also measured the patient's diastolic blood pressure (DBP).
+Suppose we received a full blood workup: Sunitinib concentration, Alanine aminotransferase (ALT), Aspartate aminotransferase (AST), Absolute neutrophil count (ANC), Platelet count (PC) and Lymphocyte count (LC). We also measured the subject's diastolic blood pressure (DBP).
 
 We can create a single model to predict all of these aspects. In the example below, we will focus on ALT and AST. Please note the mandatory '|' nlmixr syntax used to describe the residual variability of different endpoints.
 
@@ -920,7 +920,7 @@ ggplot(mapping=aes(x=TIME, y=CONC)) +
 
 <img src="08-Vignettes_files/figure-html/unnamed-chunk-26-1.png" width="672" />
 
-### Is the patient taking his/her medication? {-}
+### Is the subject taking his/her medication? {-}
 We can now take a serum sample and evaluate if there is non-adherence.
 
 
@@ -948,7 +948,7 @@ observed
 
 ```r
 # We estimate individual parameters
-# as if the patient took his medication
+# as if the virtual subject took his medication
 # properly
 ipred <- estimate(m1, observed, regimen)
 coef(ipred)
@@ -985,12 +985,12 @@ standardDeviations
 ```r
 i <- which(pnorm(abs(standardDeviations)) > 0.975)
 if(length(i) > 0) {
-  cat("This patient has unlikely (outside 95% CI) parameter estimates for ", names(i),". There may be a treatment adherence issue.")
+  cat("This subject has unlikely (outside 95% CI) parameter estimates for ", names(i),". There may be a treatment adherence issue.")
 }
 ```
 
 ```
-## This patient has unlikely (outside 95% CI) parameter estimates for  ECL . There may be a treatment adherence issue.
+## This subject has unlikely (outside 95% CI) parameter estimates for  ECL . There may be a treatment adherence issue.
 ```
 
 ### Code appendix
@@ -1303,7 +1303,7 @@ observed <- predict(m1, regimen=actual, newdata=data.frame(TIME=30*24+c(-16, 0),
 observed
 
 # We estimate individual parameters
-# as if the patient took his medication
+# as if the virtual subject took his medication
 # properly
 ipred <- estimate(m1, observed, regimen)
 coef(ipred)
@@ -1324,6 +1324,6 @@ standardDeviations
 
 i <- which(pnorm(abs(standardDeviations)) > 0.975)
 if(length(i) > 0) {
-  cat("This patient has unlikely (outside 95% CI) parameter estimates for ", names(i),". There may be a treatment adherence issue.")
+  cat("This subject has unlikely (outside 95% CI) parameter estimates for ", names(i),". There may be a treatment adherence issue.")
 }
 ```

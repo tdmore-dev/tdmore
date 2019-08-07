@@ -171,7 +171,7 @@
 <div id="adding-a-pd-model" class="section level3 unnumbered">
 <h3 class="hasAnchor">
 <a href="#adding-a-pd-model" class="anchor"></a>Adding a PD model</h3>
-<p>Suppose we received a full blood workup: Sunitinib concentration, Alanine aminotransferase (ALT), Aspartate aminotransferase (AST), Absolute neutrophil count (ANC), Platelet count (PC) and Lymphocyte count (LC). We also measured the patient’s diastolic blood pressure (DBP).</p>
+<p>Suppose we received a full blood workup: Sunitinib concentration, Alanine aminotransferase (ALT), Aspartate aminotransferase (AST), Absolute neutrophil count (ANC), Platelet count (PC) and Lymphocyte count (LC). We also measured the subject’s diastolic blood pressure (DBP).</p>
 <p>We can create a single model to predict all of these aspects. In the example below, we will focus on ALT and AST. Please note the mandatory ‘|’ nlmixr syntax used to describe the residual variability of different endpoints.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){</a>
 <a class="sourceLine" id="cb5-2" title="2">  <span class="kw">ini</span>({</a>

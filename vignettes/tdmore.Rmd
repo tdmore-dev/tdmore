@@ -1,8 +1,8 @@
 ---
-title: "TDMore, a global framework for Therapeutic Drug Monitoring (TDM)"
+title: "TDMore, a tool for in silico simulation of virtual subject profiles and dose adaptation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{TDMore, a global framework for Therapeutic Drug Monitoring (TDM)}
+  %\VignetteIndexEntry{TDMore, a tool for in silico simulation of virtual subject profiles and dose adaptation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -28,11 +28,8 @@ distribute or modify this work further.
 Please see <https://choosealicense.com/no-permission/> for more
 information.
 
-Through publishing, we allow others to use this R package and to perform
-in silico evaluation of individualized dosing strategies. Under no circumstances
-should the software in its current state be used for patient care.
-Installing this package using
-`devtools::install_github` is allowed.
+Through publishing, we allow others to use this R package and to perform in silico evaluation of individualized dosing strategies. Under no circumstances should the software be used for patient care.
+Installing this package using `devtools::install_github` is allowed.
 
 The official copyright holder of this work is the KU Leuven university.
 

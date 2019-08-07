@@ -181,9 +181,9 @@
 <a class="sourceLine" id="cb2-18" title="18"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Non-adhering"</span>), <span class="dt">data=</span>nonAdhering)</a></code></pre></div>
 <p><img src="testing_adherence_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 </div>
-<div id="is-the-patient-taking-hisher-medication" class="section level3 unnumbered">
+<div id="is-the-subject-taking-hisher-medication" class="section level3 unnumbered">
 <h3 class="hasAnchor">
-<a href="#is-the-patient-taking-hisher-medication" class="anchor"></a>Is the patient taking his/her medication?</h3>
+<a href="#is-the-subject-taking-hisher-medication" class="anchor"></a>Is the subject taking his/her medication?</h3>
 <p>We can now take a serum sample and evaluate if there is non-adherence.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># Take a blood sample</span></a>
 <a class="sourceLine" id="cb3-2" title="2">observed &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(m1, <span class="dt">regimen=</span>actual, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">30</span><span class="op">*</span><span class="dv">24</span><span class="op">+</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span><span class="dv">16</span>, <span class="dv">0</span>), <span class="dt">CONC=</span><span class="ot">NA</span>))</a>
@@ -205,7 +205,7 @@
 </tr>
 </table>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># We estimate individual parameters</span></a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="co"># as if the patient took his medication</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co"># as if the virtual subject took his medication</span></a>
 <a class="sourceLine" id="cb4-3" title="3"><span class="co"># properly</span></a>
 <a class="sourceLine" id="cb4-4" title="4">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1, observed, regimen)</a>
 <a class="sourceLine" id="cb4-5" title="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</a></code></pre></div>
@@ -226,9 +226,9 @@
 ##  0.0000000000  3.1601339289  0.0767874167 -0.0009384978  0.0070688412</code></pre>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">i &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/which">which</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Normal">pnorm</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">abs</a></span>(standardDeviations)) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.975</span>)</a>
 <a class="sourceLine" id="cb9-2" title="2"><span class="cf">if</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(i) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {</a>
-<a class="sourceLine" id="cb9-3" title="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"This patient has unlikely (outside 95% CI) parameter estimates for "</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(i),<span class="st">". There may be a treatment adherence issue."</span>)</a>
+<a class="sourceLine" id="cb9-3" title="3">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"This subject has unlikely (outside 95% CI) parameter estimates for "</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(i),<span class="st">". There may be a treatment adherence issue."</span>)</a>
 <a class="sourceLine" id="cb9-4" title="4">}</a></code></pre></div>
-<pre><code>## This patient has unlikely (outside 95% CI) parameter estimates for  ECL . There may be a treatment adherence issue.</code></pre>
+<pre><code>## This subject has unlikely (outside 95% CI) parameter estimates for  ECL . There may be a treatment adherence issue.</code></pre>
 </div>
 <div id="code-appendix" class="section level3">
 <h3 class="hasAnchor">
@@ -296,7 +296,7 @@
 <a class="sourceLine" id="cb11-61" title="61">observed</a>
 <a class="sourceLine" id="cb11-62" title="62"></a>
 <a class="sourceLine" id="cb11-63" title="63"><span class="co"># We estimate individual parameters</span></a>
-<a class="sourceLine" id="cb11-64" title="64"><span class="co"># as if the patient took his medication</span></a>
+<a class="sourceLine" id="cb11-64" title="64"><span class="co"># as if the virtual subject took his medication</span></a>
 <a class="sourceLine" id="cb11-65" title="65"><span class="co"># properly</span></a>
 <a class="sourceLine" id="cb11-66" title="66">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1, observed, regimen)</a>
 <a class="sourceLine" id="cb11-67" title="67"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</a>
@@ -317,7 +317,7 @@
 <a class="sourceLine" id="cb11-82" title="82"></a>
 <a class="sourceLine" id="cb11-83" title="83">i &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/which">which</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Normal">pnorm</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">abs</a></span>(standardDeviations)) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.975</span>)</a>
 <a class="sourceLine" id="cb11-84" title="84"><span class="cf">if</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(i) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {</a>
-<a class="sourceLine" id="cb11-85" title="85">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"This patient has unlikely (outside 95% CI) parameter estimates for "</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(i),<span class="st">". There may be a treatment adherence issue."</span>)</a>
+<a class="sourceLine" id="cb11-85" title="85">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"This subject has unlikely (outside 95% CI) parameter estimates for "</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(i),<span class="st">". There may be a treatment adherence issue."</span>)</a>
 <a class="sourceLine" id="cb11-86" title="86">}</a></code></pre></div>
 </div>
   </div>

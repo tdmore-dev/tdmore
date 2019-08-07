@@ -31,7 +31,7 @@ test_that("Test all other ebe methods", {
   expect_true( is.tdmorefit(fit) )
   expect_true( !is.tdmorefit(m1) )
 
-  #How would a patient with higher bodyweight look? Can we re-estimate?
+  #How would a subject with higher bodyweight look? Can we re-estimate?
   fit2 <- estimate(fit, covariates=c(WT=75))
   expect_known_output( summary(fit), "summary-tdmorefit2-example.txt" )
 

@@ -37,8 +37,8 @@ The standard requires *Software requirements analysis*. For TDMore, this consist
 
 For now, no formal releases have been executed. It is our intent to release to CRAN regularly, starting september 2019.
 
-## Validation requirements for use in patient care
-*It should be stressed that TDMore is not a medical device.* The software is for research and educational use only, and should never be directly used in patient care.
+## Validation requirements
+*It should be stressed that TDMore is not a medical device.* The software is for research and educational use only, and should never be directly used in patient care without an extensive validation process, for which you and only you are responsible.
 
 Should you wish to build a dose adaptation tool, and include the TDMore mathematical engine, please note that we deny any responsibility and that any dose adaptation tool is classified as a Medical Device under [MEDDEV July 2016](https://ec.europa.eu/docsroom/documents/17921/attachments/1/translations/en/renditions/native).
 

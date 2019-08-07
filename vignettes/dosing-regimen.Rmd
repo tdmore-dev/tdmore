@@ -80,7 +80,7 @@ regimenB <- rbind(
 
 # predict generates N samples of a tdmorefit with uncertainty
 # If we use the population fit, then this will represent a sample across the population.
-# I.e. N virtual patients
+# I.e. N virtual subjects
 # In a model with covariates, you should either sample the covariates from an external database,
 # or generate them from a distribution.
 N <- 300

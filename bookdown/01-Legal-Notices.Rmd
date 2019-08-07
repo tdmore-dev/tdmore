@@ -8,6 +8,13 @@ chunk_output_type: console
 
 The package is intended to make it easy to define your own models, and easily create an educational tool to support dosing decisions decision by physicians via in silico training.
 
+`TDMore` differs from other software for TDM in three aspects:
+
+1. It is a mathematical engine only. You have to provide the model.
+No clinical models or clinical interpretation is included. If you build dose adaptation software (a medical device!), you need to provide your own model, own clinical interpretation, and especially your own validation (potentially requiring a [CE mark](http://ec.europa.eu/DocsRoom/documents/10337/attachments/1/translations)).
+2. It is a tool for *in silico* evaluation and validation of dose adaptation approaches. It can be used in a population simulation (to estimate how many virtual subjects would be put on target by a given approach), or in a trial simulation (to estimate study power for a prospective trial on dose adaptation). Other software are designed for use by physicians, on a single individual real patient.
+3. It is open-source and can be easily extended or integrated with.
+
 ## About this book {-}
 This book provides guidance on the use of `TDMore` and serves as a basic reference manual.
 

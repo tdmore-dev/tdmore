@@ -180,7 +180,7 @@
 <a class="sourceLine" id="cb2-12" title="12"></a>
 <a class="sourceLine" id="cb2-13" title="13"><span class="co"># predict generates N samples of a tdmorefit with uncertainty</span></a>
 <a class="sourceLine" id="cb2-14" title="14"><span class="co"># If we use the population fit, then this will represent a sample across the population.</span></a>
-<a class="sourceLine" id="cb2-15" title="15"><span class="co"># I.e. N virtual patients</span></a>
+<a class="sourceLine" id="cb2-15" title="15"><span class="co"># I.e. N virtual subjects</span></a>
 <a class="sourceLine" id="cb2-16" title="16"><span class="co"># In a model with covariates, you should either sample the covariates from an external database,</span></a>
 <a class="sourceLine" id="cb2-17" title="17"><span class="co"># or generate them from a distribution.</span></a>
 <a class="sourceLine" id="cb2-18" title="18">N &lt;-<span class="st"> </span><span class="dv">10</span></a>
@@ -220,8 +220,8 @@
 <p>A retrospective dataset can also be used. Aggregating this data across individuals may be difficult if there are large differences in treatment, observation schedule or adherence. Furthermore, a decision should be made up-front on how to treat missing values.</p>
 <p>As an example: If we evaluate how well we predict day3 using day 1+2 data, should we…</p>
 <ol style="list-style-type: lower-alpha">
-<li>discard patients with missing data on day3 (target), as there is no point of reference in this case?</li>
-<li>discard patients with missing data on day1 or day2, as there is less data to calculate an accurate fit?</li>
+<li>discard subjects with missing data on day3 (target), as there is no point of reference in this case?</li>
+<li>discard subjects with missing data on day1 or day2, as there is less data to calculate an accurate fit?</li>
 </ol>
 <p>This can be solved by using all data to generate an individual fit, and predicting (interpolating) missing data.</p>
 </div>
@@ -343,7 +343,7 @@
 <a class="sourceLine" id="cb9-57" title="57"></a>
 <a class="sourceLine" id="cb9-58" title="58"><span class="co"># predict generates N samples of a tdmorefit with uncertainty</span></a>
 <a class="sourceLine" id="cb9-59" title="59"><span class="co"># If we use the population fit, then this will represent a sample across the population.</span></a>
-<a class="sourceLine" id="cb9-60" title="60"><span class="co"># I.e. N virtual patients</span></a>
+<a class="sourceLine" id="cb9-60" title="60"><span class="co"># I.e. N virtual subjects</span></a>
 <a class="sourceLine" id="cb9-61" title="61"><span class="co"># In a model with covariates, you should either sample the covariates from an external database,</span></a>
 <a class="sourceLine" id="cb9-62" title="62"><span class="co"># or generate them from a distribution.</span></a>
 <a class="sourceLine" id="cb9-63" title="63">N &lt;-<span class="st"> </span><span class="dv">10</span></a>

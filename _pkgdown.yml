@@ -98,7 +98,7 @@ reference:
 
 - title: "Dose recommendation"
   desc: >
-    Define a target value to reach, and find the dose that will bring the patient to that target.
+    Define a target value to reach, and find the dose that will bring the predicted profile to that target.
   contents:
   - computeTmax
   - findDose
