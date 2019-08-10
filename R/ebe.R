@@ -648,23 +648,22 @@ summariseFittedMC <- function(fittedMC, ipred, level, oNames) {
     return( fittedMC %>% dplyr::distinct(.data$TIME) )
   }
   a <- (1-level)/2
-  summarize <- function(x, key) {
-    result <- list()
-    for(i in oNames) {
-      result[i] <- ipred[ipred$TIME==key$TIME, i]
-      result[paste0(i, ".median")] <- median(x[,i,drop=T])
-      result[paste0(i, ".lower")] <- quantile(x[,i,drop=T], probs=a)
-      result[paste0(i, ".upper")] <- quantile(x[,i,drop=T], probs=1-a)
-    }
-    tibble::as_tibble(result)
-  }
   #dplyr gets confused with multiple 'ECL' columns (in case of IOV)
   fittedMC <- fittedMC[,c("TIME", oNames)]
 
+  lower <- function(x) {quantile(x, probs=a)}
+  upper <- function(x) {quantile(x, probs=1-a)}
   retValue <- fittedMC %>%
     dplyr::group_by(.data$TIME) %>%
-    dplyr::group_modify(summarize) %>%
+    dplyr::summarize_at(dplyr::vars(!!oNames), list(median, lower, upper)) %>%
     dplyr::ungroup()
+  ## Assign the right names to these columns
+  names <- expand.grid(oNames, c("median", "lower", "upper"))
+  cNames <- paste0(names$Var1, ".", names$Var2)
+  colnames(retValue)[seq_along(cNames)+1] <- cNames
+
+  retValue[, oNames] <- ipred[, oNames]
+
   return(retValue)
 }
 
