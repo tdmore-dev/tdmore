@@ -109,18 +109,20 @@ input <- data.frame(
 )
 
 library(dplyr)
-results_m1 <- input %>% group_by(ID) %>% do({
-  observed <- .data
-  obs <- observed[, c("TIME", "DV")]
-  colnames(obs) <- c("TIME", "CONC")
-  est <- estimate(m1tdm, obs, regimen)
+expect_runtime( {
+  results_m1 <- input %>% group_by(ID) %>% do({
+    observed <- .data
+    obs <- observed[, c("TIME", "DV")]
+    colnames(obs) <- c("TIME", "CONC")
+    est <- estimate(m1tdm, obs, regimen)
 
-  cbind(asPhi(est),
-        data.frame(
-          ID=observed$ID[1],
-          OBJ=est$ofv
-        ))
-}) %>% ungroup() %>% as.data.frame()
+    cbind(asPhi(est),
+          data.frame(
+            ID=observed$ID[1],
+            OBJ=est$ofv
+          ))
+  }) %>% ungroup() %>% as.data.frame()
+}, "estimate_theo.runtime.txt")
 
 expected_results_m1 <- data.frame(
   `ETA(1)` = c(-0.104660664215003, 0.329025944024965, 0.411113690829706,
