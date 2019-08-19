@@ -111,61 +111,65 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #' Incidentally, 3 significant digits \href{http://holford.fmhs.auckland.ac.nz/research/sigdig}{is the default value for NONMEM}.
 #' Without the above option, `estimate` will calculate with a relative precision of `1e-8`.
 #'
-#' @param data Instead of specifying a separate `observed` and `regimen` data, we can also
-#'
 #' @return A tdmorefit object
 #' @importFrom stats optim
 #' @export
-estimate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
+estimate <- function(object, observed, regimen, covariates, par, fix,
+                     method, se.fit,
+                     lower, upper,
+                     multistart,
+                     control, ...) {
   UseMethod("estimate")
 }
 
-#'
-#' Calculate the Empirical Bayesian Estimate parameters for a tdmore object.
-#'
-#' @inheritParams estimate
-#' @return a tdmorefit object
 #' @export
-estimate.tdmore <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
-  estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
+estimate.tdmore <- function(object, observed, regimen, covariates, par, fix,
+                            method, se.fit,
+                            lower, upper,
+                            multistart,
+                            control, ...) {
+  NextMethod()
 }
 
-#'
-#' Calculate the Empirical Bayesian Estimate parameters for a tdmore_set object.
-#'
-#' @inheritParams estimate
-#' @return a tdmorefit object
 #' @export
-estimate.tdmore_set <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
-  estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
+estimate.tdmore_set <- function(object, observed, regimen, covariates, par, fix,
+                                method, se.fit,
+                                lower, upper,
+                                multistart,
+                                control, ...) {
+  NextMethod()
 }
 
-#'
-#' Calculate the Empirical Bayesian Estimate parameters for a tdmore_mixture object.
-#'
-#' @inheritParams estimate
-#' @return a tdmorefit object
 #' @export
-estimate.tdmore_mixture <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
-  estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
+estimate.tdmore_mixture <- function(object, observed, regimen, covariates, par, fix,
+                                    method, se.fit,
+                                    lower, upper,
+                                    multistart,
+                                    control, ...) {
+  NextMethod()
 }
 
-#'
-#' Rerun a tdmorefit with new updated parameters
-#'
-#' @inheritParams estimate
-#' @return a tdmorefit object
 #' @export
-estimate.tdmorefit <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
-  estimateDelegate(object, observed, regimen, covariates, par, fix, method, se.fit, lower, upper, multistart, control, data, ...)
+estimate.tdmorefit <- function(object, observed, regimen, covariates, par, fix,
+                               method, se.fit,
+                               lower, upper,
+                               multistart,
+                               control, ...) {
+  NextMethod()
 }
 
-#'
-#' Delegate method used for EBE estimation.
-#'
-#' @inheritParams estimate
-#' @return a tdmorefit object
-estimateDelegate <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NA, upper=NA, multistart=F, control=list(), data=NULL, ...) {
+#' @export
+estimate.default <- function(object, observed, regimen, covariates, par, fix,
+                             method="L-BFGS-B", se.fit=TRUE,
+                             lower=NA, upper=NA,
+                             multistart=F,
+                             control=list(trace=interactive()*1, REPORT=10, factr=1e13),
+                             ...) {
+  if(missing(observed)) observed <- NULL
+  if(missing(regimen)) regimen <- NULL
+  if(missing(covariates)) covariates <- NULL
+  if(missing(par)) par <- NULL
+  if(missing(fix)) fix <- NULL
   if(is.null(control$trace)) control$trace <- 0
   if(length(method) > 1) {
     ## Multiple methods specified
@@ -211,12 +215,6 @@ estimateDelegate <- function(object, observed=NULL, regimen=NULL, covariates=NUL
   } else {
     #will never happen
     stop("Object not an instance of 'tdmore', 'tdmore_set' or 'tdmore_mixture") #nocov
-  }
-
-  if(!is.null(data)) {
-    observed = loadObserved(tdmore, data)
-    regimen = loadRegimen(tdmore, data)
-    covariates = loadCovariates(tdmore, data)
   }
 
   observed <- model.frame(tdmore, data=observed) #ensure "observed" in right format for estimation
@@ -677,13 +675,13 @@ summariseFittedMC <- function(fittedMC, ipred, level, oNames) {
 #' @export
 #' @importFrom stats formula model.frame
 logLik.tdmorefit <- function(object, type=c('ll', 'pop', 'pred'), ...) {
-  estimate <- coef(object)
+  par <- coef(object)
   tdmore <- formula(object)
   observed <- model.frame(object)
   regimen <- object$regimen
   covariates <- object$covariates
   fun <- getLikelihoodFun(type)
-  fun(par=estimate,
+  fun(par=par,
       omega=expandOmega(tdmore, getMaxOccasion(regimen)),
       fix=list(indexes=c(), values=c()),
       tdmore=tdmore,
@@ -843,7 +841,7 @@ getLikelihoodFun <- function(type) {
 #' @export
 is.tdmorefit <- function(a) {inherits(a, "tdmorefit")}
 
-#' Expand OMEGA matrix by adding variance-covariance information regarding all IOV terms.
+#' Expand OMEGA matrix by duplicating variance-covariance information for IOV terms.
 #' Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames().
 #'
 #' @param tdmore the tdmore object

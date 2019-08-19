@@ -125,8 +125,12 @@ checkIOV <- function(tdmore) {
 
 checkRegimen <- function(regimen, iov) {
   assert_that(is.data.frame(regimen))
-  assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
-  assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "DURATION", "CMT", "II", "ADDL", "SS", "OCC")))
+  assert_that(all(c("TIME", "AMT") %in% colnames(regimen)),
+              msg="A required column is missing in the treatment regimen")
+  assert_that(
+    all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "DURATION", "CMT", "II", "ADDL", "SS", "OCC")),
+    msg="A spurious column in the treatment regimen is present. Please remove it."
+  )
 
   # XXX: Not a strict requirement! II + SS is also possible...
   #if ("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))
@@ -137,7 +141,9 @@ checkRegimen <- function(regimen, iov) {
       stop("No IOV exists in model")
     } else {
       uniqueOcc <- unique(regimen$OCC)
-      assert_that(all(uniqueOcc == 1:max(regimen$OCC)), msg="Occasions mispecified in regimen")
+      assert_that(
+        all(uniqueOcc == 1:max(regimen$OCC)),
+        msg="Occasions mispecified in regimen")
     }
   }
   if (!("OCC" %in% colnames(regimen)) && !is.null(iov)) {
