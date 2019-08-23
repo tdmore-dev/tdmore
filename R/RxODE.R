@@ -108,7 +108,9 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     df$OCC <- unique(regimen$OCC)
     for(i in iov) df[[i]] <- iovParameters[ names(iovParameters) == i ]
 
-    df <- as.data.frame(df) %>% merge(regimen[, c("TIME", "OCC")])
+    occTimes <- regimen[, c("TIME", "OCC")] %>% dplyr::distinct()
+    occTimes$TIME[1] <- 0 #first occasion always starts at time 0
+    df <- as.data.frame(df) %>% merge(occTimes)
     if(!is.null(covariates)) {
       covariates <- covariates %>%
         merge(df, by="TIME", all=T) %>% #and it is immediately sorted as well!
