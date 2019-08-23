@@ -99,7 +99,7 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
     }
     if (iterIndex <= maxIter) {
       currentObsTime <- observedMpc %>% dplyr::filter(.data$ITER==iterIndex) %>% dplyr::pull(.data$TIME) %>% dplyr::last()
-      ipred <- estimate.tdmore(object, regimen=regimen %>% dplyr::filter(.data$TIME < currentObsTime),
+      ipred <- estimate.default(object, regimen=regimen %>% dplyr::filter(.data$TIME < currentObsTime),
                         observed=observedMpc %>% dplyr::filter(.data$ITER==iterIndex) %>% dplyr::select(-dplyr::one_of("ITER")),
                         covariates=mergeCovariates(ebeCovariates, covariates), fix=fix, se.fit=se.fit, control=control, ...)
     } else {
@@ -144,5 +144,6 @@ mpc.tdmore <- function(x, theta, suffix, ...) {
   x$mpc_theta <- theta
   x$mpc_suffix <- suffix
   class(x) <- append("tdmore_mpc", "tdmore")
+  if( !setequal(x$parameters, x$iov) ) stop("For MPC, all parameters should be IOV")
   return(x)
 }
