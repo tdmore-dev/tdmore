@@ -98,7 +98,9 @@ proseval <- function(.data, ..., .fit="fit", .prediction="ipred", .elapsed="elap
 #' @section DoseSimulation:
 #' This tool simulates a dose adaptation run for an individual.
 #' We expect a .fit column in the data, that represents the best model fit for the given subject.
-#' All other columns are ignored.
+#' All other columns are passed to the posthoc function when calculating the next fit, except for
+#' the 'observed' data (that is replaced by the simulated data)
+#' and the 'regimen' data (that is replaced by the adapted regimen)
 #'
 #' The DoseSimulation iterates as follows:
 #' 1) A fit is generated using the up-to-now observed concentrations
@@ -131,7 +133,10 @@ doseSimulation <- function(.data, ..., optimize, predict, .fit="fit", .iteration
     observed <- tibble::tibble(TIME=numeric()) ## specifying NULL will reuse the tdmorefit observed values!!
     repeat {
       # 1) a fit is generated using up-to-now observed concentrations
-      args <- list(object=truth, observed=observed, regimen=regimen)
+      args <- .data
+      args[[.fit]] <- NULL
+      args$observed <- observed
+      args$regimen <- regimen
       res <- posthoc(args, ..., .fit=.iterationFit, .prediction=NULL, .elapsed=NULL)
 
       optimizeResult <- optimize(res[[.iterationFit]][[1]], regimen, truth)
