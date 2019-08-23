@@ -591,10 +591,7 @@ summary(tdmorefit)
 
 ```
 ## Call:
-## estimateDelegate(object = object, observed = observed, regimen = regimen, 
-##     covariates = covariates, par = par, fix = fix, method = method, 
-##     se.fit = se.fit, lower = lower, upper = upper, multistart = multistart, 
-##     control = control, data = data)
+## estimate.default(object = m1, observed = observed, regimen = regimen1)
 ## Coef:
 ##        EKA         EV        ECL 
 ## 0.01972336 0.02310260 0.24016578 

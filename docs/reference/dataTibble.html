@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get the specified data values, with the upper and lower bounds provided by the residual error model — model.frame.tdmore • tdmore</title>
+<title>Utility function to create a data tibble. — dataTibble • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,10 @@
 
 
 
-<meta property="og:title" content="Get the specified data values, with the upper and lower bounds provided by the residual error model — model.frame.tdmore" />
+<meta property="og:title" content="Utility function to create a data tibble. — dataTibble" />
 
-<meta property="og:description" content="Get the specified data values, with the upper and lower bounds provided by the residual error model" />
+<meta property="og:description" content="A data tibble is a tibble with an ID column, and separate columns
+with the arguments for `estimate` function calls." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -135,57 +136,32 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get the specified data values, with the upper and lower bounds provided by the residual error model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/model.R'><code>R/model.R</code></a></small>
-    <div class="hidden name"><code>model.frame.tdmore.Rd</code></div>
+    <h1>Utility function to create a data tibble.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/data.R'><code>R/data.R</code></a></small>
+    <div class="hidden name"><code>dataTibble.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Get the specified data values, with the upper and lower bounds provided by the residual error model</p>
+    <p>A data tibble is a tibble with an ID column, and separate columns
+with the arguments for `estimate` function calls.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for tdmore</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/model.frame'>model.frame</a></span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>se</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
-  <span class='kw'>onlyOutput</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>dataTibble</span>(<span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>formula</th>
-      <td><p>a TDMore object</p></td>
-    </tr>
-    <tr>
-      <th>data</th>
-      <td><p>data.frame with at least a TIME column
-Or alternatively, a numeric vector.
-Or NULL, to get an empty data.frame with TIME and a column for every output variable.</p></td>
-    </tr>
-    <tr>
-      <th>se</th>
-      <td><p>TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset</p></td>
-    </tr>
-    <tr>
-      <th>level</th>
-      <td><p>numeric value to specify the confidence interval</p></td>
-    </tr>
-    <tr>
-      <th>onlyOutput</th>
-      <td><p>only keep TIME and output variables in the data.frame</p></td>
-    </tr>
-    <tr>
       <th>...</th>
-      <td><p>ignored</p></td>
+      <td><p>each of these arguments will be included in the resulting tibble.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a data.frame similar to data. It contains at least column TIME.
-If a numeric vector was specified as `data`, the output is a data.frame with TIME column and additional NA-filled columns corresponding to the residual error variables.
-If `se` is TRUE, the data.frame has additional columns xx.lower and xx.upper for all columns that match the residual error model.</p>
+    <p>All arguments passed to the dataTibble function will be present in the resulting tibble as columns.</p>
     
 
   </div>

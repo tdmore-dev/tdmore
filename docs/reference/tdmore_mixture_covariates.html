@@ -174,33 +174,7 @@
     <pre class="examples"><div class='input'><span class='fu'>tdmore_mixture_covariates</span>(<span class='no'>tacrolimus_storset</span>,
    <span class='kw'>probs</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0.5</span>, <span class='fl'>0.5</span>),
    <span class='kw'>covariates</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='kw'>CYP3A5</span><span class='kw'>=</span><span class='fl'>1</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='kw'>CYP3A5</span><span class='kw'>=</span><span class='fl'>0</span>))
-)</div><div class='output co'>#&gt; $models
-#&gt; $models[[1]]
-#&gt; Pre-filled covariates: 
-#&gt; CYP3A5 
-#&gt;      1 
-#&gt; Structural model: RxODE 
-#&gt; Parameters: ECL EV1 EQ EF EF_IOV EKa_IOV 
-#&gt; Covariates: WT HT FEMALE CYP3A5 PredDose FirstDay HCT 
-#&gt; Output(s):
-#&gt; Cwb  : proportional  ( prop= 0.149  )
-#&gt; 
-#&gt; $models[[2]]
-#&gt; Pre-filled covariates: 
-#&gt; CYP3A5 
-#&gt;      0 
-#&gt; Structural model: RxODE 
-#&gt; Parameters: ECL EV1 EQ EF EF_IOV EKa_IOV 
-#&gt; Covariates: WT HT FEMALE CYP3A5 PredDose FirstDay HCT 
-#&gt; Output(s):
-#&gt; Cwb  : proportional  ( prop= 0.149  )
-#&gt; 
-#&gt; 
-#&gt; $probs
-#&gt; [1] 0.5 0.5
-#&gt; 
-#&gt; attr(,"class")
-#&gt; [1] "tdmore_mixture"</div></pre>
+)</div><div class='output co'>#&gt; <span class='error'>Error in names(curriedCovariates) %in% model$covariates: object 'tacrolimus_storset' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

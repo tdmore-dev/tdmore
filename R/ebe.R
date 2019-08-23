@@ -567,6 +567,7 @@ generateMonteCarloMatrix <- function(tdmorefit, fix, mc.maxpts) {
 #' the other parameters are taken from the tdmorefit object
 #' @param covariates the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0
 #' @param se.fit TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower
+#' FALSE to show the model prediction (IPRED)
 #' @param level The confidence interval, or NA to return all mc.maxpts results
 #' @param mc.maxpts Maximum number of points to sample in Monte Carlo simulation
 #' @param ... ignored
@@ -805,9 +806,9 @@ formula.tdmorefit <- function(x, ...) {x$tdmore}
 #'
 #' @param formula A tdmorefit object
 #' @param data Data.frame to append and modify. If NULL, uses the observed values.
-#' @param se if TRUE, add a column xx.upper and xx.lower with the lower and upper bounds of confidence, based on the residual error model
-#' @param level Confidence interval to use for `se`
 #' @param ... ignored
+#'
+#' @inheritParams model.frame.tdmore
 #'
 #' @return
 #' A data.frame, similar to the one used to estimate this `tdmorefit` object.
@@ -815,9 +816,9 @@ formula.tdmorefit <- function(x, ...) {x$tdmore}
 #' lower and upper confidence interval (based on the residual error model) is added.
 #'
 #' @export
-model.frame.tdmorefit <- function(formula, data=NULL, se=FALSE, level=0.95, ...) {
+model.frame.tdmorefit <- function(formula, data=NULL, se=FALSE, level=0.95, onlyOutput=FALSE, ...) {
   if(is.null(data)) data <- formula$observed
-  result <- model.frame.tdmore(formula=formula$tdmore, data=data, se=se, level=level)
+  result <- model.frame.tdmore(formula=formula$tdmore, data=data, se=se, level=level, onlyOutput=onlyOutput, ...)
   result
 }
 
@@ -870,6 +871,41 @@ expandOmega <- function(tdmore, occasions) {
   result
 }
 
-residuals.tdmorefit <- function(object, weighted=FALSE, ...) {
-  residuals(object$tdmore, model.frame(object), predict(object), weighted=weighted, ...)
+#' Get the residuals for a specific tdmorefit
+#'
+#' @param data optional data.frame
+#' If specified, this adds the original residuals back onto the data.frame
+#' If points at a time without corresponding IRES are present, an IRES of 0 is used and a warning is emitted.
+#'
+#' @rdname residuals
+#' @export
+#' @examples
+#' observed <- data.frame(TIME=5, CONC=0.060)
+#' fit <- estimate(tdmore(default_model),
+#'     regimen=data.frame(TIME=0, AMT=10),
+#'     observed=observed,
+#'     covariates=c(WT=70)
+#'     )
+#' wres <- residuals(fit, weighted=TRUE)
+#'
+#' all.equal(
+#'   residuals(fit, predict(fit), weighted=TRUE),
+#'   observed
+#' )
+#'
+#' regimen$AMT <- regimen$AMT*2
+#' predictionForDoubleDose <- residuals(fit, predict(fit, regimen=regimen), weighted=TRUE)
+#'
+residuals.tdmorefit <- function(object, data, weighted=FALSE, ...) {
+  res <- residuals(object$tdmore, predict(object), model.frame(object), weighted=weighted, ...)
+  if(missing(data)) return(res)
+
+  observed <- model.frame(object)
+  if(any(duplicated(observed$TIME)) || any(duplicated(data$TIME)) ) stop()
+  i <- data$TIME %in% observed$TIME #matching rows from data
+  j <- observed$TIME %in% data$TIME #matching rows from observed
+
+  result <- residuals.tdmore(object$tdmore, predicted=data[i,], observed=res[j,], weighted=TRUE, inverse=TRUE)
+  data[i, names(result)] <- result[i, ]
+  return(result)
 }

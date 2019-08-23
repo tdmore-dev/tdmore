@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get the specified data values, with the upper and lower bounds provided by the residual error model — model.frame.tdmore • tdmore</title>
+<title>For a given set of planned times, round to the nearest reference time. — roundTime • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,10 @@
 
 
 
-<meta property="og:title" content="Get the specified data values, with the upper and lower bounds provided by the residual error model — model.frame.tdmore" />
+<meta property="og:title" content="For a given set of planned times, round to the nearest reference time. — roundTime" />
 
-<meta property="og:description" content="Get the specified data values, with the upper and lower bounds provided by the residual error model" />
+<meta property="og:description" content="This can be used to move an intended administration to fit the historic treatment regimen of a
+patient in retrospective data." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -135,57 +136,46 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get the specified data values, with the upper and lower bounds provided by the residual error model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/model.R'><code>R/model.R</code></a></small>
-    <div class="hidden name"><code>model.frame.tdmore.Rd</code></div>
+    <h1>For a given set of planned times, round to the nearest reference time.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/optimize.R'><code>R/optimize.R</code></a></small>
+    <div class="hidden name"><code>roundTime.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Get the specified data values, with the upper and lower bounds provided by the residual error model</p>
+    <p>This can be used to move an intended administration to fit the historic treatment regimen of a
+patient in retrospective data.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for tdmore</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/model.frame'>model.frame</a></span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>se</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
-  <span class='kw'>onlyOutput</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>roundTime</span>(<span class='no'>x</span>, <span class='no'>reference</span>, <span class='kw'>range</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(-<span class='fl'>0.5</span>, <span class='fl'>0.5</span>), <span class='kw'>if.na</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"keep"</span>, <span class='st'>"NA"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>formula</th>
-      <td><p>a TDMore object</p></td>
+      <th>x</th>
+      <td><p>a vector of times to round</p></td>
     </tr>
     <tr>
-      <th>data</th>
-      <td><p>data.frame with at least a TIME column
-Or alternatively, a numeric vector.
-Or NULL, to get an empty data.frame with TIME and a column for every output variable.</p></td>
+      <th>reference</th>
+      <td><p>a vector of times, used to round</p></td>
     </tr>
     <tr>
-      <th>se</th>
-      <td><p>TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset</p></td>
+      <th>range</th>
+      <td><p>how much can be subtracted or added from/to 'x' to get to the reference</p></td>
     </tr>
     <tr>
-      <th>level</th>
-      <td><p>numeric value to specify the confidence interval</p></td>
-    </tr>
-    <tr>
-      <th>onlyOutput</th>
-      <td><p>only keep TIME and output variables in the data.frame</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>ignored</p></td>
+      <th>if.na</th>
+      <td><p>if no corresponding reference time is found, what should we do?
+if 'keep', then the original time is kept
+if 'NA', then we set the value to NA</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a data.frame similar to data. It contains at least column TIME.
-If a numeric vector was specified as `data`, the output is a data.frame with TIME column and additional NA-filled columns corresponding to the residual error variables.
-If `se` is TRUE, the data.frame has additional columns xx.lower and xx.upper for all columns that match the residual error model.</p>
+    <p>A vector of the same length as x. Values close to reference values are replaced by the reference value.</p>
     
 
   </div>

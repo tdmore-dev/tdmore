@@ -48,12 +48,6 @@
 #' @format A fitted Nlmixr model
 "pheno_nlmixr"
 
-#' NlmixrUI object describing the Tacrolimus model from Størset, Elisabet, et al.
-#'
-#' @format an nlmixrUI model
-#' @export
-tacrolimus_storset <- NULL
-
 #' Default example model
 #' TODO: Better documentation required
 #' @format an nlmixrUI model

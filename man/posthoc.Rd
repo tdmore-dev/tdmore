@@ -2,36 +2,88 @@
 % Please edit documentation in R/proseval.R
 \name{posthoc}
 \alias{posthoc}
-\title{This function performs a posthoc estimate for multiple individuals at the same time.
-All parameters may have an additional ID column to identify every individual.}
+\alias{proseval}
+\alias{doseSimulation}
+\title{These functions perform estimate for multiple individuals at the same time.}
 \usage{
-posthoc(object, observed = NULL, regimen = NULL, covariates = NULL,
-  par = NULL, fix = NULL, ..., .prediction = "ipred")
+posthoc(.data, ..., .fit = "fit", .prediction = "ipred",
+  .elapsed = "elapsed", .id = "ID")
+
+proseval(.data, ..., .fit = "fit", .prediction = "ipred",
+  .elapsed = "elapsed", .obs = "OBS")
+
+doseSimulation(.data, ..., optimize, predict, .fit = "fit",
+  .iterationFit = "iterationFit", .next_observed = "next_observed",
+  .next_regimen = "next_regimen")
 }
 \arguments{
-\item{object}{a tdmore, tdmore_set or tdmore_mixture object}
+\item{...}{additional arguments to add to each `estimate` call. If an argument
+is present both here and in .data, the argument here takes precedence.}
 
-\item{observed}{data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
-If not specified, we estimate the population prediction}
-
-\item{regimen}{data frame describing the treatment regimen.}
-
-\item{covariates}{the model covariates}
-
-\item{par}{optional starting parameter for the MLE minimization}
-
-\item{fix}{named vector with the fixed parameters}
-
-\item{...}{passed to \link{estimate} function}
+\item{.fit}{Either a string or NULL. If a string, the output will contain a column
+with that name, storing the fit}
 
 \item{.prediction}{Either a string or NULL. If a string, the output will contain a column
-with that name, storing the predicted values for that specific fit.}
+with that name, storing the predicted values for that fit}
+
+\item{.elapsed}{Either a string or NULL. If a string, the output will contain a column
+with that name, storing the required computation time (`System.time`) for that fit}
+
+\item{.obs}{Either a string or NULL. If a string, the output will contain a column
+with that name, describing how many observations were taken into account}
+
+\item{optimize}{an optimization function for dose simulation, corresponding to function(fit, regimen, truth), and returning a list(nextTime, regimen)}
+
+\item{predict}{a prediction function for dose simulation, corresponding to function(truth, newRegimen, nextTime)
+If missing, we simply predict using the true fit.
+We evaluate the nextObservations time points using the 'true' model and the new regimen.}
+
+\item{data}{a tbl with one or multiple rows
+Each column from the tbl will be mapped to the `estimate()` function.
+You can generate such a tbl using \link{data} functions.}
 }
 \value{
-a tibble with columns ID,
-and column `fit` with the tdmorefit object
+a tibble with the requested columns for each fit
 }
 \description{
-This function performs a posthoc estimate for multiple individuals at the same time.
-All parameters may have an additional ID column to identify every individual.
+These functions perform estimate for multiple individuals at the same time.
+}
+\section{Proseval}{
+
+The proseval tool calculates a prospective evaluation, and therefore creates multiple outputs per input row.
+If N is the number of observations, it will calculate N+1 fits.
+The first fit will be the population fit (not using any observations).
+The next fit will only use one observation.
+The next fit will use two observations.
+And so on.
+}
+
+\section{DoseSimulation}{
+
+This tool simulates a dose adaptation run for an individual.
+We expect a .fit column in the data, that represents the best model fit for the given subject.
+All other columns are ignored.
+
+The DoseSimulation iterates as follows:
+1) A fit is generated using the up-to-now observed concentrations
+2) The optimize method is called with the following arguments:
+  optimize( fit, regimen, truth )
+  It is up to the optimizer to determine how to optimize the treatment regimen.
+  The optimizer returns a list( nextTime=nextObservations, regimen=newRegimen, extra=tibble() )
+  If nextTime is not a finite number, we stop the simulation.
+3) The predict method is called with the following arguments:
+  predict(truth, newRegimen, nextTime)
+This predicts the next observation.
+}
+
+\examples{
+data <- dataTibble(object=meropenem_model \%>\% tdmore(), observed=data.frame(ID=c(1,1,2,2), TIME=c(8,10,8,10), CONC=c(1.5,0.3,0.8,0.2)))
+fit <- data \%>\%
+  posthoc(regimen=data.frame(TIME=0, AMT=1000))
+cluster <- multidplyr::new_cluster(2)
+data \%>\% group_by(ID) \%>\% partition(cluster) \%>\% posthoc(regimen=data.frame(TIME=0, AMT=1000))
+fit \%>\% tidyr::unnest(observed, ipred, .sep=".") \%>\% ggplot(aes(x=ipred.TIME)) +
+geom_point(aes(y=observed.CONC)) +
+geom_line(aes(y=ipred.CONC, group=ID)) +
+facet_wrap(~ID)
 }

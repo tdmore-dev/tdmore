@@ -46,7 +46,8 @@ the other parameters are taken from the tdmorefit object}
 
 \item{n}{Number of points to interpolate along}
 
-\item{se.fit}{TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower}
+\item{se.fit}{TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower
+FALSE to show the model prediction (IPRED)}
 
 \item{level}{The confidence interval, or NA to return all mc.maxpts results}
 

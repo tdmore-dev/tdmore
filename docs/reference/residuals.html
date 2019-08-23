@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get the observed values used to provide this model fit. — model.frame.tdmorefit • tdmore</title>
+<title>Get the residuals for a specific tdmorefit — residuals.tdmorefit • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,10 @@
 
 
 
-<meta property="og:title" content="Get the observed values used to provide this model fit. — model.frame.tdmorefit" />
+<meta property="og:title" content="Get the residuals for a specific tdmorefit — residuals.tdmorefit" />
 
-<meta property="og:description" content="Get the observed values used to provide this model fit." />
+<meta property="og:description" content="Get the residuals for a specific tdmorefit
+Get the residual values of a predicted value vs the observed value" />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -135,57 +136,80 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get the observed values used to provide this model fit.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
-    <div class="hidden name"><code>model.frame.tdmorefit.Rd</code></div>
+    <h1>Get the residuals for a specific tdmorefit</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a>, <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/model.R'><code>R/model.R</code></a></small>
+    <div class="hidden name"><code>residuals.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Get the observed values used to provide this model fit.</p>
+    <p>Get the residuals for a specific tdmorefit</p>
+<p>Get the residual values of a predicted value vs the observed value</p>
     
     </div>
 
     <pre class="usage"><span class='co'># S3 method for tdmorefit</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/model.frame'>model.frame</a></span>(<span class='no'>formula</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>se</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='kw'>onlyOutput</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/residuals'>residuals</a></span>(<span class='no'>object</span>, <span class='no'>data</span>, <span class='kw'>weighted</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for tdmore</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/residuals'>residuals</a></span>(<span class='no'>object</span>, <span class='no'>predicted</span>, <span class='no'>observed</span>, <span class='kw'>weighted</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>inverse</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>formula</th>
-      <td><p>A tdmorefit object</p></td>
+      <th>object</th>
+      <td><p>A TDMore object</p></td>
     </tr>
     <tr>
       <th>data</th>
-      <td><p>Data.frame to append and modify. If NULL, uses the observed values.</p></td>
+      <td><p>optional data.frame
+If specified, this adds the original residuals back onto the data.frame
+If points at a time without corresponding IRES are present, an IRES of 0 is used and a warning is emitted.</p></td>
     </tr>
     <tr>
-      <th>se</th>
-      <td><p>TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset</p></td>
-    </tr>
-    <tr>
-      <th>level</th>
-      <td><p>numeric value to specify the confidence interval</p></td>
-    </tr>
-    <tr>
-      <th>onlyOutput</th>
-      <td><p>only keep TIME and output variables in the data.frame</p></td>
+      <th>weighted</th>
+      <td><p>Should the residuals be divided by the standard deviation of the error model?</p></td>
     </tr>
     <tr>
       <th>...</th>
       <td><p>ignored</p></td>
     </tr>
+    <tr>
+      <th>predicted</th>
+      <td><p>What was predicted, as data.frame</p></td>
+    </tr>
+    <tr>
+      <th>observed</th>
+      <td><p>The observed values, as data.frame</p></td>
+    </tr>
+    <tr>
+      <th>inverse</th>
+      <td><p>if TRUE, perform the inverse operation (assume `predicted` has IPRED values, and `observed` has IRES/IWRES values)</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.frame, similar to the one used to estimate this `tdmorefit` object.
-If `se` was specified, then a column xx.upper and xx.lower with the
-lower and upper confidence interval (based on the residual error model) is added.</p>
+    <p>The `predicted` data.frame, with all output values replaced by IRES or IWRES</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>observed</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>TIME</span><span class='kw'>=</span><span class='fl'>5</span>, <span class='kw'>CONC</span><span class='kw'>=</span><span class='fl'>0.060</span>)
+<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='estimate.html'>estimate</a></span>(<span class='fu'><a href='tdmore.html'>tdmore</a></span>(<span class='no'>default_model</span>),
+    <span class='kw'>regimen</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>TIME</span><span class='kw'>=</span><span class='fl'>0</span>, <span class='kw'>AMT</span><span class='kw'>=</span><span class='fl'>10</span>),
+    <span class='kw'>observed</span><span class='kw'>=</span><span class='no'>observed</span>,
+    <span class='kw'>covariates</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='kw'>WT</span><span class='kw'>=</span><span class='fl'>70</span>)
+    )
+<span class='no'>wres</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/residuals'>residuals</a></span>(<span class='no'>fit</span>, <span class='kw'>weighted</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/all.equal'>all.equal</a></span>(
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/residuals'>residuals</a></span>(<span class='no'>fit</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>fit</span>), <span class='kw'>weighted</span><span class='kw'>=</span><span class='fl'>TRUE</span>),
+  <span class='no'>observed</span>
+)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='no'>regimen</span>$<span class='no'>AMT</span> <span class='kw'>&lt;-</span> <span class='no'>regimen</span>$<span class='no'>AMT</span>*<span class='fl'>2</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'regimen' not found</span></div><div class='input'><span class='no'>predictionForDoubleDose</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/residuals'>residuals</a></span>(<span class='no'>fit</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>fit</span>, <span class='kw'>regimen</span><span class='kw'>=</span><span class='no'>regimen</span>), <span class='kw'>weighted</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in predict.tdmorefit(fit, regimen = regimen): object 'regimen' not found</span></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -193,7 +217,9 @@ lower and upper confidence interval (based on the residual error model) is added
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

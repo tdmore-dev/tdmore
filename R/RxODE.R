@@ -233,14 +233,11 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   if(!is.null( cache$output) ) return(cache$output) ## output always same, no matter the parameters
 
   # Run the simulation
-  result <- do.call(RxODE::rxSolve, c( list(object=model), cache$rxSolveArgs(parameters), extraArguments))
-
-  # Only get the values we want
-  result <- as.data.frame(result, row.names=NULL)
+  result <- do.call(RxODE::rxSolve, c( list(object=model, returnType="data.frame"), cache$rxSolveArgs(parameters), extraArguments))
   names(result)[names(result)=="time"] <- "TIME"
 
   # Remove spurious sampling times due to covariates
-  # But keep this a data.frame!
+  # But keep this a data.frame (drop=FALSE)
   result <- subset( result, result$TIME %in% times, drop=FALSE)
 
   result
@@ -281,11 +278,18 @@ addRegimenToEventTable <- function(eventTable, regimen, nbSSDoses=NULL) {
       }
     }
 
+    if("ii" %in% names(args) && ! any(c("ss", "addl") %in% names(args) ) ) {
+      #RxODE is not happy with II and no additional doses or steady state dosing
+      #let's simply remove II
+      args$ii <- NULL
+    }
+
     if("RATE" %in% names(row) && isTRUE(is.finite(row$RATE))) args$rate=row$RATE
     if("DURATION" %in% names(row) && isTRUE(is.finite(row$DURATION))) {
       if(!is.null(args$rate)) stop("Cannot specify RATE and DURATION in the same treatment row ", i)
       args$dur = row$DURATION
     }
+
     eventTable <- do.call(RxODE::et,
                           c( list(eventTable), args))
   }

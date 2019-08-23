@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>This function performs a posthoc estimate for multiple individuals at the same time.
-All parameters may have an additional ID column to identify every individual. — posthoc • tdmore</title>
+<title>These functions perform estimate for multiple individuals at the same time. — posthoc • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -31,11 +30,9 @@ All parameters may have an additional ID column to identify every individual. �
 
 
 
-<meta property="og:title" content="This function performs a posthoc estimate for multiple individuals at the same time.
-All parameters may have an additional ID column to identify every individual. — posthoc" />
+<meta property="og:title" content="These functions perform estimate for multiple individuals at the same time. — posthoc" />
 
-<meta property="og:description" content="This function performs a posthoc estimate for multiple individuals at the same time.
-All parameters may have an additional ID column to identify every individual." />
+<meta property="og:description" content="These functions perform estimate for multiple individuals at the same time." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -138,67 +135,113 @@ All parameters may have an additional ID column to identify every individual." /
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>This function performs a posthoc estimate for multiple individuals at the same time.
-All parameters may have an additional ID column to identify every individual.</h1>
+    <h1>These functions perform estimate for multiple individuals at the same time.</h1>
     <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/proseval.R'><code>R/proseval.R</code></a></small>
     <div class="hidden name"><code>posthoc.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This function performs a posthoc estimate for multiple individuals at the same time.
-All parameters may have an additional ID column to identify every individual.</p>
+    <p>These functions perform estimate for multiple individuals at the same time.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>posthoc</span>(<span class='no'>object</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>.prediction</span> <span class='kw'>=</span> <span class='st'>"ipred"</span>)</pre>
+    <pre class="usage"><span class='fu'>posthoc</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>, <span class='kw'>.prediction</span> <span class='kw'>=</span> <span class='st'>"ipred"</span>,
+  <span class='kw'>.elapsed</span> <span class='kw'>=</span> <span class='st'>"elapsed"</span>, <span class='kw'>.id</span> <span class='kw'>=</span> <span class='st'>"ID"</span>)
+
+<span class='fu'>proseval</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>, <span class='kw'>.prediction</span> <span class='kw'>=</span> <span class='st'>"ipred"</span>,
+  <span class='kw'>.elapsed</span> <span class='kw'>=</span> <span class='st'>"elapsed"</span>, <span class='kw'>.obs</span> <span class='kw'>=</span> <span class='st'>"OBS"</span>)
+
+<span class='fu'>doseSimulation</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='no'>optimize</span>, <span class='no'>predict</span>, <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>,
+  <span class='kw'>.iterationFit</span> <span class='kw'>=</span> <span class='st'>"iterationFit"</span>, <span class='kw'>.next_observed</span> <span class='kw'>=</span> <span class='st'>"next_observed"</span>,
+  <span class='kw'>.next_regimen</span> <span class='kw'>=</span> <span class='st'>"next_regimen"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>object</th>
-      <td><p>a tdmore, tdmore_set or tdmore_mixture object</p></td>
-    </tr>
-    <tr>
-      <th>observed</th>
-      <td><p>data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
-If not specified, we estimate the population prediction</p></td>
-    </tr>
-    <tr>
-      <th>regimen</th>
-      <td><p>data frame describing the treatment regimen.</p></td>
-    </tr>
-    <tr>
-      <th>covariates</th>
-      <td><p>the model covariates</p></td>
-    </tr>
-    <tr>
-      <th>par</th>
-      <td><p>optional starting parameter for the MLE minimization</p></td>
-    </tr>
-    <tr>
-      <th>fix</th>
-      <td><p>named vector with the fixed parameters</p></td>
-    </tr>
-    <tr>
       <th>...</th>
-      <td><p>passed to <a href='estimate.html'>estimate</a> function</p></td>
+      <td><p>additional arguments to add to each `estimate` call. If an argument
+is present both here and in .data, the argument here takes precedence.</p></td>
+    </tr>
+    <tr>
+      <th>.fit</th>
+      <td><p>Either a string or NULL. If a string, the output will contain a column
+with that name, storing the fit</p></td>
     </tr>
     <tr>
       <th>.prediction</th>
       <td><p>Either a string or NULL. If a string, the output will contain a column
-with that name, storing the predicted values for that specific fit.</p></td>
+with that name, storing the predicted values for that fit</p></td>
+    </tr>
+    <tr>
+      <th>.elapsed</th>
+      <td><p>Either a string or NULL. If a string, the output will contain a column
+with that name, storing the required computation time (`System.time`) for that fit</p></td>
+    </tr>
+    <tr>
+      <th>.obs</th>
+      <td><p>Either a string or NULL. If a string, the output will contain a column
+with that name, describing how many observations were taken into account</p></td>
+    </tr>
+    <tr>
+      <th>optimize</th>
+      <td><p>an optimization function for dose simulation, corresponding to function(fit, regimen, truth), and returning a list(nextTime, regimen)</p></td>
+    </tr>
+    <tr>
+      <th>predict</th>
+      <td><p>a prediction function for dose simulation, corresponding to function(truth, newRegimen, nextTime)
+If missing, we simply predict using the true fit.
+We evaluate the nextObservations time points using the 'true' model and the new regimen.</p></td>
+    </tr>
+    <tr>
+      <th>data</th>
+      <td><p>a tbl with one or multiple rows
+Each column from the tbl will be mapped to the `estimate()` function.
+You can generate such a tbl using <a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a> functions.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a tibble with columns ID,
-and column `fit` with the tdmorefit object</p>
+    <p>a tibble with the requested columns for each fit</p>
+    
+    <h2 class="hasAnchor" id="proseval"><a class="anchor" href="#proseval"></a>Proseval</h2>
+
+    
+    <p>The proseval tool calculates a prospective evaluation, and therefore creates multiple outputs per input row.
+If N is the number of observations, it will calculate N+1 fits.
+The first fit will be the population fit (not using any observations).
+The next fit will only use one observation.
+The next fit will use two observations.
+And so on.</p>
+    
+    <h2 class="hasAnchor" id="dosesimulation"><a class="anchor" href="#dosesimulation"></a>DoseSimulation</h2>
+
+    
+    <p>This tool simulates a dose adaptation run for an individual.
+We expect a .fit column in the data, that represents the best model fit for the given subject.
+All other columns are ignored.</p>
+<p>The DoseSimulation iterates as follows:
+1) A fit is generated using the up-to-now observed concentrations
+2) The optimize method is called with the following arguments:
+  optimize( fit, regimen, truth )
+  It is up to the optimizer to determine how to optimize the treatment regimen.
+  The optimizer returns a list( nextTime=nextObservations, regimen=newRegimen, extra=tibble() )
+  If nextTime is not a finite number, we stop the simulation.
+3) The predict method is called with the following arguments:
+  predict(truth, newRegimen, nextTime)
+This predicts the next observation.</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dataTibble.html'>dataTibble</a></span>(<span class='kw'>object</span><span class='kw'>=</span><span class='no'>meropenem_model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='tdmore.html'>tdmore</a></span>(), <span class='kw'>observed</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>ID</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span>), <span class='kw'>TIME</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>8</span>,<span class='fl'>10</span>,<span class='fl'>8</span>,<span class='fl'>10</span>), <span class='kw'>CONC</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1.5</span>,<span class='fl'>0.3</span>,<span class='fl'>0.8</span>,<span class='fl'>0.2</span>)))
+<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='no'>data</span> <span class='kw'>%&gt;%</span>
+  <span class='fu'>posthoc</span>(<span class='kw'>regimen</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>TIME</span><span class='kw'>=</span><span class='fl'>0</span>, <span class='kw'>AMT</span><span class='kw'>=</span><span class='fl'>1000</span>))</div><div class='output co'>#&gt; <span class='error'>Error in `[&lt;-.data.frame`(`*tmp*`, names(list(...)), value = list(regimen = structure(list(    TIME = 0, AMT = 1000), class = "data.frame", row.names = c(NA, -1L)))): replacement element 1 is a matrix/data frame of 1 row, need 2</span></div><div class='input'><span class='no'>cluster</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>multidplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/multidplyr/topics/new_cluster'>new_cluster</a></span>(<span class='fl'>2</span>)
+<span class='no'>data</span> <span class='kw'>%&gt;%</span> <span class='fu'>group_by</span>(<span class='no'>ID</span>) <span class='kw'>%&gt;%</span> <span class='fu'>partition</span>(<span class='no'>cluster</span>) <span class='kw'>%&gt;%</span> <span class='fu'>posthoc</span>(<span class='kw'>regimen</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>TIME</span><span class='kw'>=</span><span class='fl'>0</span>, <span class='kw'>AMT</span><span class='kw'>=</span><span class='fl'>1000</span>))</div><div class='output co'>#&gt; <span class='error'>Error in group_by(., ID): could not find function "group_by"</span></div><div class='input'><span class='no'>fit</span> <span class='kw'>%&gt;%</span> <span class='kw pkg'>tidyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://tidyr.tidyverse.org/reference/unnest.html'>unnest</a></span>(<span class='no'>observed</span>, <span class='no'>ipred</span>, <span class='kw'>.sep</span><span class='kw'>=</span><span class='st'>"."</span>) <span class='kw'>%&gt;%</span> <span class='fu'>ggplot</span>(<span class='fu'>aes</span>(<span class='kw'>x</span><span class='kw'>=</span><span class='no'>ipred.TIME</span>)) +
+<span class='fu'>geom_point</span>(<span class='fu'>aes</span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>observed.CONC</span>)) +
+<span class='fu'>geom_line</span>(<span class='fu'>aes</span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>ipred.CONC</span>, <span class='kw'>group</span><span class='kw'>=</span><span class='no'>ID</span>)) +
+<span class='fu'>facet_wrap</span>(~<span class='no'>ID</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(lhs, parent, parent): object 'fit' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -206,7 +249,13 @@ and column `fit` with the tdmorefit object</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-          </ul>
+
+      <li><a href="#proseval">Proseval</a></li>
+
+      <li><a href="#dosesimulation">DoseSimulation</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

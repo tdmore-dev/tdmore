@@ -146,10 +146,9 @@ checkRegimen <- function(regimen, iov) {
         msg="Occasions mispecified in regimen")
     }
   }
-  if (!("OCC" %in% colnames(regimen)) && !is.null(iov)) {
+  if (!("OCC" %in% colnames(regimen)) && !is.null(iov) && length(iov) > 0) {
     stop("No occasion column (OCC) in regimen")
   }
-
 }
 
 checkTimes <- function(times) {
