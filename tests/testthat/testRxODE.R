@@ -74,10 +74,12 @@ expect_known_value(
   predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100)),
   "Rxode.regimen.1dose"
 )
-expect_error(
-  predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12)),
-  regexp="ii requires non zero additional doses"
-)
+
+## RxODE throws an error 'ii requires non zero additional doses'
+## but tdmore does support this treatment regimen,
+## as it is useful to plan e.g. additional doses
+predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12))
+
 expect_error(
   predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, ADDL=0)),
   regexp="ii requires non zero additional doses"
