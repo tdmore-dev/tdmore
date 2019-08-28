@@ -26,8 +26,7 @@
 #' geom_line(aes(y=ipred.CONC, group=ID)) +
 #' facet_wrap(~ID)
 posthoc <- function(.data, ..., .fit="fit", .prediction="ipred", .elapsed="elapsed", .id="ID") {
-  if(inherits(.data, "rowwise_df")) {
-    dplyr::group_by
+  if(!setequal(class(.data), "list")) {
     res <- dplyr::rowwise(.data) %>%
       dplyr::do({posthoc(.data, ..., .fit=.fit, .prediction=.prediction, .elapsed=.elapsed, .id=.id)})
     return(res)
@@ -115,14 +114,17 @@ proseval <- function(.data, ..., .fit="fit", .prediction="ipred", .elapsed="elap
 #'
 #'
 #' @export
-doseSimulation <- function(.data, ..., optimize, predict, .fit="fit", .iterationFit="iterationFit", .next_observed="next_observed", .next_regimen="next_regimen") {
+doseSimulation <- function(.data, ..., optimize, predict,
+                           .fit="fit", .iterationFit="iterationFit", .next_observed="next_observed", .next_regimen="next_regimen",
+                           .verbose=TRUE) {
   if(! .fit %in% names(.data)) stop(".fit column needs to be present in .data for doseSimulation to work")
   if(missing(predict)) predict <- function(truth, regimen, time) {
     stats::predict(truth, regimen=regimen, newdata=time)
   }
   if(tibble::is_tibble(.data)) {
     res <- dplyr::rowwise(.data) %>%
-      dplyr::do({doseSimulation(.data, ..., optimize, .fit="fit")})
+      dplyr::do({doseSimulation(.data, ..., optimize=optimize, predict=predict,
+                                .fit=.fit, .iterationFit=.iterationFit, .next_observed=.next_observed, .next_regimen=.next_regimen)})
     return(res)
   } else {
     stopifnot(is.list( .data ))
@@ -132,6 +134,7 @@ doseSimulation <- function(.data, ..., optimize, predict, .fit="fit", .iteration
     regimen <- truth$regimen
     observed <- tibble::tibble(TIME=numeric()) ## specifying NULL will reuse the tdmorefit observed values!!
     repeat {
+      if(.verbose) cat("Iteration #", nrow(observed), "\n")
       # 1) a fit is generated using up-to-now observed concentrations
       args <- .data
       args[[.fit]] <- NULL

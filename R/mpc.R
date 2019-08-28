@@ -77,7 +77,7 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
   # Special case: no observed data
   if (is.null(observed) || nrow(observed) == 0) {
     # Note that se.fit=T => varcov can then be used to plot BSV in population
-    ipred <- estimate.tdmore(object, regimen=regimen, covariates=mergeCovariates(ebeCovariates, covariates), se.fit=TRUE, control=control, ...)
+    ipred <- estimate.default(object, regimen=regimen, covariates=mergeCovariates(ebeCovariates, covariates), se.fit=TRUE, control=control, ...)
     maxIter <- 0
   # Normal case: observed data present
   } else {
@@ -107,6 +107,11 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
       ipred$covariates <- mergeCovariates(ebeCovariates, covariates)
     }
   }
+
+  # Put the original data back in the `observed` and `regimen` slot
+  ipred$observed <- observed
+  ipred$regimen <- regimen
+
   return(ipred)
 }
 

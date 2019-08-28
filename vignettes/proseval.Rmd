@@ -106,8 +106,8 @@ ggplot(dbPred, aes(x=TIME, y=CONC)) +
   geom_line(aes(group=ID), data=db) +
   geom_smooth()
 
-posthocFit <- posthoc(m1, regimen=regimen, observed=db, se.fit=F, control=list(factr=1e14))
-posthocFit %>% 
+posthocFit <- dataTibble(object=m1, regimen=regimen, observed=db) %>% posthoc(se.fit=F, control=list(factr=1e14))
+posthocFit %>% ungroup() %>%
   mutate(coef = map(fit, ~tibble::enframe(coef(.x)))) %>% 
   tidyr::unnest(coef) %>%
   ggplot(aes(x=ID, y=value)) + 
@@ -138,7 +138,7 @@ This can be solved by using all data to generate an individual fit, and predicti
 ## Input data: 'db' with columns ID, TIME and CONC
 ## Input data: 'regimen' with columns TIME and AMT.
 ## Note that with true retrospective data, the regimen would be different per individual
-prosevalDb <- proseval(m1, regimen=regimen, observed=db, control=list(factr=1e14))
+prosevalDb <- dataTibble(object=m1, regimen=regimen, observed=db) %>% proseval(control=list(factr=1e14))
 ```
 
 ### Graphical representation {-}

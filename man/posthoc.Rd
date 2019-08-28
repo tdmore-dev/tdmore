@@ -62,7 +62,9 @@ And so on.
 
 This tool simulates a dose adaptation run for an individual.
 We expect a .fit column in the data, that represents the best model fit for the given subject.
-All other columns are ignored.
+All other columns are passed to the posthoc function when calculating the next fit, except for
+the 'observed' data (that is replaced by the simulated data)
+and the 'regimen' data (that is replaced by the adapted regimen)
 
 The DoseSimulation iterates as follows:
 1) A fit is generated using the up-to-now observed concentrations
