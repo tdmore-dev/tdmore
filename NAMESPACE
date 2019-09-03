@@ -65,11 +65,7 @@ export(covariate)
 export(dataTibble)
 export(default_model)
 export(discrete.searchspace)
-<<<<<<< HEAD
-=======
-export(dose)
 export(doseSimulation)
->>>>>>> 4f6e6bb88da7085fc86c85e569241994b85d3675
 export(errorModel)
 export(estimate)
 export(evaluate)

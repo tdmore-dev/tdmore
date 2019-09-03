@@ -14,7 +14,7 @@ proseval(.data, ..., .fit = "fit", .prediction = "ipred",
 
 doseSimulation(.data, ..., optimize, predict, .fit = "fit",
   .iterationFit = "iterationFit", .next_observed = "next_observed",
-  .next_regimen = "next_regimen")
+  .next_regimen = "next_regimen", .verbose = TRUE)
 }
 \arguments{
 \item{...}{additional arguments to add to each `estimate` call. If an argument
