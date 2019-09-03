@@ -11,24 +11,40 @@
 #' @return modified observed dataframe, with an 'ITER' column
 #'
 addIterationColumn <- function(regimen, observed) {
-  i <- findInterval(observed$TIME, regimen$TIME)
+  i <- findInterval(observed$TIME, regimen$TIME, left.open=T)
   OCC <- regimen$OCC[i]
   observed$ITER <- as.numeric( factor(OCC) ) #count from 1 to N
   observed
 }
 
 #'
-#' Select most appropriate covariates.
+#' MPC predict method.
 #'
-#' @param t time
-#' @param covariates time-varying covariates
-#' @param thetaNames theta names to be removed
-#' @return a vector with the covariates
+#' @inheritParams predict.tdmore
+#' @return a data.frame with all observed values at the given time points
+#' @export
 #'
-selectBestCovariates <- function(t, covariates, thetaNames) {
-  selectedRow <- utils::tail(which((covariates$TIME <= t)==TRUE), n=1)
-  retValue <- unlist(covariates[selectedRow,,drop=F] %>% dplyr::select(-dplyr::one_of(thetaNames, "TIME")))
-  return(retValue)
+predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
+  if (!is.data.frame(covariates)) {
+    covariates <- as.data.frame(as.list(c(TIME=0, covariates)))
+  }
+
+  # Retrieve initial thetas
+  theta <- object$mpc_theta
+  thetaNames <- names(theta)
+
+  # Make distinction between covariates
+  allCovariates <- object$covariates
+  trueCovariates <- allCovariates[!(allCovariates %in% thetaNames)]
+  assert_that(all(trueCovariates %in% colnames(covariates)), msg="Missing covariates")
+
+  # Add missing initial thetas if not there
+  missingThetas <- thetaNames[!(thetaNames %in% colnames(covariates))]
+  for (missingTheta in missingThetas) {
+    covariates[, missingTheta] <- theta[[missingTheta]]
+  }
+
+  return(predict.tdmore(object=object, newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates, se=se, level=level, ...))
 }
 
 #'
@@ -43,19 +59,25 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
     covariates <- as.data.frame(as.list(c(TIME=0, covariates)))
   }
 
-  # Init
+  # Retrieve initial thetas
   theta <- object$mpc_theta
   thetaNames <- names(theta)
-  thetaDf <- as.data.frame(as.list(theta)) # Thetas (MPC parameters) specified to tdmore via the covariates dataframe
-  thetaDf$TIME <- 0
-  selectedCovs <- selectBestCovariates(t=0, covariates, thetaNames)
-  covariatesMpc <- if(is.null(selectedCovs)) {thetaDf} else {cbind(thetaDf, t(selectedCovs))}
+
+  # Make distinction between covariates
+  allCovariates <- object$covariates
+  trueCovariates <- allCovariates[!(allCovariates %in% thetaNames)]
+  assert_that(sum(thetaNames %in% colnames(covariates))==0, msg="You shouldn't give thetas in covariates")
+  assert_that(all(trueCovariates %in% colnames(covariates)), msg="Some covariates are missing")
+
+  # Initialisation
+  ebeCovariates <- as.data.frame(as.list(theta)) # Thetas (MPC parameters) specified to tdmore via the covariates dataframe
+  ebeCovariates$TIME <- 0
   fix <- c()
 
   # Special case: no observed data
   if (is.null(observed) || nrow(observed) == 0) {
     # Note that se.fit=T => varcov can then be used to plot BSV in population
-    ipred <- estimate.tdmore(object, regimen=regimen, covariates=covariatesMpc, se.fit=TRUE, control=control, ...)
+    ipred <- estimate.default(object, regimen=regimen, covariates=mergeCovariates(ebeCovariates, covariates), se.fit=TRUE, control=control, ...)
     maxIter <- 0
   # Normal case: observed data present
   } else {
@@ -72,22 +94,37 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
       previousEbe <- predict(ipred, newdata=c(firstDoseJustAfter))[, paste0(thetaNames, object$mpc_suffix)]
       names(previousEbe) <- paste0(thetaNames)
       previousEbe$TIME <- firstDoseJustAfter
-      selectedCovs <- selectBestCovariates(t=firstDoseJustAfter, covariates, thetaNames)
-      covariates_tmp <- if(is.null(selectedCovs)) {previousEbe} else {cbind(previousEbe, t(selectedCovs))}
-      covariatesMpc <- dplyr::bind_rows(covariatesMpc, covariates_tmp)
+      ebeCovariates <- dplyr::bind_rows(ebeCovariates, previousEbe)
       fix <- coef(ipred)
     }
     if (iterIndex <= maxIter) {
       currentObsTime <- observedMpc %>% dplyr::filter(.data$ITER==iterIndex) %>% dplyr::pull(.data$TIME) %>% dplyr::last()
-      ipred <- estimate.tdmore(object, regimen=regimen %>% dplyr::filter(.data$TIME < currentObsTime),
+      ipred <- estimate.default(object, regimen=regimen %>% dplyr::filter(.data$TIME < currentObsTime),
                         observed=observedMpc %>% dplyr::filter(.data$ITER==iterIndex) %>% dplyr::select(-dplyr::one_of("ITER")),
-                        covariates=covariatesMpc, fix=fix, se.fit=se.fit, control=control, ...)
+                        covariates=mergeCovariates(ebeCovariates, covariates), fix=fix, se.fit=se.fit, control=control, ...)
     } else {
       # Last extra iteration copies final covariates dataframe (with all MPC parameters) to ipred
-      ipred$covariates <- covariatesMpc
+      ipred$covariates <- mergeCovariates(ebeCovariates, covariates)
     }
   }
+
+  # Put the original data back in the `observed` and `regimen` slot
+  ipred$observed <- observed
+  ipred$regimen <- regimen
+
   return(ipred)
+}
+
+#' Merge covariates.
+#'
+#' @param ebeCovariates EBE covariates
+#' @param covariates 'true' time-varying covariates
+#' @return an updated covariates dataframe
+#'
+mergeCovariates <- function(ebeCovariates, covariates) {
+  join <- dplyr::full_join(ebeCovariates, covariates, by="TIME")
+  join <- join[order(join$TIME), ]
+  return(zoo::na.locf(join))
 }
 
 #' MPC is a generic function to make a tdmore model compatible with MPC.
@@ -112,5 +149,6 @@ mpc.tdmore <- function(x, theta, suffix, ...) {
   x$mpc_theta <- theta
   x$mpc_suffix <- suffix
   class(x) <- append("tdmore_mpc", "tdmore")
+  if( !setequal(x$parameters, x$iov) ) stop("For MPC, all parameters should be IOV")
   return(x)
 }

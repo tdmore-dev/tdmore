@@ -115,8 +115,6 @@ plot(ipred)
 # Curried covariates
 #---------------------------------------------------
 
-m1 <- tdmore_mixture_covariates(tacrolimus_storset, probs=c(0.5, 0.5), covariates=list(c(CYP3A5=1), c(CYP3A5=0)))
-
 mod_1cpt <- nlmixrUI(function(){
   ini({
     TVV <- 70

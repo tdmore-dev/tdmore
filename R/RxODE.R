@@ -108,7 +108,9 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     df$OCC <- unique(regimen$OCC)
     for(i in iov) df[[i]] <- iovParameters[ names(iovParameters) == i ]
 
-    df <- as.data.frame(df) %>% merge(regimen[, c("TIME", "OCC")])
+    occTimes <- regimen[, c("TIME", "OCC")] %>% dplyr::distinct()
+    occTimes$TIME[1] <- 0 #first occasion always starts at time 0
+    df <- as.data.frame(df) %>% merge(occTimes)
     if(!is.null(covariates)) {
       covariates <- covariates %>%
         merge(df, by="TIME", all=T) %>% #and it is immediately sorted as well!
@@ -233,14 +235,11 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   if(!is.null( cache$output) ) return(cache$output) ## output always same, no matter the parameters
 
   # Run the simulation
-  result <- do.call(RxODE::rxSolve, c( list(object=model), cache$rxSolveArgs(parameters), extraArguments))
-
-  # Only get the values we want
-  result <- as.data.frame(result, row.names=NULL)
+  result <- do.call(RxODE::rxSolve, c( list(object=model, returnType="data.frame"), cache$rxSolveArgs(parameters), extraArguments))
   names(result)[names(result)=="time"] <- "TIME"
 
   # Remove spurious sampling times due to covariates
-  # But keep this a data.frame!
+  # But keep this a data.frame (drop=FALSE)
   result <- subset( result, result$TIME %in% times, drop=FALSE)
 
   result
@@ -255,46 +254,46 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 #' @return a completed event table
 #'
 addRegimenToEventTable <- function(eventTable, regimen, nbSSDoses=NULL) {
-  if(is.null(nbSSDoses)) nbSSDoses=5 #default
   for(i in seq_len(nrow(regimen))) {
     row <- regimen[i, ,drop=FALSE]
-    dosing.to = 1
-    rate = NULL
-    nbr.doses = 1
-    dosing.interval = if("II" %in% names(row)) row$II else NULL
-    start.time = row$TIME
+    args <- list()
+    args$time <- row$TIME
+    args$amt = row$AMT
+    if("II" %in% names(row)) args$ii <- row$II
+    if("CMT" %in% names(row)) args$cmt <- row$CMT
 
     if("ADDL" %in% colnames(row)) {
-      if(is.null(dosing.interval)) stop("Please define the dosing interval II in order to use ADDL doses")
-      nbr.doses <- nbr.doses + row$ADDL
+      if(is.null(args$ii)) stop("Please define the dosing interval II in order to use ADDL doses")
+      args$addl <- row$ADDL
     }
-    if (isTRUE("SS" %in% names(row) && row$SS == 1)) {
-      if(is.null(dosing.interval)) stop("Please define the dosing interval II in order to use SS=1")
+    if (isTRUE("SS" %in% names(row) && row$SS > 0)) {
+      if(is.null(args$ii)) stop("Please define the dosing interval II in order to use SS=1")
 
-      ## TODO: Use new functionality of new RxODE??
-      nbr.doses=nbr.doses + nbSSDoses
-      start.time = start.time - row$II * nbSSDoses
-      if(any( eventTable$get.dosing()$time > start.time ))
-        warning("Possible collision of steady-state dose on ", row$TIME, " with other treatments...")
+      if(is.null(nbSSDoses)) {
+        args$ss <- row$SS
+      } else {
+        if(is.null(args$addl)) args$addl <- 0
+        args$addl = args$addl + nbSSDoses
+        args$time = args$time - row$II * nbSSDoses
+        if(any( eventTable$get.dosing()$time > args$time ))
+          warning("Possible collision of steady-state dose on ", row$TIME, " with other treatments...")
+      }
     }
 
-    if("RATE" %in% names(row) && isTRUE(is.finite(row$RATE))) rate=row$RATE
+    if("ii" %in% names(args) && ! any(c("ss", "addl") %in% names(args) ) ) {
+      #RxODE is not happy with II and no additional doses or steady state dosing
+      #let's simply remove II
+      args$ii <- NULL
+    }
+
+    if("RATE" %in% names(row) && isTRUE(is.finite(row$RATE))) args$rate=row$RATE
     if("DURATION" %in% names(row) && isTRUE(is.finite(row$DURATION))) {
-      if(!is.null(rate)) stop("Cannot specify RATE and DURATION in the same treatment row ", i)
-      rate = row$AMT / row$DURATION
+      if(!is.null(args$rate)) stop("Cannot specify RATE and DURATION in the same treatment row ", i)
+      args$dur = row$DURATION
     }
 
-    #strange defaults in RxODE
-    #see https://github.com/nlmixrdevelopment/RxODE/blob/68ecc64b0fd7e231ac0ff38541715bbc8031f583/src/et.cpp#L2485
-    if(nbr.doses == 1) dosing.interval <- 24
-
-    if("CMT" %in% names(row)) dosing.to <- row$CMT
-    eventTable$add.dosing(start.time = start.time,
-                  dose=row$AMT,
-                  dosing.to=dosing.to,
-                  rate=rate,
-                  dosing.interval=dosing.interval,
-                  nbr.doses=nbr.doses)
+    eventTable <- do.call(RxODE::et,
+                          c( list(eventTable), args))
   }
   return(eventTable)
 }

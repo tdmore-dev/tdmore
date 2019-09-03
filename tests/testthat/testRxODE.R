@@ -22,9 +22,16 @@ d/dt(centr) = ka*abs - k12*centr + k21*perip - ke*centr;
 d/dt(perip) = k12*centr - k21*perip;
 "
 omegas=c(EVc=0.19^2, ECL=0.28^2)
-tdmore <- RxODE::RxODE(modelCode) %>%
+m1 <- RxODE::RxODE(modelCode)
+tdmore <- m1 %>%
   tdmore(omega=omegas,
          res_var=list(errorModel("CONC", prop=0.23))) #Model has 23% proportional error
+
+tdmoreMonolixSS <- m1 %>%
+  tdmore(omega=omegas,
+         res_var=list(errorModel("CONC", prop=0.23)), #Model has 23% proportional error
+          nbSSDoses = 5
+  )
 
 regimen <- data.frame(
   TIME=seq(0, 3)*24,
@@ -40,6 +47,8 @@ expect_known_output(
   print(summary(tdmore)),
   "tdmoreRxodeSummary.txt"
 )
+
+model_predict(m1, times=seq(0:16), regimen=regimen, parameters=c(ECL=0, EVc=0))
 
 # Default tdmore plot
 plot(tdmore, regimen)
@@ -65,17 +74,24 @@ expect_known_value(
   predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100)),
   "Rxode.regimen.1dose"
 )
-expect_known_value(
-  predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12)),
-  "Rxode.regimen.1dose"
-)
-expect_known_value(
+
+## RxODE throws an error 'ii requires non zero additional doses'
+## but tdmore does support this treatment regimen,
+## as it is useful to plan e.g. additional doses
+predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12))
+
+expect_error(
   predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, ADDL=0)),
-  "Rxode.regimen.1dose"
+  regexp="ii requires non zero additional doses"
 )
 expect_known_value(
   predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, ADDL=1)),
   "Rxode.regimen.2dose"
+)
+
+expect_known_value(
+  predict(tdmoreMonolixSS, newdata=seq(0, 14)+12*10, regimen=data.frame(TIME=0+12*10, AMT=100, II=12, SS=1)),
+  "Rxode.regimen.1doseSSMonolixStyle"
 )
 
 expect_known_value(
@@ -87,7 +103,7 @@ expect_known_value(
   predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, SS=1, ADDL=0)),
   "Rxode.regimen.1doseSS"
 )
-expect_known_value(
+expect_error(
  predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, SS=1, ADDL=1)),
- "Rxode.regimen.2doseSS"
+ regexp = "ss with addl not supported yet"
 )

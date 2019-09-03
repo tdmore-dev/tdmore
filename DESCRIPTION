@@ -1,6 +1,6 @@
 Package: tdmore
 Type: Package
-Title: Bayesian Therapeutic Drug Monitoring Framework
+Title: In silico simulation of virtual subject profiles and dose adaptation
 Version: 1.0.0
 Authors@R: c(
   person("Ruben", "Faelens", role = c("aut", "cre"), email = "ruben.faelens@kuleuven.be", comment=c(ORCID="0000-0002-7234-2443")),
@@ -13,23 +13,22 @@ Authors@R: c(
   person("FWO TBM Grant", role="fnd")
   )
 Description: Easily define a Nonlinear Mixed-Effects Model,
-    predict individual posthoc parameters with uncertainty, and
-    explore new dosing regimen in a user-defined search space. 
-    Finally, select the best dose and present this to the clinician.
-    Provide value by automatically generating a Shiny app for use
-    in a clinical setting.
+    perform a posthoc fit for a virtual subject, and
+    explore new dosing regimen in a user-defined search space.
+    Finally, select the best dose and evaluate future target attainment.
+    A shiny app can be created by using the `shinytdmore` package.
 Depends: R (>= 3.5.0)
-Imports: assertthat, mnormt, dplyr, numDeriv, stats, RxODE, nlmixr (>= 1.1.0-9), deSolve, ggplot2 (>= 3.0.0), magrittr,
+Imports: assertthat, mnormt, dplyr, numDeriv, stats, RxODE (>= 0.9.0), nlmixr (>= 1.1.0-9), deSolve, ggplot2 (>= 3.0.0), magrittr,
   gridExtra, zoo, rlang, purrr, Matrix, mvnfast, data.table, optimr, optextras, tibble
 License: file LICENSE
 Encoding: UTF-8
 Language: en-US
 LazyData: true
 Suggests: knitr, rmarkdown, testthat, roxygen2, devtools, vdiffr, svglite,
- pkgdown, bookdown, miniUI, shiny, readr, stringr, tidyr, shinytest
+ pkgdown, bookdown, miniUI, shiny, readr, stringr, tidyr, shinytest, withr,
+ benchmarkme, microbenchmark
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 URL: https://github.com/tdmore-dev/tdmore, https://tdmore-dev.github.io/tdmore/
 BugReports: https://github.com/tdmore-dev/tdmore/issues
-Remotes: nlmixrdevelopment/RxODE@d5ecf72b876836d60061a196ee6dc27b830f60c6,
-  nlmixrdevelopment/nlmixr@3da776f9412b988453ceefd28a36031e20a84f6e
+Remotes: nlmixrdevelopment/nlmixr@3da776f9412b988453ceefd28a36031e20a84f6e

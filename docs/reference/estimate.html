@@ -94,7 +94,13 @@ a given dataset using the model" />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/dosing-regimen.html">Simulating different dosing regimen</a>
+    </li>
+    <li>
       <a href="../articles/ggplot.html">Using ggplot to visualize tdmore results</a>
+    </li>
+    <li>
+      <a href="../articles/proseval.html">Prospective evaluation</a>
     </li>
     <li>
       <a href="../articles/tdmore_multiple_endpoints.html">Multiple endpoints in TDMore</a>
@@ -145,10 +151,8 @@ a given dataset using the model</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>estimate</span>(<span class='no'>object</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"L-BFGS-B"</span>, <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>multistart</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(),
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>estimate</span>(<span class='no'>object</span>, <span class='no'>observed</span>, <span class='no'>regimen</span>, <span class='no'>covariates</span>, <span class='no'>par</span>, <span class='no'>fix</span>, <span class='no'>method</span>, <span class='no'>se.fit</span>,
+  <span class='no'>lower</span>, <span class='no'>upper</span>, <span class='no'>multistart</span>, <span class='no'>control</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -212,10 +216,6 @@ reduce accuracy and report estimation progress.</p></td>
       <th>control</th>
       <td><p>control options for `estimate`
 If trace &gt; 0, the estimation function also reports errors when calculating log-likelihood.</p></td>
-    </tr>
-    <tr>
-      <th>data</th>
-      <td><p>Instead of specifying a separate `observed` and `regimen` data, we can also</p></td>
     </tr>
     <tr>
       <th>...</th>

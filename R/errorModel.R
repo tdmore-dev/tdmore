@@ -42,6 +42,8 @@ errorModel <- function(var="CONC", add=0, prop=0, type=NULL) {
     if(!any(i)) return(0)
     dnorm(ipred[i], obs[i], sd=sd[i], log=log)
   }
+  inv_res <- function(ipred, res) { ipred + res }
+  inv_wres <- function(ipred, wres) { inv_res(ipred, wres * sigma(ipred)) }
   return(structure(
     list(
       var=var,
@@ -49,6 +51,8 @@ errorModel <- function(var="CONC", add=0, prop=0, type=NULL) {
       sigma=sigma,
       res=res,
       wres=wres,
+      inv_res=inv_res,
+      inv_wres=inv_wres,
       ll=ll,
       add=add,
       prop=prop

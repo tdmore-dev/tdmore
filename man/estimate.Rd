@@ -5,10 +5,8 @@
 \title{Calculate the Empirical Bayesian Estimate parameters that predict
 a given dataset using the model}
 \usage{
-estimate(object, observed = NULL, regimen = NULL, covariates = NULL,
-  par = NULL, fix = NULL, method = "L-BFGS-B", se.fit = TRUE,
-  lower = NA, upper = NA, multistart = F, control = list(),
-  data = NULL, ...)
+estimate(object, observed, regimen, covariates, par, fix, method, se.fit,
+  lower, upper, multistart, control, ...)
 }
 \arguments{
 \item{object}{a tdmore, tdmore_set or tdmore_mixture object}
@@ -48,8 +46,6 @@ reduce accuracy and report estimation progress.}
 
 \item{control}{control options for `estimate`
 If trace > 0, the estimation function also reports errors when calculating log-likelihood.}
-
-\item{data}{Instead of specifying a separate `observed` and `regimen` data, we can also}
 
 \item{...}{extra parameters to pass to the optim function
 A good example is to specify `control=list(trace=1, REPORT=10, factr=1e13)` to improve performance.

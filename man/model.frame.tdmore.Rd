@@ -5,18 +5,20 @@
 \title{Get the specified data values, with the upper and lower bounds provided by the residual error model}
 \usage{
 \method{model.frame}{tdmore}(formula, data, se = FALSE, level = 0.95,
-  ...)
+  onlyOutput = FALSE, ...)
 }
 \arguments{
 \item{formula}{a TDMore object}
 
 \item{data}{data.frame with at least a TIME column
 Or alternatively, a numeric vector.
-Or NULL, to get an empty data.frame with TIME and a column for every residual error variable.}
+Or NULL, to get an empty data.frame with TIME and a column for every output variable.}
 
 \item{se}{TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset}
 
 \item{level}{numeric value to specify the confidence interval}
+
+\item{onlyOutput}{only keep TIME and output variables in the data.frame}
 
 \item{...}{ignored}
 }

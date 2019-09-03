@@ -5,16 +5,18 @@
 \title{Get the observed values used to provide this model fit.}
 \usage{
 \method{model.frame}{tdmorefit}(formula, data = NULL, se = FALSE,
-  level = 0.95, ...)
+  level = 0.95, onlyOutput = FALSE, ...)
 }
 \arguments{
 \item{formula}{A tdmorefit object}
 
 \item{data}{Data.frame to append and modify. If NULL, uses the observed values.}
 
-\item{se}{if TRUE, add a column xx.upper and xx.lower with the lower and upper bounds of confidence, based on the residual error model}
+\item{se}{TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset}
 
-\item{level}{Confidence interval to use for `se`}
+\item{level}{numeric value to specify the confidence interval}
+
+\item{onlyOutput}{only keep TIME and output variables in the data.frame}
 
 \item{...}{ignored}
 }

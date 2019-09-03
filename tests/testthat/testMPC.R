@@ -2,17 +2,17 @@ library(tdmore)
 library(nlmixr)
 library(testthat)
 library(dplyr)
-
+library(ggplot2)
 
 context("Test that MPC estimation works as intended")
 
 test_that("addIterationColumn works as expected", {
-regimen <- data.frame(TIME=seq(0, 7*24, by=24), AMT=50, OCC=1:8)
-observed <- data.frame(TIME=c(23, 45, 47, 6*24-1) )
-expect_equal(
-  tdmore:::addIterationColumn(regimen, observed)$ITER,
-  c(1,2,2,3)
-)
+  regimen <- data.frame(TIME=seq(0, 7*24, by=24), AMT=50, OCC=1:8)
+  observed <- data.frame(TIME=c(23, 45, 47, 6*24-1) )
+  expect_equal(
+    tdmore:::addIterationColumn(regimen, observed)$ITER,
+    c(1,2,2,3)
+  )
 })
 
 
@@ -46,7 +46,8 @@ m1 <- nlmixrUI(function(){
 }) %>% tdmore(iov=c("EV1", "ECL"))
 
 theta <- c(TVCL=3.7, TVV1=61)
-covariates <- as.data.frame(t(c(TIME=0, theta, WT=70)))
+
+covariatesThetaIncluded <- as.data.frame(t(c(TIME=0, theta, WT=70)))
 
 regimen <- data.frame(
   TIME=c(0, 24, 48, 72, 96),
@@ -59,25 +60,31 @@ observed <- data.frame(
   CONC=c(2.5, 4, 5, 5, 4.5)
 )
 
-plot(m1, newdata=seq(0, 5*24, by=0.1), regimen=regimen, covariates=covariates, se.fit=NA)
+expect_equal(
+  tdmore:::addIterationColumn(regimen, observed)$ITER,
+  c(1,2,2,3,3)
+)
+
+plot(m1, newdata=seq(0, 5*24, by=0.1), regimen=regimen, covariates=covariatesThetaIncluded, se.fit=NA)
 
 # Estimate with EBE
-# plot(estimate(m1, regimen=regimen, covariates=covariates, observed=observed))
+plot(estimate(m1, regimen=regimen, covariates=covariatesThetaIncluded, observed=observed))
 
 # Estimate with MPC
 m1_mpc <- m1 %>% mpc(theta=theta, suffix="_next")
 
 #debugonce(tdmore:::estimate.tdmore_mpc)
-#debug(tdmore:::model_prepare.RxODE)
+
+covariates <- data.frame(TIME=0, WT=70) # No need to give the MPC thetas for an MPC model
 ipred <- estimate(m1_mpc, regimen=regimen, covariates=covariates, observed=observed)
 
-#expectedCoef <- c(ECL=-0.2018, EV1=-0.0559, ECL=-0.1534, EV1=-0.0331, ECL=0.1174, EV1=-0.0016)
-#expect_equal(round(coef(ipred), digits=4), expectedCoef)
+expectedCoef <- c(ECL=-0.2018, EV1=-0.0559, ECL=-0.1534, EV1=-0.0331, ECL=0.1174, EV1=-0.0016)
+expect_equal(round(coef(ipred), digits=4), expectedCoef)
 
 # PLOT
 times <- seq(0, max(observed$TIME), by=0.2)
-fit <- predict(m1, newdata=times, regimen=regimen, parameters=coef(ipred), covariates=ipred$covariates)
-pred <- predict(m1, newdata=times, regimen=regimen, parameters=c(), covariates=covariates)
+fit <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=coef(ipred), covariates=ipred$covariates)
+pred <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=c(), covariates=covariates)
 
 plot <- ggplot(mapping=aes(x=TIME, y=CONC)) +
   geom_line(data=pred, color="blue") +
@@ -92,6 +99,7 @@ plot(ipred, se.fit=F)
 
 
 # ---------------------------------------------------------------------
+
 regimen <- data.frame(
   TIME=c(0, 24),
   AMT=5,
@@ -106,8 +114,8 @@ observed <- data.frame(
 ipred <- estimate(m1_mpc, regimen=regimen, covariates=covariates, observed=observed)
 
 times <- seq(0, 48, by=0.2)
-fit <- predict(m1, newdata=times, regimen=regimen, parameters=coef(ipred), covariates=ipred$covariates)
-pred <- predict(m1, newdata=times, regimen=regimen, parameters=c(), covariates=covariates)
+fit <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=coef(ipred), covariates=ipred$covariates)
+pred <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=c(), covariates=covariates)
 
 plot <- ggplot(mapping=aes(x=TIME, y=CONC)) +
   geom_line(data=pred, color="blue") +
@@ -115,3 +123,38 @@ plot <- ggplot(mapping=aes(x=TIME, y=CONC)) +
   geom_point(data=observed)
 
 print(plot)
+
+
+# ---------------------------------------------------------------------
+
+# Time-varying covariates
+
+timeVaryingCovs <- data.frame(TIME=c(0,20,40), WT=c(50,70,90))
+
+# No observation
+ipred1 <- estimate(m1_mpc, regimen=regimen, covariates=timeVaryingCovs)
+expect_equal(ipred1$covariates, data.frame(TVCL=c(3.7, 3.7, 3.7),
+                                           TVV1=c(61, 61, 61),
+                                           TIME=c(0, 20, 40),
+                                           WT=c(50,70,90)))
+
+# Observation
+ipred2 <- estimate(m1_mpc, regimen=regimen, covariates=timeVaryingCovs, observed=observed)
+expect_true(all.equal(ipred2$covariates, data.frame(TVCL=c(3.7, 3.7, 2.7878, 2.7878),
+                                           TVV1=c(61, 61,  47.8952,  47.8952),
+                                           TIME=c(0, 20, 24, 40),
+                                           WT=c(50, 70, 70, 90)), check.attributes=F, tolerance=1E-4))
+
+times <- seq(0, 48, by=0.2)
+fit <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=coef(ipred2), covariates=ipred2$covariates)
+pred <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=c(), covariates=timeVaryingCovs)
+
+plot <- ggplot(mapping=aes(x=TIME, y=CONC)) +
+  geom_line(data=pred, color="blue") +
+  geom_line(data=fit, color="red") +
+  geom_point(data=observed)
+
+print(plot)
+
+
+

@@ -89,3 +89,42 @@ evaluate <- function(tdmorefit, regimen, searchspace, evaluators) {
 
   list(pred=db, table=eval)
 }
+
+#' For a given set of planned times, round to the nearest reference time.
+#'
+#' This can be used to move an intended administration to fit the historic treatment regimen of a
+#' patient in retrospective data.
+#'
+#' @param x a vector of times to round
+#' @param reference a vector of times, used to round
+#' @param range how much can be subtracted or added from/to 'x' to get to the reference
+#' @param if.na if no corresponding reference time is found, what should we do?
+#' if 'keep', then the original time is kept
+#' if 'NA', then we set the value to NA
+#'
+#' @return A vector of the same length as x. Values close to reference values are replaced by the reference value.
+#'
+#' @export
+#'
+roundTime <- function(x, reference, range=c(-0.5, 0.5), if.na=c("keep", "NA")) {
+  if.na <- match.arg(if.na)
+  lower <- range[1]
+  upper <- range[2]
+  for(i in seq_along(x)) {
+    delta <- reference - x[i]
+    ## if reference is higher, then delta is positive
+    ## so delta should be smaller than 'upper'
+
+    matches <- delta >= lower & delta <= upper
+    if(!any(matches)) {
+      # no match
+      if(if.na=="NA") x[i] <- NA
+    } else {
+      # match !
+      delta[!matches] <- Inf
+      j <- which.min( abs(delta) ) #which one is closest?
+      x[i] <- reference[j]
+    }
+  }
+  x
+}

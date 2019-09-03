@@ -91,7 +91,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/dosing-regimen.html">Simulating different dosing regimen</a>
+    </li>
+    <li>
       <a href="../articles/ggplot.html">Using ggplot to visualize tdmore results</a>
+    </li>
+    <li>
+      <a href="../articles/proseval.html">Prospective evaluation</a>
     </li>
     <li>
       <a href="../articles/tdmore_multiple_endpoints.html">Multiple endpoints in TDMore</a>
@@ -142,7 +148,7 @@
 
     <pre class="usage"><span class='co'># S3 method for tdmore</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/model.frame'>model.frame</a></span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>se</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
-  <span class='no'>...</span>)</pre>
+  <span class='kw'>onlyOutput</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -155,7 +161,7 @@
       <th>data</th>
       <td><p>data.frame with at least a TIME column
 Or alternatively, a numeric vector.
-Or NULL, to get an empty data.frame with TIME and a column for every residual error variable.</p></td>
+Or NULL, to get an empty data.frame with TIME and a column for every output variable.</p></td>
     </tr>
     <tr>
       <th>se</th>
@@ -164,6 +170,10 @@ Or NULL, to get an empty data.frame with TIME and a column for every residual er
     <tr>
       <th>level</th>
       <td><p>numeric value to specify the confidence interval</p></td>
+    </tr>
+    <tr>
+      <th>onlyOutput</th>
+      <td><p>only keep TIME and output variables in the data.frame</p></td>
     </tr>
     <tr>
       <th>...</th>

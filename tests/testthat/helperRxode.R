@@ -26,6 +26,8 @@ rxOdeVersion <- function() {
   paste0( "RxODE-",sessionInfo()$otherPkgs$RxODE$Version )
 }
 
+message("Tests using RxODE version: ", rxOdeVersion())
+
 ## Change the path for different versions of RxODE...
 expect_doppelganger_RxODE <- function(title, fig, path=NULL, ...) {
   vdiffr::expect_doppelganger(title, fig,

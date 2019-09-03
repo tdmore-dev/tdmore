@@ -2,7 +2,7 @@
 % Please edit documentation in R/ebe.R
 \name{expandOmega}
 \alias{expandOmega}
-\title{Expand OMEGA matrix by adding variance-covariance information regarding all IOV terms.
+\title{Expand OMEGA matrix by duplicating variance-covariance information for IOV terms.
 Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames().}
 \usage{
 expandOmega(tdmore, occasions)
@@ -16,6 +16,6 @@ expandOmega(tdmore, occasions)
 the omega matrix with the duplicated IOV terms at the end
 }
 \description{
-Expand OMEGA matrix by adding variance-covariance information regarding all IOV terms.
+Expand OMEGA matrix by duplicating variance-covariance information for IOV terms.
 Note that the column and row names of the returned matrix are strictly identical to the ones returned by getParameterNames().
 }

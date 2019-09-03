@@ -1,8 +1,6 @@
 ---
 title: "Multiple endpoints in TDMore"
-output:
-  html_document:
-    keep_md: true
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Multiple endpoints in TDMore}
   %\VignetteEncoding{UTF-8}
@@ -88,7 +86,7 @@ plot(m1, regimen, newdata=times)
 
 ### Adding a PD model {-}
 
-Suppose we received a full blood workup: Sunitinib concentration, Alanine aminotransferase (ALT), Aspartate aminotransferase (AST), Absolute neutrophil count (ANC), Platelet count (PC) and Lymphocyte count (LC). We also measured the patient's diastolic blood pressure (DBP).
+Suppose we received a full blood workup: Sunitinib concentration, Alanine aminotransferase (ALT), Aspartate aminotransferase (AST), Absolute neutrophil count (ANC), Platelet count (PC) and Lymphocyte count (LC). We also measured the subject's diastolic blood pressure (DBP).
 
 We can create a single model to predict all of these aspects. In the example below, we will focus on ALT and AST. Please note the mandatory '|' nlmixr syntax used to describe the residual variability of different endpoints.
 
@@ -215,3 +213,6 @@ coef(ipred)
 coef(ipred) / sqrt(diag(m2$omega))
 ```
 
+### Code appendix
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+```

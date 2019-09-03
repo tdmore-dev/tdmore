@@ -1,8 +1,6 @@
 ---
 title: "Using ggplot to visualize tdmore results"
-output:
-  html_document:
-    keep_md: true
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using ggplot to visualize tdmore results}
   %\VignetteEncoding{UTF-8}
@@ -52,3 +50,6 @@ autoplot(population)
 autoplot(ipred)
 ```
 
+### Code appendix
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+```

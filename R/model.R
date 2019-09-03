@@ -142,32 +142,43 @@ predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covar
 #' Get the residual values of a predicted value vs the observed value
 #'
 #' @param object A TDMore object
-#' @param observed The observed values, as data.frame
 #' @param predicted What was predicted, as data.frame
+#' @param observed The observed values, as data.frame
 #' @param weighted Should the residuals be divided by the standard deviation of the error model?
+#' @param inverse if TRUE, perform the inverse operation (assume `predicted` has IPRED values, and `observed` has IRES/IWRES values)
 #' @param ... ignored
 #'
-#' @return A numeric vector, equivalent to IRES or IWRES
+#' @return The `predicted` data.frame, with all output values replaced by IRES or IWRES
+#'
 #' @export
+#' @rdname residuals
 #'
 #' @importFrom stats dnorm
-residuals.tdmore <- function(object, observed, predicted, weighted=FALSE, ...) {
+residuals.tdmore <- function(object, predicted, observed, weighted=FALSE, inverse=FALSE, ...) {
   tdmore <- object
-  result <- c()
   for (err in tdmore$res_var) {
     var <- err$var
 
     ipred <- predicted[, var, drop=TRUE]
-    obs <- observed[, var, drop=TRUE]
 
-    if(weighted) {
-      tmp <- err$wres(ipred, obs)
+    if(!inverse) {
+      obs <- observed[, var, drop=TRUE]
+      if(weighted) {
+        tmp <- err$wres(ipred, obs)
+      } else {
+        tmp <- err$res(ipred, obs)
+      }
     } else {
-      tmp <- err$res(ipred, obs)
+      res <- observed[, var, drop=TRUE]
+      if(weighted) {
+        tmp <- err$inv_wres(ipred, res)
+      } else {
+        tmp <- err$inv_res(ipred, res)
+      }
     }
-    result <- c(result, tmp)
+    predicted[, var] <- tmp
   }
-  return(result)
+  return(predicted)
 }
 
 #' Get the specified data values, with the upper and lower bounds provided by the residual error model
@@ -175,9 +186,10 @@ residuals.tdmore <- function(object, observed, predicted, weighted=FALSE, ...) {
 #' @param formula a TDMore object
 #' @param data data.frame with at least a TIME column
 #' Or alternatively, a numeric vector.
-#' Or NULL, to get an empty data.frame with TIME and a column for every residual error variable.
+#' Or NULL, to get an empty data.frame with TIME and a column for every output variable.
 #' @param se TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset
 #' @param level numeric value to specify the confidence interval
+#' @param onlyOutput only keep TIME and output variables in the data.frame
 #' @param ... ignored
 #'
 #' @importFrom stats qnorm
@@ -187,7 +199,7 @@ residuals.tdmore <- function(object, observed, predicted, weighted=FALSE, ...) {
 #' If a numeric vector was specified as `data`, the output is a data.frame with TIME column and additional NA-filled columns corresponding to the residual error variables.
 #' If `se` is TRUE, the data.frame has additional columns xx.lower and xx.upper for all columns that match the residual error model.
 #' @export
-model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, ...) {
+model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, onlyOutput=FALSE, ...) {
   tdmore <- formula
   if(is.null(data)) data <- numeric()
 
@@ -198,6 +210,11 @@ model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, ...) {
     data <- as.numeric(data)
     data <- data.frame(TIME=data)
     for(err in tdmore$res_var) data[, err$var] <- numeric()
+  }
+
+  if(onlyOutput) {
+    modelOutputs <- lapply(tdmore$res_var, function(x) x$var)
+    data <- data[, c("TIME", modelOutputs), drop=FALSE ]
   }
 
   if(!se) return(data)
@@ -212,7 +229,7 @@ model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, ...) {
       if (!(var %in% oNames)) next
       obs <- data[, var, drop=TRUE]
       sd <- err$sigma(obs)
-      q <- stats::rnorm(1)
+      q <- stats::rnorm(length(sd))
       data[, var] <- obs + sd*q
     }
     return(data)
