@@ -51,6 +51,7 @@ predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, c
 #' MPC estimate method.
 #'
 #' @inheritParams estimate
+#' @param data to be documented
 #' @return a tdmorefit
 #' @export
 #'

@@ -1,6 +1,6 @@
 #' These functions perform estimate for multiple individuals at the same time.
 #'
-#' @param data a tbl with one or multiple rows
+#' @param .data a tbl with one or multiple rows
 #' Each column from the tbl will be mapped to the `estimate()` function.
 #' You can generate such a tbl using \link{data} functions.
 #' @param ... additional arguments to add to each `estimate` call. If an argument
@@ -11,20 +11,21 @@
 #' with that name, storing the predicted values for that fit
 #' @param .elapsed Either a string or NULL. If a string, the output will contain a column
 #' with that name, storing the required computation time (`System.time`) for that fit
+#' @param .id to be documented
 #'
 #' @return a tibble with the requested columns for each fit
 #'
 #' @export
 #' @examples
+#' library(magrittr)
 #' data <- dataTibble(object=meropenem_model %>% tdmore(), observed=data.frame(ID=c(1,1,2,2), TIME=c(8,10,8,10), CONC=c(1.5,0.3,0.8,0.2)))
-#' fit <- data %>%
-#'   posthoc(regimen=data.frame(TIME=0, AMT=1000))
-#' cluster <- multidplyr::new_cluster(2)
-#' data %>% group_by(ID) %>% partition(cluster) %>% posthoc(regimen=data.frame(TIME=0, AMT=1000))
-#' fit %>% tidyr::unnest(observed, ipred, .sep=".") %>% ggplot(aes(x=ipred.TIME)) +
-#' geom_point(aes(y=observed.CONC)) +
-#' geom_line(aes(y=ipred.CONC, group=ID)) +
-#' facet_wrap(~ID)
+#' fit <- data %>% posthoc(regimen=data.frame(TIME=0, AMT=1000))
+#' # cluster <- multidplyr::new_cluster(2)
+#' # data %>% group_by(ID) %>% partition(cluster) %>% posthoc(regimen=data.frame(TIME=0, AMT=1000))
+#' # fit %>% tidyr::unnest(observed, ipred, .sep=".") %>% ggplot(aes(x=ipred.TIME)) +
+#' # geom_point(aes(y=observed.CONC)) +
+#' # geom_line(aes(y=ipred.CONC, group=ID)) +
+#' # facet_wrap(~ID)
 posthoc <- function(.data, ..., .fit="fit", .prediction="ipred", .elapsed="elapsed", .id="ID") {
   if(!setequal(class(.data), "list")) {
     res <- dplyr::rowwise(.data) %>%
@@ -88,11 +89,14 @@ proseval <- function(.data, ..., .fit="fit", .prediction="ipred", .elapsed="elap
 }
 
 #' @rdname posthoc
-#'
 #' @param optimize an optimization function for dose simulation, corresponding to function(fit, regimen, truth), and returning a list(nextTime, regimen)
 #' @param predict a prediction function for dose simulation, corresponding to function(truth, newRegimen, nextTime)
 #' If missing, we simply predict using the true fit.
 #' We evaluate the nextObservations time points using the 'true' model and the new regimen.
+#' @param .iterationFit to be documented
+#' @param .next_observed to be documented
+#' @param .next_regimen to be documented
+#' @param .verbose to be documented
 #'
 #' @section DoseSimulation:
 #' This tool simulates a dose adaptation run for an individual.

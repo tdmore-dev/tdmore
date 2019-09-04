@@ -17,6 +17,10 @@ doseSimulation(.data, ..., optimize, predict, .fit = "fit",
   .next_regimen = "next_regimen", .verbose = TRUE)
 }
 \arguments{
+\item{.data}{a tbl with one or multiple rows
+Each column from the tbl will be mapped to the `estimate()` function.
+You can generate such a tbl using \link{data} functions.}
+
 \item{...}{additional arguments to add to each `estimate` call. If an argument
 is present both here and in .data, the argument here takes precedence.}
 
@@ -29,6 +33,8 @@ with that name, storing the predicted values for that fit}
 \item{.elapsed}{Either a string or NULL. If a string, the output will contain a column
 with that name, storing the required computation time (`System.time`) for that fit}
 
+\item{.id}{to be documented}
+
 \item{.obs}{Either a string or NULL. If a string, the output will contain a column
 with that name, describing how many observations were taken into account}
 
@@ -38,9 +44,13 @@ with that name, describing how many observations were taken into account}
 If missing, we simply predict using the true fit.
 We evaluate the nextObservations time points using the 'true' model and the new regimen.}
 
-\item{data}{a tbl with one or multiple rows
-Each column from the tbl will be mapped to the `estimate()` function.
-You can generate such a tbl using \link{data} functions.}
+\item{.iterationFit}{to be documented}
+
+\item{.next_observed}{to be documented}
+
+\item{.next_regimen}{to be documented}
+
+\item{.verbose}{to be documented}
 }
 \value{
 a tibble with the requested columns for each fit
@@ -79,13 +89,13 @@ This predicts the next observation.
 }
 
 \examples{
+library(magrittr)
 data <- dataTibble(object=meropenem_model \%>\% tdmore(), observed=data.frame(ID=c(1,1,2,2), TIME=c(8,10,8,10), CONC=c(1.5,0.3,0.8,0.2)))
-fit <- data \%>\%
-  posthoc(regimen=data.frame(TIME=0, AMT=1000))
-cluster <- multidplyr::new_cluster(2)
-data \%>\% group_by(ID) \%>\% partition(cluster) \%>\% posthoc(regimen=data.frame(TIME=0, AMT=1000))
-fit \%>\% tidyr::unnest(observed, ipred, .sep=".") \%>\% ggplot(aes(x=ipred.TIME)) +
-geom_point(aes(y=observed.CONC)) +
-geom_line(aes(y=ipred.CONC, group=ID)) +
-facet_wrap(~ID)
+fit <- data \%>\% posthoc(regimen=data.frame(TIME=0, AMT=1000))
+# cluster <- multidplyr::new_cluster(2)
+# data \%>\% group_by(ID) \%>\% partition(cluster) \%>\% posthoc(regimen=data.frame(TIME=0, AMT=1000))
+# fit \%>\% tidyr::unnest(observed, ipred, .sep=".") \%>\% ggplot(aes(x=ipred.TIME)) +
+# geom_point(aes(y=observed.CONC)) +
+# geom_line(aes(y=ipred.CONC, group=ID)) +
+# facet_wrap(~ID)
 }
