@@ -123,14 +123,16 @@ output <- function(name, label, unit=NULL, default_value=1) {
 #' @param unit the unit
 #' @param dosing_interval the dosing interval in hours, 24h is the default value
 #' @param default_value the default dose value, same unit as the one provided
+#' @param round_function the rounding function to round the recommended dose, by default doses are not rounded
 #' @return a tdmore_formulation object
 #' @export
-formulation <- function(name, unit, dosing_interval=24, default_value=1) {
+formulation <- function(name, unit, dosing_interval=24, default_value=1, round_function=function(dose){dose}) {
   structure(list(
     name=name,
     unit=unit,
     dosing_interval=dosing_interval,
-    default_value=default_value
+    default_value=default_value,
+    round_function=round_function
   ), class="tdmore_formulation")
 }
 

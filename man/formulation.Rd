@@ -4,7 +4,8 @@
 \alias{formulation}
 \title{Create a new formulation object.}
 \usage{
-formulation(name, unit, dosing_interval = 24, default_value = 1)
+formulation(name, unit, dosing_interval = 24, default_value = 1,
+  round_function = function(dose) {     dose })
 }
 \arguments{
 \item{name}{the formulation name}
@@ -14,6 +15,8 @@ formulation(name, unit, dosing_interval = 24, default_value = 1)
 \item{dosing_interval}{the dosing interval in hours, 24h is the default value}
 
 \item{default_value}{the default dose value, same unit as the one provided}
+
+\item{round_function}{the rounding function to round the recommended dose, by default doses are not rounded}
 }
 \value{
 a tdmore_formulation object
