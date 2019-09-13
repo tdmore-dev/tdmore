@@ -37,8 +37,9 @@ Get the residual values of a predicted value vs the observed value
 }
 \examples{
 observed <- data.frame(TIME=5, CONC=0.060)
+regimen=data.frame(TIME=0, AMT=10)
 fit <- estimate(tdmore(default_model),
-    regimen=data.frame(TIME=0, AMT=10),
+    regimen=regimen,
     observed=observed,
     covariates=c(WT=70)
     )

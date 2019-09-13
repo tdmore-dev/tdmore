@@ -1,6 +1,6 @@
 #' These functions perform estimate for multiple individuals at the same time.
 #'
-#' @param data a tbl with one or multiple rows
+#' @param .data a tbl with one or multiple rows
 #' Each column from the tbl will be mapped to the `estimate()` function.
 #' You can generate such a tbl using \link{data} functions.
 #' @param ... additional arguments to add to each `estimate` call. If an argument
@@ -11,6 +11,7 @@
 #' with that name, storing the predicted values for that fit
 #' @param .elapsed Either a string or NULL. If a string, the output will contain a column
 #' with that name, storing the required computation time (`System.time`) for that fit
+#' @param .id column with the subject ID (to be ignored when calling `estimate`)
 #'
 #' @return a tibble with the requested columns for each fit
 #'
@@ -91,7 +92,6 @@ proseval <- function(x, ..., .fit="fit", .prediction="ipred", .elapsed="elapsed"
 }
 
 #' @rdname posthoc
-#'
 #' @param optimize an optimization function for dose simulation, corresponding to function(fit, regimen, truth), and returning a list(nextTime, regimen)
 #' @param predict a prediction function for dose simulation, corresponding to function(truth, newRegimen, nextTime)
 #' If missing, we simply predict using the true fit.

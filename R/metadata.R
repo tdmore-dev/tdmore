@@ -39,13 +39,13 @@ metadata.tdmore_output <- function(x, ...) {
   ), class="metadata")
 }
 
-#' Build a dose metadata.
+#' Build a formulation metadata.
 #'
-#' @param x a tdmore_dose object
+#' @param x a tdmore_formulation object
 #' @param ... ignored
 #' @return a metadata structure
 #' @export
-metadata.tdmore_dose <- function(x, ...) {
+metadata.tdmore_formulation <- function(x, ...) {
   structure(list(
     value=x
   ), class="metadata")
@@ -117,20 +117,23 @@ output <- function(name, label, unit=NULL, default_value=1) {
   ), class="tdmore_output")
 }
 
-#' Create a new dose object.
+#' Create a new formulation object.
 #'
+#' @param name the formulation name
 #' @param unit the unit
 #' @param dosing_interval the dosing interval in hours, 24h is the default value
 #' @param default_value the default dose value, same unit as the one provided
-#' @return a tdmore_dose object
+#' @param round_function the rounding function to round the recommended dose, by default doses are not rounded
+#' @return a tdmore_formulation object
 #' @export
-dose <- function(unit, dosing_interval=24, default_value=1) {
+formulation <- function(name, unit, dosing_interval=24, default_value=1, round_function=function(dose){dose}) {
   structure(list(
-    name="DOSE",
+    name=name,
     unit=unit,
     dosing_interval=dosing_interval,
-    default_value=default_value
-  ), class="tdmore_dose")
+    default_value=default_value,
+    round_function=round_function
+  ), class="tdmore_formulation")
 }
 
 #' Create a new target.
@@ -167,13 +170,13 @@ toString.tdmore_covariate <- function(x, ...) {
   return(paste0(x$label, " (", x$unit, ")"))
 }
 
-#' Tdmore_dose to string method.
+#' Tdmore_formulation to string method.
 #'
 #' @param x a tdmore_dose object
 #' @param ... ignored
 #'
 #' @export
-toString.tdmore_dose <- function(x, ...) {
+toString.tdmore_formulation <- function(x, ...) {
   return(x$unit)
 }
 
@@ -187,7 +190,7 @@ toString.tdmore_target <- function(x, ...) {
   return(paste0("Target: [", x$min, ",", x$max, "]"))
 }
 
-#' Get metadata (output or covariate) by name.
+#' Get metadata (output, formulation or covariate) by name.
 #'
 #' @param tdmore the tdmore model
 #' @param metaName the name of the metadata
@@ -201,4 +204,16 @@ getMetadataByName <- function(tdmore, metaName) {
   } else {
     return(NULL)
   }
+}
+
+#' Get metadata by class.
+#'
+#' @param tdmore the tdmore model
+#' @param metaClass the class of the metadata
+#' @return the metadata items that matches the given class
+#' @export
+getMetadataByClass <- function(tdmore, metaClass) {
+  hasMetadata <- function(x) {inherits(x, metaClass) }
+  results <- tdmore$metadata[sapply(tdmore$metadata, hasMetadata)]
+  return(results)
 }

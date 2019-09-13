@@ -29,6 +29,8 @@ with that name, storing the predicted values for that fit}
 \item{.elapsed}{Either a string or NULL. If a string, the output will contain a column
 with that name, storing the required computation time (`System.time`) for that fit}
 
+\item{.id}{column with the subject ID (to be ignored when calling `estimate`)}
+
 \item{.obs}{Either a string or NULL. If a string, the output will contain a column
 with that name, describing how many observations were taken into account}
 
@@ -46,7 +48,7 @@ We evaluate the nextObservations time points using the 'true' model and the new 
 
 \item{.verbose}{Be verbose when simulating?}
 
-\item{data}{a tbl with one or multiple rows
+\item{.data}{a tbl with one or multiple rows
 Each column from the tbl will be mapped to the `estimate()` function.
 You can generate such a tbl using \link{data} functions.}
 }

@@ -180,6 +180,10 @@ with that name, storing the predicted values for that fit</p></td>
 with that name, storing the required computation time (`System.time`) for that fit</p></td>
     </tr>
     <tr>
+      <th>.id</th>
+      <td><p>column with the subject ID (to be ignored when calling `estimate`)</p></td>
+    </tr>
+    <tr>
       <th>.obs</th>
       <td><p>Either a string or NULL. If a string, the output will contain a column
 with that name, describing how many observations were taken into account</p></td>
@@ -211,7 +215,7 @@ We evaluate the nextObservations time points using the 'true' model and the new 
       <td><p>Be verbose when simulating?</p></td>
     </tr>
     <tr>
-      <th>data</th>
+      <th>.data</th>
       <td><p>a tbl with one or multiple rows
 Each column from the tbl will be mapped to the `estimate()` function.
 You can generate such a tbl using <a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a> functions.</p></td>

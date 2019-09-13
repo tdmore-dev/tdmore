@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get metadata (output, formulation or covariate) by name. — getMetadataByName • tdmore</title>
+<title>Get metadata by class. — getMetadataByClass • tdmore</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Get metadata (output, formulation or covariate) by name. — getMetadataByName" />
+<meta property="og:title" content="Get metadata by class. — getMetadataByClass" />
 
-<meta property="og:description" content="Get metadata (output, formulation or covariate) by name." />
+<meta property="og:description" content="Get metadata by class." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -135,18 +135,18 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get metadata (output, formulation or covariate) by name.</h1>
+    <h1>Get metadata by class.</h1>
     <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/metadata.R'><code>R/metadata.R</code></a></small>
-    <div class="hidden name"><code>getMetadataByName.Rd</code></div>
+    <div class="hidden name"><code>getMetadataByClass.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Get metadata (output, formulation or covariate) by name.</p>
+    <p>Get metadata by class.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>getMetadataByName</span>(<span class='no'>tdmore</span>, <span class='no'>metaName</span>)</pre>
+    <pre class="usage"><span class='fu'>getMetadataByClass</span>(<span class='no'>tdmore</span>, <span class='no'>metaClass</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -156,14 +156,14 @@
       <td><p>the tdmore model</p></td>
     </tr>
     <tr>
-      <th>metaName</th>
-      <td><p>the name of the metadata</p></td>
+      <th>metaClass</th>
+      <td><p>the class of the metadata</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>the first metadata item that matches the given name</p>
+    <p>the metadata items that matches the given class</p>
     
 
   </div>

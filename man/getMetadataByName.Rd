@@ -2,7 +2,7 @@
 % Please edit documentation in R/metadata.R
 \name{getMetadataByName}
 \alias{getMetadataByName}
-\title{Get metadata (output or covariate) by name.}
+\title{Get metadata (output, formulation or covariate) by name.}
 \usage{
 getMetadataByName(tdmore, metaName)
 }
@@ -15,5 +15,5 @@ getMetadataByName(tdmore, metaName)
 the first metadata item that matches the given name
 }
 \description{
-Get metadata (output or covariate) by name.
+Get metadata (output, formulation or covariate) by name.
 }
