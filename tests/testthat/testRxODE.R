@@ -107,3 +107,17 @@ expect_error(
  predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, SS=1, ADDL=1)),
  regexp = "ss with addl not supported yet"
 )
+
+
+# Test IOV with two treatments at same time -------------------------------
+time=15
+regimen=data.frame(TIME=c(0,0, 24, 24, 48), AMT=5, OCC=seq(1, 5))
+covariates=NULL
+
+m1ModelIOV <- m1 %>%
+  tdmore(omega=omegas,
+         res_var=list(errorModel("CONC", prop=0.23)),
+         iov=names(omegas)) #Model has 23% proportional error
+
+predict(m1ModelIOV, regimen=regimen, newdata=time)
+
