@@ -170,6 +170,12 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>x</th>
+      <td><p>a tbl with one or multiple rows
+Each column from the tbl will be mapped to the `estimate()` function.
+You can generate such a tbl using <a href='https://rdrr.io/r/utils/data.html'>data</a> functions.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>additional arguments to add to each `estimate` call. If an argument
 is present both here and in x, the argument here takes precedence.</p></td>
@@ -223,12 +229,6 @@ We evaluate the nextObservations time points using the 'true' model and the new 
     <tr>
       <th>.verbose</th>
       <td><p>Be verbose when simulating?</p></td>
-    </tr>
-    <tr>
-      <th>.data</th>
-      <td><p>a tbl with one or multiple rows
-Each column from the tbl will be mapped to the `estimate()` function.
-You can generate such a tbl using <a href='https://rdrr.io/r/utils/data.html'>data</a> functions.</p></td>
     </tr>
     </table>
 

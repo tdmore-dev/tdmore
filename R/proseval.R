@@ -1,6 +1,6 @@
 #' These functions perform estimate for multiple individuals at the same time.
 #'
-#' @param .data a tbl with one or multiple rows
+#' @param x a tbl with one or multiple rows
 #' Each column from the tbl will be mapped to the `estimate()` function.
 #' You can generate such a tbl using \link{data} functions.
 #' @param ... additional arguments to add to each `estimate` call. If an argument

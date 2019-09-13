@@ -17,6 +17,10 @@ doseSimulation(x, ..., optimize, predict, .fit = "fit",
   .next_regimen = "next_regimen", .verbose = TRUE)
 }
 \arguments{
+\item{x}{a tbl with one or multiple rows
+Each column from the tbl will be mapped to the `estimate()` function.
+You can generate such a tbl using \link{data} functions.}
+
 \item{...}{additional arguments to add to each `estimate` call. If an argument
 is present both here and in x, the argument here takes precedence.}
 
@@ -47,10 +51,6 @@ We evaluate the nextObservations time points using the 'true' model and the new 
 \item{.next_regimen}{What will be the next regimen?}
 
 \item{.verbose}{Be verbose when simulating?}
-
-\item{.data}{a tbl with one or multiple rows
-Each column from the tbl will be mapped to the `estimate()` function.
-You can generate such a tbl using \link{data} functions.}
 }
 \value{
 a tibble with the requested columns for each fit
