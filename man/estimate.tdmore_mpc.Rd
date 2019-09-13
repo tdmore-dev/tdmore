@@ -7,7 +7,7 @@
 \method{estimate}{tdmore_mpc}(object, observed = NULL, regimen = NULL,
   covariates = NULL, par = NULL, fix = NULL, method = "L-BFGS-B",
   se.fit = TRUE, lower = NULL, upper = NULL, multistart = F,
-  control = list(), data = NULL, ...)
+  control = list(), ...)
 }
 \arguments{
 \item{object}{a tdmore, tdmore_set or tdmore_mixture object}

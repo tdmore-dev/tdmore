@@ -54,7 +54,7 @@ predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, c
 #' @return a tdmorefit
 #' @export
 #'
-estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), data=NULL, ...) {
+estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), ...) {
   if (!is.data.frame(covariates)) {
     covariates <- as.data.frame(as.list(c(TIME=0, covariates)))
   }
