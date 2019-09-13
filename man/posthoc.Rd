@@ -6,19 +6,19 @@
 \alias{doseSimulation}
 \title{These functions perform estimate for multiple individuals at the same time.}
 \usage{
-posthoc(.data, ..., .fit = "fit", .prediction = "ipred",
+posthoc(x, ..., .fit = "fit", .prediction = "ipred",
   .elapsed = "elapsed", .id = "ID")
 
-proseval(.data, ..., .fit = "fit", .prediction = "ipred",
+proseval(x, ..., .fit = "fit", .prediction = "ipred",
   .elapsed = "elapsed", .obs = "OBS")
 
-doseSimulation(.data, ..., optimize, predict, .fit = "fit",
+doseSimulation(x, ..., optimize, predict, .fit = "fit",
   .iterationFit = "iterationFit", .next_observed = "next_observed",
-  .next_regimen = "next_regimen")
+  .next_regimen = "next_regimen", .verbose = TRUE)
 }
 \arguments{
 \item{...}{additional arguments to add to each `estimate` call. If an argument
-is present both here and in .data, the argument here takes precedence.}
+is present both here and in x, the argument here takes precedence.}
 
 \item{.fit}{Either a string or NULL. If a string, the output will contain a column
 with that name, storing the fit}
@@ -37,6 +37,14 @@ with that name, describing how many observations were taken into account}
 \item{predict}{a prediction function for dose simulation, corresponding to function(truth, newRegimen, nextTime)
 If missing, we simply predict using the true fit.
 We evaluate the nextObservations time points using the 'true' model and the new regimen.}
+
+\item{.iterationFit}{column name for the iteration fit}
+
+\item{.next_observed}{What will be the predicted next observation?}
+
+\item{.next_regimen}{What will be the next regimen?}
+
+\item{.verbose}{Be verbose when simulating?}
 
 \item{data}{a tbl with one or multiple rows
 Each column from the tbl will be mapped to the `estimate()` function.
@@ -73,19 +81,23 @@ The DoseSimulation iterates as follows:
   It is up to the optimizer to determine how to optimize the treatment regimen.
   The optimizer returns a list( nextTime=nextObservations, regimen=newRegimen, extra=tibble() )
   If nextTime is not a finite number, we stop the simulation.
+  If nextTime is missing, we use the next observation from the posthocfit.
 3) The predict method is called with the following arguments:
   predict(truth, newRegimen, nextTime)
 This predicts the next observation.
 }
 
 \examples{
-data <- dataTibble(object=meropenem_model \%>\% tdmore(), observed=data.frame(ID=c(1,1,2,2), TIME=c(8,10,8,10), CONC=c(1.5,0.3,0.8,0.2)))
+require(magrittr)
+require(ggplot2)
+data <- dataTibble(
+    object=meropenem_model \%>\% tdmore(),
+    observed=data.frame(ID=c(1,1,2,2), TIME=c(8,10,8,10), CONC=c(1.5,0.3,0.8,0.2))
+)
 fit <- data \%>\%
   posthoc(regimen=data.frame(TIME=0, AMT=1000))
-cluster <- multidplyr::new_cluster(2)
-data \%>\% group_by(ID) \%>\% partition(cluster) \%>\% posthoc(regimen=data.frame(TIME=0, AMT=1000))
 fit \%>\% tidyr::unnest(observed, ipred, .sep=".") \%>\% ggplot(aes(x=ipred.TIME)) +
-geom_point(aes(y=observed.CONC)) +
-geom_line(aes(y=ipred.CONC, group=ID)) +
-facet_wrap(~ID)
+  geom_point(aes(y=observed.CONC)) +
+  geom_line(aes(y=ipred.CONC, group=ID)) +
+  facet_wrap(~ID)
 }
