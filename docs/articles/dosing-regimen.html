@@ -6,9 +6,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Simulating different dosing regimen • tdmore</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Simulating different dosing regimen">
 <meta property="og:description" content="">
 <meta property="og:image" content="/logo.png">
@@ -40,7 +47,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -85,7 +92,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/tdmore-dev/tdmore">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -98,6 +105,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -135,7 +143,7 @@
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="co"># Model taken from literature: Soulele, K., et al.</span></a>
 <a class="sourceLine" id="cb6-2" title="2"><span class="co"># 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'</span></a>
 <a class="sourceLine" id="cb6-3" title="3"><span class="co"># European Journal of Pharmaceutical Sciences 80 (2015): 33-42."</span></a>
-<a class="sourceLine" id="cb6-4" title="4">myModel &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(<span class="cf">function</span>(){</a>
+<a class="sourceLine" id="cb6-4" title="4">myModel &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/nlmixr/man/nlmixrUI.html">nlmixrUI</a></span>(<span class="cf">function</span>(){</a>
 <a class="sourceLine" id="cb6-5" title="5">  <span class="kw">ini</span>({</a>
 <a class="sourceLine" id="cb6-6" title="6">    TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span></a>
 <a class="sourceLine" id="cb6-7" title="7">    TVCL &lt;-<span class="st"> </span><span class="dv">659</span>    <span class="co"># L/h</span></a>
@@ -153,17 +161,17 @@
 <a class="sourceLine" id="cb6-19" title="19">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span></a>
 <a class="sourceLine" id="cb6-20" title="20">  })</a>
 <a class="sourceLine" id="cb6-21" title="21">  <span class="kw">model</span>({</a>
-<a class="sourceLine" id="cb6-22" title="22">    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)</a>
-<a class="sourceLine" id="cb6-23" title="23">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
-<a class="sourceLine" id="cb6-24" title="24">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)</a>
-<a class="sourceLine" id="cb6-25" title="25">    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV2)</a>
-<a class="sourceLine" id="cb6-26" title="26">    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EQ)</a>
+<a class="sourceLine" id="cb6-22" title="22">    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EKa)</a>
+<a class="sourceLine" id="cb6-23" title="23">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(ECL)</a>
+<a class="sourceLine" id="cb6-24" title="24">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EV1)</a>
+<a class="sourceLine" id="cb6-25" title="25">    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EV2)</a>
+<a class="sourceLine" id="cb6-26" title="26">    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EQ)</a>
 <a class="sourceLine" id="cb6-27" title="27">    </a>
 <a class="sourceLine" id="cb6-28" title="28">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</a>
 <a class="sourceLine" id="cb6-29" title="29">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</a>
 <a class="sourceLine" id="cb6-30" title="30"></a>
-<a class="sourceLine" id="cb6-31" title="31">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
-<a class="sourceLine" id="cb6-32" title="32">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb6-31" title="31">    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb6-32" title="32">    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
 <a class="sourceLine" id="cb6-33" title="33"></a>
 <a class="sourceLine" id="cb6-34" title="34">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span></a>
 <a class="sourceLine" id="cb6-35" title="35">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)</a>
@@ -176,12 +184,12 @@
 <h3 class="hasAnchor">
 <a href="#in-silico-simulation-of-different-regimen" class="anchor"></a>In silico simulation of different regimen</h3>
 <p>Below, we compare the standard treatment regimen of 88mcg twice-daily to a treatment regimen with a loading dose.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">regimenA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>( <span class="co">#only maintenance dose</span></a>
-<a class="sourceLine" id="cb7-2" title="2">    <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">8</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dv">20</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>) ), <span class="co">#at 08:00 and 20:00</span></a>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">regimenA &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>( <span class="co">#only maintenance dose</span></a>
+<a class="sourceLine" id="cb7-2" title="2">    <span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>( <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">8</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dv">20</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>) ), <span class="co">#at 08:00 and 20:00</span></a>
 <a class="sourceLine" id="cb7-3" title="3">    <span class="dt">AMT=</span><span class="dv">88</span></a>
 <a class="sourceLine" id="cb7-4" title="4">  )</a>
-<a class="sourceLine" id="cb7-5" title="5">regimenB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(</a>
-<a class="sourceLine" id="cb7-6" title="6">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">500</span>), <span class="co">#loading dose</span></a>
+<a class="sourceLine" id="cb7-5" title="5">regimenB &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(</a>
+<a class="sourceLine" id="cb7-6" title="6">  <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">500</span>), <span class="co">#loading dose</span></a>
 <a class="sourceLine" id="cb7-7" title="7">  regimenA <span class="co">#maintenance dose</span></a>
 <a class="sourceLine" id="cb7-8" title="8">)</a>
 <a class="sourceLine" id="cb7-9" title="9"></a>
@@ -192,14 +200,14 @@
 <a class="sourceLine" id="cb7-14" title="14"><span class="co"># or generate them from a distribution.</span></a>
 <a class="sourceLine" id="cb7-15" title="15">N &lt;-<span class="st"> </span><span class="dv">300</span></a>
 <a class="sourceLine" id="cb7-16" title="16">population &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1)</a>
-<a class="sourceLine" id="cb7-17" title="17">resultA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
+<a class="sourceLine" id="cb7-17" title="17">resultA &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
 <a class="sourceLine" id="cb7-18" title="18">                  <span class="dt">regimen=</span>regimenA,</a>
 <a class="sourceLine" id="cb7-19" title="19">                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)</a>
-<a class="sourceLine" id="cb7-20" title="20">resultB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
+<a class="sourceLine" id="cb7-20" title="20">resultB &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
 <a class="sourceLine" id="cb7-21" title="21">                  <span class="dt">regimen=</span>regimenB,</a>
 <a class="sourceLine" id="cb7-22" title="22">                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)</a>
 <a class="sourceLine" id="cb7-23" title="23"></a>
-<a class="sourceLine" id="cb7-24" title="24">result &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(</a>
+<a class="sourceLine" id="cb7-24" title="24">result &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(</a>
 <a class="sourceLine" id="cb7-25" title="25">  resultA <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"No loading dose"</span>),</a>
 <a class="sourceLine" id="cb7-26" title="26">  resultB <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"200ug loading dose"</span>)</a>
 <a class="sourceLine" id="cb7-27" title="27">)</a>
@@ -213,17 +221,17 @@
 <div id="code-appendix" class="section level3">
 <h3 class="hasAnchor">
 <a href="#code-appendix" class="anchor"></a>Code appendix</h3>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)</a>
-<a class="sourceLine" id="cb8-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr)</a>
-<a class="sourceLine" id="cb8-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(purrr)</a>
-<a class="sourceLine" id="cb8-4" title="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tidyr)</a>
-<a class="sourceLine" id="cb8-5" title="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)</a>
-<a class="sourceLine" id="cb8-6" title="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Random">set.seed</a></span>(<span class="dv">1234</span>)</a>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tdmore)</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(dplyr)</a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(purrr)</a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tidyr)</a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)</a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="kw"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="dv">1234</span>)</a>
 <a class="sourceLine" id="cb8-7" title="7"></a>
 <a class="sourceLine" id="cb8-8" title="8"><span class="co"># Model taken from literature: Soulele, K., et al.</span></a>
 <a class="sourceLine" id="cb8-9" title="9"><span class="co"># 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'</span></a>
 <a class="sourceLine" id="cb8-10" title="10"><span class="co"># European Journal of Pharmaceutical Sciences 80 (2015): 33-42."</span></a>
-<a class="sourceLine" id="cb8-11" title="11">myModel &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(<span class="cf">function</span>(){</a>
+<a class="sourceLine" id="cb8-11" title="11">myModel &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/nlmixr/man/nlmixrUI.html">nlmixrUI</a></span>(<span class="cf">function</span>(){</a>
 <a class="sourceLine" id="cb8-12" title="12">  <span class="kw">ini</span>({</a>
 <a class="sourceLine" id="cb8-13" title="13">    TVKa &lt;-<span class="st"> </span><span class="fl">3.87</span></a>
 <a class="sourceLine" id="cb8-14" title="14">    TVCL &lt;-<span class="st"> </span><span class="dv">659</span>    <span class="co"># L/h</span></a>
@@ -241,17 +249,17 @@
 <a class="sourceLine" id="cb8-26" title="26">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.117</span></a>
 <a class="sourceLine" id="cb8-27" title="27">  })</a>
 <a class="sourceLine" id="cb8-28" title="28">  <span class="kw">model</span>({</a>
-<a class="sourceLine" id="cb8-29" title="29">    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EKa)</a>
-<a class="sourceLine" id="cb8-30" title="30">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
-<a class="sourceLine" id="cb8-31" title="31">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)</a>
-<a class="sourceLine" id="cb8-32" title="32">    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV2)</a>
-<a class="sourceLine" id="cb8-33" title="33">    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EQ)</a>
+<a class="sourceLine" id="cb8-29" title="29">    Ka &lt;-<span class="st"> </span>TVKa <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EKa)</a>
+<a class="sourceLine" id="cb8-30" title="30">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(ECL)</a>
+<a class="sourceLine" id="cb8-31" title="31">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EV1)</a>
+<a class="sourceLine" id="cb8-32" title="32">    V2 &lt;-<span class="st"> </span>TVV2 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EV2)</a>
+<a class="sourceLine" id="cb8-33" title="33">    Q &lt;-<span class="st"> </span>TVQ <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EQ)</a>
 <a class="sourceLine" id="cb8-34" title="34">    </a>
 <a class="sourceLine" id="cb8-35" title="35">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</a>
 <a class="sourceLine" id="cb8-36" title="36">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</a>
 <a class="sourceLine" id="cb8-37" title="37"></a>
-<a class="sourceLine" id="cb8-38" title="38">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
-<a class="sourceLine" id="cb8-39" title="39">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb8-38" title="38">    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
+<a class="sourceLine" id="cb8-39" title="39">    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
 <a class="sourceLine" id="cb8-40" title="40"></a>
 <a class="sourceLine" id="cb8-41" title="41">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1 <span class="op">*</span><span class="st"> </span><span class="dv">1000</span></a>
 <a class="sourceLine" id="cb8-42" title="42">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="op">+</span><span class="st"> </span><span class="kw">add</span>(EPS_ADD)</a>
@@ -260,12 +268,12 @@
 <a class="sourceLine" id="cb8-45" title="45"></a>
 <a class="sourceLine" id="cb8-46" title="46">m1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(myModel)</a>
 <a class="sourceLine" id="cb8-47" title="47"></a>
-<a class="sourceLine" id="cb8-48" title="48">regimenA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>( <span class="co">#only maintenance dose</span></a>
-<a class="sourceLine" id="cb8-49" title="49">    <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">8</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dv">20</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>) ), <span class="co">#at 08:00 and 20:00</span></a>
+<a class="sourceLine" id="cb8-48" title="48">regimenA &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>( <span class="co">#only maintenance dose</span></a>
+<a class="sourceLine" id="cb8-49" title="49">    <span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>( <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">8</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dv">20</span><span class="op">+</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">20</span>)<span class="op">*</span><span class="dv">24</span>) ), <span class="co">#at 08:00 and 20:00</span></a>
 <a class="sourceLine" id="cb8-50" title="50">    <span class="dt">AMT=</span><span class="dv">88</span></a>
 <a class="sourceLine" id="cb8-51" title="51">  )</a>
-<a class="sourceLine" id="cb8-52" title="52">regimenB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(</a>
-<a class="sourceLine" id="cb8-53" title="53">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">500</span>), <span class="co">#loading dose</span></a>
+<a class="sourceLine" id="cb8-52" title="52">regimenB &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(</a>
+<a class="sourceLine" id="cb8-53" title="53">  <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">500</span>), <span class="co">#loading dose</span></a>
 <a class="sourceLine" id="cb8-54" title="54">  regimenA <span class="co">#maintenance dose</span></a>
 <a class="sourceLine" id="cb8-55" title="55">)</a>
 <a class="sourceLine" id="cb8-56" title="56"></a>
@@ -276,14 +284,14 @@
 <a class="sourceLine" id="cb8-61" title="61"><span class="co"># or generate them from a distribution.</span></a>
 <a class="sourceLine" id="cb8-62" title="62">N &lt;-<span class="st"> </span><span class="dv">300</span></a>
 <a class="sourceLine" id="cb8-63" title="63">population &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(m1)</a>
-<a class="sourceLine" id="cb8-64" title="64">resultA &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
+<a class="sourceLine" id="cb8-64" title="64">resultA &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
 <a class="sourceLine" id="cb8-65" title="65">                  <span class="dt">regimen=</span>regimenA,</a>
 <a class="sourceLine" id="cb8-66" title="66">                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)</a>
-<a class="sourceLine" id="cb8-67" title="67">resultB &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
+<a class="sourceLine" id="cb8-67" title="67">resultB &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(population, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">20</span><span class="op">*</span><span class="dv">24</span>, <span class="dt">by=</span><span class="dv">4</span>), </a>
 <a class="sourceLine" id="cb8-68" title="68">                  <span class="dt">regimen=</span>regimenB,</a>
 <a class="sourceLine" id="cb8-69" title="69">                  <span class="dt">se=</span>T, <span class="dt">level=</span><span class="ot">NA</span>, <span class="dt">mc.maxpts=</span>N)</a>
 <a class="sourceLine" id="cb8-70" title="70"></a>
-<a class="sourceLine" id="cb8-71" title="71">result &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(</a>
+<a class="sourceLine" id="cb8-71" title="71">result &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(</a>
 <a class="sourceLine" id="cb8-72" title="72">  resultA <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"No loading dose"</span>),</a>
 <a class="sourceLine" id="cb8-73" title="73">  resultB <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">regimen=</span><span class="st">"200ug loading dose"</span>)</a>
 <a class="sourceLine" id="cb8-74" title="74">)</a>
@@ -298,9 +306,11 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
       </div>
 
 </div>
+
 
 
       <footer><div class="copyright">
@@ -308,12 +318,14 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

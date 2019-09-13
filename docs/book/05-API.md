@@ -217,6 +217,10 @@ library(nlmixr)
 m1_WT <- nlmixrUI(modelCode1_WT) %>% tdmore()
 ```
 
+```
+## Warning in get(.i, envir = .env): restarting interrupted promise evaluation
+```
+
 
 ```r
 print(m1_WT) # Print may be seen as a short 'summary'

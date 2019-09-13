@@ -6,9 +6,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>In silico simulation of virtual subject profiles and dose adaptation • tdmore</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="In silico simulation of virtual subject profiles and dose adaptation">
 <meta property="og:description" content="Easily define a Nonlinear Mixed-Effects Model,
     perform a posthoc fit for a virtual subject, and
@@ -24,7 +31,7 @@
 <![endif]-->
 </head>
 <body>
-    <div class="container template-article">
+    <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -44,7 +51,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -89,7 +96,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/tdmore-dev/tdmore">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -102,92 +109,43 @@
 <!--/.navbar -->
 
       
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    
 
-    
-    
-<div align="center">
+      </header><div class="row">
+  <div class="contents col-md-9">
+
+<div data-align="center">
+
+<a href="https://travis-ci.com/tdmore-dev/tdmore">
+<img src="https://travis-ci.com/tdmore-dev/tdmore.svg?token=xctp8qEX8rnVyGDrjTyu&amp;branch=master" alt="Build status"></a> <a href="https://codecov.io/gh/tdmore-dev/tdmore">
+<img src="https://codecov.io/gh/tdmore-dev/tdmore/branch/master/graph/badge.svg?token=ifRzKCFY4B"></a>
 
 </div>
-<div id="tdmore" class="section level1">
+<div id="tdmore-" class="section level1">
 
-<div id="overview" class="section level2">
-<h2 class="hasAnchor">
-<a href="#overview" class="anchor"></a>Overview</h2>
 <p><code>tdmore</code> provides an easy interface for the execution of post-hoc bayesian estimation of parameter vectors of virtual individuals given a population model and for the in silico assessment of dose individualization strategies.</p>
 <p>The package is intended to make it easy to define your own models and use them for in silico assessments and educational purposes.</p>
 </div>
-<div id="how-to-install" class="section level2">
-<h2 class="hasAnchor">
-<a href="#how-to-install" class="anchor"></a>How to install</h2>
-<p>TDMore depends on package <code>RxODE</code>, which requires a working C and fortran compiler to work. Installation procedure can be found <a href="https://github.com/nlmixrdevelopment/RxODE">here</a>. Once <code>RxODE</code> installed, simply execute the following command in the R console:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"tdmore-dev/tdmore"</span>)</a></code></pre></div>
+<div id="license" class="section level1">
+<h1 class="hasAnchor">
+<a href="#license" class="anchor"></a>License</h1>
+<p>This project does not include a license. This means that all work is under exclusive copyright. Nobody else can use, copy, distribute or modify this work.</p>
+<p>The Github terms of service apply. We allow others to view and fork the repository. Please note that this is not sufficient to then copy, distribute or modify this work further.</p>
+<p>Please see <a href="https://choosealicense.com/no-permission/" class="uri">https://choosealicense.com/no-permission/</a> for more information.</p>
+<p>Through publishing, we allow others to use this R package and to perform in silico evaluation of individualized dosing strategies. Under no circumstances should the software be used for patient care. Installing this package using <code><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">devtools::install_github</a></code> is allowed.</p>
+<p>The official copyright holder of this work is the KU Leuven university.</p>
 </div>
-<div id="legal" class="section level2">
-<h2 class="hasAnchor">
-<a href="#legal" class="anchor"></a>Legal</h2>
-<p>All work is under exclusive copyright by KULeuven and cannot be distributed or modified. You are allowed to install this package for experimentation. Please <a href="mailto:ruben.faelens@kuleuven.be">contact the authors</a> to obtain a license to use this work in a commercial software, or for research.</p>
-<p>This software is a research project, and cannot be considered as a medical device. It is not a substitute for clinical reasoning.</p>
+<div id="limitations" class="section level1">
+<h1 class="hasAnchor">
+<a href="#limitations" class="anchor"></a>Limitations</h1>
+<p>This software is a research project, and cannot be considered as a medical device.</p>
 </div>
-<div id="how-to-use" class="section level2">
-<h2 class="hasAnchor">
-<a href="#how-to-use" class="anchor"></a>How to use</h2>
-<p>This example code uses <code>nlmixr</code> to define the model.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(nlmixr)</a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tdmore)</a>
-<a class="sourceLine" id="cb2-3" title="3"></a>
-<a class="sourceLine" id="cb2-4" title="4">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){</a>
-<a class="sourceLine" id="cb2-5" title="5">  <span class="kw">ini</span>({</a>
-<a class="sourceLine" id="cb2-6" title="6">    TVKA &lt;-<span class="st"> </span><span class="fl">3.7</span></a>
-<a class="sourceLine" id="cb2-7" title="7">    TVVc &lt;-<span class="st"> </span><span class="dv">61</span></a>
-<a class="sourceLine" id="cb2-8" title="8">    TVCL &lt;-<span class="st"> </span><span class="fl">3.7</span></a>
-<a class="sourceLine" id="cb2-9" title="9">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.0784</span> <span class="co">#OMEGA_CL, 28% SD</span></a>
-<a class="sourceLine" id="cb2-10" title="10">    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.0361</span> <span class="co">#OMEGA_V1, 19% SD</span></a>
-<a class="sourceLine" id="cb2-11" title="11">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.23</span> <span class="co"># Proportional error, 23% SD</span></a>
-<a class="sourceLine" id="cb2-12" title="12">  })</a>
-<a class="sourceLine" id="cb2-13" title="13">  <span class="kw">model</span>({</a>
-<a class="sourceLine" id="cb2-14" title="14">    KA &lt;-<span class="st"> </span>TVKA</a>
-<a class="sourceLine" id="cb2-15" title="15">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(ECL)</a>
-<a class="sourceLine" id="cb2-16" title="16">    Vc &lt;-<span class="st"> </span>TVVc <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(EV1)</a>
-<a class="sourceLine" id="cb2-17" title="17">    </a>
-<a class="sourceLine" id="cb2-18" title="18">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(depot) =<span class="st"> </span><span class="op">-</span>KA<span class="op">*</span>depot</a>
-<a class="sourceLine" id="cb2-19" title="19">    d<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/TDist">dt</a></span>(center) =<span class="st"> </span>KA<span class="op">*</span>depot <span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>Vc <span class="op">*</span><span class="st"> </span>center</a>
-<a class="sourceLine" id="cb2-20" title="20">    </a>
-<a class="sourceLine" id="cb2-21" title="21">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>Vc</a>
-<a class="sourceLine" id="cb2-22" title="22">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP)</a>
-<a class="sourceLine" id="cb2-23" title="23">  })</a>
-<a class="sourceLine" id="cb2-24" title="24">}</a>
-<a class="sourceLine" id="cb2-25" title="25">model &lt;-<span class="st"> </span>nlmixr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/nlmixr/topics/nlmixrUI">nlmixrUI</a></span>(modelCode) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="reference/tdmore.html">tdmore</a></span>()</a>
-<a class="sourceLine" id="cb2-26" title="26"></a>
-<a class="sourceLine" id="cb2-27" title="27">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(</a>
-<a class="sourceLine" id="cb2-28" title="28">  <span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">0</span>, <span class="dv">7</span>)<span class="op">*</span><span class="dv">24</span>,</a>
-<a class="sourceLine" id="cb2-29" title="29">  <span class="dt">AMT=</span><span class="dv">5</span> <span class="co">#5mg</span></a>
-<a class="sourceLine" id="cb2-30" title="30">)</a>
-<a class="sourceLine" id="cb2-31" title="31"></a>
-<a class="sourceLine" id="cb2-32" title="32">observed &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>, <span class="dv">24</span>, <span class="dv">72</span>), <span class="dt">CONC=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.04</span>, <span class="fl">0.02</span>, <span class="fl">0.025</span>))</a>
-<a class="sourceLine" id="cb2-33" title="33">ipred &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="reference/estimate.html">estimate</a></span>(observed, regimen)</a></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(ipred)</a></code></pre></div>
-<p><img src="figures/readme_plot_ipred-1.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/coef">coef</a></span>(ipred)</a></code></pre></div>
-<pre><code>##        ECL        EV1 
-## 0.07919572 0.16332022</code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/vcov">vcov</a></span>(ipred)</a></code></pre></div>
-<pre><code>##             ECL         EV1
-## ECL 0.011779142 0.009373237
-## EV1 0.009373237 0.030891449</code></pre>
+<div id="contribution-guidelines" class="section level1">
+<h1 class="hasAnchor">
+<a href="#contribution-guidelines" class="anchor"></a>Contribution guidelines</h1>
+<p>Currently, the license does not allow to modify the code any further. Once this changes, refer to the below for contribution.</p>
+<p>Please find the contribution guidelines <a href="CONTRIBUTING.html">here</a>. This document also contains some technical documentation. To make contributions to this project, you will need to sign a transfer of copyright statement. Please find it <a href="TODO">here</a>.</p>
 </div>
-<div id="more-information" class="section level2">
-<h2 class="hasAnchor">
-<a href="#more-information" class="anchor"></a>More information</h2>
-<p>Interested in TDMore and eager to learn more about it?</p>
-<ul>
-<li>The <a href="https://tdmore-dev.github.io/tdmore/vignettes.html">vignettes</a> are also great examples to start with.</li>
-<li>Full documentation is available in the <a href="https://tdmore-dev.github.io/tdmore/book/index.html">TDMore Book</a>.</li>
-</ul>
-</div>
-</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -207,10 +165,16 @@
 </li>
 </ul>
 </div>
+<div class="community">
+<h2>Community</h2>
+<ul class="list-unstyled">
+<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
+</ul>
+</div>
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Ruben Faelens <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-7234-2443" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID" height="16"></a> </li>
+<li>Ruben Faelens <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-7234-2443" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID"></a> </li>
 <li>Nicolas Luyckx <br><small class="roles"> Author, consultant </small>  </li>
 <li>Quentin Leirens <br><small class="roles"> Author, consultant </small>  </li>
 <li>FWO TBM Grant <br><small class="roles"> Funder </small>  </li>
@@ -218,15 +182,7 @@
 </ul>
 </div>
 
-      <div class="dev-status">
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://travis-ci.com/tdmore-dev/tdmore"> <img src="https://travis-ci.com/tdmore-dev/tdmore.svg?token=xctp8qEX8rnVyGDrjTyu&amp;branch=master" alt="Build status"></a></li>
-<li><a href="https://codecov.io/gh/tdmore-dev/tdmore"> <img src="https://codecov.io/gh/tdmore-dev/tdmore/branch/master/graph/badge.svg?token=ifRzKCFY4B"></a></li>
-</ul>
-</div>
-</div>
-
+  </div>
 </div>
 
 
@@ -235,12 +191,14 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

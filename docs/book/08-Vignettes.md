@@ -388,6 +388,18 @@ The TDMore object is instantiated as follows:
 library(tdmore)
 
 nlmixrModel <- nlmixrUI(modelCode)
+```
+
+```
+## Warning in get(.i, envir = .env): restarting interrupted promise evaluation
+```
+
+```
+## Warning in gzfile(file, "rb"): cannot open compressed file '.
+## \render49e438d46c52.rds', probable reason 'No such file or directory'
+```
+
+```r
 m1 <- tdmore(nlmixrModel)
 ```
 
@@ -503,6 +515,18 @@ modelCode <- function(){
   })
 }
 nlmixrModel <- nlmixrUI(modelCode)
+```
+
+```
+## Warning in get(.i, envir = .env): restarting interrupted promise evaluation
+```
+
+```
+## Warning in gzfile(file, "rb"): cannot open compressed file '.
+## \render49e438d46c52.rds', probable reason 'No such file or directory'
+```
+
+```r
 m2 <- tdmore(nlmixrModel, maxsteps=1E3*500)
 ```
 
