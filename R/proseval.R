@@ -25,7 +25,7 @@
 #' )
 #' fit <- data %>%
 #'   posthoc(regimen=data.frame(TIME=0, AMT=1000))
-#' fit %>% tidyr::unnest(observed, ipred, .sep=".") %>% ggplot(aes(x=ipred.TIME)) +
+#' fit %>% tidyr::unnest(c(observed, ipred), names_sep=".") %>% ggplot(aes(x=ipred.TIME)) +
 #'   geom_point(aes(y=observed.CONC)) +
 #'   geom_line(aes(y=ipred.CONC, group=ID)) +
 #'   facet_wrap(~ID)
