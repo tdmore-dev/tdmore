@@ -893,6 +893,7 @@ expandOmega <- function(tdmore, occasions) {
 #'   observed
 #' )
 #'
+#' regimen <- fit$regimen
 #' regimen$AMT <- regimen$AMT*2
 #' predictionForDoubleDose <- residuals(fit, predict(fit, regimen=regimen), weighted=TRUE)
 #'
