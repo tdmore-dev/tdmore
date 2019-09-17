@@ -80,10 +80,10 @@ expect_known_value(
 ## as it is useful to plan e.g. additional doses
 predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12))
 
-expect_error(
-  predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, ADDL=0)),
-  regexp="ii requires non zero additional doses"
-)
+## eventTable$add.regimen would give an error
+## "ii requires non zero additional doses"
+## But a manual event table works perfectly!
+
 expect_known_value(
   predict(tdmore, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, ADDL=1)),
   "Rxode.regimen.2dose"
@@ -119,5 +119,6 @@ m1ModelIOV <- m1 %>%
          res_var=list(errorModel("CONC", prop=0.23)),
          iov=names(omegas)) #Model has 23% proportional error
 
+## This should work fine!
 predict(m1ModelIOV, regimen=regimen, newdata=time)
 

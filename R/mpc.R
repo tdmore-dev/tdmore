@@ -78,30 +78,40 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
   if (is.null(observed) || nrow(observed) == 0) {
     # Note that se.fit=T => varcov can then be used to plot BSV in population
     ipred <- estimate.default(object, regimen=regimen, covariates=mergeCovariates(ebeCovariates, covariates), se.fit=TRUE, control=control, ...)
-    maxIter <- 0
-  # Normal case: observed data present
-  } else {
-    observedMpc <- addIterationColumn(regimen, observed)
-    maxIter <- max(observedMpc$ITER)
+    return(ipred)
   }
+
+  # Normal case: observed data present
+  observedMpc <- addIterationColumn(regimen, observed)
+  maxIter <- max(observedMpc$ITER)
+
+  N <- length(object$iov)
+  varcov <- matrix(data=0,
+                   nrow=N*maxIter, ncol=N*maxIter,
+                   dimnames=list(rep(object$iov, maxIter), rep(object$iov, maxIter)))
 
   for (iterIndex in seq_len(maxIter + 1)) {
     if (iterIndex > 1) {
-      firstDoseJustAfter <- regimen$TIME[ match(TRUE, regimen$TIME >= currentObsTime) ]
-      if (is.na(firstDoseJustAfter)) {
+      startOccasion <- regimen$TIME[ match(iterIndex, regimen$OCC) ]
+      if (is.na(startOccasion)) {
         break
       }
-      previousEbe <- predict(ipred, newdata=c(firstDoseJustAfter))[, paste0(thetaNames, object$mpc_suffix)]
+      previousEbe <- predict(ipred, newdata=startOccasion)[, paste0(thetaNames, object$mpc_suffix)]
       names(previousEbe) <- paste0(thetaNames)
-      previousEbe$TIME <- firstDoseJustAfter
+      previousEbe$TIME <- startOccasion
       ebeCovariates <- dplyr::bind_rows(ebeCovariates, previousEbe)
       fix <- coef(ipred)
     }
     if (iterIndex <= maxIter) {
       currentObsTime <- observedMpc %>% dplyr::filter(.data$ITER==iterIndex) %>% dplyr::pull(.data$TIME) %>% dplyr::last()
-      ipred <- estimate.default(object, regimen=regimen %>% dplyr::filter(.data$TIME < currentObsTime),
-                        observed=observedMpc %>% dplyr::filter(.data$ITER==iterIndex) %>% dplyr::select(-dplyr::one_of("ITER")),
-                        covariates=mergeCovariates(ebeCovariates, covariates), fix=fix, se.fit=se.fit, control=control, ...)
+      ipred <- estimate.default(object,
+          #limit regimen; less to simulate and last occasion = current iteration!
+          regimen=regimen %>% dplyr::filter(.data$TIME < currentObsTime),
+          observed=observedMpc %>% dplyr::filter(.data$ITER==iterIndex) %>% dplyr::select(-dplyr::one_of("ITER")),
+          covariates=mergeCovariates(ebeCovariates, covariates),
+          fix=fix, se.fit=se.fit, control=control, ...)
+      i <- (iterIndex-1)*N + seq_len(N) #copy last SE
+      varcov[i, i] <- ipred$varcov[i, i]
     } else {
       # Last extra iteration copies final covariates dataframe (with all MPC parameters) to ipred
       ipred$covariates <- mergeCovariates(ebeCovariates, covariates)
@@ -111,6 +121,8 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
   # Put the original data back in the `observed` and `regimen` slot
   ipred$observed <- observed
   ipred$regimen <- regimen
+  ipred$varcov <- varcov
+  ipred$fix <- c()
 
   return(ipred)
 }
@@ -151,4 +163,14 @@ mpc.tdmore <- function(x, theta, suffix, ...) {
   class(x) <- append("tdmore_mpc", "tdmore")
   if( !setequal(x$parameters, x$iov) ) stop("For MPC, all parameters should be IOV")
   return(x)
+}
+
+#'
+#' Test if an object is a `tdmore_mpc` model
+#'
+#' @param x object to test
+#' @return TRUE if x inherits from `tdmore_mpc`
+#' @export
+is.mpc <- function(x) {
+  inherits(x, "tdmore_mpc")
 }

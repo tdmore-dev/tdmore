@@ -121,14 +121,16 @@ mod_1cpt_1 <- nlmixrUI(function(){
   })
 })
 tdmore <- mod_1cpt_1 %>% tdmore(iov=c("EKA_IOV", "ECL_IOV"))
-data3 <- tdmore %>% predict(newdata=seq(0, 96, by=0.1), regimen=regimen, parameters=c(EKA_IOV=1, ECL_IOV=0, EKA_IOV=-2, ECL_IOV=0), covariates=data.frame(TIME=c(0, 12.5, 24, 75), WT=c(70, 80, 85, 70)))
+data3 <- tdmore %>% predict(newdata=seq(0, 96, by=0.1),
+                            regimen=regimen,
+                            parameters=c(EKA_IOV=1, ECL_IOV=0, EKA_IOV=-2, ECL_IOV=0),
+                            covariates=data.frame(TIME=c(0, 12.5, 24, 75), WT=c(70, 80, 85, 70)))
 
 data4 <- rbind(data1 %>% mutate(type="No covariate"), data3 %>% mutate(type="WT covariate"))
-ggplot(data4, aes(x = TIME, y=CONC, group=type, color=type)) + geom_line() +
-  geom_line()
+ggplot(data4, aes(x = TIME, y=CONC, group=type, color=type)) + geom_line()
 
 data4Check <- data4 %>% filter(TIME==55) %>% select(CONC)
-expect_equal(data4Check, data.frame(CONC=c(1.717376, 1.460061)), tolerance=1e-6)
+expect_equal(data4Check, data.frame(CONC=c(1.71737651617475, 1.46006359689144)), tolerance=1e-6)
 
 tdmore$omega[1,2] <- tdmore$omega[2,1] <- sqrt(0.09)*sqrt(0.08)*-0.1 #IIV correlation
 tdmore$omega[3,4] <- tdmore$omega[4,3] <- sqrt(0.03)*sqrt(0.02)*0.3 #IOV correlation

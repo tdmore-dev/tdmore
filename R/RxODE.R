@@ -98,9 +98,27 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   }
   # now covariates is NULL, or a data.frame
 
-  # IOV: create data.frame for use as covariates
+  # All arguments look good, let's prepare the simulation
+  ev <- data.table::rbindlist( c(list(list(time=times, evid=0)), as.RxODE_regimen(regimen)), fill=TRUE ) %>%
+    dplyr::arrange(time)
+
+  # Add the covariates into EV
+  if(!is.null(covariates)) {
+    covariates$evid <- 2
+    covariates$time <- covariates$TIME
+    covariates <- covariates[, setdiff(names(covariates), "TIME") ]
+    ev <- data.table::rbindlist(list(covariates, ev), fill=TRUE) %>% dplyr::arrange(time)
+    for(i in setdiff(names(covariates), c("time", "evid")))
+      ev[,i] <- zoo::na.locf(ev[, i], na.rm=FALSE)
+  }
+
+  ev <- ev %>% dplyr::arrange(.data$time, factor(.data$evid, levels=c(1, 0, 2) )) #FIRST regimen, so OCC can propagate correctly
+  if("OCC" %in% names(ev)) ev$OCC <- zoo::na.locf(ev$OCC, na.rm=FALSE)
+  if("OCC" %in% names(ev)) ev$OCC[is.na(ev$OCC)] <- 1 #leading NA should be '1'
+  ev <- ev %>% dplyr::arrange(.data$time, factor(.data$evid, levels=c(2, 0, 1) )) #FIRST covariate, then OBS then TMT
+
   if(length(iovParameters) > 0) {
-    ## Move the IOV parameters into time-varying covariates
+    ## Move the IOV parameters into the EV data.frame
     if(!is.null(extraArguments$covsInterpolation) && extraArguments$covsInterpolation != "locf")
       stop("When using IOV, no interpolation for time-varying covariates should be used!")
 
@@ -108,38 +126,14 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     df$OCC <- unique(regimen$OCC)
     for(i in iov) df[[i]] <- iovParameters[ names(iovParameters) == i ]
 
-    occTimes <- regimen[, c("TIME", "OCC")] %>% dplyr::distinct()
-    occTimes$TIME[1] <- 0 #first occasion always starts at time 0
-    df <- as.data.frame(df) %>% merge(occTimes)
-    if(!is.null(covariates)) {
-      covariates <- covariates %>%
-        merge(df, by="TIME", all=T) %>% #and it is immediately sorted as well!
-        dplyr::mutate_all(zoo::na.locf)
-    } else {
-      covariates <- df
-    }
+    # Add parameters to ev
+    ev <- dplyr::left_join(ev, as.data.frame(df), by="OCC")
   }
 
   ## Make sure that all model input is defined now
-  i <- modVars$params %in% c(names(parameters), colnames(covariates))
+  i <- modVars$params %in% c(names(parameters), colnames(ev))
   if( any(!i) ) {
     stop("Model parameter(s) ", paste(modVars$params[!i], collapse=", "), " is missing.")
-  }
-
-  # All arguments look good, let's prepare the simulation
-  ev <- RxODE::eventTable()
-  if(length(times) > 0) ev$add.sampling(time=times)
-  ev <- addRegimenToEventTable(ev, regimen, extraArguments$nbSSDoses)
-
-  # Treat missing times
-  if(!is.null(covariates)) {
-    missingTimes <- covariates$TIME[ !(covariates$TIME %in% ev$get.sampling()$time) ]
-    if(length(missingTimes) > 0) ev$add.sampling(missingTimes)
-
-    eventTable <- ev$get.EventTable()
-    covariates <-  eventTable %>% dplyr::transmute(TIME=eventTable$time) %>% dplyr::left_join(covariates, by="TIME")
-    for(i in colnames(covariates))
-      covariates[, i] <- zoo::na.locf(covariates[,i]) # last observation carried forward for NA values
   }
 
   cache <- list()
@@ -166,39 +160,16 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     }
   }
 
-  cutoffVersion <- base::package_version("0.8.1")
-  rxVersion <- utils::packageVersion('RxODE')
-  if(rxVersion >= cutoffVersion) {
-    ## new version of RxODE
-    if(!is.null(covariates)) ev <- cbind(ev, covariates)
-    ev <- data.table::as.data.table(ev)
-    cache$ev <- function(x) {
-      update_table(ev, x)
-      ev
-    }
-    cache$rxSolveArgs <- function(parameters) {
-      list(
-        events=cache$ev(parameters),
-        params=cache$parameters(parameters)
-        ## covs cannot even be specified anymore!!
-      )
-    }
-  } else {
-    ## old version, covariates via 'covs' argument
-    if(!is.null(covariates)) covariates <- data.table::as.data.table(covariates)
-    cache$covs <- function(x) {
-      if(is.null(covariates)) return(NULL)
-      update_table(covariates, x)
-      covariates
-    }
-    cache$ev <- function(x) { ev }
-    cache$rxSolveArgs <- function(parameters) {
-      list(
-        events=cache$ev(parameters),
-        params=cache$parameters(parameters),
-        covs=cache$covs(parameters)
-      )
-    }
+  cache$ev <- function(x) {
+    update_table(ev, x)
+    ev
+  }
+  cache$rxSolveArgs <- function(parameters) {
+    list(
+      events=cache$ev(parameters),
+      params=cache$parameters(parameters)
+      ## covs cannot even be specified anymore!!
+    )
   }
 
   return(cache)
@@ -235,7 +206,7 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   if(!is.null( cache$output) ) return(cache$output) ## output always same, no matter the parameters
 
   # Run the simulation
-  result <- do.call(RxODE::rxSolve, c( list(object=model, returnType="data.frame"), cache$rxSolveArgs(parameters), extraArguments))
+  result <- do.call(RxODE::rxSolve, c( list(object=model, returnType="data.frame", addDosing=NULL), cache$rxSolveArgs(parameters), extraArguments))
   names(result)[names(result)=="time"] <- "TIME"
 
   # Remove spurious sampling times due to covariates
@@ -247,13 +218,13 @@ model_predict.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 
 #' Add the given regimen into the RxODE event table.
 #'
-#' @param eventTable the RxODE event table
 #' @param regimen the specified regimen
 #' @param nbSSDoses number of doses to prepend for simulation of steady-state
 #'
 #' @return a completed event table
 #'
-addRegimenToEventTable <- function(eventTable, regimen, nbSSDoses=NULL) {
+as.RxODE_regimen <- function(regimen, nbSSDoses=NULL) {
+  result <- list()
   for(i in seq_len(nrow(regimen))) {
     row <- regimen[i, ,drop=FALSE]
     args <- list()
@@ -275,8 +246,8 @@ addRegimenToEventTable <- function(eventTable, regimen, nbSSDoses=NULL) {
         if(is.null(args$addl)) args$addl <- 0
         args$addl = args$addl + nbSSDoses
         args$time = args$time - row$II * nbSSDoses
-        if(any( eventTable$get.dosing()$time > args$time ))
-          warning("Possible collision of steady-state dose on ", row$TIME, " with other treatments...")
+        # if(any( eventTable$get.dosing()$time > args$time ))
+        #   warning("Possible collision of steady-state dose on ", row$TIME, " with other treatments...")
       }
     }
 
@@ -292,8 +263,9 @@ addRegimenToEventTable <- function(eventTable, regimen, nbSSDoses=NULL) {
       args$dur = row$DURATION
     }
 
-    eventTable <- do.call(RxODE::et,
-                          c( list(eventTable), args))
+    args$evid=1 #dose
+    if("OCC" %in% names(row)) args$OCC = row$OCC
+    result[[i]] <- args
   }
-  return(eventTable)
+  return(result)
 }

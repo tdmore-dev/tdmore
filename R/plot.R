@@ -39,20 +39,16 @@ plot.tdmorefit <- function(x, newdata=NULL, regimen=NULL, se.fit=TRUE, populatio
 
   # Compute PRED
   if(population) {
-    pred_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates) #TODO: should we respect fixed parameters?
+    covariates <- tdmorefit$covariates
+    if(is.mpc(tdmore)) covariates <- covariates[, setdiff(names(covariates), names(tdmore$mpc_theta)), drop=F ]
+    pred_tmp <- tdmore %>% estimate(regimen=regimen, covariates=covariates) #TODO: should we respect fixed parameters?
     if(mixture) {
       pred_tmp$fits_prob <- x$fits_prob # Use same fit probabilities as ipred to have a coherent plot
       pred_tmp$winner <- x$winner # Same winner
     }
     pred <-  predict(pred_tmp, newdata=newdata, ...) %>% meltPredictions() #TODO: should we respect fixed parameters?
-
-    predre_tmp <- tdmore %>% estimate(regimen=regimen, covariates=tdmorefit$covariates) #TODO: should we respect fixed parameters?
-    if(mixture) {
-      predre_tmp$fits_prob <- x$fits_prob # Use same fit probabilities as ipred to have a coherent plot
-      predre_tmp$winner <- x$winner # Same winner
-    }
     if(!is.na(se.fit)) {
-      predre <- predict(predre_tmp, newdata=newdata, se.fit=T, ...) %>% meltPredictions(se=T) #TODO: should we respect fixed parameters?
+      predre <- predict(pred_tmp, newdata=newdata, se.fit=T, ...) %>% meltPredictions(se=T) #TODO: should we respect fixed parameters?
     }
   }
 
