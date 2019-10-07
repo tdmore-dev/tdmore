@@ -74,3 +74,10 @@ RUN R -e 'devtools::install_dev_deps()'
 ## Install full package
 COPY . .
 RUN R -e 'devtools::install(dependencies=TRUE)'
+
+## BUGFIX: Manually update devtools
+## Due to issue r-lib/devtools#2129
+## Can be removed once devtools CRAN version is updated
+RUN R -e 'if( packageVersion("devtools") != "2.2.1") stop("Devtools package version: ", packageVersion("devtools"), "; bugfix in Dockerfile not needed anymore, please remove!")'
+RUN R -e 'remotes::install_github("r-lib/devtools")'
+
