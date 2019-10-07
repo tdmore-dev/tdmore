@@ -32,7 +32,12 @@ tdmore_mixture <- function(..., probs) {
 #' @export
 #' @importFrom purrr map
 #' @examples
-#' # tdmore_mixture_covariates(tacrolimus_storset, probs=c(0.5, 0.5), covariates=list(c(CYP3A5=1), c(CYP3A5=0)))
+#' \dontrun{
+#' tdmore_mixture_covariates(tacrolimus_storset,
+#'           probs=c(0.5, 0.5),
+#'           covariates=list(c(CYP3A5=1), c(CYP3A5=0))
+#' )
+#' }
 tdmore_mixture_covariates <- function(model, probs, covariates) {
   N <- length(probs)
   stopifnot(length(covariates) == N)

@@ -100,14 +100,14 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 
   # All arguments look good, let's prepare the simulation
   ev <- data.table::rbindlist( c(list(list(time=times, evid=0)), as.RxODE_regimen(regimen)), fill=TRUE ) %>%
-    dplyr::arrange(time)
+    dplyr::arrange(.data$time)
 
   # Add the covariates into EV
   if(!is.null(covariates)) {
     covariates$evid <- 2
     covariates$time <- covariates$TIME
     covariates <- covariates[, setdiff(names(covariates), "TIME") ]
-    ev <- data.table::rbindlist(list(covariates, ev), fill=TRUE) %>% dplyr::arrange(time)
+    ev <- data.table::rbindlist(list(covariates, ev), fill=TRUE) %>% dplyr::arrange(.data$time)
     for(i in setdiff(names(covariates), c("time", "evid")))
       ev[,i] <- zoo::na.locf(ev[, i], na.rm=FALSE)
   }
