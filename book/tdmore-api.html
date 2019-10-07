@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 TDMore API | TDMore: an R package for in silico assessment of dose individualization strategies</title>
+  <meta name="description" content="TDMore reference manual" />
+  <meta name="generator" content="bookdown 0.14 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 TDMore API | TDMore: an R package for in silico assessment of dose individualization strategies" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="TDMore reference manual" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 TDMore API | TDMore: an R package for in silico assessment of dose individualization strategies" />
+  
+  <meta name="twitter:description" content="TDMore reference manual" />
+  
+
+<meta name="author" content="Ruben Faelens, Nicolas Luyckx, Quentin Leirens, Thomas Bouillon" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="license.html"/>
+<link rel="next" href="science.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<meta name="robots" content="noindex" />
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">TDMore bookdown</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome to TDMore</a></li>
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html#about-this-book"><i class="fa fa-check"></i>About this book</a></li>
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html#acknowledgements"><i class="fa fa-check"></i>Acknowledgements</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="legal-notices.html"><a href="legal-notices.html"><i class="fa fa-check"></i><b>1</b> Legal Notices</a><ul>
+<li class="chapter" data-level="1.1" data-path="legal-notices.html"><a href="legal-notices.html#disclaimer"><i class="fa fa-check"></i><b>1.1</b> Disclaimer</a></li>
+<li class="chapter" data-level="1.2" data-path="legal-notices.html"><a href="legal-notices.html#content"><i class="fa fa-check"></i><b>1.2</b> Content</a></li>
+<li class="chapter" data-level="1.3" data-path="legal-notices.html"><a href="legal-notices.html#referrals-and-links"><i class="fa fa-check"></i><b>1.3</b> Referrals and links</a></li>
+<li class="chapter" data-level="1.4" data-path="legal-notices.html"><a href="legal-notices.html#copyright"><i class="fa fa-check"></i><b>1.4</b> Copyright</a></li>
+<li class="chapter" data-level="1.5" data-path="legal-notices.html"><a href="legal-notices.html#legal-validity-of-this-disclaimer"><i class="fa fa-check"></i><b>1.5</b> Legal validity of this disclaimer</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>2</b> Introduction</a><ul>
+<li class="chapter" data-level="2.1" data-path="intro.html"><a href="intro.html#prereq"><i class="fa fa-check"></i><b>2.1</b> Prerequisites</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="install.html"><a href="install.html"><i class="fa fa-check"></i><b>3</b> Installation</a></li>
+<li class="chapter" data-level="4" data-path="installation-script.html"><a href="installation-script.html"><i class="fa fa-check"></i><b>4</b> Installation script</a></li>
+<li class="chapter" data-level="5" data-path="license.html"><a href="license.html"><i class="fa fa-check"></i><b>5</b> License</a></li>
+<li class="chapter" data-level="6" data-path="tdmore-api.html"><a href="tdmore-api.html"><i class="fa fa-check"></i><b>6</b> TDMore API</a><ul>
+<li class="chapter" data-level="6.1" data-path="tdmore-api.html"><a href="tdmore-api.html#model"><i class="fa fa-check"></i><b>6.1</b> Model definition</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-a-nlxmir-model"><i class="fa fa-check"></i><b>6.1.1</b> Build a TDMore object from a nlxmir model</a></li>
+<li class="chapter" data-level="6.1.2" data-path="tdmore-api.html"><a href="tdmore-api.html#build-a-tdmore-object-from-an-rxode-model"><i class="fa fa-check"></i><b>6.1.2</b> Build a TDMore object from an RxODE model</a></li>
+<li class="chapter" data-level="6.1.3" data-path="tdmore-api.html"><a href="tdmore-api.html#build-your-own-algebraic-model"><i class="fa fa-check"></i><b>6.1.3</b> Build your own algebraic model</a></li>
+<li class="chapter" data-level="6.1.4" data-path="tdmore-api.html"><a href="tdmore-api.html#add-model-covariates"><i class="fa fa-check"></i><b>6.1.4</b> Add model covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="tdmore-api.html"><a href="tdmore-api.html#regimen"><i class="fa fa-check"></i><b>6.2</b> Regimen definition</a></li>
+<li class="chapter" data-level="6.3" data-path="tdmore-api.html"><a href="tdmore-api.html#model-simulation"><i class="fa fa-check"></i><b>6.3</b> Model simulation</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmore"><i class="fa fa-check"></i><b>6.3.1</b> Predict a tdmore object</a></li>
+<li class="chapter" data-level="6.3.2" data-path="tdmore-api.html"><a href="tdmore-api.html#predicttdmorefit"><i class="fa fa-check"></i><b>6.3.2</b> Predict a tdmorefit object</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="tdmore-api.html"><a href="tdmore-api.html#estimation"><i class="fa fa-check"></i><b>6.4</b> Parameter estimation</a></li>
+<li class="chapter" data-level="6.5" data-path="tdmore-api.html"><a href="tdmore-api.html#dose-recommendation"><i class="fa fa-check"></i><b>6.5</b> Dose recommendation</a><ul>
+<li class="chapter" data-level="6.5.1" data-path="tdmore-api.html"><a href="tdmore-api.html#calling-the-finddose-method"><i class="fa fa-check"></i><b>6.5.1</b> Calling the findDose method</a></li>
+<li class="chapter" data-level="6.5.2" data-path="tdmore-api.html"><a href="tdmore-api.html#visualise-a-recommendation"><i class="fa fa-check"></i><b>6.5.2</b> Visualise a recommendation</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-the-intermediate-steps"><i class="fa fa-check"></i><b>6.6</b> Plotting the intermediate steps</a><ul>
+<li class="chapter" data-level="6.6.1" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmore-object"><i class="fa fa-check"></i><b>6.6.1</b> Plotting a tdmore object</a></li>
+<li class="chapter" data-level="6.6.2" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object"><i class="fa fa-check"></i><b>6.6.2</b> Plotting a tdmorefit object</a></li>
+<li class="chapter" data-level="6.6.3" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmorefit-object-with-an-adapted-regimen"><i class="fa fa-check"></i><b>6.6.3</b> Plotting a tdmorefit object with an adapted regimen</a></li>
+<li class="chapter" data-level="6.6.4" data-path="tdmore-api.html"><a href="tdmore-api.html#plotting-a-tdmoreprofile-object"><i class="fa fa-check"></i><b>6.6.4</b> Plotting a tdmoreprofile object</a></li>
+</ul></li>
+<li class="chapter" data-level="6.7" data-path="tdmore-api.html"><a href="tdmore-api.html#extending-tdmore"><i class="fa fa-check"></i><b>6.7</b> Extending TDMore</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="science.html"><a href="science.html"><i class="fa fa-check"></i><b>7</b> Science</a><ul>
+<li class="chapter" data-level="7.1" data-path="science.html"><a href="science.html#emperical-bayesian-estimation"><i class="fa fa-check"></i><b>7.1</b> Emperical Bayesian Estimation</a></li>
+<li class="chapter" data-level="7.2" data-path="science.html"><a href="science.html#predictive-performance"><i class="fa fa-check"></i><b>7.2</b> Predictive performance</a></li>
+<li class="chapter" data-level="7.3" data-path="science.html"><a href="science.html#predictive-performance-vs-dose-adaptation"><i class="fa fa-check"></i><b>7.3</b> Predictive performance vs dose adaptation</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="science.html"><a href="science.html#definitions"><i class="fa fa-check"></i><b>7.3.1</b> Definitions</a></li>
+<li class="chapter" data-level="7.3.2" data-path="science.html"><a href="science.html#simple-curve-fitting"><i class="fa fa-check"></i><b>7.3.2</b> Simple curve fitting</a></li>
+<li class="chapter" data-level="7.3.3" data-path="science.html"><a href="science.html#empirical-bayesian-estimation"><i class="fa fa-check"></i><b>7.3.3</b> Empirical bayesian estimation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="validation.html"><a href="validation.html"><i class="fa fa-check"></i><b>8</b> Validation</a><ul>
+<li class="chapter" data-level="8.1" data-path="validation.html"><a href="validation.html#development-process"><i class="fa fa-check"></i><b>8.1</b> Development process</a></li>
+<li class="chapter" data-level="8.2" data-path="validation.html"><a href="validation.html#standards-iec-623042006"><i class="fa fa-check"></i><b>8.2</b> Standards: IEC 62304:2006</a></li>
+<li class="chapter" data-level="8.3" data-path="validation.html"><a href="validation.html#validation-requirements"><i class="fa fa-check"></i><b>8.3</b> Validation requirements</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="validation.html"><a href="validation.html#valid-clinical-association"><i class="fa fa-check"></i><b>8.3.1</b> Valid Clinical Association</a></li>
+<li class="chapter" data-level="8.3.2" data-path="validation.html"><a href="validation.html#analytical-validation"><i class="fa fa-check"></i><b>8.3.2</b> Analytical Validation</a></li>
+<li class="chapter" data-level="8.3.3" data-path="validation.html"><a href="validation.html#clinical-validation"><i class="fa fa-check"></i><b>8.3.3</b> Clinical Validation</a></li>
+<li class="chapter" data-level="8.3.4" data-path="validation.html"><a href="validation.html#other-requirements"><i class="fa fa-check"></i><b>8.3.4</b> Other requirements</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="vignettes.html"><a href="vignettes.html"><i class="fa fa-check"></i><b>9</b> Vignettes</a><ul>
+<li class="chapter" data-level="9.1" data-path="vignettes.html"><a href="vignettes.html#running-tdmore"><i class="fa fa-check"></i><b>9.1</b> Running TDMore</a><ul>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#creating-your-model"><i class="fa fa-check"></i>Creating your model</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#predicting-new-data"><i class="fa fa-check"></i>Predicting new data</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#finding-the-right-dose-to-give"><i class="fa fa-check"></i>Finding the right dose to give</a></li>
+<li class="chapter" data-level="9.1.1" data-path="vignettes.html"><a href="vignettes.html#code-appendix"><i class="fa fa-check"></i><b>9.1.1</b> Code appendix</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="vignettes.html"><a href="vignettes.html#multiple-endpoints"><i class="fa fa-check"></i><b>9.2</b> Multiple endpoints</a><ul>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#writing-and-testing-the-pk-model"><i class="fa fa-check"></i>Writing and testing the PK model</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#adding-a-pd-model"><i class="fa fa-check"></i>Adding a PD model</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#estimating-individual-parameters-1"><i class="fa fa-check"></i>Estimating individual parameters</a></li>
+<li class="chapter" data-level="9.2.1" data-path="vignettes.html"><a href="vignettes.html#code-appendix-1"><i class="fa fa-check"></i><b>9.2.1</b> Code appendix</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="vignettes.html"><a href="vignettes.html#example-detecting-non-adherence"><i class="fa fa-check"></i><b>9.3</b> Example: Detecting non-adherence</a><ul>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#about-this-example"><i class="fa fa-check"></i>About this example</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#the-model"><i class="fa fa-check"></i>The model</a></li>
+<li class="chapter" data-level="" data-path="vignettes.html"><a href="vignettes.html#is-the-subject-taking-hisher-medication"><i class="fa fa-check"></i>Is the subject taking his/her medication?</a></li>
+<li class="chapter" data-level="9.3.1" data-path="vignettes.html"><a href="vignettes.html#code-appendix-2"><i class="fa fa-check"></i><b>9.3.1</b> Code appendix</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><code>TDMore</code>: an R package for in silico assessment of dose individualization strategies</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="tdmore-api" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> TDMore API</h1>
+<p>The following section shows an overview of the main methods of the TDMore API and tells you how to use them.</p>
+<div id="model" class="section level2">
+<h2><span class="header-section-number">6.1</span> Model definition</h2>
+<p>The TDMore model can be built using 3 different ways. Its model definition can be:</p>
+<ul>
+<li>a <a href="https://cran.r-project.org/package=nlmixr"><code>nlmixr</code></a> model</li>
+<li>a <a href="https://cran.r-project.org/package=RxODE"><code>RxODE</code></a> model</li>
+<li>a custom algebraic model</li>
+</ul>
+<p>These 3 ways will be explained in the next sections.</p>
+<div id="build-a-tdmore-object-from-a-nlxmir-model" class="section level3">
+<h3><span class="header-section-number">6.1.1</span> Build a TDMore object from a nlxmir model</h3>
+<p>Let’s implement a basic 1-compartment PK model in <code>nlmixr</code>. The model code is divided in two different blocks. The ‘ini’ block is used to define all the model parameter values (commonly called theta’s, omega’s and sigma’s in PK/PD modelling language) while the ‘model’ blocks defines all the equations of the model.
+The <code>nlmixr</code> function is implemented as follows:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="tdmore-api.html#cb4-1"></a><span class="kw">library</span>(nlmixr)</span>
+<span id="cb4-2"><a href="tdmore-api.html#cb4-2"></a>modelCode1 &lt;-<span class="st"> </span><span class="cf">function</span>() {</span>
+<span id="cb4-3"><a href="tdmore-api.html#cb4-3"></a>  <span class="kw">ini</span>({</span>
+<span id="cb4-4"><a href="tdmore-api.html#cb4-4"></a>    TVKA &lt;-<span class="st"> </span><span class="dv">1</span> <span class="co"># THETA on KA</span></span>
+<span id="cb4-5"><a href="tdmore-api.html#cb4-5"></a>    TVV &lt;-<span class="st"> </span><span class="dv">70</span> <span class="co"># THETA on V</span></span>
+<span id="cb4-6"><a href="tdmore-api.html#cb4-6"></a>    TVCL &lt;-<span class="st"> </span><span class="dv">4</span> <span class="co"># THETA on CL</span></span>
+<span id="cb4-7"><a href="tdmore-api.html#cb4-7"></a>    </span>
+<span id="cb4-8"><a href="tdmore-api.html#cb4-8"></a>    EKA <span class="op">~</span><span class="st"> </span><span class="fl">0.3</span> <span class="co"># ETA on KA (OMEGA, variance)</span></span>
+<span id="cb4-9"><a href="tdmore-api.html#cb4-9"></a>    EV <span class="op">~</span><span class="st"> </span><span class="fl">0.3</span>  <span class="co"># ETA on V (OMEGA, variance)</span></span>
+<span id="cb4-10"><a href="tdmore-api.html#cb4-10"></a>    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.3</span> <span class="co"># ETA on CL (OMEGA, variance)</span></span>
+<span id="cb4-11"><a href="tdmore-api.html#cb4-11"></a>    </span>
+<span id="cb4-12"><a href="tdmore-api.html#cb4-12"></a>    SIGMA &lt;-<span class="st"> </span><span class="fl">0.1</span> <span class="co"># 10% CV proportional error</span></span>
+<span id="cb4-13"><a href="tdmore-api.html#cb4-13"></a>  })</span>
+<span id="cb4-14"><a href="tdmore-api.html#cb4-14"></a>  <span class="kw">model</span>({</span>
+<span id="cb4-15"><a href="tdmore-api.html#cb4-15"></a>    KA &lt;-<span class="st"> </span>TVKA<span class="op">*</span><span class="kw">exp</span>(EKA)</span>
+<span id="cb4-16"><a href="tdmore-api.html#cb4-16"></a>    V &lt;-<span class="st"> </span>TVV<span class="op">*</span><span class="kw">exp</span>(EV)</span>
+<span id="cb4-17"><a href="tdmore-api.html#cb4-17"></a>    CL &lt;-<span class="st"> </span>TVCL<span class="op">*</span><span class="kw">exp</span>(ECL)</span>
+<span id="cb4-18"><a href="tdmore-api.html#cb4-18"></a></span>
+<span id="cb4-19"><a href="tdmore-api.html#cb4-19"></a>    d<span class="op">/</span><span class="kw">dt</span>(depot) =<span class="st"> </span><span class="op">-</span>KA<span class="op">*</span>depot</span>
+<span id="cb4-20"><a href="tdmore-api.html#cb4-20"></a>    d<span class="op">/</span><span class="kw">dt</span>(center) =<span class="st"> </span>KA<span class="op">*</span>depot <span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V<span class="op">*</span>center</span>
+<span id="cb4-21"><a href="tdmore-api.html#cb4-21"></a></span>
+<span id="cb4-22"><a href="tdmore-api.html#cb4-22"></a>    CONC =<span class="st"> </span>center<span class="op">/</span>V</span>
+<span id="cb4-23"><a href="tdmore-api.html#cb4-23"></a>    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(SIGMA)</span>
+<span id="cb4-24"><a href="tdmore-api.html#cb4-24"></a>  })</span>
+<span id="cb4-25"><a href="tdmore-api.html#cb4-25"></a>}</span></code></pre></div>
+<p>A TDMore object can then be instantiated by running the following snippet:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="tdmore-api.html#cb5-1"></a><span class="kw">library</span>(tdmore)</span>
+<span id="cb5-2"><a href="tdmore-api.html#cb5-2"></a>m1 &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>()</span></code></pre></div>
+<p>Your model is ready to use. Have a look at its content by calling:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="tdmore-api.html#cb6-1"></a><span class="kw">summary</span>(m1)</span></code></pre></div>
+<pre><code>## Structural model: RxODE 
+## 
+## Parameters:
+##  name var        cv
+##   EKA 0.3 0.5477226
+##    EV 0.3 0.5477226
+##   ECL 0.3 0.5477226
+## 
+## Covariates: / 
+## 
+## Residual error model:
+##  name         type additiveError proportionalError
+##  CONC proportional             0               0.1</code></pre>
+<p>This summary tells you the model contains 3 parameters: EKA, EV and ECL. These parameters will be estimated by TDMore to fit virtual individual observations as best as possible. The model does not have any covariates (to see how covariates are included, go to section X). Output variable is the <code>CONC</code> variable. The residual error model on this variable is proportional. Please note that the underlying structural model is <code>RxODE</code>, not <code>nlxmir</code>. This is because the <code>nlxmir</code> model is automatically converted into a RxODE model. The <code>RxODE</code> package is used extensively in TDMore to simulate data.</p>
+</div>
+<div id="build-a-tdmore-object-from-an-rxode-model" class="section level3">
+<h3><span class="header-section-number">6.1.2</span> Build a TDMore object from an RxODE model</h3>
+<p>The same TDMore object can be based on a <code>RxODE</code> model as well. This is done as follows:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="tdmore-api.html#cb8-1"></a>modelCode2 &lt;-<span class="st"> &quot;</span></span>
+<span id="cb8-2"><a href="tdmore-api.html#cb8-2"></a><span class="st">  TVKA = 1</span></span>
+<span id="cb8-3"><a href="tdmore-api.html#cb8-3"></a><span class="st">  TVV = 70</span></span>
+<span id="cb8-4"><a href="tdmore-api.html#cb8-4"></a><span class="st">  TVCL = 4</span></span>
+<span id="cb8-5"><a href="tdmore-api.html#cb8-5"></a><span class="st">  KA &lt;- TVKA * exp(EKA)</span></span>
+<span id="cb8-6"><a href="tdmore-api.html#cb8-6"></a><span class="st">  V &lt;- TVV * exp(EV)</span></span>
+<span id="cb8-7"><a href="tdmore-api.html#cb8-7"></a><span class="st">  CL &lt;- TVCL * exp(ECL)</span></span>
+<span id="cb8-8"><a href="tdmore-api.html#cb8-8"></a><span class="st">  d/dt(depot) = -KA*depot</span></span>
+<span id="cb8-9"><a href="tdmore-api.html#cb8-9"></a><span class="st">  d/dt(center) = KA*depot - CL/V*center</span></span>
+<span id="cb8-10"><a href="tdmore-api.html#cb8-10"></a><span class="st">  CONC = center/V</span></span>
+<span id="cb8-11"><a href="tdmore-api.html#cb8-11"></a><span class="st">&quot;</span></span></code></pre></div>
+<p>Note that the model is a character vector and not a function anymore. It does not include the ETA’s (and related OMEGA values). Furthemore, the residual error model is omitted. The missing information needs to be passed to TDMore as follows (arguments <code>omega</code> and <code>res_var</code>):</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="tdmore-api.html#cb9-1"></a><span class="kw">library</span>(tdmore)</span>
+<span id="cb9-2"><a href="tdmore-api.html#cb9-2"></a><span class="kw">library</span>(RxODE)</span>
+<span id="cb9-3"><a href="tdmore-api.html#cb9-3"></a>errorModel &lt;-<span class="st"> </span><span class="kw">errorModel</span>(<span class="st">&quot;CONC&quot;</span>, <span class="dt">prop=</span><span class="fl">0.1</span>)</span>
+<span id="cb9-4"><a href="tdmore-api.html#cb9-4"></a>m2 &lt;-<span class="st"> </span><span class="kw">RxODE</span>(modelCode2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>(<span class="dt">omega=</span><span class="kw">c</span>(<span class="dt">EKA=</span><span class="fl">0.3</span>, <span class="dt">EV=</span><span class="fl">0.3</span>, <span class="dt">ECL=</span><span class="fl">0.3</span>), <span class="dt">res_var=</span><span class="kw">list</span>(errorModel))</span></code></pre></div>
+<p>The omega matrix is a 3x3 matrix. Only the diagonal is used as you can see. However, correlations can be added if needed.
+Your model is now ready to use. It can be summarised this way:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="tdmore-api.html#cb10-1"></a><span class="kw">summary</span>(m2)</span></code></pre></div>
+<pre><code>## Structural model: RxODE 
+## 
+## Parameters:
+##  name var        cv
+##   EKA 0.3 0.5477226
+##    EV 0.3 0.5477226
+##   ECL 0.3 0.5477226
+## 
+## Covariates: / 
+## 
+## Residual error model:
+##  name         type additiveError proportionalError
+##  CONC proportional             0               0.1</code></pre>
+<p>This summary is the exact same copy as the previous one!</p>
+</div>
+<div id="build-your-own-algebraic-model" class="section level3">
+<h3><span class="header-section-number">6.1.3</span> Build your own algebraic model</h3>
+<p>Finally, <code>TDMore</code> can also work with algebraic models. To do so, the model definition function must return a object of class <code>algebraic_definition</code>. In particular, it must override the <code>predictFunction(times, regimen, ...)</code> which returns the output variable according to the <code>times</code> vector and specified <code>regimen</code>. The following code shows how the algebraic model can be implemented:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="tdmore-api.html#cb12-1"></a>modelCode3 &lt;-<span class="st"> </span><span class="cf">function</span>(t, TIME, AMT, EKA, EV, ECL) {</span>
+<span id="cb12-2"><a href="tdmore-api.html#cb12-2"></a>      V =<span class="st"> </span><span class="dv">70</span> <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EV)</span>
+<span id="cb12-3"><a href="tdmore-api.html#cb12-3"></a>      CL =<span class="st"> </span><span class="dv">4</span> <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(ECL)</span>
+<span id="cb12-4"><a href="tdmore-api.html#cb12-4"></a>      KA =<span class="st"> </span><span class="dv">1</span> <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(EKA)</span>
+<span id="cb12-5"><a href="tdmore-api.html#cb12-5"></a>      k =<span class="st"> </span>CL <span class="op">/</span><span class="st"> </span>V</span>
+<span id="cb12-6"><a href="tdmore-api.html#cb12-6"></a>      D =<span class="st"> </span>AMT</span>
+<span id="cb12-7"><a href="tdmore-api.html#cb12-7"></a>      tD =<span class="st"> </span>TIME</span>
+<span id="cb12-8"><a href="tdmore-api.html#cb12-8"></a>      <span class="co"># Algebraic solution of 1-cpt-model</span></span>
+<span id="cb12-9"><a href="tdmore-api.html#cb12-9"></a>      <span class="kw">ifelse</span>(t <span class="op">&gt;=</span><span class="st"> </span>tD, D<span class="op">/</span>V <span class="op">*</span><span class="st"> </span>(KA<span class="op">/</span>(KA<span class="op">-</span>k)) <span class="op">*</span><span class="st"> </span>(<span class="kw">exp</span>(<span class="op">-</span>k<span class="op">*</span>(t<span class="op">-</span>tD)) <span class="op">-</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>KA<span class="op">*</span>(t<span class="op">-</span>tD))), <span class="dv">0</span>) </span>
+<span id="cb12-10"><a href="tdmore-api.html#cb12-10"></a>    }</span>
+<span id="cb12-11"><a href="tdmore-api.html#cb12-11"></a>m3 &lt;-<span class="st"> </span><span class="kw">tdmore</span>(<span class="kw">algebraic</span>(modelCode3), </span>
+<span id="cb12-12"><a href="tdmore-api.html#cb12-12"></a>       <span class="dt">omega=</span><span class="kw">c</span>(<span class="dt">EKA=</span><span class="fl">0.3</span>, <span class="dt">EV=</span><span class="fl">0.3</span>, <span class="dt">ECL=</span><span class="fl">0.3</span>),</span>
+<span id="cb12-13"><a href="tdmore-api.html#cb12-13"></a>       <span class="dt">res_var=</span><span class="kw">errorModel</span>(<span class="dt">prop=</span><span class="fl">0.1</span>)</span>
+<span id="cb12-14"><a href="tdmore-api.html#cb12-14"></a>       )</span>
+<span id="cb12-15"><a href="tdmore-api.html#cb12-15"></a><span class="kw">summary</span>(m3)</span></code></pre></div>
+<pre><code>## Structural model: algebraic 
+## 
+## Parameters:
+##  name var        cv
+##   EKA 0.3 0.5477226
+##    EV 0.3 0.5477226
+##   ECL 0.3 0.5477226
+## 
+## Covariates: / 
+## 
+## Residual error model:
+##  name         type additiveError proportionalError
+##  CONC proportional             0               0.1</code></pre>
+</div>
+<div id="add-model-covariates" class="section level3">
+<h3><span class="header-section-number">6.1.4</span> Add model covariates</h3>
+<p>Let’s assume the weight is a covariate in the previous 1-compartment model. It can be added in the model as follows:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="tdmore-api.html#cb14-1"></a>modelCode1_WT &lt;-<span class="st"> </span><span class="cf">function</span>() {</span>
+<span id="cb14-2"><a href="tdmore-api.html#cb14-2"></a>  <span class="kw">ini</span>({</span>
+<span id="cb14-3"><a href="tdmore-api.html#cb14-3"></a>    TVKA &lt;-<span class="st"> </span><span class="dv">1</span> <span class="co"># THETA on KA</span></span>
+<span id="cb14-4"><a href="tdmore-api.html#cb14-4"></a>    TVV &lt;-<span class="st"> </span><span class="dv">70</span> <span class="co"># THETA on V</span></span>
+<span id="cb14-5"><a href="tdmore-api.html#cb14-5"></a>    TVCL &lt;-<span class="st"> </span><span class="dv">4</span> <span class="co"># THETA on CL</span></span>
+<span id="cb14-6"><a href="tdmore-api.html#cb14-6"></a>    </span>
+<span id="cb14-7"><a href="tdmore-api.html#cb14-7"></a>    EKA <span class="op">~</span><span class="st"> </span><span class="fl">0.3</span> <span class="co"># ETA on KA (OMEGA, variance)</span></span>
+<span id="cb14-8"><a href="tdmore-api.html#cb14-8"></a>    EV <span class="op">~</span><span class="st"> </span><span class="fl">0.3</span>  <span class="co"># ETA on V (OMEGA, variance)</span></span>
+<span id="cb14-9"><a href="tdmore-api.html#cb14-9"></a>    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.3</span> <span class="co"># ETA on CL (OMEGA, variance)</span></span>
+<span id="cb14-10"><a href="tdmore-api.html#cb14-10"></a>    </span>
+<span id="cb14-11"><a href="tdmore-api.html#cb14-11"></a>    SIGMA &lt;-<span class="st"> </span><span class="fl">0.1</span> <span class="co"># 10% CV proportional error</span></span>
+<span id="cb14-12"><a href="tdmore-api.html#cb14-12"></a>  })</span>
+<span id="cb14-13"><a href="tdmore-api.html#cb14-13"></a>  <span class="kw">model</span>({</span>
+<span id="cb14-14"><a href="tdmore-api.html#cb14-14"></a>    KA &lt;-<span class="st"> </span>TVKA<span class="op">*</span><span class="kw">exp</span>(EKA)</span>
+<span id="cb14-15"><a href="tdmore-api.html#cb14-15"></a>    V &lt;-<span class="st"> </span>TVV<span class="op">*</span>(WT<span class="op">/</span><span class="dv">70</span>)<span class="op">*</span><span class="kw">exp</span>(EV)</span>
+<span id="cb14-16"><a href="tdmore-api.html#cb14-16"></a>    CL &lt;-<span class="st"> </span>TVCL<span class="op">*</span>((WT<span class="op">/</span><span class="dv">70</span>)<span class="op">**</span><span class="fl">0.75</span>)<span class="op">*</span><span class="kw">exp</span>(ECL)</span>
+<span id="cb14-17"><a href="tdmore-api.html#cb14-17"></a></span>
+<span id="cb14-18"><a href="tdmore-api.html#cb14-18"></a>    d<span class="op">/</span><span class="kw">dt</span>(depot) =<span class="st"> </span><span class="op">-</span>KA<span class="op">*</span>depot</span>
+<span id="cb14-19"><a href="tdmore-api.html#cb14-19"></a>    d<span class="op">/</span><span class="kw">dt</span>(center) =<span class="st"> </span>KA<span class="op">*</span>depot <span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V<span class="op">*</span>center</span>
+<span id="cb14-20"><a href="tdmore-api.html#cb14-20"></a></span>
+<span id="cb14-21"><a href="tdmore-api.html#cb14-21"></a>    CONC =<span class="st"> </span>center<span class="op">/</span>V</span>
+<span id="cb14-22"><a href="tdmore-api.html#cb14-22"></a>    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(SIGMA)</span>
+<span id="cb14-23"><a href="tdmore-api.html#cb14-23"></a>  })</span>
+<span id="cb14-24"><a href="tdmore-api.html#cb14-24"></a>}</span></code></pre></div>
+<p>Now, the TDMore object can be created and printed.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="tdmore-api.html#cb15-1"></a><span class="kw">library</span>(tdmore)</span>
+<span id="cb15-2"><a href="tdmore-api.html#cb15-2"></a><span class="kw">library</span>(nlmixr)</span>
+<span id="cb15-3"><a href="tdmore-api.html#cb15-3"></a>m1_WT &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode1_WT) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tdmore</span>()</span></code></pre></div>
+<pre><code>## Warning in get(.i, envir = .env): restarting interrupted promise evaluation</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="tdmore-api.html#cb17-1"></a><span class="kw">print</span>(m1_WT) <span class="co"># Print may be seen as a short &#39;summary&#39;</span></span></code></pre></div>
+<pre><code>## Structural model: RxODE 
+## Parameters: EKA EV ECL 
+## Covariates: WT 
+## Output(s):
+## CONC  : proportional  ( prop= 0.1  )</code></pre>
+<p>Weight covariate has been well detected by TDMore!</p>
+</div>
+</div>
+<div id="regimen" class="section level2">
+<h2><span class="header-section-number">6.2</span> Regimen definition</h2>
+<p>The regimen definition in TDMore is relatively close to the NONMEM definition. In TDMore, the regimen is defined as a dataframe. Each row indicates a new dosing scheme. Supported column types are:</p>
+<ul>
+<li>TIME: time of first dose</li>
+<li>AMT: amount of the dose</li>
+<li>II (optional): dose interval between multiple doses</li>
+<li>ADDL (optional): additional doses, to be used in combination with II</li>
+<li>RATE (optional): defines the infusion time, if not specified, dose is a bolus given at once at t=<code>TIME</code></li>
+<li>CMT (optional): the compartment number (1=depot, 2=center, 3=periph)</li>
+</ul>
+<p><strong>Example 1</strong>: the following snippet will give a 150mg dose every day for a week.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="tdmore-api.html#cb19-1"></a>regimen1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">150</span>, <span class="dt">II=</span><span class="dv">24</span>, <span class="dt">ADDL=</span><span class="dv">7</span>)</span></code></pre></div>
+<p>This is strictly equivalent to the following form:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="tdmore-api.html#cb20-1"></a>regimen1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dt">AMT=</span><span class="dv">150</span>)</span></code></pre></div>
+<p><strong>Example 2</strong>: let’s now infuse this dose in the central compartment instead (CMT=2), for a week. This is translated into the following dataframe:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="tdmore-api.html#cb21-1"></a>regimen2 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="dv">150</span>, <span class="dt">II=</span><span class="dv">24</span>, <span class="dt">ADDL=</span><span class="dv">7</span>, <span class="dt">CMT=</span><span class="dv">2</span>)</span></code></pre></div>
+<p>Note that infusions (defined with <code>RATE</code>) are injected into the central compartment by default.
+In the next section, you will learn how to check your model and regimen are well implemented by running simulations.</p>
+</div>
+<div id="model-simulation" class="section level2">
+<h2><span class="header-section-number">6.3</span> Model simulation</h2>
+<p>Simulations in TDMore are done using the <code>predict()</code> function. This function can be applied on both <code>tdmore</code> and <code>tdmorefit</code> objects altough their arguments differ a little (see <a href="tdmore-api.html#predicttdmore">6.3.1</a> and <a href="tdmore-api.html#predicttdmorefit">6.3.2</a>)</p>
+<div id="predicttdmore" class="section level3">
+<h3><span class="header-section-number">6.3.1</span> Predict a tdmore object</h3>
+<p>Let’s have a closer look at the <code>predict.tdmore</code> arguments:</p>
+<ul>
+<li>object: a <code>tdmore</code> object</li>
+<li>newdata: numeric vector with all times or a dataframe with a <code>TIME</code> column and all the needed output variables</li>
+<li>regimen: the treatment regimen (as defined in section <a href="tdmore-api.html#regimen">6.2</a>)</li>
+<li>parameters: the parameter values to use, missing values are taken from the population</li>
+<li>covariates: the covariates values. They can be time-varying (see section X).</li>
+<li>se: whether to add residual error</li>
+<li>level: how much residual error to add, e.g. 0.95</li>
+</ul>
+<p><strong>Example 1a</strong>: Simulate the first model for a week without residual error</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="tdmore-api.html#cb22-1"></a>times &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">24</span><span class="op">*</span><span class="dv">7-1</span>, <span class="dt">by=</span><span class="dv">1</span>)</span>
+<span id="cb22-2"><a href="tdmore-api.html#cb22-2"></a>data1a &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">newdata=</span>times, <span class="dt">regimen=</span>regimen1)</span>
+<span id="cb22-3"><a href="tdmore-api.html#cb22-3"></a><span class="kw">head</span>(data1a)</span></code></pre></div>
+<table class="huxtable" style="border-collapse: collapse; margin-bottom: 2em; margin-top: 2em; width: 58.8888888888889%; margin-left: 0%; margin-right: auto;  ">
+<col><col><col><col><col><col><col><tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">TIME</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">KA</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">V</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CL</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CONC</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">depot</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">center</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">150&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">1.31</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">55.2&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">91.7</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.72</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">20.3&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">120&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">3</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">1.8&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">7.47</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">126&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">4</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.77</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2.75</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">124&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">5</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">1.69</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">1.01</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">118&nbsp;&nbsp;</td>
+</tr>
+</table>
+
+<p>Because <code>newdata</code> is provided as numeric (with no specified output column), all variables are output.</p>
+<p><strong>Example 1b</strong>: Simulate the first model for a week with residual error</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="tdmore-api.html#cb23-1"></a>data1b &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">newdata=</span>times, <span class="dt">regimen=</span>regimen1, <span class="dt">se=</span>T, <span class="dt">level=</span><span class="fl">0.95</span>)</span>
+<span id="cb23-2"><a href="tdmore-api.html#cb23-2"></a><span class="kw">head</span>(data1b)</span></code></pre></div>
+<table class="huxtable" style="border-collapse: collapse; margin-bottom: 2em; margin-top: 2em; width: 94.4444444444444%; margin-left: 0%; margin-right: auto;  ">
+<col><col><col><col><col><col><col><col><col><tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">TIME</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">KA</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">V</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CL</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CONC</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">depot</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">center</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CONC.lower</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CONC.upper</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">150&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">1.31</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">55.2&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">91.7</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">1.05</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">1.57</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.72</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">20.3&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">120&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.38</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2.06</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">3</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">1.8&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">7.47</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">126&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">1.45</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">2.15</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">4</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.77</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2.75</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">124&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.42</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2.11</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">5</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">1</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">70</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">1.69</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">1.01</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">118&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">1.36</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">2.02</td>
+</tr>
+</table>
+
+<p>As you can see, lower and upper bounds on the concentration are provided.</p>
+<p><strong>Example 1c</strong>: Simulate the first model for a week with residual error and output selection</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="tdmore-api.html#cb24-1"></a>data1c &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1, <span class="dt">se=</span>T, <span class="dt">level=</span><span class="fl">0.95</span>)</span>
+<span id="cb24-2"><a href="tdmore-api.html#cb24-2"></a><span class="kw">head</span>(data1c)</span></code></pre></div>
+<table class="huxtable" style="border-collapse: collapse; margin-bottom: 2em; margin-top: 2em; width: 54.4444444444444%; margin-left: 0%; margin-right: auto;  ">
+<col><col><col><col><tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">TIME</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CONC</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CONC.lower</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CONC.upper</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">1</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">1.31</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">1.05</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">1.57</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.72</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.38</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2.06</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">3</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">1.8&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">1.45</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">2.15</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.77</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.42</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2.11</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">5</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">1.69</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">1.36</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">2.02</td>
+</tr>
+</table>
+
+<p>Only the concentration is returned in the previous dataframe.</p>
+<p><strong>Example 2</strong>: Compare the 4 models previously described in section <a href="tdmore-api.html#model">6.1</a></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="tdmore-api.html#cb25-1"></a>data1 &lt;-<span class="st"> </span><span class="kw">predict</span>(m1, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1)</span>
+<span id="cb25-2"><a href="tdmore-api.html#cb25-2"></a>data1<span class="op">$</span>model &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;nlmixr model&quot;</span>)</span>
+<span id="cb25-3"><a href="tdmore-api.html#cb25-3"></a></span>
+<span id="cb25-4"><a href="tdmore-api.html#cb25-4"></a>data2 &lt;-<span class="st"> </span><span class="kw">predict</span>(m2, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1)</span>
+<span id="cb25-5"><a href="tdmore-api.html#cb25-5"></a>data2<span class="op">$</span>model &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;RxODE model&quot;</span>)</span>
+<span id="cb25-6"><a href="tdmore-api.html#cb25-6"></a></span>
+<span id="cb25-7"><a href="tdmore-api.html#cb25-7"></a>data3 &lt;-<span class="st"> </span><span class="kw">predict</span>(m3, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1)</span>
+<span id="cb25-8"><a href="tdmore-api.html#cb25-8"></a>data3<span class="op">$</span>model &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;algebraic model&quot;</span>)</span>
+<span id="cb25-9"><a href="tdmore-api.html#cb25-9"></a></span>
+<span id="cb25-10"><a href="tdmore-api.html#cb25-10"></a>data4 &lt;-<span class="st"> </span><span class="kw">predict</span>(m1_WT, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">regimen=</span>regimen1, <span class="dt">covariates=</span><span class="kw">c</span>(<span class="dt">WT=</span><span class="dv">50</span>))</span>
+<span id="cb25-11"><a href="tdmore-api.html#cb25-11"></a>data4<span class="op">$</span>model &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;nlxmir model with WT covariate&quot;</span>)</span>
+<span id="cb25-12"><a href="tdmore-api.html#cb25-12"></a></span>
+<span id="cb25-13"><a href="tdmore-api.html#cb25-13"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb25-14"><a href="tdmore-api.html#cb25-14"></a><span class="kw">ggplot</span>(<span class="dt">data=</span><span class="kw">rbind</span>(data1, data2, data3, data4), <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC, <span class="dt">group=</span>model)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span>model))</span></code></pre></div>
+<p><img src="05-API_files/figure-html/api_model_comparison-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>The plot above shows that the first 3 models are equivalent. The last model with the covariate is different because a covariate of WT=50 is used (this implies a lower clearance).</p>
+</div>
+<div id="predicttdmorefit" class="section level3">
+<h3><span class="header-section-number">6.3.2</span> Predict a tdmorefit object</h3>
+<p>Arguments of function <code>predict.tdmorefit</code> slightly differ from function <code>predict.tdmore</code>:</p>
+<ul>
+<li>object: a <code>tdmorefit</code> object</li>
+<li>newdata: numeric vector with all times or a dataframe with a <code>TIME</code> column and all the needed output variables</li>
+<li>regimen: the treatment regimen (as defined in section <a href="tdmore-api.html#regimen">6.2</a>)</li>
+<li>parameters: set parameters. If missing, or if only part of the parameters are specified, the other parameters are taken from the tdmorefit object</li>
+<li>covariates: the covariates values. They can be time-varying (see section X).</li>
+<li>se.fit: TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower</li>
+<li>level: the confidence interval, or NA to return all mc.maxpts results</li>
+<li>mc.maxpts: maximum number of points to sample in Monte Carlo simulation</li>
+<li>ip.maxpts: maximum number of points to interpolate if newdata is not given</li>
+</ul>
+<p>The main difference between <code>predict.tdmore</code> and <code>predict.tdmorefit</code> when a confidence interval is asked (respectively <code>se=T</code> or <code>se.fit=T</code>) is that the latter performs a monte-carlo simulation to build a confidence interval on the prediction while the former builds a confidence interval based on the error model.</p>
+</div>
+</div>
+<div id="estimation" class="section level2">
+<h2><span class="header-section-number">6.4</span> Parameter estimation</h2>
+<p>Parameter estimation is done using the <code>estimate()</code> function. This function returns a <code>tdmorefit</code> object. Let’s first discuss all its main arguments in detail:</p>
+<ul>
+<li>object: this must be a <code>tdmore</code> object</li>
+<li>observed: data frame with at least a <code>TIME</code> column, and all observed data. The observed data will be compared to the model predictions. If not specified, we estimate the population prediction.</li>
+<li>covariates: the covariates values. They can be time-varying (see section X).</li>
+<li>par (optional): starting parameters for the MLE minimization. This must be a numeric vector. Parameters must be ordered.</li>
+</ul>
+<p>The <code>estimate()</code> function contains a few more arguments allowing to configure the optimisation method. These are detailled in the documentation (try <code>?tdmore::estimate</code> in the R console).</p>
+<p><strong>Example</strong>: Find parameters of a virtual individual based on virtual observations.</p>
+<p>Assume we have collected 2 concentrations at 24h and 48h. In the following code, we’d like to estimate the parameters for this virtual individual.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="tdmore-api.html#cb26-1"></a>observed &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">24</span>,<span class="dv">48</span>), <span class="dt">CONC=</span><span class="kw">c</span>(<span class="fl">0.4</span>,<span class="fl">0.5</span>))</span>
+<span id="cb26-2"><a href="tdmore-api.html#cb26-2"></a>tdmorefit &lt;-<span class="st"> </span><span class="kw">estimate</span>(<span class="dt">object =</span> m1, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen1)</span></code></pre></div>
+<pre><code>## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced
+
+## Warning in dnorm(ipred[i], obs[i], sd = sd[i], log = log): NaNs produced</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="tdmore-api.html#cb28-1"></a><span class="kw">summary</span>(tdmorefit)</span></code></pre></div>
+<pre><code>## Call:
+## estimate.default(object = m1, observed = observed, regimen = regimen1)
+## Coef:
+##        EKA         EV        ECL 
+## 0.01972336 0.02310260 0.24016578 
+## 
+## OFV: -6.51 (pop=2.1, pred=-8.61)
+## 
+## Observations:
+##  TIME CONC
+##    24  0.4
+##    48  0.5
+## 
+## Regimen:
+##  TIME AMT
+##     0 150
+##    24 150
+##    48 150
+##    72 150
+##    96 150
+##   120 150
+##   144 150
+## 
+## Covariates: /
+## 
+## Coefficients:
+##  name  value        (95% CI)    se
+##   EKA 0.0197   (-1.04, 1.08) 0.541
+##    EV 0.0231   (-0.9, 0.946) 0.471
+##   ECL 0.2400 (-0.172, 0.652) 0.210</code></pre>
+<p>The above summary shows us how well the observed data was estimated. In particular, the objective function value (OFV) is shown. The higher this value, the better the fit. <code>pop</code> value is the population likelihood (it can be seen as how well the parameters fit the population PK model), <code>pred</code> value is the prediction likelihood (it can be seen as how well the parameters fit the observed data, knowing the population PK model). The summary also shows the coefficient values, as well as their 95% confidence interval (CI) and standard error (se). Because all ETA’s in this model have a standard deviation of <code>sqrt(0.3)=0.547</code>, we can deduce that the observed data only helped estimate ECL (standard errors of EKA and EV are too close from their original standard deviation).</p>
+<p>Predictions on the <code>tdmorefit</code> object can be done as follows (see also <a href="tdmore-api.html#predicttdmorefit">6.3.2</a>:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="tdmore-api.html#cb30-1"></a>data &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmorefit, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se.fit=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<p>Let’s now see what the virtual individual prediction <code>tdmorefit</code> looks like on a plot.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="tdmore-api.html#cb31-1"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME))  <span class="op">+</span></span>
+<span id="cb31-2"><a href="tdmore-api.html#cb31-2"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Individual&quot;</span>, <span class="dt">y=</span>CONC.median)) <span class="op">+</span></span>
+<span id="cb31-3"><a href="tdmore-api.html#cb31-3"></a><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">&quot;Individual&quot;</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">&quot;tomato1&quot;</span>, <span class="dt">alpha=</span><span class="fl">0.10</span>) <span class="op">+</span></span>
+<span id="cb31-4"><a href="tdmore-api.html#cb31-4"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">&quot;Population&quot;</span>, <span class="dt">y=</span>CONC), <span class="dt">data=</span>data1) <span class="op">+</span></span>
+<span id="cb31-5"><a href="tdmore-api.html#cb31-5"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y=</span>CONC), <span class="dt">data=</span>observed) <span class="op">+</span></span>
+<span id="cb31-6"><a href="tdmore-api.html#cb31-6"></a><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw">c</span>(<span class="st">&quot;tomato1&quot;</span>, <span class="st">&quot;steelblue2&quot;</span>))</span></code></pre></div>
+<p><img src="05-API_files/figure-html/api_param_estimation-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dose-recommendation" class="section level2">
+<h2><span class="header-section-number">6.5</span> Dose recommendation</h2>
+<div id="calling-the-finddose-method" class="section level3">
+<h3><span class="header-section-number">6.5.1</span> Calling the findDose method</h3>
+<p>The <code>findDose()</code> method allows you to find the optimal virtual dose to use according to one or multiple targets. Its main arguments are:</p>
+<ul>
+<li>tdmorefit: the <code>tdmorefit</code> object</li>
+<li>regimen: the regimen (see section <a href="tdmore-api.html#regimen">6.2</a>)</li>
+<li>doseRows (optional): which rows of the regimen to adapt when searching for a new dose, or NULL to take the last one</li>
+<li>interval (optional): which interval to search a dose in</li>
+<li>target: target value, as a data.frame</li>
+</ul>
+<p>The <code>findDose()</code> function contains a few more arguments, namely, to build a confidence interval on the returned dose using Monte-Carlo simulation. These are detailled in the documentation (try <code>?tdmore::findDose</code> in the R console).</p>
+<p><strong>Example 1</strong>: Reach the population trough concentration (first solution)</p>
+<p>Assume your virtual individual needs to reach a concentration of 0.75 after 1 week. A first solution is to find a daily dose that will achieve this. This can be done as follows:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="tdmore-api.html#cb32-1"></a>newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="ot">NA</span>, <span class="dt">II=</span><span class="dv">24</span>, <span class="dt">ADDL=</span><span class="dv">7</span>)</span>
+<span id="cb32-2"><a href="tdmore-api.html#cb32-2"></a></span>
+<span id="cb32-3"><a href="tdmore-api.html#cb32-3"></a>recommendation1 &lt;-<span class="st"> </span><span class="kw">findDose</span>(</span>
+<span id="cb32-4"><a href="tdmore-api.html#cb32-4"></a>  tdmorefit,</span>
+<span id="cb32-5"><a href="tdmore-api.html#cb32-5"></a>  <span class="dt">regimen =</span> newRegimen,</span>
+<span id="cb32-6"><a href="tdmore-api.html#cb32-6"></a>  <span class="dt">interval =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1000</span>),</span>
+<span id="cb32-7"><a href="tdmore-api.html#cb32-7"></a>  <span class="dt">target =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="dv">168</span>, <span class="dt">CONC =</span> <span class="fl">0.75</span>)</span>
+<span id="cb32-8"><a href="tdmore-api.html#cb32-8"></a>  )</span>
+<span id="cb32-9"><a href="tdmore-api.html#cb32-9"></a></span>
+<span id="cb32-10"><a href="tdmore-api.html#cb32-10"></a><span class="kw">summary</span>(recommendation1)</span></code></pre></div>
+<pre><code>## $dose
+## [1] 224.7086
+## 
+## $regimen
+##   TIME      AMT II ADDL
+## 1    0 224.7086 24    7</code></pre>
+<p>A daily dose of 225mg is recommended for this specific virtual subject.</p>
+<p><strong>Example 2</strong>: Reach the population trough concentration (second solution)</p>
+<p>Another possible way is to adapt the last dose only. This can be specified using the following regimen:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="tdmore-api.html#cb34-1"></a>newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dt">AMT=</span><span class="kw">c</span>(<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="ot">NA</span>))</span>
+<span id="cb34-2"><a href="tdmore-api.html#cb34-2"></a></span>
+<span id="cb34-3"><a href="tdmore-api.html#cb34-3"></a>recommendation2 &lt;-<span class="st"> </span><span class="kw">findDose</span>(</span>
+<span id="cb34-4"><a href="tdmore-api.html#cb34-4"></a>  tdmorefit,</span>
+<span id="cb34-5"><a href="tdmore-api.html#cb34-5"></a>  <span class="dt">regimen =</span> newRegimen,</span>
+<span id="cb34-6"><a href="tdmore-api.html#cb34-6"></a>  <span class="dt">interval =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1000</span>),</span>
+<span id="cb34-7"><a href="tdmore-api.html#cb34-7"></a>  <span class="dt">target =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="dv">168</span>, <span class="dt">CONC =</span> <span class="fl">0.75</span>)</span>
+<span id="cb34-8"><a href="tdmore-api.html#cb34-8"></a>  )</span>
+<span id="cb34-9"><a href="tdmore-api.html#cb34-9"></a></span>
+<span id="cb34-10"><a href="tdmore-api.html#cb34-10"></a><span class="kw">summary</span>(recommendation2)</span></code></pre></div>
+<pre><code>## $dose
+## [1] 241.3273
+## 
+## $regimen
+##   TIME      AMT
+## 1    0 150.0000
+## 2   24 150.0000
+## 3   48 150.0000
+## 4   72 150.0000
+## 5   96 150.0000
+## 6  120 150.0000
+## 7  144 241.3273</code></pre>
+<p>A last dose of 241mg is recommended for this specific virtual subject.</p>
+<p><strong>Example 3</strong>: Ask for a confidence interval around the dose</p>
+<p>Use argument <code>se.fit</code> as follows:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="tdmore-api.html#cb36-1"></a>newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)<span class="op">*</span><span class="dv">24</span>, <span class="dt">AMT=</span><span class="kw">c</span>(<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="dv">150</span>,<span class="ot">NA</span>))</span>
+<span id="cb36-2"><a href="tdmore-api.html#cb36-2"></a></span>
+<span id="cb36-3"><a href="tdmore-api.html#cb36-3"></a>recommendation3 &lt;-<span class="st"> </span><span class="kw">findDose</span>(</span>
+<span id="cb36-4"><a href="tdmore-api.html#cb36-4"></a>  tdmorefit,</span>
+<span id="cb36-5"><a href="tdmore-api.html#cb36-5"></a>  <span class="dt">regimen =</span> newRegimen,</span>
+<span id="cb36-6"><a href="tdmore-api.html#cb36-6"></a>  <span class="dt">interval =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1000</span>),</span>
+<span id="cb36-7"><a href="tdmore-api.html#cb36-7"></a>  <span class="dt">target =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="dv">168</span>, <span class="dt">CONC =</span> <span class="fl">0.75</span>),</span>
+<span id="cb36-8"><a href="tdmore-api.html#cb36-8"></a>  <span class="dt">se.fit =</span> T</span>
+<span id="cb36-9"><a href="tdmore-api.html#cb36-9"></a>  )</span>
+<span id="cb36-10"><a href="tdmore-api.html#cb36-10"></a></span>
+<span id="cb36-11"><a href="tdmore-api.html#cb36-11"></a><span class="kw">summary</span>(recommendation3)</span></code></pre></div>
+<pre><code>## $dose
+## dose.median  dose.lower  dose.upper 
+##    249.8563    210.9439    316.8162 
+## 
+## $regimen
+##   TIME      AMT
+## 1    0 150.0000
+## 2   24 150.0000
+## 3   48 150.0000
+## 4   72 150.0000
+## 5   96 150.0000
+## 6  120 150.0000
+## 7  144 249.8563</code></pre>
+<p>A 95% confidence interval is returned.</p>
+</div>
+<div id="visualise-a-recommendation" class="section level3">
+<h3><span class="header-section-number">6.5.2</span> Visualise a recommendation</h3>
+<p>Let’s compare the first and second examples.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="tdmore-api.html#cb38-1"></a>tdmorefit<span class="op">$</span>regimen &lt;-<span class="st"> </span>recommendation1<span class="op">$</span>regimen</span>
+<span id="cb38-2"><a href="tdmore-api.html#cb38-2"></a>data1 &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmorefit, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se.fit=</span>F)</span>
+<span id="cb38-3"><a href="tdmore-api.html#cb38-3"></a>data1<span class="op">$</span>solution &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;Solution 1&quot;</span>)</span>
+<span id="cb38-4"><a href="tdmore-api.html#cb38-4"></a></span>
+<span id="cb38-5"><a href="tdmore-api.html#cb38-5"></a>tdmorefit<span class="op">$</span>regimen &lt;-<span class="st"> </span>recommendation2<span class="op">$</span>regimen</span>
+<span id="cb38-6"><a href="tdmore-api.html#cb38-6"></a>data2 &lt;-<span class="st"> </span><span class="kw">predict</span>(tdmorefit, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">TIME=</span>times, <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se.fit=</span>F)</span>
+<span id="cb38-7"><a href="tdmore-api.html#cb38-7"></a>data2<span class="op">$</span>solution &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="st">&quot;Solution 2&quot;</span>)</span>
+<span id="cb38-8"><a href="tdmore-api.html#cb38-8"></a></span>
+<span id="cb38-9"><a href="tdmore-api.html#cb38-9"></a><span class="kw">ggplot</span>(<span class="kw">rbind</span>(data1, data2), <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">group=</span>solution))  <span class="op">+</span></span>
+<span id="cb38-10"><a href="tdmore-api.html#cb38-10"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span>solution, <span class="dt">y=</span>CONC)) <span class="op">+</span></span>
+<span id="cb38-11"><a href="tdmore-api.html#cb38-11"></a><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="fl">0.75</span>, <span class="dt">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span></span>
+<span id="cb38-12"><a href="tdmore-api.html#cb38-12"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x=</span><span class="dv">168</span>, <span class="dt">y=</span><span class="fl">0.75</span>), <span class="dt">shape=</span><span class="dv">1</span>, <span class="dt">size=</span><span class="dv">3</span>)</span></code></pre></div>
+<p><img src="05-API_files/figure-html/plot_tdmorefit_recommendation-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Both solutions achieve the target in the virtual subject at the right time.</p>
+</div>
+</div>
+<div id="plotting-the-intermediate-steps" class="section level2">
+<h2><span class="header-section-number">6.6</span> Plotting the intermediate steps</h2>
+<div id="plotting-a-tdmore-object" class="section level3">
+<h3><span class="header-section-number">6.6.1</span> Plotting a tdmore object</h3>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="tdmore-api.html#cb39-1"></a><span class="kw">plot</span>(m1, <span class="dt">regimen=</span>regimen1)</span></code></pre></div>
+<p><img src="05-API_files/figure-html/plot_tdmore_object-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="plotting-a-tdmorefit-object" class="section level3">
+<h3><span class="header-section-number">6.6.2</span> Plotting a tdmorefit object</h3>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="tdmore-api.html#cb40-1"></a><span class="kw">plot</span>(tdmorefit)</span></code></pre></div>
+<p><img src="05-API_files/figure-html/plot_tdmorefit_object-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="plotting-a-tdmorefit-object-with-an-adapted-regimen" class="section level3">
+<h3><span class="header-section-number">6.6.3</span> Plotting a tdmorefit object with an adapted regimen</h3>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="tdmore-api.html#cb41-1"></a>newRegimen &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">TIME=</span><span class="dv">0</span>, <span class="dt">AMT=</span><span class="ot">NA</span>, <span class="dt">II=</span><span class="dv">24</span>, <span class="dt">ADDL=</span><span class="dv">7</span>)</span>
+<span id="cb41-2"><a href="tdmore-api.html#cb41-2"></a>recommendation1 &lt;-<span class="st"> </span><span class="kw">findDose</span>(</span>
+<span id="cb41-3"><a href="tdmore-api.html#cb41-3"></a>  tdmorefit, </span>
+<span id="cb41-4"><a href="tdmore-api.html#cb41-4"></a>  <span class="dt">regimen =</span> newRegimen,</span>
+<span id="cb41-5"><a href="tdmore-api.html#cb41-5"></a>  <span class="dt">target =</span> <span class="kw">data.frame</span>(<span class="dt">TIME =</span> <span class="dv">168</span>, <span class="dt">CONC =</span> <span class="fl">0.75</span>)</span>
+<span id="cb41-6"><a href="tdmore-api.html#cb41-6"></a>)</span>
+<span id="cb41-7"><a href="tdmore-api.html#cb41-7"></a><span class="kw">plot</span>(tdmorefit, <span class="dt">regimen=</span>recommendation1<span class="op">$</span>regimen)</span></code></pre></div>
+<p><img src="05-API_files/figure-html/plot_tdmorefit_object_regimen-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="plotting-a-tdmoreprofile-object" class="section level3">
+<h3><span class="header-section-number">6.6.4</span> Plotting a tdmoreprofile object</h3>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="tdmore-api.html#cb42-1"></a>profile &lt;-<span class="st"> </span><span class="kw">profile</span>(tdmorefit, <span class="dt">maxpts=</span><span class="dv">50</span>, <span class="dt">limits =</span> <span class="kw">list</span>(<span class="dt">ECL=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="fl">0.7</span>)), <span class="dt">fix=</span><span class="kw">c</span>(<span class="dt">EKA=</span><span class="dv">0</span>))</span>
+<span id="cb42-2"><a href="tdmore-api.html#cb42-2"></a><span class="kw">plot</span>(profile)</span></code></pre></div>
+<p><img src="05-API_files/figure-html/plot_tdmoreprofile_object-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="extending-tdmore" class="section level2">
+<h2><span class="header-section-number">6.7</span> Extending TDMore</h2>
+
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="tdmore-api.html#cb43-1"></a><span class="kw">library</span>(tidyverse)</span></code></pre></div>
+<pre><code>## -- Attaching packages ------------------------------------------------------------------------------------ tidyverse 1.2.1 --</code></pre>
+<pre><code>## &lt;U+221A&gt; ggplot2 3.2.1     &lt;U+221A&gt; purrr   0.3.2
+## &lt;U+221A&gt; tibble  2.1.3     &lt;U+221A&gt; dplyr   0.8.3
+## &lt;U+221A&gt; tidyr   1.0.0     &lt;U+221A&gt; stringr 1.4.0
+## &lt;U+221A&gt; readr   1.3.1     &lt;U+221A&gt; forcats 0.4.0</code></pre>
+<pre><code>## -- Conflicts --------------------------------------------------------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="license.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="science.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
