@@ -22,13 +22,21 @@ findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), tar
     #assert_that(getMaxOccasion(tdmorefitRegimen)  getMaxOccasion(regimen),
     #            msg="Number of occasions is different in tdmorefit regimen and findDose regimen")
   }
+  if(is.null(doseRows))
+    doseRows <- nrow(regimen)
+
+  if(nrow(target) > 1) {
+    stop("Cannot find the dose to hit multiple targets. Split the treatment regimen and perform findDose separately per target.")
+  }
 
   if (!se.fit) {
     # Find the best dose for the estimated parameters
     rootFunction <- function(AMT) {
       myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)
       obs <- predict(tdmorefit, newdata = target, regimen = myRegimen)
-      obs[, colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
+      result <- obs[, colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
+      if(length(result) > 1) stop("Cannot use findDose to hit multiple targets!")
+      result
     }
     result <- runUniroot(rootFunction, interval, ...)
     return(convertResultToRecommendation(result, regimen, doseRows, target))

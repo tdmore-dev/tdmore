@@ -395,6 +395,13 @@ tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, r
     res <- rep(0, N) #population prediction
     names(res) <- tdmore$parameters
   }
+
+  ## Check parameter input
+  extraNames <- setdiff(names(res), tdmore$parameters)
+  if( !is.null(extraNames) && length(extraNames) > 0 ) stop("Superfluous names in parameter specification: ", paste(extraNames, collapse=", "), " does not appear in model parameter specification")
+  missingNames <- setdiff(tdmore$parameters, names(res))
+  if( !is.null(missingNames) && length(missingNames) > 0 ) stop("Missing parameters: ", paste(missingNames, collapse=", "))
+
   if(is.null(varcov)) {
     varcov <- diag(.Machine$double.eps, nrow=N, ncol=N)
     dimnames(varcov) = list(tdmore$parameters, tdmore$parameters)

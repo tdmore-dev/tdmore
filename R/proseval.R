@@ -127,7 +127,8 @@ doseSimulation <- function(x, ..., optimize, predict,
                            .verbose=TRUE) {
   if(! .fit %in% names(x)) stop(".fit column needs to be present in x for doseSimulation to work")
   if(missing(predict)) predict <- function(truth, regimen, time) {
-    stats::predict(truth, regimen=regimen, newdata=time)
+    result <- stats::predict(truth, regimen=regimen, newdata=time)
+    residuals.tdmorefit(truth, data=result, weighted=TRUE)
   }
   if(tibble::is_tibble(x)) {
     res <- dplyr::rowwise(x) %>%
