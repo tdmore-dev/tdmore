@@ -1,6 +1,3 @@
-if(packageVersion('bookdown') != "0.14") stop("Expecting bookdown version 0.13")
-
-
 build <- function() {
   setwd(devtools::package_file("bookdown/"))
   bookoutputdir <- devtools::package_file("docs/book/")
@@ -14,7 +11,7 @@ build <- function() {
   arguments <- list(input="index.Rmd",
                       output_format="bookdown::gitbook",
                       output_dir = bookoutputdir,
-                      new_session=TRUE)
+                      new_session=FALSE)
   do.call(bookdown::render_book, arguments)
   unlink("_bookdown_files", recursive=TRUE) #clean up
   unlink("_main.rds")
@@ -23,24 +20,13 @@ build <- function() {
 
 buildWithPackage <- function() {
   pkg <- devtools::as.package(".")
-  tmp_lib <- tempfile("R_LIBS")
-  dir.create(tmp_lib)
-  on.exit({
-    unlink(tmp_lib, recursive = TRUE)
-  }, add=T)
-  utils::install.packages(repos = NULL,
-                          lib = tmp_lib,
-                          pkg$path,
-                          type = "source",
-                          INSTALL_opts = c("--example",
-                                           "--install-tests",
-                                           "--with-keep.source",
-                                           "--with-keep.parse.data",
-                                           "--no-multiarch"),
-                          quiet = FALSE)
-  withr::with_libpaths(tmp_lib, {
-    build()
-  }, action="prefix")
+
+  withr::local_temp_libpaths()
+  message("Installing package into temporary library")
+  utils::install.packages(pkg$src_path, repo = NULL, type = "source",
+                          quiet = TRUE)
+
+  build()
 }
 
 buildWithPackage()
