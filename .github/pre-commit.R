@@ -22,11 +22,6 @@
 ##    do the file modification dates agree with dependencies?
 ##    ( are you committing these dependent files? ) -> no, as we assume this is a conscious decision
 ##
-## This system will get confused if you made multiple modifications, but are only committing a part.
-## E.g.
-##   ChangeA: typo in source code file #1
-##   ChangeB: typo in documentation for file #2, should also commit updated pkgdown site
-##   The pre-commit hook for ChangeA will complain that the pkgdown site should be recompiled.
 ## ---------------------------
 suppressMessages(
   library(tidyverse)
@@ -71,11 +66,7 @@ files <- files %>% mutate(category = categorize(
   #note that built vignettes should not be in github, https://github.com/r-lib/devtools/issues/584
   #We simply use this as a shortcut for better dependency detection
   vignettesOut=grepl(file, "^vignettes/.*$"),
-  book=startsWith(file, "bookdown/"),
   metadata=(file %in% c("DESCRIPTION","LICENSE")),
-  bookResult=startsWith(file, "docs/book/"),
-  pkgdown=(file == "_pkgdown.yml"),
-  pkgdownResult= startsWith(file, "docs/"),
   man=startsWith(file, "man/"),
   NAMESPACE=file=="NAMESPACE",
 #  READMERmd=(file=="README.Rmd"),
@@ -149,11 +140,6 @@ if(nrow(problems) > 0) {
     devtools::document()
   }
   if("READMEmd" %in% problems$category) devtools::build_readme(quiet=TRUE)
-  if("pkgdownResult" %in% problems$category) {
-    message("Building site...")
-    devtools::build_site(quiet=TRUE)
-  }
-  if("bookResult" %in% problems$category) source("bookdown/create_bookdown.R")
 
   message("Review the modified files, stage them, and commit again")
   stop(call. = FALSE)

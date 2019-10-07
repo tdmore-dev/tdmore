@@ -41,7 +41,7 @@ r_packages:
 after_success:
   - Rscript -e 'library(covr);codecov(quiet=FALSE)'
   - Rscript -e 'library(pkgdown);pkgdown::build_site()'
-  - Rscript -e 'source("bookdown/create_bookdown.R", chdir=TRUE)'
+  - Rscript -e 'source("bookdown/create_bookdown.R")'
 
 deploy:
   local_dir: docs
