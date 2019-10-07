@@ -8,6 +8,9 @@
 #' @docType package
 NULL
 
+## quiets concerns of R CMD check re: the .'s that appear in pipelines
+utils::globalVariables(c("."))
+
 loadModel <- function(modName, Rfile) {
   if(interactive()) cat("Loading model ", modName, " ...\n")
   result <- source(Rfile, keep.source = TRUE)
