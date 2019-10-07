@@ -1,5 +1,16 @@
 language: r
 
+## GITHUB_PAT environment variable
+## to allow uploading compiled Pages
+## and installing private github packages
+##
+## Generate by:
+## 1) install rubygems in Cygwin
+## 2) gem install travis
+## 3) ~/bin/travis login --pro
+## 4) ~/bin/travis encrypt --pro -r tdmore-dev/tdmore GITHUB_PAT="my_secret_key"
+secure: "LRB9pKoccAsNovu2YVCHqJaim7EMjr48pnh3J8mA3KqLtMfyl7/FQjCwh4HLs09FcSPYB/lS+fHkA5fVwkS+xv0HO87iR6Ox8cXCL2xqexDD2rUVjNE/97ZNdKJMBu6jIQU/M9qhhUnN7HFd/o8fbITuibrt9tzmmy4SanbcCPmWMhjLUw7EKq54kEzC0EYpZCSkb6RBpR3kAB2z6Bh+h4teKJMp9xcKeZFtxKVUZttsaP7qKG3UBnMtcfTA+19HfTn73ZeydQH7qDGqkhcuOiz858oY+fQjEUIkA9w4t7xXa0ekmlt89ga4r2mpxSWQvb7sfIsmKcMdDPl5KoitCOmSopZA9wHhlFhICcGVKftlBM7mlVhjXz/ORdXJGg8EzKuy97ACU/NRceYeyu+pB60T0dw31hNfi2MrXDUmBaDsq2pvFWdZlgwx/w85p5B57yE98+b1hNpv+MSgz6WiahdlTBz2ORAo+S/YyUlSxcclJS72pfN+MN1BYQ68IlyCf3E+C0C9prtTj1KiZKbbOWqBZfJZWnD15rg2K8hZ34QJCIpn4A+sY/Cl0oHWU9/iLuqDb9j2tK2HQUeIBGgdyyrfiK1On7zuRGF84UIZ0SBUWfSvJ+WmidNB2m8iX97kjHV7OAbzaUlYOrRrNGfxf/3veX9c3lDdoH9Fy+DmVqk="
+
 cache:
   packages: true
   directories:
@@ -27,6 +38,17 @@ r_packages:
 
 after_success:
   - Rscript -e 'library(covr);codecov(quiet=FALSE)'
+  - Rscript -e 'library(pkgdown);pkgdown::build_site()'
+  - Rscript -e 'source("bookdown/create_bookdown.R", chdir=TRUE)'
+
+deploy:
+  local_dir: docs
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_PAT
+  keep_history: true
+  on:
+    branch: master
 
 notifications:
   email:
