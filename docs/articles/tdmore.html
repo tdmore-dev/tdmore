@@ -71,6 +71,9 @@
       <a href="../articles/ggplot.html">Using ggplot to visualize tdmore results</a>
     </li>
     <li>
+      <a href="../articles/mpc.html">Model-predictive control</a>
+    </li>
+    <li>
       <a href="../articles/proseval.html">Prospective evaluation</a>
     </li>
     <li>
@@ -123,63 +126,63 @@
 <h3 class="hasAnchor">
 <a href="#creating-your-model" class="anchor"></a>Creating your model</h3>
 <p>There are several ways telling TDMore what your model is. The easiest way is to provide the model in the form of a nxlmir model. The following example shows how a 2-compartment-PK model can be written. For the purpose of this demonstration, the ‘Meropenem’ PK model will be used. As Meropenem is given by injection into a vein, the absorption compartment is omitted.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(nlmixr)</a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){</a>
-<a class="sourceLine" id="cb1-4" title="4">  <span class="kw">ini</span>({</a>
-<a class="sourceLine" id="cb1-5" title="5">    TVV1 &lt;-<span class="st"> </span><span class="fl">24.4</span>;</a>
-<a class="sourceLine" id="cb1-6" title="6">    TVV2 &lt;-<span class="st"> </span><span class="fl">7.01</span>;</a>
-<a class="sourceLine" id="cb1-7" title="7">    TVQ &lt;-<span class="st"> </span><span class="fl">4.97</span>;</a>
-<a class="sourceLine" id="cb1-8" title="8">    TVCL &lt;-<span class="st"> </span><span class="fl">9.87</span>;</a>
-<a class="sourceLine" id="cb1-9" title="9">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.194</span> <span class="co"># This value corresponds to OMEGA_CL (44% SD)</span></a>
-<a class="sourceLine" id="cb1-10" title="10">    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.287</span> <span class="co"># This value corresponds to OMEGA_V1 (54% SD)</span></a>
-<a class="sourceLine" id="cb1-11" title="11">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.371</span> <span class="co"># Proportional error (37% SD)</span></a>
-<a class="sourceLine" id="cb1-12" title="12">  })</a>
-<a class="sourceLine" id="cb1-13" title="13">  <span class="kw">model</span>({</a>
-<a class="sourceLine" id="cb1-14" title="14">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(ECL)</a>
-<a class="sourceLine" id="cb1-15" title="15">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EV1)</a>
-<a class="sourceLine" id="cb1-16" title="16">    V2 &lt;-<span class="st"> </span>TVV2</a>
-<a class="sourceLine" id="cb1-17" title="17">    Q &lt;-<span class="st"> </span>TVQ</a>
-<a class="sourceLine" id="cb1-18" title="18">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</a>
-<a class="sourceLine" id="cb1-19" title="19">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</a>
-<a class="sourceLine" id="cb1-20" title="20"></a>
-<a class="sourceLine" id="cb1-21" title="21">    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
-<a class="sourceLine" id="cb1-22" title="22">    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
-<a class="sourceLine" id="cb1-23" title="23"></a>
-<a class="sourceLine" id="cb1-24" title="24">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1</a>
-<a class="sourceLine" id="cb1-25" title="25">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="co"># Proportional error linked to the PK model</span></a>
-<a class="sourceLine" id="cb1-26" title="26">  })</a>
-<a class="sourceLine" id="cb1-27" title="27">}</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(nlmixr)</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a>modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){</span>
+<span id="cb1-4"><a href="#cb1-4"></a>  <span class="kw">ini</span>({</span>
+<span id="cb1-5"><a href="#cb1-5"></a>    TVV1 &lt;-<span class="st"> </span><span class="fl">24.4</span>;</span>
+<span id="cb1-6"><a href="#cb1-6"></a>    TVV2 &lt;-<span class="st"> </span><span class="fl">7.01</span>;</span>
+<span id="cb1-7"><a href="#cb1-7"></a>    TVQ &lt;-<span class="st"> </span><span class="fl">4.97</span>;</span>
+<span id="cb1-8"><a href="#cb1-8"></a>    TVCL &lt;-<span class="st"> </span><span class="fl">9.87</span>;</span>
+<span id="cb1-9"><a href="#cb1-9"></a>    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.194</span> <span class="co"># This value corresponds to OMEGA_CL (44% SD)</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a>    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.287</span> <span class="co"># This value corresponds to OMEGA_V1 (54% SD)</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a>    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.371</span> <span class="co"># Proportional error (37% SD)</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a>  })</span>
+<span id="cb1-13"><a href="#cb1-13"></a>  <span class="kw">model</span>({</span>
+<span id="cb1-14"><a href="#cb1-14"></a>    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(ECL)</span>
+<span id="cb1-15"><a href="#cb1-15"></a>    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EV1)</span>
+<span id="cb1-16"><a href="#cb1-16"></a>    V2 &lt;-<span class="st"> </span>TVV2</span>
+<span id="cb1-17"><a href="#cb1-17"></a>    Q &lt;-<span class="st"> </span>TVQ</span>
+<span id="cb1-18"><a href="#cb1-18"></a>    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</span>
+<span id="cb1-19"><a href="#cb1-19"></a>    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</span>
+<span id="cb1-20"><a href="#cb1-20"></a></span>
+<span id="cb1-21"><a href="#cb1-21"></a>    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</span>
+<span id="cb1-22"><a href="#cb1-22"></a>    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</span>
+<span id="cb1-23"><a href="#cb1-23"></a></span>
+<span id="cb1-24"><a href="#cb1-24"></a>    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1</span>
+<span id="cb1-25"><a href="#cb1-25"></a>    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="co"># Proportional error linked to the PK model</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a>  })</span>
+<span id="cb1-27"><a href="#cb1-27"></a>}</span></code></pre></div>
 <p>Once the model is created, a TDMore object can be instantiated as follows:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tdmore)</a>
-<a class="sourceLine" id="cb2-2" title="2"></a>
-<a class="sourceLine" id="cb2-3" title="3">nlmixrUI &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)</a>
-<a class="sourceLine" id="cb2-4" title="4">tdmore &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrUI)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tdmore)</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a>nlmixrUI &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)</span>
+<span id="cb2-4"><a href="#cb2-4"></a>tdmore &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrUI)</span></code></pre></div>
 <p>The TDMore object is now ready for use.</p>
 </div>
 <div id="predicting-new-data" class="section level3 unnumbered">
 <h3 class="hasAnchor">
 <a href="#predicting-new-data" class="anchor"></a>Predicting new data</h3>
 <p>TDMore can be used to run simulations, based on the model defined in the previous step. For doing so, the regimen first needs to be specified. In the case of Meropenem, an 30-min injection is given into the central compartment every 8 hour. This can be written as follows:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</a>
-<a class="sourceLine" id="cb3-2" title="2">  <span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>),            <span class="co"># Every 8 hour and for 1 day, an injection is given</span></a>
-<a class="sourceLine" id="cb3-3" title="3">  <span class="dt">AMT=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>),     <span class="co"># 1g is administered</span></a>
-<a class="sourceLine" id="cb3-4" title="4">  <span class="dt">RATE=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span></a>
-<a class="sourceLine" id="cb3-5" title="5">)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</span>
+<span id="cb3-2"><a href="#cb3-2"></a>  <span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>),            <span class="co"># Every 8 hour and for 1 day, an injection is given</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="dt">AMT=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>),     <span class="co"># 1g is administered</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>  <span class="dt">RATE=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>)</span></code></pre></div>
 <p>Let’s now simulate the population PK model for 1 day. This can be done using the TDMore predict() function. A dataframe with all the times to predict (and respective NA concentration) is given to the ‘newdata’ argument. Field ‘se’ is set to true, it tells TDMore we are interested to simulate the model with residual variability.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(</a>
-<a class="sourceLine" id="cb4-2" title="2">  <span class="dt">object =</span> tdmore,</a>
-<a class="sourceLine" id="cb4-3" title="3">  <span class="dt">newdata =</span> <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME =</span> <span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dt">by =</span> <span class="fl">0.5</span>), <span class="dt">CONC =</span> <span class="ot">NA</span>),</a>
-<a class="sourceLine" id="cb4-4" title="4">  <span class="dt">regimen =</span> regimen,</a>
-<a class="sourceLine" id="cb4-5" title="5">  <span class="dt">se =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb4-6" title="6">  )</a>
-<a class="sourceLine" id="cb4-7" title="7">  </a>
-<a class="sourceLine" id="cb4-8" title="8"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)</a>
-<a class="sourceLine" id="cb4-9" title="9"><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb4-10" title="10"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Population"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"steelblue2"</span>, <span class="dt">alpha=</span><span class="fl">0.15</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb4-11" title="11"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>), <span class="dt">data=</span>data) <span class="op">+</span></a>
-<a class="sourceLine" id="cb4-12" title="12"><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"steelblue2"</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb4-13" title="13"><span class="st">  </span><span class="kw">scale_y_log10</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(</span>
+<span id="cb4-2"><a href="#cb4-2"></a>  <span class="dt">object =</span> tdmore,</span>
+<span id="cb4-3"><a href="#cb4-3"></a>  <span class="dt">newdata =</span> <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME =</span> <span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dt">by =</span> <span class="fl">0.5</span>), <span class="dt">CONC =</span> <span class="ot">NA</span>),</span>
+<span id="cb4-4"><a href="#cb4-4"></a>  <span class="dt">regimen =</span> regimen,</span>
+<span id="cb4-5"><a href="#cb4-5"></a>  <span class="dt">se =</span> <span class="ot">TRUE</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>  )</span>
+<span id="cb4-7"><a href="#cb4-7"></a>  </span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)</span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Population"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"steelblue2"</span>, <span class="dt">alpha=</span><span class="fl">0.15</span>) <span class="op">+</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>), <span class="dt">data=</span>data) <span class="op">+</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"steelblue2"</span>)) <span class="op">+</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="st">  </span><span class="kw">scale_y_log10</span>()</span></code></pre></div>
 <p><img src="tdmore_files/figure-html/population_prediction-1.png" width="768" style="display: block; margin: auto;"></p>
 <p>The plot above shows the median of the population (typical profile) and its 95% confidence interval. The range of the confidence interval can be changed using the argument ‘level’.</p>
 </div>
@@ -187,57 +190,57 @@
 <h3 class="hasAnchor">
 <a href="#estimating-individual-parameters" class="anchor"></a>Estimating individual parameters</h3>
 <p>This section will show you how the individual parameters can be estimated, based on some observed data. Let’s first estimate the parameters of a typical individual. This is achieved by calling the estimate() function.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> regimen)</a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="kw"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(pred)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> regimen)</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(pred)</span></code></pre></div>
 <pre><code>## ECL EV1 
 ##   0   0</code></pre>
 <p>Both eta’s ECL and EV1 have been estimated to 0. This is not surprising, as zero eta’s best describe the population average. We can also look at the uncertainty on these estimates.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw"><a href="https://rdrr.io/r/stats/vcov.html">vcov</a></span>(pred)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw"><a href="https://rdrr.io/r/stats/vcov.html">vcov</a></span>(pred)</span></code></pre></div>
 <pre><code>##              ECL          EV1
 ## ECL 1.940000e-01 1.090438e-13
 ## EV1 1.090438e-13 2.870000e-01</code></pre>
 <p>This uncertainty is equal to the population inter-individual variability (OMEGA matrix). Now, let’s assume blood samples have been collected for a subject X at different times. For example, blood samples were collected at times 9h and 16h on the first day. This can be translated in TDMore as follows (note that the concentrations are purely fictive):</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">observed &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">9</span>, <span class="dv">15</span>), <span class="dt">CONC=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">30</span>, <span class="dv">2</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>observed &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">9</span>, <span class="dv">15</span>), <span class="dt">CONC=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">30</span>, <span class="dv">2</span>))</span></code></pre></div>
 <p>We can ask TDMore to re-estimate the parameters for this specific individual:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)</a>
-<a class="sourceLine" id="cb10-2" title="2"><span class="kw"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(ipred)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)</span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="kw"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(ipred)</span></code></pre></div>
 <pre><code>##        ECL        EV1 
 ##  0.2597598 -0.1320256</code></pre>
 <p>Eta’s obtained by calling ‘coef’ on pred maximise altogether the likelihood for this specific subject. The variance-covariance matrix shows the uncertainty of the individual estimates, and their correlation.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw"><a href="https://rdrr.io/r/stats/vcov.html">vcov</a></span>(ipred)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw"><a href="https://rdrr.io/r/stats/vcov.html">vcov</a></span>(ipred)</span></code></pre></div>
 <pre><code>##            ECL        EV1
 ## ECL 0.03154125 0.04680262
 ## EV1 0.04680262 0.12759879</code></pre>
 <p>Predictions for the population (pred) and this specific subject (ipred) can be compared using the following snippet:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se=</span><span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb14-2" title="2"><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME))  <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-3" title="3"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Individual"</span>, <span class="dt">y=</span>CONC.median)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-4" title="4"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Individual"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"tomato1"</span>, <span class="dt">alpha=</span><span class="fl">0.10</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-5" title="5"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>, <span class="dt">y=</span>CONC), <span class="dt">data=</span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(pred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>))) <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-6" title="6"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y=</span>CONC), <span class="dt">data=</span>observed) <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-7" title="7"><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"tomato1"</span>, <span class="st">"steelblue2"</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-8" title="8"><span class="st">  </span><span class="kw">scale_y_log10</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se=</span><span class="ot">TRUE</span>)</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME))  <span class="op">+</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Individual"</span>, <span class="dt">y=</span>CONC.median)) <span class="op">+</span></span>
+<span id="cb14-4"><a href="#cb14-4"></a><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Individual"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"tomato1"</span>, <span class="dt">alpha=</span><span class="fl">0.10</span>) <span class="op">+</span></span>
+<span id="cb14-5"><a href="#cb14-5"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>, <span class="dt">y=</span>CONC), <span class="dt">data=</span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(pred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>))) <span class="op">+</span></span>
+<span id="cb14-6"><a href="#cb14-6"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y=</span>CONC), <span class="dt">data=</span>observed) <span class="op">+</span></span>
+<span id="cb14-7"><a href="#cb14-7"></a><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"tomato1"</span>, <span class="st">"steelblue2"</span>)) <span class="op">+</span></span>
+<span id="cb14-8"><a href="#cb14-8"></a><span class="st">  </span><span class="kw">scale_y_log10</span>()</span></code></pre></div>
 <p><img src="tdmore_files/figure-html/pred_ipred_predictions-1.png" width="768" style="display: block; margin: auto;"></p>
 <p>Ipred and pred are shown respectively in red and blue. A 95% confidence interval has been added around the ipred prediction. Note that the default TDMore plotting function can also be used to obtain the exact same plot in a single line of code:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0.1</span>, <span class="dv">24</span>, <span class="dt">by=</span><span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0.1</span>, <span class="dv">24</span>, <span class="dt">by=</span><span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</span></code></pre></div>
 </div>
 <div id="finding-the-right-dose-to-give" class="section level3 unnumbered">
 <h3 class="hasAnchor">
 <a href="#finding-the-right-dose-to-give" class="anchor"></a>Finding the right dose to give</h3>
 <p>A very interesting feature in TDMore is the possibility to ask the framework the next dose to be given knowing all the previous observations that were collected and some known end-points. For example, assume we still collected the same two observations on the first day, we would like to find the best first dose to be given on the second day. We would like to reach the trough concentration of 3.10 mg/L as much as possible. This can be expressed, as follows:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">newRegimen &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</a>
-<a class="sourceLine" id="cb16-2" title="2">  <span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">24</span>),              <span class="co"># A fourth dose on the second day is added</span></a>
-<a class="sourceLine" id="cb16-3" title="3">  <span class="dt">AMT=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="ot">NA</span>),       <span class="co"># Adding an unknown dose on the second day</span></a>
-<a class="sourceLine" id="cb16-4" title="4">  <span class="dt">RATE=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span></a>
-<a class="sourceLine" id="cb16-5" title="5">)</a>
-<a class="sourceLine" id="cb16-6" title="6"></a>
-<a class="sourceLine" id="cb16-7" title="7">recommendation &lt;-<span class="st"> </span><span class="kw"><a href="../reference/findDose.html">findDose</a></span>(</a>
-<a class="sourceLine" id="cb16-8" title="8">  ipred,</a>
-<a class="sourceLine" id="cb16-9" title="9">  <span class="dt">regimen =</span> newRegimen,</a>
-<a class="sourceLine" id="cb16-10" title="10">  <span class="dt">interval =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">100</span>, <span class="dv">5000</span>),</a>
-<a class="sourceLine" id="cb16-11" title="11">  <span class="dt">target =</span> <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME =</span> <span class="dv">32</span>, <span class="dt">CONC =</span> <span class="dv">8</span>)</a>
-<a class="sourceLine" id="cb16-12" title="12">  )</a>
-<a class="sourceLine" id="cb16-13" title="13"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(recommendation)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>newRegimen &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</span>
+<span id="cb16-2"><a href="#cb16-2"></a>  <span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">24</span>),              <span class="co"># A fourth dose on the second day is added</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a>  <span class="dt">AMT=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="ot">NA</span>),       <span class="co"># Adding an unknown dose on the second day</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a>  <span class="dt">RATE=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a>)</span>
+<span id="cb16-6"><a href="#cb16-6"></a></span>
+<span id="cb16-7"><a href="#cb16-7"></a>recommendation &lt;-<span class="st"> </span><span class="kw"><a href="../reference/findDose.html">findDose</a></span>(</span>
+<span id="cb16-8"><a href="#cb16-8"></a>  ipred,</span>
+<span id="cb16-9"><a href="#cb16-9"></a>  <span class="dt">regimen =</span> newRegimen,</span>
+<span id="cb16-10"><a href="#cb16-10"></a>  <span class="dt">interval =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">100</span>, <span class="dv">5000</span>),</span>
+<span id="cb16-11"><a href="#cb16-11"></a>  <span class="dt">target =</span> <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME =</span> <span class="dv">32</span>, <span class="dt">CONC =</span> <span class="dv">8</span>)</span>
+<span id="cb16-12"><a href="#cb16-12"></a>  )</span>
+<span id="cb16-13"><a href="#cb16-13"></a><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(recommendation)</span></code></pre></div>
 <pre><code>## $dose
 ## [1] 4540.072
 ## 
@@ -248,116 +251,116 @@
 ## 3   16 1000.000 2000
 ## 4   24 4540.072 2000</code></pre>
 <p>The result of the findDose() routine is shown above. It tells us that XXX mg (approximately) is the recommended starting dose on the second day. The following code helps up verify this visually.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="co"># Recommended regimen for individual can be directly accessed from the recommendation object</span></a>
-<a class="sourceLine" id="cb18-2" title="2">ipredRecommendedRegimen &lt;-<span class="st"> </span>recommendation<span class="op">$</span>regimen</a>
-<a class="sourceLine" id="cb18-3" title="3"></a>
-<a class="sourceLine" id="cb18-4" title="4"><span class="co"># Population regimen can be updated using the 'updateRegimen' method, a 4th dose of 1000 is used</span></a>
-<a class="sourceLine" id="cb18-5" title="5">predUpdatedRegimen &lt;-<span class="st"> </span><span class="kw"><a href="../reference/updateRegimen.html">updateRegimen</a></span>(<span class="dt">regimen =</span> newRegimen, <span class="dt">newDose =</span> <span class="dv">4500</span>)</a>
-<a class="sourceLine" id="cb18-6" title="6"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(predUpdatedRegimen) <span class="co"># Check pred regimen</span></a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># Recommended regimen for individual can be directly accessed from the recommendation object</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a>ipredRecommendedRegimen &lt;-<span class="st"> </span>recommendation<span class="op">$</span>regimen</span>
+<span id="cb18-3"><a href="#cb18-3"></a></span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="co"># Population regimen can be updated using the 'updateRegimen' method, a 4th dose of 1000 is used</span></span>
+<span id="cb18-5"><a href="#cb18-5"></a>predUpdatedRegimen &lt;-<span class="st"> </span><span class="kw"><a href="../reference/updateRegimen.html">updateRegimen</a></span>(<span class="dt">regimen =</span> newRegimen, <span class="dt">newDose =</span> <span class="dv">4500</span>)</span>
+<span id="cb18-6"><a href="#cb18-6"></a><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(predUpdatedRegimen) <span class="co"># Check pred regimen</span></span></code></pre></div>
 <pre><code>##   TIME  AMT RATE
 ## 1    0 1000 2000
 ## 2    8 1000 2000
 ## 3   16 1000 2000
 ## 4   24 4500 2000</code></pre>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> ipredRecommendedRegimen)</a>
-<a class="sourceLine" id="cb20-2" title="2">pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> predUpdatedRegimen)</a></code></pre></div>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">32</span>, <span class="dt">by=</span><span class="fl">0.1</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="dv">8</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> ipredRecommendedRegimen)</span>
+<span id="cb20-2"><a href="#cb20-2"></a>pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> predUpdatedRegimen)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">32</span>, <span class="dt">by=</span><span class="fl">0.1</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="dv">8</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</span></code></pre></div>
 <p><img src="tdmore_files/figure-html/find_dose_pred_ipred_predictions-1.png" width="768" style="display: block; margin: auto;"></p>
 <p>The plot above demonstrates that the individual is reaching the trough concentration quite well after the first administration on the second day.</p>
 </div>
 <div id="code-appendix" class="section level3">
 <h3 class="hasAnchor">
 <a href="#code-appendix" class="anchor"></a>Code appendix</h3>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="dv">0</span>) </a>
-<a class="sourceLine" id="cb22-2" title="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(nlmixr)</a>
-<a class="sourceLine" id="cb22-3" title="3"></a>
-<a class="sourceLine" id="cb22-4" title="4">modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){</a>
-<a class="sourceLine" id="cb22-5" title="5">  <span class="kw">ini</span>({</a>
-<a class="sourceLine" id="cb22-6" title="6">    TVV1 &lt;-<span class="st"> </span><span class="fl">24.4</span>;</a>
-<a class="sourceLine" id="cb22-7" title="7">    TVV2 &lt;-<span class="st"> </span><span class="fl">7.01</span>;</a>
-<a class="sourceLine" id="cb22-8" title="8">    TVQ &lt;-<span class="st"> </span><span class="fl">4.97</span>;</a>
-<a class="sourceLine" id="cb22-9" title="9">    TVCL &lt;-<span class="st"> </span><span class="fl">9.87</span>;</a>
-<a class="sourceLine" id="cb22-10" title="10">    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.194</span> <span class="co"># This value corresponds to OMEGA_CL (44% SD)</span></a>
-<a class="sourceLine" id="cb22-11" title="11">    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.287</span> <span class="co"># This value corresponds to OMEGA_V1 (54% SD)</span></a>
-<a class="sourceLine" id="cb22-12" title="12">    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.371</span> <span class="co"># Proportional error (37% SD)</span></a>
-<a class="sourceLine" id="cb22-13" title="13">  })</a>
-<a class="sourceLine" id="cb22-14" title="14">  <span class="kw">model</span>({</a>
-<a class="sourceLine" id="cb22-15" title="15">    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(ECL)</a>
-<a class="sourceLine" id="cb22-16" title="16">    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EV1)</a>
-<a class="sourceLine" id="cb22-17" title="17">    V2 &lt;-<span class="st"> </span>TVV2</a>
-<a class="sourceLine" id="cb22-18" title="18">    Q &lt;-<span class="st"> </span>TVQ</a>
-<a class="sourceLine" id="cb22-19" title="19">    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</a>
-<a class="sourceLine" id="cb22-20" title="20">    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</a>
-<a class="sourceLine" id="cb22-21" title="21"></a>
-<a class="sourceLine" id="cb22-22" title="22">    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
-<a class="sourceLine" id="cb22-23" title="23">    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</a>
-<a class="sourceLine" id="cb22-24" title="24"></a>
-<a class="sourceLine" id="cb22-25" title="25">    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1</a>
-<a class="sourceLine" id="cb22-26" title="26">    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="co"># Proportional error linked to the PK model</span></a>
-<a class="sourceLine" id="cb22-27" title="27">  })</a>
-<a class="sourceLine" id="cb22-28" title="28">}</a>
-<a class="sourceLine" id="cb22-29" title="29"></a>
-<a class="sourceLine" id="cb22-30" title="30"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tdmore)</a>
-<a class="sourceLine" id="cb22-31" title="31"></a>
-<a class="sourceLine" id="cb22-32" title="32">nlmixrUI &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)</a>
-<a class="sourceLine" id="cb22-33" title="33">tdmore &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrUI)</a>
-<a class="sourceLine" id="cb22-34" title="34">regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</a>
-<a class="sourceLine" id="cb22-35" title="35">  <span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>),            <span class="co"># Every 8 hour and for 1 day, an injection is given</span></a>
-<a class="sourceLine" id="cb22-36" title="36">  <span class="dt">AMT=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>),     <span class="co"># 1g is administered</span></a>
-<a class="sourceLine" id="cb22-37" title="37">  <span class="dt">RATE=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span></a>
-<a class="sourceLine" id="cb22-38" title="38">)</a>
-<a class="sourceLine" id="cb22-39" title="39">data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(</a>
-<a class="sourceLine" id="cb22-40" title="40">  <span class="dt">object =</span> tdmore,</a>
-<a class="sourceLine" id="cb22-41" title="41">  <span class="dt">newdata =</span> <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME =</span> <span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dt">by =</span> <span class="fl">0.5</span>), <span class="dt">CONC =</span> <span class="ot">NA</span>),</a>
-<a class="sourceLine" id="cb22-42" title="42">  <span class="dt">regimen =</span> regimen,</a>
-<a class="sourceLine" id="cb22-43" title="43">  <span class="dt">se =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb22-44" title="44">  )</a>
-<a class="sourceLine" id="cb22-45" title="45">  </a>
-<a class="sourceLine" id="cb22-46" title="46"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)</a>
-<a class="sourceLine" id="cb22-47" title="47"><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-48" title="48"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Population"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"steelblue2"</span>, <span class="dt">alpha=</span><span class="fl">0.15</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-49" title="49"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>), <span class="dt">data=</span>data) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-50" title="50"><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"steelblue2"</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-51" title="51"><span class="st">  </span><span class="kw">scale_y_log10</span>()</a>
-<a class="sourceLine" id="cb22-52" title="52">  </a>
-<a class="sourceLine" id="cb22-53" title="53">pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> regimen)</a>
-<a class="sourceLine" id="cb22-54" title="54"><span class="kw"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(pred)</a>
-<a class="sourceLine" id="cb22-55" title="55"><span class="kw"><a href="https://rdrr.io/r/stats/vcov.html">vcov</a></span>(pred)</a>
-<a class="sourceLine" id="cb22-56" title="56">observed &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">9</span>, <span class="dv">15</span>), <span class="dt">CONC=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">30</span>, <span class="dv">2</span>))</a>
-<a class="sourceLine" id="cb22-57" title="57">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)</a>
-<a class="sourceLine" id="cb22-58" title="58"><span class="kw"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(ipred)</a>
-<a class="sourceLine" id="cb22-59" title="59"><span class="kw"><a href="https://rdrr.io/r/stats/vcov.html">vcov</a></span>(ipred)</a>
-<a class="sourceLine" id="cb22-60" title="60">data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se=</span><span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb22-61" title="61"><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME))  <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-62" title="62"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Individual"</span>, <span class="dt">y=</span>CONC.median)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-63" title="63"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Individual"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"tomato1"</span>, <span class="dt">alpha=</span><span class="fl">0.10</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-64" title="64"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>, <span class="dt">y=</span>CONC), <span class="dt">data=</span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(pred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>))) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-65" title="65"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y=</span>CONC), <span class="dt">data=</span>observed) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-66" title="66"><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"tomato1"</span>, <span class="st">"steelblue2"</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-67" title="67"><span class="st">  </span><span class="kw">scale_y_log10</span>()</a>
-<a class="sourceLine" id="cb22-68" title="68"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0.1</span>, <span class="dv">24</span>, <span class="dt">by=</span><span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</a>
-<a class="sourceLine" id="cb22-69" title="69">newRegimen &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</a>
-<a class="sourceLine" id="cb22-70" title="70">  <span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">24</span>),              <span class="co"># A fourth dose on the second day is added</span></a>
-<a class="sourceLine" id="cb22-71" title="71">  <span class="dt">AMT=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="ot">NA</span>),       <span class="co"># Adding an unknown dose on the second day</span></a>
-<a class="sourceLine" id="cb22-72" title="72">  <span class="dt">RATE=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span></a>
-<a class="sourceLine" id="cb22-73" title="73">)</a>
-<a class="sourceLine" id="cb22-74" title="74"></a>
-<a class="sourceLine" id="cb22-75" title="75">recommendation &lt;-<span class="st"> </span><span class="kw"><a href="../reference/findDose.html">findDose</a></span>(</a>
-<a class="sourceLine" id="cb22-76" title="76">  ipred,</a>
-<a class="sourceLine" id="cb22-77" title="77">  <span class="dt">regimen =</span> newRegimen,</a>
-<a class="sourceLine" id="cb22-78" title="78">  <span class="dt">interval =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">100</span>, <span class="dv">5000</span>),</a>
-<a class="sourceLine" id="cb22-79" title="79">  <span class="dt">target =</span> <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME =</span> <span class="dv">32</span>, <span class="dt">CONC =</span> <span class="dv">8</span>)</a>
-<a class="sourceLine" id="cb22-80" title="80">  )</a>
-<a class="sourceLine" id="cb22-81" title="81"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(recommendation)</a>
-<a class="sourceLine" id="cb22-82" title="82"><span class="co"># Recommended regimen for individual can be directly accessed from the recommendation object</span></a>
-<a class="sourceLine" id="cb22-83" title="83">ipredRecommendedRegimen &lt;-<span class="st"> </span>recommendation<span class="op">$</span>regimen</a>
-<a class="sourceLine" id="cb22-84" title="84"></a>
-<a class="sourceLine" id="cb22-85" title="85"><span class="co"># Population regimen can be updated using the 'updateRegimen' method, a 4th dose of 1000 is used</span></a>
-<a class="sourceLine" id="cb22-86" title="86">predUpdatedRegimen &lt;-<span class="st"> </span><span class="kw"><a href="../reference/updateRegimen.html">updateRegimen</a></span>(<span class="dt">regimen =</span> newRegimen, <span class="dt">newDose =</span> <span class="dv">4500</span>)</a>
-<a class="sourceLine" id="cb22-87" title="87"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(predUpdatedRegimen) <span class="co"># Check pred regimen</span></a>
-<a class="sourceLine" id="cb22-88" title="88">ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> ipredRecommendedRegimen)</a>
-<a class="sourceLine" id="cb22-89" title="89">pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> predUpdatedRegimen)</a>
-<a class="sourceLine" id="cb22-90" title="90"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">32</span>, <span class="dt">by=</span><span class="fl">0.1</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="dv">8</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="kw"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="dv">0</span>) </span>
+<span id="cb22-2"><a href="#cb22-2"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(nlmixr)</span>
+<span id="cb22-3"><a href="#cb22-3"></a></span>
+<span id="cb22-4"><a href="#cb22-4"></a>modelCode &lt;-<span class="st"> </span><span class="cf">function</span>(){</span>
+<span id="cb22-5"><a href="#cb22-5"></a>  <span class="kw">ini</span>({</span>
+<span id="cb22-6"><a href="#cb22-6"></a>    TVV1 &lt;-<span class="st"> </span><span class="fl">24.4</span>;</span>
+<span id="cb22-7"><a href="#cb22-7"></a>    TVV2 &lt;-<span class="st"> </span><span class="fl">7.01</span>;</span>
+<span id="cb22-8"><a href="#cb22-8"></a>    TVQ &lt;-<span class="st"> </span><span class="fl">4.97</span>;</span>
+<span id="cb22-9"><a href="#cb22-9"></a>    TVCL &lt;-<span class="st"> </span><span class="fl">9.87</span>;</span>
+<span id="cb22-10"><a href="#cb22-10"></a>    ECL <span class="op">~</span><span class="st"> </span><span class="fl">0.194</span> <span class="co"># This value corresponds to OMEGA_CL (44% SD)</span></span>
+<span id="cb22-11"><a href="#cb22-11"></a>    EV1 <span class="op">~</span><span class="st"> </span><span class="fl">0.287</span> <span class="co"># This value corresponds to OMEGA_V1 (54% SD)</span></span>
+<span id="cb22-12"><a href="#cb22-12"></a>    EPS_PROP &lt;-<span class="st"> </span><span class="fl">0.371</span> <span class="co"># Proportional error (37% SD)</span></span>
+<span id="cb22-13"><a href="#cb22-13"></a>  })</span>
+<span id="cb22-14"><a href="#cb22-14"></a>  <span class="kw">model</span>({</span>
+<span id="cb22-15"><a href="#cb22-15"></a>    CL &lt;-<span class="st"> </span>TVCL <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(ECL)</span>
+<span id="cb22-16"><a href="#cb22-16"></a>    V1 &lt;-<span class="st"> </span>TVV1 <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(EV1)</span>
+<span id="cb22-17"><a href="#cb22-17"></a>    V2 &lt;-<span class="st"> </span>TVV2</span>
+<span id="cb22-18"><a href="#cb22-18"></a>    Q &lt;-<span class="st"> </span>TVQ</span>
+<span id="cb22-19"><a href="#cb22-19"></a>    K12 &lt;-<span class="st"> </span>Q<span class="op">/</span>V1</span>
+<span id="cb22-20"><a href="#cb22-20"></a>    K21 &lt;-<span class="st"> </span>Q<span class="op">/</span>V2</span>
+<span id="cb22-21"><a href="#cb22-21"></a></span>
+<span id="cb22-22"><a href="#cb22-22"></a>    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(center) =<span class="st"> </span><span class="op">-</span><span class="st"> </span>CL<span class="op">/</span>V1 <span class="op">*</span><span class="st"> </span>center <span class="op">-</span><span class="st"> </span>K12<span class="op">*</span>center <span class="op">+</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</span>
+<span id="cb22-23"><a href="#cb22-23"></a>    d<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span>(periph) =<span class="st"> </span>K12<span class="op">*</span>center <span class="op">-</span><span class="st"> </span>K21 <span class="op">*</span><span class="st"> </span>periph</span>
+<span id="cb22-24"><a href="#cb22-24"></a></span>
+<span id="cb22-25"><a href="#cb22-25"></a>    CONC =<span class="st"> </span>center <span class="op">/</span><span class="st"> </span>V1</span>
+<span id="cb22-26"><a href="#cb22-26"></a>    CONC <span class="op">~</span><span class="st"> </span><span class="kw">prop</span>(EPS_PROP) <span class="co"># Proportional error linked to the PK model</span></span>
+<span id="cb22-27"><a href="#cb22-27"></a>  })</span>
+<span id="cb22-28"><a href="#cb22-28"></a>}</span>
+<span id="cb22-29"><a href="#cb22-29"></a></span>
+<span id="cb22-30"><a href="#cb22-30"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tdmore)</span>
+<span id="cb22-31"><a href="#cb22-31"></a></span>
+<span id="cb22-32"><a href="#cb22-32"></a>nlmixrUI &lt;-<span class="st"> </span><span class="kw">nlmixrUI</span>(modelCode)</span>
+<span id="cb22-33"><a href="#cb22-33"></a>tdmore &lt;-<span class="st"> </span><span class="kw"><a href="../reference/tdmore.html">tdmore</a></span>(nlmixrUI)</span>
+<span id="cb22-34"><a href="#cb22-34"></a>regimen &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</span>
+<span id="cb22-35"><a href="#cb22-35"></a>  <span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>),            <span class="co"># Every 8 hour and for 1 day, an injection is given</span></span>
+<span id="cb22-36"><a href="#cb22-36"></a>  <span class="dt">AMT=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>),     <span class="co"># 1g is administered</span></span>
+<span id="cb22-37"><a href="#cb22-37"></a>  <span class="dt">RATE=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span></span>
+<span id="cb22-38"><a href="#cb22-38"></a>)</span>
+<span id="cb22-39"><a href="#cb22-39"></a>data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(</span>
+<span id="cb22-40"><a href="#cb22-40"></a>  <span class="dt">object =</span> tdmore,</span>
+<span id="cb22-41"><a href="#cb22-41"></a>  <span class="dt">newdata =</span> <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME =</span> <span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dt">by =</span> <span class="fl">0.5</span>), <span class="dt">CONC =</span> <span class="ot">NA</span>),</span>
+<span id="cb22-42"><a href="#cb22-42"></a>  <span class="dt">regimen =</span> regimen,</span>
+<span id="cb22-43"><a href="#cb22-43"></a>  <span class="dt">se =</span> <span class="ot">TRUE</span></span>
+<span id="cb22-44"><a href="#cb22-44"></a>  )</span>
+<span id="cb22-45"><a href="#cb22-45"></a>  </span>
+<span id="cb22-46"><a href="#cb22-46"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)</span>
+<span id="cb22-47"><a href="#cb22-47"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME, <span class="dt">y=</span>CONC)) <span class="op">+</span></span>
+<span id="cb22-48"><a href="#cb22-48"></a><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Population"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"steelblue2"</span>, <span class="dt">alpha=</span><span class="fl">0.15</span>) <span class="op">+</span></span>
+<span id="cb22-49"><a href="#cb22-49"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>), <span class="dt">data=</span>data) <span class="op">+</span></span>
+<span id="cb22-50"><a href="#cb22-50"></a><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"steelblue2"</span>)) <span class="op">+</span></span>
+<span id="cb22-51"><a href="#cb22-51"></a><span class="st">  </span><span class="kw">scale_y_log10</span>()</span>
+<span id="cb22-52"><a href="#cb22-52"></a>  </span>
+<span id="cb22-53"><a href="#cb22-53"></a>pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> regimen)</span>
+<span id="cb22-54"><a href="#cb22-54"></a><span class="kw"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(pred)</span>
+<span id="cb22-55"><a href="#cb22-55"></a><span class="kw"><a href="https://rdrr.io/r/stats/vcov.html">vcov</a></span>(pred)</span>
+<span id="cb22-56"><a href="#cb22-56"></a>observed &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">9</span>, <span class="dv">15</span>), <span class="dt">CONC=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">30</span>, <span class="dv">2</span>))</span>
+<span id="cb22-57"><a href="#cb22-57"></a>ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> regimen)</span>
+<span id="cb22-58"><a href="#cb22-58"></a><span class="kw"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(ipred)</span>
+<span id="cb22-59"><a href="#cb22-59"></a><span class="kw"><a href="https://rdrr.io/r/stats/vcov.html">vcov</a></span>(ipred)</span>
+<span id="cb22-60"><a href="#cb22-60"></a>data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>), <span class="dt">se=</span><span class="ot">TRUE</span>)</span>
+<span id="cb22-61"><a href="#cb22-61"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x=</span>TIME))  <span class="op">+</span></span>
+<span id="cb22-62"><a href="#cb22-62"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Individual"</span>, <span class="dt">y=</span>CONC.median)) <span class="op">+</span></span>
+<span id="cb22-63"><a href="#cb22-63"></a><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">fill=</span><span class="st">"Individual"</span>, <span class="dt">ymin=</span>CONC.lower, <span class="dt">ymax=</span>CONC.upper), <span class="dt">fill=</span><span class="st">"tomato1"</span>, <span class="dt">alpha=</span><span class="fl">0.10</span>) <span class="op">+</span></span>
+<span id="cb22-64"><a href="#cb22-64"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color=</span><span class="st">"Population"</span>, <span class="dt">y=</span>CONC), <span class="dt">data=</span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(pred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="fl">0.1</span>))) <span class="op">+</span></span>
+<span id="cb22-65"><a href="#cb22-65"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y=</span>CONC), <span class="dt">data=</span>observed) <span class="op">+</span></span>
+<span id="cb22-66"><a href="#cb22-66"></a><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"tomato1"</span>, <span class="st">"steelblue2"</span>)) <span class="op">+</span></span>
+<span id="cb22-67"><a href="#cb22-67"></a><span class="st">  </span><span class="kw">scale_y_log10</span>()</span>
+<span id="cb22-68"><a href="#cb22-68"></a><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0.1</span>, <span class="dv">24</span>, <span class="dt">by=</span><span class="fl">0.1</span>), <span class="dt">CONC=</span><span class="ot">NA</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</span>
+<span id="cb22-69"><a href="#cb22-69"></a>newRegimen &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</span>
+<span id="cb22-70"><a href="#cb22-70"></a>  <span class="dt">TIME=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">24</span>),              <span class="co"># A fourth dose on the second day is added</span></span>
+<span id="cb22-71"><a href="#cb22-71"></a>  <span class="dt">AMT=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="ot">NA</span>),       <span class="co"># Adding an unknown dose on the second day</span></span>
+<span id="cb22-72"><a href="#cb22-72"></a>  <span class="dt">RATE=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">1000</span>)<span class="op">/</span><span class="fl">0.5</span> <span class="co"># 30-minute infusion (rate=dose/infusion time)</span></span>
+<span id="cb22-73"><a href="#cb22-73"></a>)</span>
+<span id="cb22-74"><a href="#cb22-74"></a></span>
+<span id="cb22-75"><a href="#cb22-75"></a>recommendation &lt;-<span class="st"> </span><span class="kw"><a href="../reference/findDose.html">findDose</a></span>(</span>
+<span id="cb22-76"><a href="#cb22-76"></a>  ipred,</span>
+<span id="cb22-77"><a href="#cb22-77"></a>  <span class="dt">regimen =</span> newRegimen,</span>
+<span id="cb22-78"><a href="#cb22-78"></a>  <span class="dt">interval =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">100</span>, <span class="dv">5000</span>),</span>
+<span id="cb22-79"><a href="#cb22-79"></a>  <span class="dt">target =</span> <span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">TIME =</span> <span class="dv">32</span>, <span class="dt">CONC =</span> <span class="dv">8</span>)</span>
+<span id="cb22-80"><a href="#cb22-80"></a>  )</span>
+<span id="cb22-81"><a href="#cb22-81"></a><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(recommendation)</span>
+<span id="cb22-82"><a href="#cb22-82"></a><span class="co"># Recommended regimen for individual can be directly accessed from the recommendation object</span></span>
+<span id="cb22-83"><a href="#cb22-83"></a>ipredRecommendedRegimen &lt;-<span class="st"> </span>recommendation<span class="op">$</span>regimen</span>
+<span id="cb22-84"><a href="#cb22-84"></a></span>
+<span id="cb22-85"><a href="#cb22-85"></a><span class="co"># Population regimen can be updated using the 'updateRegimen' method, a 4th dose of 1000 is used</span></span>
+<span id="cb22-86"><a href="#cb22-86"></a>predUpdatedRegimen &lt;-<span class="st"> </span><span class="kw"><a href="../reference/updateRegimen.html">updateRegimen</a></span>(<span class="dt">regimen =</span> newRegimen, <span class="dt">newDose =</span> <span class="dv">4500</span>)</span>
+<span id="cb22-87"><a href="#cb22-87"></a><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(predUpdatedRegimen) <span class="co"># Check pred regimen</span></span>
+<span id="cb22-88"><a href="#cb22-88"></a>ipred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">observed =</span> observed, <span class="dt">regimen =</span> ipredRecommendedRegimen)</span>
+<span id="cb22-89"><a href="#cb22-89"></a>pred &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estimate.html">estimate</a></span>(tdmore, <span class="dt">regimen =</span> predUpdatedRegimen)</span>
+<span id="cb22-90"><a href="#cb22-90"></a><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(ipred, <span class="dt">newdata=</span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">0</span>, <span class="dv">32</span>, <span class="dt">by=</span><span class="fl">0.1</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="dv">8</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_log10</span>()</span></code></pre></div>
 </div>
   </div>
 
@@ -374,7 +377,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

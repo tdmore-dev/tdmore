@@ -1,0 +1,105 @@
+---
+title: "Model-predictive control"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Model-predictive control}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+### About MPC {-}
+Model-predictive control (MPC) is a technique that was originally developed for control of petrochemical installations.[^1] In tdmore, the technique is applied for IOV models. Classical EBE estimates a per-patient IIV and occasion-specific IOV. Three assumptions should hold: 
+
+1. The model prior fits the target population.
+2. IOV is randomly distributed between occasions, without correlation between occasions.
+3. RE is randomly distributed between observations, without correlation between observations.
+
+In MPC, we estimate a single parameter set for the first occasion. We then use this as a prior for the next occasion. This technique is less sensitive to the above assumptions:
+
+1. MPC allows to move further from the population prior over the course of many iterations.
+2. Gradual trends in IOV and RE can be picked up by the model and carried forward.
+
+Our implementation of MPC is not perfect. Further research is required, specifically in the following areas:
+
+1. Model diagnostics to identify when MPC may be more appropriate. Specifically, we know that a discord between theoretical residual error and predictive performance results may point in the direction of correlation between subsequent residual errors.
+2. Correlation between errors may also be modeled through an auto-regressive error model `AR(1)`, or through additive IOV (random drift across occasions).
+3. The current implementation retains IIV+IOV as an estimate of uncertainty around the individual prior of the previous occasion. This may not be appropriate; the uncertainty should be reduced.
+
+[^1]: https://en.wikipedia.org/wiki/Model_predictive_control
+
+### Creating your model {-}
+
+Two key changes are required to use MPC with your model:
+
+1. Output the current parameters as `TVx_next`, so they can be used as priors for the next iteration. These should be the individual parameter estimates *without* covariate effects, as covariates may also change from day-to-day.
+2. Provide TDMore with the initial priors (`theta`).
+
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+set.seed(0) 
+```
+
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
+library(nlmixr)
+
+modelCode <- function(){
+  ini({
+    TVV2 <- 7.01;
+    TVQ <- 4.97;
+    ECL ~ 0.194 # This value corresponds to OMEGA_CL (44% SD)
+    EV1 ~ 0.287 # This value corresponds to OMEGA_V1 (54% SD)
+    EPS_PROP <- 0.371 # Proportional error (37% SD)
+  })
+  model({
+    CL <- TVCL * exp(ECL)
+    V1 <- TVV1 * exp(EV1)
+    V2 <- TVV2
+    Q <- TVQ
+    K12 <- Q/V1
+    K21 <- Q/V2
+    
+    TVCL_next <- CL
+    TVV1_next <- V1
+
+    d/dt(center) = - CL/V1 * center - K12*center + K21 * periph
+    d/dt(periph) = K12*center - K21 * periph
+
+    CONC = center / V1
+    CONC ~ prop(EPS_PROP) # Proportional error linked to the PK model
+  })
+}
+
+library(tdmore)
+#classical EBE model
+m1 <- nlmixrUI(modelCode) %>%
+  tdmore()
+
+#MPC model
+m2 <- nlmixrUI(modelCode) %>% 
+  tdmore(iov=c("ECL", "EV1")) %>%  #all parameters need to be IOV
+  mpc(theta=c(TVCL=9.87, TVV1=24.4), suffix="_next")
+```
+
+This model can now be used as any other TDMore model.
+
+### Predicting new data {-}
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
+regimen <- data.frame(
+  TIME=c(0, 8, 16),            # Every 8 hour and for 1 day, an injection is given
+  AMT=c(1000, 1000, 1000),     # 1g is administered
+  RATE=c(1000, 1000, 1000)/0.5,# 30-minute infusion (rate=dose/infusion time)
+  OCC=c(1,2,3)
+)
+
+tdmorefit <- estimate(m1, regimen=regimen %>% dplyr::select(-OCC),
+                      covariates=c(TVCL=9.87, TVV1=24.4),
+                      observed=data.frame(TIME=c(7, 15, 23), CONC=c(10, 20, 30)))
+plot(tdmorefit) + ggplot2::scale_y_log10()
+
+tdmorefit <- estimate(m2, regimen=regimen, observed=data.frame(TIME=c(7, 15, 23), CONC=c(10, 20, 30)))
+plot(tdmorefit) + ggplot2::scale_y_log10()
+```
+
+### Code appendix
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+```

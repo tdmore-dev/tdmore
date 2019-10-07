@@ -1,9 +1,10 @@
-pandoc: '2.6'
-pkgdown: 1.4.0
+pandoc: 2.7.3
+pkgdown: 1.4.1
 pkgdown_sha: ~
 articles:
   dosing-regimen: dosing-regimen.html
   ggplot: ggplot.html
+  mpc: mpc.html
   proseval: proseval.html
   tdmore: tdmore.html
   tdmore_multiple_endpoints: tdmore_multiple_endpoints.html
