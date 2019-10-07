@@ -1,0 +1,197 @@
+---
+title: "Comparing historic and bayesian dosing"
+output: rmarkdown::html_vignette
+editor_options:
+  chunk_output_type: console
+vignette: >
+  %\VignetteIndexEntry{Comparing naive and bayesian dosing}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+### About this example {-}
+
+```{r, echo=FALSE}
+library(tdmore)
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(ggplot2)
+set.seed(1234)
+```
+
+### Example model
+We use an example model from literature.
+
+```{r}
+# Model taken from literature: Soulele, K., et al.
+# 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'
+# European Journal of Pharmaceutical Sciences 80 (2015): 33-42."
+myModel <- nlmixr::nlmixrUI(function(){
+  ini({
+    TVKa <- 3.87
+    TVCL <- 659    # L/h
+    TVV1 <- 56900  # L
+    TVV2 <- 5550   # L
+    TVQ <- 259     # L/h
+
+    EKa ~ 0.04507129  # 0.2123**2
+    ECL ~ 0.1535856   # 0.3919**2
+    EV1 ~ 0.09223369  # 0.3037**2
+    EV2 ~ 0.208301    # 0.4564**2
+    EQ ~ 0.1015697    # 0.3187**2
+
+    EPS_ADD <- 0 #fixed to '0' to give the computer a fighting chance...
+    EPS_PROP <- 0.117
+  })
+  model({
+    Ka <- TVKa * exp(EKa)
+    CL <- TVCL * exp(ECL)
+    V1 <- TVV1 * exp(EV1)
+    V2 <- TVV2 * exp(EV2)
+    Q <- TVQ * exp(EQ)
+    
+    K12 <- Q/V1
+    K21 <- Q/V2
+
+    d/dt(center) = - CL/V1 * center - K12*center + K21 * periph
+    d/dt(periph) = K12*center - K21 * periph
+
+    CONC = center / V1 * 1000
+    CONC ~ prop(EPS_PROP) + add(EPS_ADD)
+  })
+})
+
+m1 <- tdmore(myModel)
+```
+
+### In silico simulation of non-adapted treatment
+Below, we simulate the standard treatment regimen of 88mcg twice-daily, with a loading dose of 500mcg.
+
+```{r}
+regimen <- rbind(
+  data.frame(TIME=0, AMT=500), #loading dose
+  data.frame( #maintenance dose
+    TIME=sort( c(8+(0:20)*24, 20+(0:20)*24) ), #at 08:00 and 20:00
+    AMT=88
+  )
+)
+
+N <- 300
+population <- estimate(m1)
+result <- predict(population, newdata=seq(0, 20*24, by=4), 
+                  regimen=regimen,
+                  se=T, level=NA, mc.maxpts=N) %>%
+  mutate(regimen="200ug + 88ug maint")
+
+ggplot(result, aes(x=TIME, y=CONC, color=regimen, fill=regimen)) +
+  stat_summary(fun.data=median_hilow, geom="ribbon", alpha=0.3) +
+  stat_summary(fun.y=median, geom="line") +
+  labs(title="Concentration over time")
+```
+
+### Build simulation dataset
+We could build the simulation dataset by using retrospective data. In this case, we will simulate a virtual population.
+```{r}
+regimen <- rbind(
+  data.frame(TIME=0, AMT=500), #loading dose
+  data.frame( #maintenance dose
+    TIME=sort( c(8+(0:20)*24, 20+(0:20)*24) ), #at 08:00 and 20:00
+    AMT=88
+  )
+)
+N <- 10
+population <- estimate(m1)
+db <- predict(population, newdata=seq(7.5, 20*24, by=3*24),  #every 3 days
+                  regimen=regimen,
+                  se=T, level=NA, mc.maxpts=N) %>%  ### Sample N patients
+  group_by(sample) %>% select(-center, -periph) %>% 
+  nest(observed=c(TIME, CONC)) %>% ## ensure a single data.frame per subject
+  mutate(observed.re = map(observed, ~model.frame(m1, data = .x, se=TRUE, level=NA)) ) %>% ## add residual error
+  rowwise() %>% mutate(fit = list( tdmorefit(m1, observed=observed.re, regimen=regimen, res = c(EKa=EKa, ECL=ECL, EV1=EV1, EV2=EV2, EQ=EQ)) )) %>% ## Create the 'truth' using the true parameters used to simulate
+  transmute(ID=sample, fit, object=list(fit$tdmore))
+``` 
+
+### Naive treatment adaptation
+We aim for a concentration of 10 ug/L, and adapt as soon as it is outside the range 8-12, using the rule of three.
+```{r}
+optimize <- function(fit, regimen, truth) {
+  if(nrow(fit$observed) == 0) return( list(regimen=regimen) )
+  lastConcentration <- last( fit$observed$CONC )
+  if( between(lastConcentration, 8, 12))
+    return( list(regimen=regimen) )
+  
+  #if last concentration is 20, then this becomes 10/20 = 0.5 => lower dose
+  #if last concentration is 5, then this becomes 10/5 = 2 => higher dose
+  lastTime <- last(fit$observed$TIME)
+  Fct <- 10 / lastConcentration
+  i <- regimen$TIME > lastTime
+  regimen$AMT[i] <- regimen$AMT[i] * Fct
+  return( list(regimen=regimen) )
+}
+
+simulationResultNaive <- db %>%
+  mutate(control=list(list(maxit=0))) %>% #we do not need a fit; so use 'maxit=0' to not lose time with calculating a fit
+  doseSimulation(db, optimize=optimize) %>%
+  mutate(method="Naive")
+
+simulationResultNaive %>% group_by(ID) %>% filter(row_number() == n()) %>%
+  ggplot(aes(x=TIME, y=CONC)) +
+  annotate("rect", xmin=-Inf, xmax=Inf, ymin=8, ymax=12, fill="green", alpha=0.2) +
+  geom_point(data=. %>% unnest(observed), aes(group=ID)) +
+  geom_line(data=. %>% group_modify(function(x, ...){predict(x$fit[[1]], x$regimen[[1]], newdata=seq(0, 20*24))}), aes(group=ID)) +
+  geom_tile(data=. %>% unnest(regimen) %>% filter(TIME!=0), aes(x=TIME, y=20, fill=AMT)) +
+  facet_wrap(~ID)
+```
+
+### Bayesian adaptation
+We adapt using a bayesian fit
+```{r}
+optimize <- function(fit, regimen, truth) {
+  maxTime = max(fit$observed$TIME)
+  nextTarget = first( truth$observed$TIME[ truth$observed$TIME > maxTime] )
+  if(is.na(nextTarget)) return()
+  recommendation <- findDose(fit, regimen=regimen, doseRows=which(regimen$TIME > maxTime), 
+           target = data.frame(TIME=nextTarget, CONC=10))
+  return( list(regimen=recommendation$regimen) )
+}
+
+simulationResultEBE <- doseSimulation(db, optimize=optimize) %>%
+  mutate(method="EBE")
+
+simulationResultEBE %>% group_by(ID) %>% filter(row_number() == n()) %>%
+  ggplot(aes(x=TIME, y=CONC)) +
+  annotate("rect", xmin=-Inf, xmax=Inf, ymin=8, ymax=12, fill="green", alpha=0.2) +
+  geom_point(data=. %>% unnest(observed), aes(group=ID)) +
+  geom_line(data=. %>% group_modify(function(x, ...){predict(x$fit[[1]], x$regimen[[1]], newdata=seq(0, 20*24))}), aes(group=ID)) +
+  geom_tile(data=. %>% unnest(regimen) %>% filter(TIME!=0), aes(x=TIME, y=20, fill=AMT)) +
+  facet_wrap(~ID)
+```
+
+### Comparing both: raw results
+```{r}
+result <- bind_rows(
+  simulationResultNaive,
+  simulationResultEBE
+)
+result %>% group_by(ID, method) %>% filter(row_number() == n()) %>%
+  ggplot(aes(x=TIME, y=CONC, color=method)) +
+  annotate("rect", xmin=-Inf, xmax=Inf, ymin=8, ymax=12, fill="green", alpha=0.2) +
+  geom_point(data=. %>% unnest(observed), aes(group=ID)) +
+  geom_line(data=. %>% group_modify(function(x, ...){predict(x$fit[[1]], x$regimen[[1]], newdata=seq(0, 20*24))}), aes(group=interaction(ID, method))) +
+  facet_wrap(~ID)
+```
+
+### Comparing both: stats comparison
+```{r}
+concentrations <- result %>% group_by(ID, method) %>% filter(row_number() == n()) %>% unnest(observed)
+inTarget <- concentrations %>%
+  mutate(INTARGET = between(CONC, 8, 12)) %>%
+  group_by(method) %>% summarize(X = sum(INTARGET), N=n())
+prop.test(x=inTarget$X, n=inTarget$N )
+```
+
+Based on the stats comparison, 10 patients per arm is clearly not enough to distinguish between naive dose optimization and computer dosing. We should run a simulation with 10,000 patients first to characterize the expected difference.
+
+### Code appendix
+```{r code={file <- knitr::purl(knitr::current_input(), documentation = 0); text <- readLines(file); unlink(file); text}, eval = FALSE}
+```
