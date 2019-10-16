@@ -2,8 +2,7 @@
   "input": {
     "ECL": -0.258646227779221,
     "EV1": 0.262449410162112,
-    "var": "ECL",
-    "var-selectized": ""
+    "var": "ECL"
   },
   "output": {
 
