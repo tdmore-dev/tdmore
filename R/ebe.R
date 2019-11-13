@@ -316,10 +316,24 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
 
   if(anyNA(res)) stop("Method ", method, " resulted in NA coefficients... Not returning result.")
 
-  # Observed fisher information matrix = -hessian(ll)
+  # Observed fisher information matrix = hessian(ll)
+  # See https://stats.stackexchange.com/questions/68080/basic-question-about-fisher-information-matrix-and-relationship-to-hessian-and-s
+  # OFIM is therefore -H/2, as we were optimizing -2*LL
+  # And therefore the variance-covariance matrix is OFIM^-1
   if(se.fit) {
-    OFIM <- pointEstimate$hessian * 1/2
+    ## Recalculate hessian?
+    H <- pointEstimate$hessian / 2 ## we were optimizing -2*LL. The OFIM is the hessian for LL
+    if(FALSE) {
+      ## Possible alternative, more precise?
+      H <- numDeriv::hessian(func=ll,
+                           x=pointEstimate$par,
+                           method="Richardson",
+                           method.args=list(eps=1e-8),
+                           omega=omega, fix=fix, tdmore=cTdmore, observed=observed, regimen=regimen, covariates=covariates)
+    }
+    OFIM <- H
     varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
+    chol(varcov) #try the cholesky decomposition, to double check varcov is truly semi-positive definite!
   } else {
     varcov <- diag(.Machine$double.eps, nrow=length(updatedParNames)) #very small value, to keep matrix semi-definite
   }
