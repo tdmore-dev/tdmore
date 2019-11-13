@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute the TMax value based on the specified regimen and observed data. — computeTmax • tdmore</title>
+<title>Automatically create the required layers for a recommendation object — autolayer.recommendation • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,8 @@
 
 
 
-<meta property="og:title" content="Compute the TMax value based on the specified regimen and observed data. — computeTmax" />
-<meta property="og:description" content="Compute the TMax value based on the specified regimen and observed data." />
+<meta property="og:title" content="Automatically create the required layers for a recommendation object — autolayer.recommendation" />
+<meta property="og:description" content="Automatically create the required layers for a recommendation object" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -153,44 +153,58 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute the TMax value based on the specified regimen and observed data.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/utilities.R'><code>R/utilities.R</code></a></small>
-    <div class="hidden name"><code>computeTmax.Rd</code></div>
+    <h1>Automatically create the required layers for a recommendation object</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ggplot.autolayer.R'><code>R/ggplot.autolayer.R</code></a></small>
+    <div class="hidden name"><code>autolayer.recommendation.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Compute the TMax value based on the specified regimen and observed data.</p>
+    <p>Automatically create the required layers for a recommendation object</p>
     </div>
 
-    <pre class="usage"><span class='fu'>computeTmax</span>(<span class='no'>regimen</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='co'># S3 method for recommendation</span>
+<span class='fu'>autolayer</span>(<span class='no'>x</span>, <span class='kw'>color</span> <span class='kw'>=</span> <span class='st'>"green"</span>, <span class='kw'>fill</span> <span class='kw'>=</span> <span class='no'>color</span>,
+  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>regimen</th>
-      <td><p>the specified regimen</p></td>
+      <th>x</th>
+      <td><p>recommendation</p></td>
     </tr>
     <tr>
-      <th>observed</th>
-      <td><p>the observed dataframe</p></td>
+      <th>color</th>
+      <td><p>color to use for the line</p></td>
+    </tr>
+    <tr>
+      <th>fill</th>
+      <td><p>fill color to use for the ribbon</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>alpha level for the ribbon</p></td>
+    </tr>
+    <tr>
+      <th>se.fit</th>
+      <td><p>plot a confidence band around the prediction?</p></td>
+    </tr>
+    <tr>
+      <th>level</th>
+      <td><p>level for the confidence band</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>extra arguments</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>the tmax value, numeric</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>the maximum of all times in observed, and regimen (+one additional Interdose-interval, should this be specified)</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
     </ul>
 
   </div>

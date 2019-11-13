@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot a tdmorefit mixture object. — plot.tdmorefit_mixture • tdmore</title>
+<title>This function tries to construct an aes
+by guessing the required variables — getAes • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +43,10 @@
 
 
 
-<meta property="og:title" content="Plot a tdmorefit mixture object. — plot.tdmorefit_mixture" />
-<meta property="og:description" content="Plot a tdmorefit mixture object." />
+<meta property="og:title" content="This function tries to construct an aes
+by guessing the required variables — getAes" />
+<meta property="og:description" content="If no 'x' is defined, we put a NULL in the aesthetic
+It will then get filled in by the predictionLayer" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -153,49 +156,38 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot a tdmorefit mixture object.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/plot.R'><code>R/plot.R</code></a></small>
-    <div class="hidden name"><code>plot.tdmorefit_mixture.Rd</code></div>
+    <h1>This function tries to construct an aes
+by guessing the required variables</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ggplot.R'><code>R/ggplot.R</code></a></small>
+    <div class="hidden name"><code>getAes.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Plot a tdmorefit mixture object.</p>
+    <p>If no 'x' is defined, we put a NULL in the aesthetic
+It will then get filled in by the predictionLayer</p>
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for tdmorefit_mixture</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>x</span>, <span class='kw'>newdata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>population</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>fit</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>getAes</span>(<span class='no'>x</span>, <span class='kw'>vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>, <span class='st'>"ymin"</span>, <span class='st'>"ymax"</span>), <span class='kw'>as.aes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>the tdmorefit mixture object</p></td>
+      <td><p>tdmorefit object</p></td>
     </tr>
     <tr>
-      <th>newdata</th>
-      <td><p>a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times</p></td>
+      <th>vars</th>
+      <td><p>the aes vars to guess</p></td>
     </tr>
     <tr>
-      <th>regimen</th>
-      <td><p>Treatment regimen</p></td>
+      <th>as.aes</th>
+      <td><p>TRUE to return an aes object, FALSE to return a named list</p></td>
     </tr>
     <tr>
-      <th>se.fit</th>
-      <td><p>add a curve for the confidence interval around the fit</p></td>
-    </tr>
-    <tr>
-      <th>population</th>
-      <td><p>should I plot the population prediction (in blue) ?</p></td>
-    </tr>
-    <tr>
-      <th>fit</th>
-      <td><p>should I plot the fit (in red) ?</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>passed on to `predict`</p></td>
+      <th>data</th>
+      <td><p>data.frame to check whether the values actually exist</p></td>
     </tr>
     </table>
 

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot a tdmore object (typical profile (population) + between subject variability). — autoplot.tdmore • tdmore</title>
+<title>Plot a tdmore object as the population — autoplot.tdmore • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,8 @@
 
 
 
-<meta property="og:title" content="Plot a tdmore object (typical profile (population) + between subject variability). — autoplot.tdmore" />
-<meta property="og:description" content="Plot a tdmore object (typical profile (population) + between subject variability)." />
+<meta property="og:title" content="Plot a tdmore object as the population — autoplot.tdmore" />
+<meta property="og:description" content="Plot a tdmore object as the population" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -153,49 +153,50 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot a tdmore object (typical profile (population) + between subject variability).</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/autoplot.R'><code>R/autoplot.R</code></a></small>
+    <h1>Plot a tdmore object as the population</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ggplot.autolayer.R'><code>R/ggplot.autolayer.R</code></a></small>
     <div class="hidden name"><code>autoplot.tdmore.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Plot a tdmore object (typical profile (population) + between subject variability).</p>
+    <p>Plot a tdmore object as the population</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for tdmore</span>
-<span class='fu'>autoplot</span>(<span class='no'>x</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>autoplot</span>(<span class='no'>x</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>newdata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>the tdmore object</p></td>
+      <td><p>a tdmore object</p></td>
     </tr>
     <tr>
       <th>regimen</th>
-      <td><p>the regimen to be predicted</p></td>
+      <td><p>the regimen</p></td>
     </tr>
     <tr>
       <th>covariates</th>
-      <td><p>covariates</p></td>
+      <td><p>the covariates</p></td>
+    </tr>
+    <tr>
+      <th>newdata</th>
+      <td><p>passed to `predict`</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>ignored</p></td>
+      <td><p>extra arguments</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>a ggplot object with the fitted individual curve, the 95<!-- % ci of this curve, the population prediction, the observed data and the residual error around the observed data --></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
     </ul>
 
   </div>

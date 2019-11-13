@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot a tdmorefit object. — autoplot.tdmorefit • tdmore</title>
+<title>Determine a timerange suitable for plotting each aspect of a tdmorefit — timeRange • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,8 @@
 
 
 
-<meta property="og:title" content="Plot a tdmorefit object. — autoplot.tdmorefit" />
-<meta property="og:description" content="Plot a tdmorefit object." />
+<meta property="og:title" content="Determine a timerange suitable for plotting each aspect of a tdmorefit — timeRange" />
+<meta property="og:description" content="Determine a timerange suitable for plotting each aspect of a tdmorefit" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -153,49 +153,44 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot a tdmorefit object.</h1>
+    <h1>Determine a timerange suitable for plotting each aspect of a tdmorefit</h1>
     <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ggplot.autolayer.R'><code>R/ggplot.autolayer.R</code></a></small>
-    <div class="hidden name"><code>autoplot.tdmorefit.Rd</code></div>
+    <div class="hidden name"><code>timeRange.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Plot a tdmorefit object.</p>
+    <p>Determine a timerange suitable for plotting each aspect of a tdmorefit</p>
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for tdmorefit</span>
-<span class='fu'>autoplot</span>(<span class='no'>x</span>, <span class='kw'>population</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>fit</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>timeRange</span>(<span class='kw'>ipred</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>101</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>the tdmorefit object</p></td>
+      <th>ipred</th>
+      <td><p>tdmorefit object to calculate the time range</p></td>
     </tr>
     <tr>
-      <th>population</th>
-      <td><p>should I plot the population prediction (in blue) ?</p></td>
+      <th>regimen</th>
+      <td><p>the regimen, or not specified to use the original regimen</p></td>
     </tr>
     <tr>
-      <th>fit</th>
-      <td><p>should I plot the fit (in red) ?</p></td>
+      <th>observed</th>
+      <td><p>observed values, or not specified to use the original observed values</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>passed on to `predict`</p></td>
+      <th>N</th>
+      <td><p>number of interpolation points</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>a ggplot object with the fitted individual curve, the 95<!-- % CI of this curve, the population prediction (with between-subject variability) and the observed data --></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
     </ul>
 
   </div>

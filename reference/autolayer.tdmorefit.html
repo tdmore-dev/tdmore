@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot a tdmorefit object. — plot.tdmorefit • tdmore</title>
+<title>Automatically plot a tdmorefit object — autolayer.tdmorefit • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,9 @@
 
 
 
-<meta property="og:title" content="Plot a tdmorefit object. — plot.tdmorefit" />
-<meta property="og:description" content="Plot a tdmorefit object." />
+<meta property="og:title" content="Automatically plot a tdmorefit object — autolayer.tdmorefit" />
+<meta property="og:description" content="The variable plotted on the y-axis is the first column with residual error that is available in the predicted result.
+You can easily influence this by providing a `newdata` argument." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -153,62 +154,63 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot a tdmorefit object.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/plot.R'><code>R/plot.R</code></a></small>
-    <div class="hidden name"><code>plot.tdmorefit.Rd</code></div>
+    <h1>Automatically plot a tdmorefit object</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ggplot.autolayer.R'><code>R/ggplot.autolayer.R</code></a></small>
+    <div class="hidden name"><code>autolayer.tdmorefit.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Plot a tdmorefit object.</p>
+    <p>The variable plotted on the y-axis is the first column with residual error that is available in the predicted result.
+You can easily influence this by providing a `newdata` argument.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for tdmorefit</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>x</span>, <span class='kw'>newdata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>population</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>fit</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>autolayer</span>(<span class='no'>x</span>, <span class='kw'>color</span> <span class='kw'>=</span> <span class='st'>"tomato1"</span>, <span class='kw'>fill</span> <span class='kw'>=</span> <span class='no'>color</span>,
+  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='no'>...</span>, <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>the tdmorefit object</p></td>
+      <td><p>tdmorefit object</p></td>
     </tr>
     <tr>
-      <th>newdata</th>
-      <td><p>a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times</p></td>
+      <th>color</th>
+      <td><p>color to use for the line</p></td>
     </tr>
     <tr>
-      <th>regimen</th>
-      <td><p>Treatment regimen</p></td>
+      <th>fill</th>
+      <td><p>fill color to use for the ribbon</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>alpha level for the ribbon</p></td>
     </tr>
     <tr>
       <th>se.fit</th>
-      <td><p>add a curve for the confidence interval around the fit</p></td>
+      <td><p>plot a confidence band around the prediction?</p></td>
     </tr>
     <tr>
-      <th>population</th>
-      <td><p>should I plot the population prediction (in blue) ?</p></td>
-    </tr>
-    <tr>
-      <th>fit</th>
-      <td><p>should I plot the fit (in red) ?</p></td>
+      <th>level</th>
+      <td><p>level for the confidence band</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>passed on to `predict`</p></td>
+      <td><p>extra arguments</p></td>
+    </tr>
+    <tr>
+      <th>na.rm</th>
+      <td><p>should NA be removed</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>a ggplot object with the fitted individual curve, the 95<!-- % CI of this curve, the population prediction (with between-subject variability) and the observed data --></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
     </ul>
 
   </div>

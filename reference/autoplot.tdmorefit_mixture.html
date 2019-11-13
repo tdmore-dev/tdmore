@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot a tdmore object (typical profile of the population and between subject variability). — plot.tdmore • tdmore</title>
+<title>Plot a tdmorefit_mixture object. — autoplot.tdmorefit_mixture • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,8 @@
 
 
 
-<meta property="og:title" content="Plot a tdmore object (typical profile of the population and between subject variability). — plot.tdmore" />
-<meta property="og:description" content="Plot a tdmore object (typical profile of the population and between subject variability)." />
+<meta property="og:title" content="Plot a tdmorefit_mixture object. — autoplot.tdmorefit_mixture" />
+<meta property="og:description" content="Plot a tdmorefit_mixture object." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -153,55 +153,43 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot a tdmore object (typical profile of the population and between subject variability).</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/plot.R'><code>R/plot.R</code></a></small>
-    <div class="hidden name"><code>plot.tdmore.Rd</code></div>
+    <h1>Plot a tdmorefit_mixture object.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ggplot.autolayer.R'><code>R/ggplot.autolayer.R</code></a></small>
+    <div class="hidden name"><code>autoplot.tdmorefit_mixture.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Plot a tdmore object (typical profile of the population and between subject variability).</p>
+    <p>Plot a tdmorefit_mixture object.</p>
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for tdmore</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>x</span>, <span class='no'>regimen</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>newdata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>bsv</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc.subjects</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='co'># S3 method for tdmorefit_mixture</span>
+<span class='fu'>autoplot</span>(<span class='no'>x</span>, <span class='kw'>population</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>fit</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>the tdmore object</p></td>
+      <td><p>the tdmorefit object</p></td>
     </tr>
     <tr>
-      <th>regimen</th>
-      <td><p>the regimen to be predicted</p></td>
+      <th>population</th>
+      <td><p>should I plot the population prediction (in blue) ?</p></td>
     </tr>
     <tr>
-      <th>covariates</th>
-      <td><p>covariates</p></td>
-    </tr>
-    <tr>
-      <th>newdata</th>
-      <td><p>a data.frame with at least TIME and any other columns to plot, NULL to plot all columns from the original observed data between time 0 and max(observationTime) or a numeric vector of times</p></td>
-    </tr>
-    <tr>
-      <th>bsv</th>
-      <td><p>add between subject variability, enabled by default</p></td>
-    </tr>
-    <tr>
-      <th>mc.subjects</th>
-      <td><p>number of subjects in the monte carlo simulation</p></td>
+      <th>fit</th>
+      <td><p>should I plot the fit (in red) ?</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>ignored</p></td>
+      <td><p>passed on to `predict`</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a ggplot object with the the population prediction</p>
+    <p>a ggplot object with the fitted individual curve, the 95<!-- % CI of this curve, the population prediction (with between-subject variability) and the observed data --></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
