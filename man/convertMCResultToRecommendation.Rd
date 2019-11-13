@@ -4,7 +4,8 @@
 \alias{convertMCResultToRecommendation}
 \title{Convert the Monte-Carlo uniroot results into a recommendation object.}
 \usage{
-convertMCResultToRecommendation(mcResult, regimen, doseRows, target, level)
+convertMCResultToRecommendation(tdmorefit, mcResult, regimen, doseRows,
+  target, level)
 }
 \arguments{
 \item{mcResult}{a dataframe with all the uniroot results, one per Monte-Carlo sample}

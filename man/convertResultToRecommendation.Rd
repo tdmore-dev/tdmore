@@ -4,7 +4,7 @@
 \alias{convertResultToRecommendation}
 \title{Convert the result of the uniroot function into a recommendation object.}
 \usage{
-convertResultToRecommendation(result, regimen, doseRows, target)
+convertResultToRecommendation(tdmorefit, result, regimen, doseRows, target)
 }
 \arguments{
 \item{result}{the uniroot result}

@@ -13,7 +13,7 @@
 #' @return a recommendation object
 #' @export
 #' @importFrom stats uniroot
-findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), target, se.fit = FALSE, level = 0.95, mc.maxpts = 100, ...) {
+findDose <- function(tdmorefit, regimen=tdmorefit$regimen, doseRows=NULL, interval=c(0, 1E10), target, se.fit = FALSE, level = 0.95, mc.maxpts = 100, ...) {
   # Check if IOV is present in model
   iov <- tdmorefit$tdmore$iov
   if (!is.null(iov)) {
@@ -39,7 +39,7 @@ findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), tar
       result
     }
     result <- runUniroot(rootFunction, interval, ...)
-    return(convertResultToRecommendation(result, regimen, doseRows, target))
+    return(convertResultToRecommendation(tdmorefit, result, regimen, doseRows, target))
 
   } else {
     # Find the dose for each Monte-Carlo sample
@@ -64,7 +64,7 @@ findDose <- function(tdmorefit, regimen, doseRows=NULL, interval=c(0, 1E10), tar
 
     colnames(mcResult)[seq_len(length(uniqueColnames))] <- colnames(mc)
 
-    return(convertMCResultToRecommendation(mcResult, regimen, doseRows, target, level))
+    return(convertMCResultToRecommendation(tdmorefit, mcResult, regimen, doseRows, target, level))
   }
 }
 
@@ -98,9 +98,10 @@ runUniroot <- function(rootFunction, interval, ...) {
 #'
 #' @return a recommendation object
 #' @keywords internal
-convertResultToRecommendation <- function(result, regimen, doseRows, target) {
+convertResultToRecommendation <- function(tdmorefit, result, regimen, doseRows, target) {
   return(structure(
     list(
+      tdmorefit=tdmorefit,
       dose = result$root,
       regimen = updateRegimen(
         regimen = regimen,
@@ -125,7 +126,7 @@ convertResultToRecommendation <- function(result, regimen, doseRows, target) {
 #' @return a recommendation object
 #' @importFrom dplyr summarise
 #' @keywords internal
-convertMCResultToRecommendation <- function(mcResult, regimen, doseRows, target, level) {
+convertMCResultToRecommendation <- function(tdmorefit, mcResult, regimen, doseRows, target, level) {
   ciLevel <- (1-level)/2
   dose <- c(
     dose.median = as.numeric(median(mcResult$dose)),
@@ -134,6 +135,7 @@ convertMCResultToRecommendation <- function(mcResult, regimen, doseRows, target,
   )
   return(structure(
     list(
+      tdmorefit=tdmorefit,
       dose = dose,
       regimen = updateRegimen(
         regimen = regimen,
