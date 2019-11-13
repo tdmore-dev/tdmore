@@ -63,7 +63,7 @@ ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
 expect_equal(round(ipred$res, digits=4), c(ECL=0.0336, EVc=0.1175))
 
 # Default IPRED plot
-plot(ipred)
+plot(ipred) + coord_cartesian(xlim=c(0, 100))
 
 # Test combinations of ADDL and SS and II
 expect_known_value(

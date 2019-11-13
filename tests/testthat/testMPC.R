@@ -65,7 +65,7 @@ expect_equal(
   c(1,2,2,3,3)
 )
 
-plot(m1, newdata=seq(0, 5*24, by=0.1), regimen=regimen, covariates=covariatesThetaIncluded, se.fit=NA)
+plot(m1, newdata=seq(0, 5*24, by=1), regimen=regimen, covariates=covariatesThetaIncluded)
 
 # Estimate with EBE
 plot(estimate(m1, regimen=regimen, covariates=covariatesThetaIncluded, observed=observed))
@@ -93,8 +93,6 @@ plot <- ggplot(mapping=aes(x=TIME, y=CONC)) +
 
 print(plot)
 
-# Need a special function to plot ipred mcp?
-class(ipred$tdmore) <- "tdmore" # TEMPORARY
 plot(ipred, se.fit=F)
 
 

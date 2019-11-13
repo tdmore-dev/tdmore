@@ -49,7 +49,7 @@ posthoc <- function(x, ..., .fit="fit", .prediction="ipred", .elapsed="elapsed",
     res <- lapply(x, function(x){if(rlang::is_atomic(x)) x else list(x)})
     if(!is.null(.fit)) res[[.fit]] <- list( fit )
     if(!is.null(.elapsed)) res[[.elapsed]] <- list( toc - tic )
-    if(!is.null(.prediction)) res[[.prediction]] <- list( predict(fit) )
+    if(!is.null(.prediction)) res[[.prediction]] <- list( stats::predict(fit) )
     return( tibble::as_tibble(res) )
   }
 }
@@ -83,7 +83,7 @@ proseval <- function(x, ..., .fit="fit", .prediction="ipred", .elapsed="elapsed"
       res <- posthoc(argsPosthoc, ..., .fit=.fit, .prediction=NULL, .elapsed=.elapsed)
       fit <- res[[.fit]][[1]]
       res[["observed"]] <- list(x$observed) #always use the same OBSERVED data.frame
-      if(!is.null(.prediction)) res[[.prediction]] <- list( predict(fit, x$observed) )
+      if(!is.null(.prediction)) res[[.prediction]] <- list( stats::predict(fit, x$observed) )
       if(!is.null(.obs)) res[[.obs]] <- i
       output[[i+1]] <- res
     }

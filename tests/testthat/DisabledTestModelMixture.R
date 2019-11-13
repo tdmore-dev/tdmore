@@ -3,6 +3,12 @@ library(nlmixr)
 library(ggplot2)
 library(testthat)
 
+
+###--------
+### TODO: disabled until we figure out a nice way to let mixture models integrate within the plotting framework
+### I do not understand why mixture models are not simply of class 'tdmore' with specific model_predict and estimate routines
+### This should not be too difficult...
+
 context("Test that the mixture models are working")
 
 set.seed(0)
@@ -61,6 +67,7 @@ mixture <- tdmore_mixture(m1, m2, probs = c(0.5, 0.5))
 # Model 1 is the most likely model
 observed1 <- data.frame(TIME=c(10, 20), CONC=c(1.20, 0.75))
 ipred_mixture <-  estimate(object=mixture, observed = observed1, regimen = regimen)
+as.population(ipred_mixture)
 plot(ipred_mixture)
 expect_true(ipred_mixture$winner == 1)
 expect_equal(round(ipred_mixture$fits_prob$IPk, digits = 4), c(0.9248, 0.0752))

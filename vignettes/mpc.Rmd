@@ -94,10 +94,12 @@ regimen <- data.frame(
 tdmorefit <- estimate(m1, regimen=regimen %>% dplyr::select(-OCC),
                       covariates=c(TVCL=9.87, TVV1=24.4),
                       observed=data.frame(TIME=c(7, 15, 23), CONC=c(10, 20, 30)))
-plot(tdmorefit) + ggplot2::scale_y_log10()
+z1 <- plot(tdmorefit, population=F) + ggplot2::scale_y_log10() + ggplot2::ggtitle("EBE")
 
 tdmorefit <- estimate(m2, regimen=regimen, observed=data.frame(TIME=c(7, 15, 23), CONC=c(10, 20, 30)))
-plot(tdmorefit) + ggplot2::scale_y_log10()
+z2 <- plot(tdmorefit, population=F) + ggplot2::scale_y_log10() + ggplot2::ggtitle("MPC")
+
+gridExtra::grid.arrange(z1, z2, nrow=1)
 ```
 
 ### Code appendix

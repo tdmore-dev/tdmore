@@ -33,7 +33,7 @@ tdmore_set <- function(...) {
 predict.tdmore_set <- function(object, newdata, regimen=NULL, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
   tdmore_set <- object
   chosenModel <- findFirstCompatibleModel(tdmore_set, covariates)
-  return(chosenModel %>% predict(newdata, regimen, parameters, covariates, se, level, ...))
+  return(chosenModel %>% stats::predict(newdata, regimen, parameters, covariates, se, level, ...))
 }
 
 #' Find the first model in the TDMore set compatible with the specified covariates.

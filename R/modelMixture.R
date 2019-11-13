@@ -105,7 +105,7 @@ print.tdmoreCurried <- function(x, ...) {
 predict.tdmore_mixture <- function(object, newdata, regimen=NULL, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
   tdmoreMixture <- object
   chosenModel <- tdmoreMixture$models[[which.max(tdmoreMixture$probs)]]
-  return(chosenModel %>% predict(newdata, regimen, parameters, covariates, se, level, ...))
+  return(chosenModel %>% stats::predict(newdata, regimen, parameters, covariates, se, level, ...))
 }
 
 #' Calculate the Empirical Bayesian Estimate parameters that predict
@@ -134,7 +134,7 @@ estimateMixtureModel <- function(object, observed=NULL, regimen, covariates=NULL
     fits = fits,
     fits_prob = mixtureProbs,
     winner = which(mixtureProbs$IPk == max(mixtureProbs$IPk))[1] # [1] in case of several winners
-  ), class = c("tdmorefit_mixture"))
+  ), class = c("tdmorefit_mixture", "tdmorefit"))
 
   return(retValue)
 }
@@ -147,11 +147,10 @@ estimateMixtureModel <- function(object, observed=NULL, regimen, covariates=NULL
 #' @return a data.frame
 #' @export
 predict.tdmorefit_mixture <- function(object, newdata=NULL, regimen=NULL, parameters=NULL, covariates=NULL, se.fit=FALSE, level=0.95, mc.maxpts=100, ...) {
-
   fits <- object$fits
   mixture <- object$mixture
   winner <- object$winner
-  ipred <- predict(fits[[winner]], newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates, se.fit=F)
+  ipred <- stats::predict(fits[[winner]], newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates, se.fit=F)
 
   if(se.fit==TRUE) {
     fits_prob <- object$fits_prob
@@ -162,7 +161,7 @@ predict.tdmorefit_mixture <- function(object, newdata=NULL, regimen=NULL, parame
               fitIndex <- row[["fit"]]
               samples <- sum(mixnum==fitIndex)
               fit <- fits[[fitIndex]]
-             predict(fit, newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates, se.fit=T, level=NA, mc.maxpts=samples)
+             stats::predict(fit, newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates, se.fit=T, level=NA, mc.maxpts=samples)
            })
 
     if(is.na(level)) { #user requested full dataframe without summary

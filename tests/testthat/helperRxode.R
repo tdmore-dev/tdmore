@@ -29,7 +29,7 @@ rxOdeVersion <- function() {
   testRoot <- rprojroot::find_testthat_root_file("../")
   available <- dir(testRoot, pattern="RxODE-*")
   candidate <- paste0( "RxODE-",sessionInfo()$otherPkgs$RxODE$Version )
-  if(available %in% candidate) {
+  if(candidate %in% available) {
     myVersion <<- candidate
   } else {
     ## Use the results from the previous version

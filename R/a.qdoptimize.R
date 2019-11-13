@@ -33,7 +33,7 @@ findDose <- function(tdmorefit, regimen=tdmorefit$regimen, doseRows=NULL, interv
     # Find the best dose for the estimated parameters
     rootFunction <- function(AMT) {
       myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)
-      obs <- predict(tdmorefit, newdata = target, regimen = myRegimen)
+      obs <- stats::predict(tdmorefit, newdata = target, regimen = myRegimen)
       result <- obs[, colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
       if(length(result) > 1) stop("Cannot use findDose to hit multiple targets!")
       result

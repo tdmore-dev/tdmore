@@ -65,14 +65,14 @@ m1 <- tdmore(myModel)
 ```
 
 ### In silico simulation of non-adapted treatment
-Below, we simulate the standard treatment regimen of 88mcg twice-daily, with a loading dose of 500mcg.
+Below, we simulate the standard treatment regimen of 100mcg twice-daily, with a loading dose of 500mcg.
 
 ```{r}
 regimen <- rbind(
   data.frame(TIME=0, AMT=500), #loading dose
   data.frame( #maintenance dose
     TIME=sort( c(8+(0:20)*24, 20+(0:20)*24) ), #at 08:00 and 20:00
-    AMT=88
+    AMT=100
   )
 )
 
@@ -81,7 +81,7 @@ population <- estimate(m1)
 result <- predict(population, newdata=seq(0, 20*24, by=4), 
                   regimen=regimen,
                   se=T, level=NA, mc.maxpts=N) %>%
-  mutate(regimen="200ug + 88ug maint")
+  mutate(regimen="500ug + 100ug maint")
 
 ggplot(result, aes(x=TIME, y=CONC, color=regimen, fill=regimen)) +
   stat_summary(fun.data=median_hilow, geom="ribbon", alpha=0.3) +
@@ -96,7 +96,7 @@ regimen <- rbind(
   data.frame(TIME=0, AMT=500), #loading dose
   data.frame( #maintenance dose
     TIME=sort( c(8+(0:20)*24, 20+(0:20)*24) ), #at 08:00 and 20:00
-    AMT=88
+    AMT=100
   )
 )
 N <- 10
@@ -125,12 +125,12 @@ optimize <- function(fit, regimen, truth) {
   lastTime <- last(fit$observed$TIME)
   Fct <- 10 / lastConcentration
   i <- regimen$TIME > lastTime
-  regimen$AMT[i] <- regimen$AMT[i] * Fct
+  regimen$AMT[i] <- plyr::round_any( regimen$AMT[i] * Fct, 20) #round to tablet size
   return( list(regimen=regimen) )
 }
 
 simulationResultNaive <- db %>%
-  mutate(control=list(list(maxit=0))) %>% #we do not need a fit; so use 'maxit=0' to not lose time with calculating a fit
+  mutate(control=list(list(maxit=0)), se.fit=F) %>% #we do not need a fit; so use 'maxit=0' to not lose time with calculating a fit
   doseSimulation(db, optimize=optimize) %>%
   mutate(method="Naive")
 
@@ -139,7 +139,7 @@ simulationResultNaive %>% group_by(ID) %>% filter(row_number() == n()) %>%
   annotate("rect", xmin=-Inf, xmax=Inf, ymin=8, ymax=12, fill="green", alpha=0.2) +
   geom_point(data=. %>% unnest(observed), aes(group=ID)) +
   geom_line(data=. %>% group_modify(function(x, ...){predict(x$fit[[1]], x$regimen[[1]], newdata=seq(0, 20*24))}), aes(group=ID)) +
-  geom_tile(data=. %>% unnest(regimen) %>% filter(TIME!=0), aes(x=TIME, y=20, fill=AMT)) +
+  geom_tile(data=. %>% unnest(regimen) %>% filter(TIME!=0), aes(x=TIME, y=20, fill=factor(AMT))) +
   facet_wrap(~ID)
 ```
 
@@ -152,10 +152,13 @@ optimize <- function(fit, regimen, truth) {
   if(is.na(nextTarget)) return()
   recommendation <- findDose(fit, regimen=regimen, doseRows=which(regimen$TIME > maxTime), 
            target = data.frame(TIME=nextTarget, CONC=10))
+  recommendation$regimen$AMT <- plyr::round_any(recommendation$regimen$AMT, 20) #round to tablet size
   return( list(regimen=recommendation$regimen) )
 }
 
-simulationResultEBE <- doseSimulation(db, optimize=optimize) %>%
+simulationResultEBE <- db %>%
+  mutate(control=list(list(trace=0)), se.fit=F) %>% #do not calculate errors
+  doseSimulation(optimize=optimize) %>%
   mutate(method="EBE")
 
 simulationResultEBE %>% group_by(ID) %>% filter(row_number() == n()) %>%
@@ -163,7 +166,7 @@ simulationResultEBE %>% group_by(ID) %>% filter(row_number() == n()) %>%
   annotate("rect", xmin=-Inf, xmax=Inf, ymin=8, ymax=12, fill="green", alpha=0.2) +
   geom_point(data=. %>% unnest(observed), aes(group=ID)) +
   geom_line(data=. %>% group_modify(function(x, ...){predict(x$fit[[1]], x$regimen[[1]], newdata=seq(0, 20*24))}), aes(group=ID)) +
-  geom_tile(data=. %>% unnest(regimen) %>% filter(TIME!=0), aes(x=TIME, y=20, fill=AMT)) +
+  geom_tile(data=. %>% unnest(regimen) %>% filter(TIME!=0), aes(x=TIME, y=20, fill=factor(AMT))) +
   facet_wrap(~ID)
 ```
 
@@ -172,25 +175,31 @@ simulationResultEBE %>% group_by(ID) %>% filter(row_number() == n()) %>%
 result <- bind_rows(
   simulationResultNaive,
   simulationResultEBE
-)
-result %>% group_by(ID, method) %>% filter(row_number() == n()) %>%
+) %>% ungroup() %>% mutate(method = factor(method)) %>%
+  group_by(ID, method) %>% filter(row_number() == n())
+result %>%
   ggplot(aes(x=TIME, y=CONC, color=method)) +
+  facet_wrap(~ID) +
   annotate("rect", xmin=-Inf, xmax=Inf, ymin=8, ymax=12, fill="green", alpha=0.2) +
   geom_point(data=. %>% unnest(observed), aes(group=ID)) +
-  geom_line(data=. %>% group_modify(function(x, ...){predict(x$fit[[1]], x$regimen[[1]], newdata=seq(0, 20*24))}), aes(group=interaction(ID, method))) +
-  facet_wrap(~ID)
+  geom_line(data=. %>% group_modify(function(x, ...){predict(x$fit[[1]], x$regimen[[1]], newdata=seq(0, 20*24))}), aes(group=method)) +
+  geom_tile(data=. %>% unnest(regimen) %>% filter(TIME!=0), aes(x=TIME, y=21-as.numeric(method), fill=AMT), color=NA) +
+  geom_text(aes(x=0, y=21-as.numeric(method), label=method), size=5) + 
+  facet_wrap(~ID) +
+  scale_fill_distiller(guide = "legend", breaks=seq(60, 200, by=20))
 ```
 
 ### Comparing both: stats comparison
 ```{r}
-concentrations <- result %>% group_by(ID, method) %>% filter(row_number() == n()) %>% unnest(observed)
+concentrations <- result %>% unnest(observed)
 inTarget <- concentrations %>%
   mutate(INTARGET = between(CONC, 8, 12)) %>%
   group_by(method) %>% summarize(X = sum(INTARGET), N=n())
-prop.test(x=inTarget$X, n=inTarget$N )
+res <- prop.test(x=inTarget$X, n=inTarget$N )
+res
 ```
 
-Based on the stats comparison, 10 patients per arm is clearly not enough to distinguish between naive dose optimization and computer dosing. We should run a simulation with 10,000 patients first to characterize the expected difference.
+Based on the stats comparison, 10 patients per arm may be enough (p=`r res$p.value`) to distinguish between naive dose optimization and computer dosing. We should run a simulation with 10,000 patients first to characterize the expected difference.
 
 ### Code appendix
 ```{r code={file <- knitr::purl(knitr::current_input(), documentation = 0); text <- readLines(file); unlink(file); text}, eval = FALSE}

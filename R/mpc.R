@@ -96,7 +96,7 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
       if (is.na(startOccasion)) {
         break
       }
-      previousEbe <- predict(ipred, newdata=startOccasion)[, paste0(thetaNames, object$mpc_suffix)]
+      previousEbe <- stats::predict(ipred, newdata=startOccasion)[, paste0(thetaNames, object$mpc_suffix)]
       names(previousEbe) <- paste0(thetaNames)
       previousEbe$TIME <- startOccasion
       ebeCovariates <- dplyr::bind_rows(ebeCovariates, previousEbe)

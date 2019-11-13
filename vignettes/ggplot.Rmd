@@ -21,34 +21,105 @@ set.seed(0)
 library(tdmore)
 library(ggplot2)
 m1 <- tdmore(meropenem_model)
-regimen <- data.frame(AMT=2000, TIME=seq(0, 100, by=8))
+regimen <- data.frame(AMT=2000, TIME=seq(0, 50, by=8), DURATION=2)
 
 population <- estimate(m1, regimen=regimen)
 observed <- data.frame(TIME=c(4, 7.8), CONC=c(10, 2.4))
 ipred <- estimate(m1, regimen=regimen, observed=observed)
+recommendation <- findDose(ipred, doseRows=which( regimen$TIME > 24), target=data.frame(TIME=39.5, CONC=8) )
 
 ggplot(mapping=aes(x=TIME,y=CONC)) + 
   geom_point(data=observed) +
   geom_line(aes(color="Population"), data=predict(population, newdata=seq(0, 48, by=0.1))) +
-  geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 48, by=0.1)))
+  geom_line(aes(color="Individual"), data=predict(ipred, newdata=seq(0, 48, by=0.1))) +
+  geom_line(aes(color="Recommendation"), data=predict(ipred, newdata=seq(0, 48, by=0.1), regimen=recommendation$regimen))
 ```
 
-# TDMore extensions ggplot
-```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
-ggplot(ipred, mapping=aes(x=TIME,y=CONC)) + 
-  geom_point() +
-  stat_predict(xlim=c(NA,NA)) +
-  stat_predict(xlim=c(NA,NA), tdmorefit=population)
+# ggplot extensions
+## Trying the simple interface
+```{r}
+ggplot() +
+  predictionLayer(tdmorefit=ipred, mapping=aes(x=TIME, y=CONC), newdata=seq(0, 48, by=0.1))
+
+ggplot(mapping=aes(x=TIME, y=CONC)) +
+  predictionLayer(data=ipred, geom="point", color="red") #interpolation between default plot region
+
+ggplot(mapping=aes(x=TIME, y=CONC)) +
+  predictionLayer(data=ipred, n=NULL, geom="line", color="red") + #no interpolation
+  predictionLayer(data=as.population(ipred), geom="line", color="blue") +
+  geom_point(data=ipred$observed)
+
+
+ggplot(mapping=aes(x=TIME, y=CONC)) +
+  predictionLayer(tdmorefit=ipred, n=500, newdata=seq(0, 10, by=0.5), geom="point", color="red") + #no interpolation
+  geom_point(data=ipred$observed) +
+  coord_cartesian(xlim=c(0, 50))
+
+ggplot(mapping=aes(x=TIME, y=CONC)) +
+  predictionLayer(tdmorefit=ipred, geom="line", color="red") +  #interpolation
+  predictionLayer(data=ipred, n=NULL, geom="point", color="red") + #no interpolation
+  geom_point(data=ipred$observed) +
+  coord_cartesian(xlim=c(0, 50))
+
+ggplot(mapping=aes(x=TIME, y=CONC)) +
+  predictionLayer(tdmorefit=ipred, n=NULL, newdata=seq(0, 50, by=0.1), geom="line", color="red") + #no interpolation
+  predictionLayer(tdmorefit=ipred, n=10, geom="point", color="purple") + #interpolation
+  scale_y_log10() +
+  coord_cartesian(xlim=c(0, 100))
+
+ggplot(ipred, aes(x=TIME, y=CONC)) + 
+  geom_point() + # by default, ipred is fortified into the observed data
+  predictionLayer(newdata=seq(0, 10, by=0.01))
+
+ggplot(ipred, aes(x=TIME, y=CONC)) + 
+  geom_point() + 
+  predictionLayer()
+
+
+## PredictionLayer automatically guesses the output you want
+ggplot(ipred, aes(x=TIME)) + 
+  geom_point(aes(y=CONC)) + 
+  predictionLayer()
 ```
 
-# TDMore autoplot
-```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
-autoplot(m1, regimen=regimen)
+## Add more verbose options
+```{r}
+z <- ggplot(ipred, aes(x=TIME, y=CONC)) + 
+  geom_point() + 
+  predictionLayer() +
+  predictionLayer(aes(ymin=CONC.lower, ymax=CONC.upper), se.fit=T, geom="ribbon", alpha=0.2) +
+  predictionLayer(regimen=recommendation$regimen, color="green") +
+  predictionLayer(aes(ymin=CONC.lower, ymax=CONC.upper), se.fit=T, geom="ribbon", fill="green", alpha=0.2, regimen=recommendation$regimen) +
+  coord_cartesian(xlim=c(28, 50), ylim=c(1, 50)) +
+  scale_y_log10()
+z
+```
 
-autoplot(population)
+## And now use utility functions
+```{r}
+z <- ggplot() + 
+  autolayer(ipred, n=1000) + 
+  autolayer(recommendation) +
+  coord_cartesian(xlim=c(30, 50)) +
+  theme_bw() +
+  scale_y_log10()
+z
+```
 
+```{r}
+# all of this is standard ggplot, so can be used in combination with e.g. plotly
+plotly::ggplotly(z)
+```
+
+
+```{r}
 autoplot(ipred)
 ```
+
+```{r}
+autoplot(as.population(ipred), newdata=timeRange(observed=ipred$observed, regimen=ipred$regimen), fit=F)
+```
+
 
 ### Code appendix
 ```{r ref.label=knitr::all_labels(), echo = T, eval = F}

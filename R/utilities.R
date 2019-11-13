@@ -36,23 +36,3 @@ meltPredictions <- function(x, se=FALSE) {
     dplyr::mutate(suffix=paste0("value", .data$suffix) ) %>%
     tidyr::spread(key=.data$suffix, value=.data$value)
 }
-
-#' Compute the TMax value based on the specified regimen and observed data.
-#'
-#' @param regimen the specified regimen
-#' @param observed the observed dataframe
-#'
-#' @details the maximum of all times in observed, and regimen (+one additional Interdose-interval, should this be specified)
-#'
-#' @return the tmax value, numeric
-computeTmax <- function(regimen, observed=NULL) {
-  values <- c(0)
-  if (!is.null(regimen)) {
-    values <- c(values, regimen$TIME)
-    if(all(c("ADDL", "II") %in% names(regimen))) values <- c(values, regimen$TIME + (regimen$ADDL+1) * regimen$II)
-  }
-  if (!is.null(observed)) {
-    values <- c(values, observed$TIME)
-  }
-  return(max(values, na.rm=TRUE))
-}

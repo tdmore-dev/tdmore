@@ -1,254 +1,210 @@
-## Strategy:
-## We use fortify to convert the tdmorefit to a special data.frame
-## It remembers all arguments passed to fortify.tdmorefit
-##
-## Any stat_predict or other functions will generate a layer with a special layer_class
-## This layer_class can change the data.frame to the predicted values instead
-
-#' Calculate predictions using the provided tdmore model. This is very similar to stat_function,
-#' but the calculated values are calculated using `predict.tdmorefit`.
+#' Convert a tdmorefit object to a data.frame using `model.frame`.
+#' The data.frame has a special 'tdmoreArgs' attribute that is used to capture all extra arguments to the original ggplot call.
+#' The attribute contains a list with element 'tdmorefit' and all extra named arguments to the fortify call.
 #'
-#' It can be compared to `stat_function(fun=predict, object, newdata, regimen, parameters, covariates, ...)`.
-#'
-#' Not all arguments have to be provided. Missing arguments can be inherited from the original `ggplot()` call,
-#' in a similar way as aesthetics.
-#'
-#' @param data
-#' The data to be displayed in this layer. There are three options:
-#' If NULL, data will be generated on a grid of evenly spaced values along the x axis.
-#' A data.frame, or other object, will override the plot data.
-#' A numeric vector will be coered to a data.frame with column TIME.
-#' All objects will be fortified to produce a data frame.
-#' See fortify() for which variables will be created.
-#' A function will be called with a single argument, the plot data.
-#' The return value must be a data.frame, and will be used as the layer data.
-#'
-#' This data is used in the `predict()` call.
-#'
-#' @inheritParams ggplot2::stat_function
+#' @param model the tdmorefit object
+#' @param ... extra arguments passed to `predict`
 #' @export
+#' @importFrom ggplot2 fortify
+fortify.tdmorefit <- function(model, ...) {
+  observed <- model.frame(model) %>% ggplot2::fortify()
+  ## We ignore 'newdata' as an argument
+  attr(observed, 'tdmoreArgs') <- list(tdmorefit=model, ...)
+  observed
+}
+
+#' @export
+#' @importFrom ggplot2 fortify
+fortify.tdmorefit_mixture <- fortify.tdmorefit
+
+has_tdmoreArgs <- function(x) {"tdmoreArgs" %in% names(attributes(x)) }
+`%||%` <- function(x,y) {if(!is.null(x)) x else y}
+
+
+#' This creates a special type of ggplot2 Layer object.
+#' The layer searches for a tdmorefit object in either the plot, or its own arguments.
+#' It then calls the `predict()` function and provides this data.frame instead of the original data
 #'
-#' @details
-#' This is implemented as a `stat` function.
+#' You can use this just like a regular `layer` call.
+#' Beware that this function does not warn you about spurious or misspelled arguments, as
+#' these will be passed along to `predict()` instead.
 #'
-#' If the model predicts an `y` or `x` output, those are passed to the geom instead.
-#' This may be outside of the range of the scales.
+#' @inheritParams ggplot2::layer
+#' @param n Specifies whether the prediction must be performed on interpolated points along the x-axis.
+#' @param ... extra arguments, which go partly into the geom/stat parameters, and partly into extra_params (which go into the `predict` call)
 #'
-#' @importFrom ggplot2 layer
+#' @export
 #' @examples
 #' m1 <- tdmore(theopp_nlmixr)
 #' pred <- estimate(m1, regimen = data.frame(TIME=0, AMT=5))
-#' ggplot2::ggplot(pred, ggplot2::aes(TIME)) + ggplot2::geom_point() + stat_predict(data=seq(0, 24))
-#'
-#' ggplot2::ggplot(data.frame(TIME=c(0, 4), CONC=c(12,14)), mapping=ggplot2::aes(x=TIME, y=CONC)) +
-#'     ggplot2::geom_point() +
-#'     stat_predict(tdmorefit=pred, xlim=c(NA, NA))
-stat_predict <- function(mapping=NULL, data=NULL, geom="line",
-                         position="identity",
-                         xlim=NULL, n=101,
-                         se.fit=FALSE, level=0.95,
-                         ...,
-                         show.legend=NA, inherit.aes=TRUE) {
+#' ggplot2::ggplot(pred, ggplot2::aes(x=TIME, y=CONC)) +
+#'     ggplot2::geom_point() + predictionLayer(newdata=seq(0, 10))
+predictionLayer <- function(mapping=NULL, data=NULL, geom="line",
+                            stat="identity",
+                            position="identity",
+                            ...,
+                            n=101,
+                            show.legend=NA, inherit.aes=TRUE) {
   params <- list(
-    xlim=xlim,
-    n=n,
-    se.fit=se.fit, level=level,
     ...
   )
+
+  geom <- ggplot2:::check_subclass(geom, "Geom", env = parent.frame())
+  stat <- ggplot2:::check_subclass(stat, "Stat", env = parent.frame())
+  params <- ggplot2:::rename_aes(params) #standardisze color and colour
+  aes_params  <- params[intersect(names(params), geom$aesthetics())]
+  geom_params <- params[intersect(names(params), geom$parameters(TRUE))]
+  stat_params <- params[intersect(names(params), stat$parameters(TRUE))]
+  all <- c("key_glyph", geom$parameters(TRUE), stat$parameters(TRUE), geom$aesthetics())
+
+  isLayerParam <- names(params) %in% all
+  layer_params <- params[isLayerParam]
+  extra_param <- params[!isLayerParam]
+
   z <- ggplot2::layer(
-    data = data, mapping = mapping, stat = StatPredict,
+    data = data, mapping = mapping,
+    stat = stat,
     geom = geom, position = position, show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = params,
-    layer_class=TDMoreInheritLayer
+    params = layer_params,
+    layer_class=PredictionLayer
   )
+  z$extra_param <- extra_param
+  if(is.null(n)) {
+    #OK
+  } else {
+    #interpolation
+    if(!is.numeric(n) || length(n) < 1) stop("the `n` argument should either be a single number, or a numeric vector")
+  }
+  z$interpolation_n <- n
   z
 }
 
-StatPredict <- ggplot2::ggproto("StatPredict", ggplot2::Stat,
-  default_aes = ggplot2::aes(x=stat(TIME), y=stat(CONC)), #Does not work! This is applied only _after_ stats are calculated
-  compute_group = function(data, scales,
-                           tdmorefit, regimen=NULL, parameters=NULL, covariates=NULL,
-                           se.fit=FALSE, level=0.95, mc.maxpts=100,
-                           xlim = NULL, n = 101) {
-    if(!is.null(xlim)) {
-      # Evenly spaced grid, determined by xlim
-      # NA is replaced by the axis limits
-      range <- xlim
-
-      if(anyNA(range)) {
-        #Can we actually replace NA by the axis limits?
-        if(is.null(scales$x)) stop("NA was used in xlim, but the x axis does not contain any real data...")
-        if(scales$x$is_discrete()) stop("stat_predict requires a continuous (time) x axis")
-        xrange <- scales$x$dimension()  # dimension() returns transformed values
-        xrange <- scales$x$trans$inverse(xrange)
-        range[is.na(range)] <- xrange[is.na(range)]
-      }
-      xseq <- seq(range[1], range[2], length.out = n)
-
-      # re-initialize `data` with evenly spaced grid
-      data <- data.frame(
-        x=if(is.null(scales$x)) xseq else scales$x$trans$inverse(xseq)
-      )
-    } else {
-      if("x" %in% names(data)) {
-        xseq <- scales$x$trans$inverse( data$x ) #data$x is already transformed
-      }
-      else stop("No `x` value available for stat_predict. Either specify `xlim`, or provide an aesthetic that maps `x`.")
-    }
-
-    result <- do.call(
-      predict,
-      c(list(object=tdmorefit,
-           newdata=xseq,
-           regimen=regimen,
-           parameters=parameters,
-           covariates=covariates,
-           se.fit=se.fit,
-           level=level,
-           mc.maxpts=mc.maxpts))
-    )
-
-    # Push new columns into `data`
-    for(i in setdiff(names(result), names(data))) data[,i] <- result[,i]
-
-    # FIXME: if the aesthetics contained 'aes(y=CONC)', then it is a pity this is not maintained...
-
-
-    # FIXME
-    # Assign 'y' as first variable with residual error
-    #vars <- lapply(tdmorefit$tdmore$res_var, function(x) x$var)
-    #vars <- unname(vars)
-    #if(length(vars) > 0 && !"y" %in% colnames(result)) {
-    #  data$y <- result[, vars[[1]] ] #first output column
-    #}
-
-    data
-  }
-)
-
-## This layer takes care of inheriting the provided parameters of ggplot() into the arguments of geom and stat
-TDMoreInheritLayer <- ggplot2::ggproto(
-  "TDMoreInheritLayer",
+PredictionLayer <- ggplot2::ggproto(
+  "PredictionLayer",
   ggplot2:::Layer,
-  setup_layer = function(self, data, plot) {
-    plotData <- plot$data
-    if(has_tdmoreArgs(plotData)) { ## if it is a tdmore data object, it can be used to override missing parameters
-      tdmoreArgs <- attr(plotData, 'tdmoreArgs')
-
-      # a layer has geom_params and stat_params
-      # we can nicely fill missing values using the tdmoreArgs
-      i <- intersect(names(tdmoreArgs), self$geom$parameters(extra=TRUE) )
-      self$geom_params[i] <- tdmoreArgs[i]
-
-      i <- intersect(names(tdmoreArgs), self$stat$parameters(extra=TRUE) )
-      self$stat_params[i] <- tdmoreArgs[i]
-    }
-
-    data
-  }
-)
-
-##### ----- The below code is experimental, and relies heavily on ggplot2 internals! -----
-## This layer replaces the data with a predicted data.frame
-## In layer_data, we set up the tdmoreArgs frame
-TDMorePredictLayer <- ggplot2::ggproto(
-  "TDMorePredictLayer",
-  ggplot2:::Layer,
-  tdmoreArgs=NULL, ## cache parameter
+  extra_param = list(), #extra parameters passed
+  interpolation_n = NULL, #interpolate?
   layer_data = function(self, plot_data) {
-    super <- ggproto_parent(ggplot2:::Layer, self)
+    super <- ggplot2::ggproto_parent(ggplot2:::Layer, self)
     layerData <- super$layer_data(plot_data)
 
-    ## First try self$data. Maybe it has some 'tdmoreArgs'?
-    params <- list()
-    if(has_tdmoreArgs(self$data)) {
-      tdmoreArgs <- attr(self$data, 'tdmoreArgs')
-      ## What is not yet specified comes from tdmoreArgs
-      i <- setdiff(names(tdmoreArgs), names(params))
-      params[i] <- tdmoreArgs[i]
-    } else if (!is.waive(self$data)) {
-      ### It is not a waiver; someone really specified something!
-      ### Use it as newdata argument
-      if(!empty(layerData) && is.null(params$newdata)) params$newdata <- layerData
-    }
+    params <- self$extra_param
 
-    ## Also check the plot_data!
+    if(has_tdmoreArgs(layerData)) {
+      extra <- attr(layerData, 'tdmoreArgs')
+      i <- setdiff(names(extra), names(params))
+      params[i] <- extra[i]
+    }
     if(has_tdmoreArgs(plot_data)) {
-      tdmoreArgs <- attr(plot_data, 'tdmoreArgs')
-      ## What is not yet specified comes from tdmoreArgs
-      i <- setdiff(names(tdmoreArgs), names(params))
-      params[i] <- tdmoreArgs[i]
+      extra <- attr(plot_data, 'tdmoreArgs')
+      i <- setdiff(names(extra), names(params))
+      params[i] <- extra[i]
     }
 
     if(is.null(params$object)) params$object <- params$tdmorefit #ensure the 'object' parameter is defined
-    self$tdmoreArgs <- params
+    if(is.null(params$object)) stop("Could not find a tdmorefit object as 'tdmorefit' or 'object' argument")
 
-    do.call(what=predict, args=params) ## Already pass a prediction, even though it may be a prediction without observed data
+    self$params <- params
+    self$predict <- function(...) {
+      params <- c(self$params, list(...) ) #give original parameters preference
+      params <- params[ unique(names(params)) ]
+      do.call(what=predict, args=params)
+    }
+    data <- self$predict(newdata=layerData)  ## Already pass a prediction, even though it may be a prediction no data
+    if(nrow(data)==0) {
+      #Ggplot handles empty data poorly. We add dummy NA data instead. This will get replaced by actual data later
+      dummy <- as.list( rep(NA_real_, length.out=ncol(data)) )
+      names(dummy) <- colnames(data)
+      data <- rbind(data, dummy)
+    }
+    data
   },
   setup_layer = function(self, data, plot) {
     self$plot <- plot ## Store the plot for later use
     data
   },
   compute_statistic = function(self, data, layout) {
-    ### Now calculate the data.frame
-    if(is.null(self$tdmoreArgs)) stop()
-    params <- self$tdmoreArgs
-    browser()
-
-    data <- plyr::ddply(data, "PANEL", function(data) {
-      if(is.null(params$newdata)) {
+    ## First interpolate the data-frame if required
+    n <- self$interpolation_n
+    data <- plyr::ddply(data, "PANEL", function(data) { # per panel
+      if(length(n)==1) {
         scales <- layout$get_scales(data$PANEL[1])
-        range <- range( c(scales$x$dimension(), layout$coord$limits$x) )
-        params$newdata <- seq(range[1], range[2], length.out=101)
+        range <- range( c(scales$x$dimension(), layout$coord$limits$x), na.rm=TRUE )
+        if(any(!is.finite(range))) stop("Prediction layer does not know where to interpolate.\nPlease specify an x-coordinate range for this plot using e.g. coord_cartesian(), or add some actual data.")
+        xseq <- seq(range[1], range[2], length.out=n)
+      } else if (is.numeric(n)) {
+        xseq <- n
+      } else if (is.null(n)) {
+        xseq <- data$x
+        if(all(is.na(xseq))) stop("`n`=NULL specified, but there is no x data to use!")
+      } else {
+        stop("Argument `n` is unsupported: ", n)
       }
-      result <- do.call(what=predict, args=params)
+      result <- self$predict(newdata=xseq)
       result$PANEL <- data$PANEL[1]
 
-      browser()
-      data <- self$compute_aesthetics(result, self$plot) ## re-compute previous aes
-      data <- scales_transform_df(scales, data)
-      data <- layout$map_position(data)
+      data <- self$compute_aesthetics(result, self$plot)
+
+      ## For aesthetics mapped to NULL, we will auto-guess their mapping here
+      vars <- c("x", "y", "ymin", "ymax")
+      missing <- setdiff(vars, colnames(data)) %>%
+        getAes(self$params$tdmorefit, vars=., as.aes=FALSE, data=result)
+      missing <- purrr::compact(missing)
+      if(length(missing)>0) data[, names(missing)] <- result[, unlist(missing) ]
+
+      data <- ggplot2:::scales_transform_df(self$plot$scales, data)
 
       for(i in setdiff(names(result), names(data))) data[,i] <- result[,i] ## add missing columns
 
       data
     })
 
-    super <- ggproto_parent(ggplot2:::Layer, self)
+    super <- ggplot2::ggproto_parent(ggplot2:::Layer, self)
     data <- super$compute_statistic(data, layout)
     data
   }
 )
 
-#' A geom to display a fit object as a line
-#' @export
-geom_fit <- function(mapping=NULL, data=NULL,
-                     stat="identity",
-                     position="identity",
-                     ...,
-                     se.fit=FALSE, level=0.95,
-                     color="tomato1",
-                     show.legend=NA, inherit.aes=TRUE) {
-  ## Add the tdmoreArgs to the list
-  tdmoreArgs <- list(
-    se.fit=se.fit, level=level
-  )
-  data <- fortify(data)
-  attr(data, 'tdmoreArgs') <- c( tdmoreArgs, attr(data, 'tdmoreArgs'))
+#' This function tries to construct an aes
+#' by guessing the required variables
+#'
+#' If no 'x' is defined, we put a NULL in the aesthetic
+#' It will then get filled in by the predictionLayer
+#' @param x tdmorefit object
+#' @param vars the aes vars to guess
+#' @param as.aes TRUE to return an aes object, FALSE to return a named list
+#' @param data data.frame to check whether the values actually exist
+getAes <- function(x, vars=c("x", "y", "ymin", "ymax"), as.aes=TRUE, data = NULL) {
+  if(!is.tdmorefit(x)) stop()
+  varNames <- lapply(x$tdmore$res_var, function(x){x$var}) %>% unlist
 
-  params <- list(
-    color=color,
-    ...
-  )
+  if(length(varNames)==0) {
+    var <- NULL
+  } else if (is.null(data)) {
+    var <- varNames[1]
+  } else {
+    ## Consult data to only suggest available column names
+    varNames <- intersect(varNames, colnames(data) )
+    if(length(varNames)==0) var <- NULL #nothing left; too bad!
+    else var <- varNames[1]
+  }
 
-  z <- ggplot2::layer(
-    data = data, mapping = mapping, stat = stat,
-    geom = "line", position = position, show.legend = show.legend,
-    inherit.aes = inherit.aes,
-    params = params,
-    layer_class=TDMorePredictLayer
-  )
-  z
+  mapping <- lapply(vars, function(i) {
+    switch (i,
+            x = "TIME",
+            y = var,
+            ymin = if(is.null(var)) NULL else paste0(var, ".lower"),
+            ymax = if(is.null(var)) NULL else paste0(var, ".upper"),
+            stop("Cannot guess aes for aesthetic ", i)
+    )
+  })
+  names(mapping) <- vars
+  mapping <- purrr::keep(mapping, function(i) {
+    i %in% colnames(data) #remove columns that are not available in source dataset
+  })
+
+  if(as.aes) mapping <- do.call( ggplot2::aes_string, args=mapping)
+
+  return(mapping)
 }
-

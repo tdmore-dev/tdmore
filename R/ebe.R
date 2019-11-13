@@ -33,7 +33,7 @@ pop_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isCho
 #'
 #' @return the prediction log likelihood
 pred_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
-  pred <- predict(object=tdmore, newdata=observed, regimen=regimen, parameters=c(fix$values,par), covariates=covariates)
+  pred <- stats::predict(object=tdmore, newdata=observed, regimen=regimen, parameters=c(fix$values,par), covariates=covariates)
   ll <- 0
   for(res_var in tdmore$res_var) {
     i <- res_var$var
@@ -205,12 +205,17 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
     return(estimateMixtureModel(object, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix, method=method, lower=lower, upper=upper, ...))
   } else if (is.tdmorefit(object)) {
     ## Re-estimate with different parameters/options
+
+    # if using an MPC object, remove the theta names from the stored covariates first
+    covariates <- covariates %||% object$covariates
+    if(is.mpc(object$tdmore) && !is.null(covariates)) covariates <- covariates[, setdiff(colnames(covariates), names(object$tdmore$mpc_theta)) ]
+
     return(
       estimate(object$tdmore,
                observed %||% object$observed,
                regimen %||% object$regimen,
-               covariates %||% object$covariates,
-               par=par, fix=fix, method=method, se.fit=se.fit, lower=lower, upper=upper, multistart=multistart, ...)
+               covariates,
+               par=par, fix=fix, method=method, se.fit=se.fit, lower=lower, upper=upper, multistart=multistart, control=control, ...)
       )
   } else {
     #will never happen
@@ -324,6 +329,14 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
     ## Recalculate hessian?
     H <- pointEstimate$hessian / 2 ## we were optimizing -2*LL. The OFIM is the hessian for LL
     if(FALSE) {
+      # fix2 <- fix
+      # fix2$indexes <- c(fix$indexes, 5)
+      # fix2$values <- c(fix$values, res['ECL'] )
+      # H <- numDeriv::hessian(func=ll,
+      #                        x=res['EV1'],
+      #                        method="Richardson",
+      #                        method.args=list(eps=1e-8),
+      #                        omega=omega['EV1','EV1'], fix=fix2, tdmore=cTdmore, observed=observed, regimen=regimen, covariates=covariates)
       ## Possible alternative, more precise?
       H <- numDeriv::hessian(func=ll,
                            x=pointEstimate$par,
@@ -333,6 +346,8 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
     }
     OFIM <- H
     varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
+    if(varcov[1,1] < 0) varcov <- -1 * varcov
+    diag(varcov) <- abs(diag(varcov)) ## force varcov to be positive, even though this is a nasty hack!
     chol(varcov) #try the cholesky decomposition, to double check varcov is truly semi-positive definite!
   } else {
     varcov <- diag(.Machine$double.eps, nrow=length(updatedParNames)) #very small value, to keep matrix semi-definite
@@ -605,7 +620,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
   par <- processParameters(parameters, tdmorefit$tdmore, regimen, defaultValues=coef(tdmorefit))
   if(is.null(covariates)) covariates <- tdmorefit$covariates
 
-  ipred <- predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=par, covariates=covariates)
+  ipred <- stats::predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=par, covariates=covariates)
   if(se.fit) {
     mc <- generateMonteCarloMatrix(tdmorefit, fix = parameters, mc.maxpts = mc.maxpts)
     uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
@@ -617,8 +632,9 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
       row <- mc[i,,drop=TRUE] #make vector
       res <- unlist(row[-1]) # Remove 'sample'
       names(res) <- names(coef(tdmorefit))
-      pred <- predict(object=cTdmore, newdata=newdata, regimen=regimen, parameters=res, covariates=covariates)
+      pred <- stats::predict(object=cTdmore, newdata=newdata, regimen=regimen, parameters=res, covariates=covariates)
       names(row) <- uniqueColnames
+      if(nrow(pred)==0) row <- lapply(row, function(x){rep(x, length.out=0)}) #just bind the names, not the values
       resArray <- cbind(row, pred)
       resArray
     })
@@ -920,7 +936,7 @@ expandOmega <- function(tdmore, occasions) {
 #' predictionForDoubleDose <- residuals(fit, predict(fit, regimen=regimen), weighted=TRUE)
 #'
 residuals.tdmorefit <- function(object, data, weighted=FALSE, ...) {
-  res <- residuals(object$tdmore, predict(object), model.frame(object), weighted=weighted, ...)
+  res <- residuals(object$tdmore, stats::predict(object), model.frame(object), weighted=weighted, ...)
   if(missing(data)) return(res)
 
   observed <- model.frame(object)
@@ -931,4 +947,13 @@ residuals.tdmorefit <- function(object, data, weighted=FALSE, ...) {
   result <- residuals.tdmore(object$tdmore, predicted=data[i,], observed=res[j,], weighted=TRUE, inverse=TRUE)
   data[i, names(result)] <- result[i, ]
   return(result)
+}
+
+#' Transform a tdmore fit object into a population fit
+#' This is done by re-executing the 'estimate' function, but with no observed data
+#' @param x a tdmorefit object
+#' @export
+as.population <- function(x) {
+  estimate(x, observed=model.frame(x, data=numeric()), control=list(trace=0))
+  #estimate(x, observed=NA, control=list(trace=0))
 }
