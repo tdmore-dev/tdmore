@@ -22,8 +22,24 @@ library(testthat)
 library(RxODE)
 library(vdiffr)
 
+myVersion <- NULL
 rxOdeVersion <- function() {
-  paste0( "RxODE-",sessionInfo()$otherPkgs$RxODE$Version )
+  if(!is.null(myVersion)) return(myVersion)
+
+  testRoot <- rprojroot::find_testthat_root_file("../")
+  available <- dir(testRoot, pattern="RxODE-*")
+  candidate <- paste0( "RxODE-",sessionInfo()$otherPkgs$RxODE$Version )
+  if(available %in% candidate) {
+    myVersion <<- candidate
+  } else {
+    ## Use the results from the previous version
+    all <- sort( c(available, candidate) )
+    i <- which( all == candidate )
+    if(i == 1) stop("RxODE version too old, no available testthat repository!")
+    myVersion <<- all[ i-1 ] #previous version
+    warning("Using older version for RxODE testing repository: current=", candidate, ", reference=", myVersion )
+  }
+  return(myVersion)
 }
 
 message("Tests using RxODE version: ", rxOdeVersion())
