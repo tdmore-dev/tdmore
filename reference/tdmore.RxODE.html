@@ -208,7 +208,7 @@ CONC = centr / Vc * 1000;
 d/dt(abs) = -ka*abs;
 d/dt(centr) = ka*abs - CL/Vc*centr;
 "</span>
-<span class='no'>rxodeModel</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>RxODE</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/RxODE/man/RxODE.html'>RxODE</a></span>(<span class='no'>modelCode</span>)
+<span class='no'>rxodeModel</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>RxODE</span><span class='kw ns'>::</span><span class='fu'><a href='https://nlmixrdevelopment.github.io/RxODE/reference/RxODE.html'>RxODE</a></span>(<span class='no'>modelCode</span>)
 <span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='fu'>tdmore</span>(<span class='no'>rxodeModel</span>, <span class='kw'>res_var</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'>errorModel</span>(<span class='kw'>var</span><span class='kw'>=</span><span class='st'>"CONC"</span>, <span class='kw'>add</span><span class='kw'>=</span><span class='fl'>3.7</span>)))</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
