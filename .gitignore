@@ -4,3 +4,4 @@
 .Ruserdata
 tdmore.d/**
 rx_*
+inst/benchmark/*.benchmark
