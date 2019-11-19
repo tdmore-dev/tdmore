@@ -28,7 +28,7 @@ test_that("IRES and IWRES make sense", {
 
 plot(ipred)
 test_that("Prediction results makes sense", {
-  expect_doppelganger_RxODE("ipred_1cmt", plot(ipred))
-  expect_doppelganger_RxODE("ipred_1cmt_profile", plot(profile(ipred)))
+  expect_doppelganger("ipred_1cmt", plot(ipred))
+  expect_doppelganger("ipred_1cmt_profile", plot(profile(ipred)))
   expect_equal(round(ipred$res, digits=3), c(EV1=0.578))
 })

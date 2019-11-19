@@ -24,6 +24,7 @@ expect_runtime <- function(expr, file, lower=0, upper=1.2) {
     return()
   }
 
+  file <- rxOdePath(file) ## adapt per RxODE version
   if (!file.exists(file)) {
     warning("Creating reference value", call. = FALSE)
     cat(relTime, file = file)

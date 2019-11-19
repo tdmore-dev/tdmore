@@ -26,7 +26,7 @@ myVersion <- NULL
 rxOdeVersion <- function() {
   if(!is.null(myVersion)) return(myVersion)
 
-  testRoot <- rprojroot::find_testthat_root_file("../")
+  testRoot <- rprojroot::find_testthat_root_file("ref")
   available <- dir(testRoot, pattern="RxODE-*")
   candidate <- paste0( "RxODE-",sessionInfo()$otherPkgs$RxODE$Version )
   if(candidate %in% available) {
@@ -44,14 +44,23 @@ rxOdeVersion <- function() {
 
 message("Tests using RxODE version: ", rxOdeVersion())
 
+rxOdePath <- function(...) {
+  testthat::test_path("ref", rxOdeVersion(), ...)
+}
+
 ## Change the path for different versions of RxODE...
-expect_doppelganger_RxODE <- function(title, fig, path=NULL, ...) {
+expect_doppelganger <- function(title, fig, path=NULL, ...) {
+  # expect_doppelganger changes the path as test_path("..", "figs", path)
+  # too bad; vdiffr::manage_cases() also expects the files in that path
   vdiffr::expect_doppelganger(title, fig,
-                              path=paste0("../",rxOdeVersion()),
+                              path=rxOdePath(),
                               ...)
 }
 
-expect_known_value_RxODE <- function(object, file, ...) {
-  file <- paste0(rxOdeVersion(), "/", file)
-  testthat::expect_known_value(object, file, ...)
+expect_known_value <- function(object, file, ...) {
+  testthat::expect_known_value(object, rxOdePath(file), ...)
+}
+
+expect_known_output <- function(object, file, ...) {
+  testthat::expect_known_output(object, rxOdePath(file), ...)
 }
