@@ -51,5 +51,7 @@ expectUpdate(timeout=10*1000, output="plot", ECL=-5)
 app$snapshot(filename="EV1-profile-ECL-fixedDiffValue")
 
 ### TODO: We do not test the plot zoom
+p <- app$.__enclos_env__$private$shinyProcess
+p$interrupt()
+p$wait()
 
-app$stop()
