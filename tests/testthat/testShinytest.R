@@ -26,9 +26,12 @@ on.exit({
 
 ## Is the tdmore library available on the search path? If yes, then use that one
 ## If not, then install the tdmore library in a separate path, because shiny is executed in a separate process
-pkgPat <- path.package("tdmore", quiet=T)
+pkg <- "tdmore"
+pkgPat <- path.package(pkg, quiet=T)
 if(is.null(pkgPat) || pkg %in% devtools::dev_packages() || startsWith(pkgPat, Sys.getenv("R_LIBS_USER")) ) {
-  #we are about to load the installed version! This will differ from the development version...
+  #Either the package is not available
+  #or it is currently in the dev packages
+  #or we are about to load the (outdated) installed version!
   message("Installing temporary version of tdmore for use with shinytest")
   pkg <- devtools::as.package(".")
   utils::install.packages(repos = NULL,
