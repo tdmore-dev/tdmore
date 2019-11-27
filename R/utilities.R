@@ -36,3 +36,48 @@ meltPredictions <- function(x, se=FALSE) {
     dplyr::mutate(suffix=paste0("value", .data$suffix) ) %>%
     tidyr::spread(key=.data$suffix, value=.data$value)
 }
+
+#'
+#' This function will check if the given package is loaded from a non-standard path.
+#' If so, we are probably running in a sub-process of a test.
+#'
+#' If it is available, but in a standard path, then this is probably an outdated version and we need to install the current version.
+#' If it is available, but as a dev_package, then we need to install the current version.
+#'
+#' The function always returns a temporary lib directory.
+#'
+#' @param pkgName the dev package name
+#' @return a directory that can be added to libPaths. The directory is removed when the R session exits, or when tmp_lib is garbage-collected
+#'
+#' @export
+ensurePackagePresent <- function(pkgName="tdmore") {
+  tmp_lib <- tempfile("R_LIBS")
+  dir.create(tmp_lib)
+  reg.finalizer(tmp_lib, function(tmp_lib){
+    unlink(tmp_lib, recursive = TRUE)
+  }, onexit=TRUE)
+
+  ## Is the library available on the current search path? If so, it probably was installed by covr or shinytest or ...
+  ## If it is in R_LIBS_USER, then we refuse: this was installed through Build and Install, and is an old version!
+  ## If no good version is available, then install the library in a temporary path and return this path
+  pkgPat <- path.package(pkgName, quiet=T)
+  if(is.null(pkgPat) || pkgName %in% devtools::dev_packages() || startsWith(pkgPat, Sys.getenv("R_LIBS_USER")) ) {
+    #Either the package is not available
+    #or it is currently in the dev packages
+    #or we are about to load the (outdated) installed version!
+    message("Installing temporary version of ", pkgName)
+    pkg <- devtools::as.package(".")
+    stopifnot(pkg$package == pkgName)
+    utils::install.packages(repos = NULL,
+                            lib = tmp_lib,
+                            pkg$path,
+                            type = "source",
+                            INSTALL_opts = c("--example",
+                                             "--install-tests",
+                                             "--with-keep.source",
+                                             "--with-keep.parse.data",
+                                             "--no-multiarch"),
+                            quiet = T)
+  }
+  return(tmp_lib)
+}

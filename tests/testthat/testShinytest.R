@@ -16,36 +16,7 @@ library(testthat)
 
 context("Perform all shinytest tests")
 
-
-
-tmp_lib <- tempfile("R_LIBS")
-dir.create(tmp_lib)
-on.exit({
-  unlink(tmp_lib, recursive = TRUE)
-}, add=T)
-
-## Is the tdmore library available on the search path? If yes, then use that one
-## If not, then install the tdmore library in a separate path, because shiny is executed in a separate process
-pkg <- "tdmore"
-pkgPat <- path.package(pkg, quiet=T)
-if(is.null(pkgPat) || pkg %in% devtools::dev_packages() || startsWith(pkgPat, Sys.getenv("R_LIBS_USER")) ) {
-  #Either the package is not available
-  #or it is currently in the dev packages
-  #or we are about to load the (outdated) installed version!
-  message("Installing temporary version of tdmore for use with shinytest")
-  pkg <- devtools::as.package(".")
-  utils::install.packages(repos = NULL,
-                          lib = tmp_lib,
-                          pkg$path,
-                          type = "source",
-                          INSTALL_opts = c("--example",
-                                           "--install-tests",
-                                           "--with-keep.source",
-                                           "--with-keep.parse.data",
-                                           "--no-multiarch"),
-                          quiet = T)
-}
-
+tmp_lib <- tdmore::ensurePackagePresent("tdmore")
 
 onCi <- !isTRUE(as.logical(Sys.getenv("CI")))
 testpath <- rprojroot::find_package_root_file("tests/shinytest")
