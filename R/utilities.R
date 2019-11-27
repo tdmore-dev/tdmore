@@ -47,15 +47,12 @@ meltPredictions <- function(x, se=FALSE) {
 #' The function always returns a temporary lib directory.
 #'
 #' @param pkgName the dev package name
-#' @return a directory that can be added to libPaths. The directory is removed when the R session exits, or when tmp_lib is garbage-collected
+#' @return a directory that can be added to libPaths
 #'
 #' @export
 ensurePackagePresent <- function(pkgName="tdmore") {
   tmp_lib <- tempfile("R_LIBS")
   dir.create(tmp_lib)
-  reg.finalizer(tmp_lib, function(tmp_lib){
-    unlink(tmp_lib, recursive = TRUE)
-  }, onexit=TRUE)
 
   ## Is the library available on the current search path? If so, it probably was installed by covr or shinytest or ...
   ## If it is in R_LIBS_USER, then we refuse: this was installed through Build and Install, and is an old version!

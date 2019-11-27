@@ -11,7 +11,7 @@ ensurePackagePresent(pkgName = "tdmore")
 \item{pkgName}{the dev package name}
 }
 \value{
-a directory that can be added to libPaths. The directory is removed when the R session exits, or when tmp_lib is garbage-collected
+a directory that can be added to libPaths
 }
 \description{
 If it is available, but in a standard path, then this is probably an outdated version and we need to install the current version.
