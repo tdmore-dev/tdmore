@@ -4,8 +4,15 @@
 \alias{autolayer.recommendation}
 \title{Automatically create the required layers for a recommendation object}
 \usage{
-\method{autolayer}{recommendation}(x, color = "green", fill = color,
-  alpha = 0.2, se.fit = T, level = 0.95, ...)
+\method{autolayer}{recommendation}(
+  x,
+  color = "green",
+  fill = color,
+  alpha = 0.2,
+  se.fit = T,
+  level = 0.95,
+  ...
+)
 }
 \arguments{
 \item{x}{recommendation}

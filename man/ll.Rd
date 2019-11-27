@@ -4,15 +4,14 @@
 \alias{ll}
 \title{Calculate the log likelihood as the sum of the population likelihood and the prediction likelihood.}
 \usage{
-ll(par, omega, fix, tdmore, observed, regimen, covariates,
-  isChol = FALSE)
+ll(par, omega, fix, tdmore, observed, regimen, covariates, isChol = FALSE)
 }
 \arguments{
-\item{par}{the current estimate of the parameters}
+\item{par}{a named numeric vector with parameter values; fixed parameter values are not included}
 
-\item{omega}{the omega matrix}
+\item{omega}{the omega matrix; fixed parameter values are not included}
 
-\item{fix}{named vector with the fixed parameters}
+\item{fix}{a named list with value 'indexes' specifying the fixed indexes, and value 'values' specifying a named numeric vector with the actual fixed values.}
 
 \item{tdmore}{the tdmore object}
 

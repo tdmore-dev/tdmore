@@ -7,8 +7,7 @@
 \usage{
 \method{residuals}{tdmorefit}(object, data, weighted = FALSE, ...)
 
-\method{residuals}{tdmore}(object, predicted, observed, weighted = FALSE,
-  inverse = FALSE, ...)
+\method{residuals}{tdmore}(object, predicted, observed, weighted = FALSE, inverse = FALSE, ...)
 }
 \arguments{
 \item{object}{A TDMore object}

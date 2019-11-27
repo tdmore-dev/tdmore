@@ -4,9 +4,15 @@
 \alias{model_prepare.RxODE}
 \title{Prepare a cache object for RxODE simulation}
 \usage{
-\method{model_prepare}{RxODE}(model, times, regimen = data.frame(TIME =
-  numeric()), parameters = numeric(), covariates = NULL, iov = NULL,
-  extraArguments = list())
+\method{model_prepare}{RxODE}(
+  model,
+  times,
+  regimen = data.frame(TIME = numeric()),
+  parameters = numeric(),
+  covariates = NULL,
+  iov = NULL,
+  extraArguments = list()
+)
 }
 \arguments{
 \item{model}{The model itself.}

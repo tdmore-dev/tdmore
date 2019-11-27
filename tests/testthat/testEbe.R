@@ -51,12 +51,6 @@ test_that("Test all other ebe methods", {
 test_that("We can use multiple methods and pick the best one", {
   observed <- data.frame(TIME=10, CONC=0.04)
   fit <- estimate(m1, observed=observed, regimen=regimen, covariates=c(WT=70))
-  # Try with an invalid method...
-  expect_error({
-    expect_warning({
-      estimate(fit, method="SANN")
-    }, regexp="optimr: optim\\(\\) with bounds ONLY uses L-BFGS-B")
-  }, )
 
   cg <- estimate(fit, lower=NULL, upper=NULL, method="CG")
   expect_equal( coef(cg), coef(fit), tolerance=1e-6 )
@@ -100,4 +94,25 @@ test_that("We can use multiple methods and pick the best one", {
   expect_error({
     estimate(fit, fix=c(EV1=1, ECL=2))
   }) #all parameters fixed...
+})
+
+
+
+test_that("We can generate uncertainty using MCMC", {
+  observed <- data.frame(TIME=c(10, 12), CONC=c(0.04, 0.03))
+  tdmorefit <- estimate(m1, observed=observed, regimen=regimen, covariates=c(WT=70))
+
+  out1 <- sampleMC_norm(tdmorefit, mc.maxpts=1000)
+  out2 <- sampleMC_metrop(tdmorefit, mc.maxpts=1000)
+
+  if(interactive()) { ## no real test is possible to compare these two different methods...
+  ggplot(mapping=aes(x=value)) +
+    geom_density(data=out1 %>% tidyr::pivot_longer(cols=-sample), aes(color="norm")) +
+    geom_density(data=out2 %>% tidyr::pivot_longer(cols=-sample), aes(color="metrop")) +
+    geom_vline(data=tibble::enframe(coef(tdmorefit)), aes(xintercept=value)) +
+    facet_wrap(~name)
+  autoplot(tdmorefit, newdata=seq(0, 24, by=0.1))
+  tdmorefit$varcov <- NULL
+  autoplot(tdmorefit, newdata=seq(0, 24, by=0.1))
+  }
 })

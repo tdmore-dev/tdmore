@@ -4,8 +4,7 @@
 \alias{tdmore.RxODE}
 \title{Create a TDM-capable model from an RxODE model}
 \usage{
-\method{tdmore}{RxODE}(model, res_var, parameters = NULL, omega = NULL,
-  iov = NULL, ...)
+\method{tdmore}{RxODE}(model, res_var, parameters = NULL, omega = NULL, iov = NULL, ...)
 }
 \arguments{
 \item{model}{the RxODE model}

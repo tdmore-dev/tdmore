@@ -111,7 +111,11 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
           covariates=mergeCovariates(ebeCovariates, covariates),
           fix=fix, se.fit=se.fit, control=control, ...)
       i <- (iterIndex-1)*N + seq_len(N) #copy last SE
-      varcov[i, i] <- ipred$varcov[i, i]
+      if(is.null(varcov) || is.null(ipred$varcov)) {
+        varcov <- NULL # too bad, varcov cannot be used
+      } else {
+        varcov[i, i] <- ipred$varcov[i, i]
+      }
     } else {
       # Last extra iteration copies final covariates dataframe (with all MPC parameters) to ipred
       ipred$covariates <- mergeCovariates(ebeCovariates, covariates)

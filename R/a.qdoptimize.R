@@ -43,7 +43,7 @@ findDose <- function(tdmorefit, regimen=tdmorefit$regimen, doseRows=NULL, interv
 
   } else {
     # Find the dose for each Monte-Carlo sample
-    mc <- generateMonteCarloMatrix(tdmorefit, fix = tdmorefit$fix, mc.maxpts = mc.maxpts)
+    mc <- sampleMC(tdmorefit, mc.maxpts = mc.maxpts)
     uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
 
     mcResult <- purrr::map_dfr(mc$sample, function(i) {

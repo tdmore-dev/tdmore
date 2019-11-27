@@ -2,25 +2,23 @@
 % Please edit documentation in R/ebe.R
 \name{pred_ll}
 \alias{pred_ll}
-\title{Calculate the prediction log likelihood.}
+\title{Calculate the prediction log likelihood. Fixed values are appended to the provided parameter estimate}
 \usage{
 pred_ll(par, omega, fix, tdmore, observed, regimen, covariates)
 }
 \arguments{
-\item{par}{the current estimate of the parameters}
+\item{par}{a named numeric vector with parameter values; fixed parameter values are not included}
 
-\item{omega}{the omega matrix}
+\item{omega}{the omega matrix; fixed parameter values are not included}
 
-\item{fix}{named vector with the fixed parameters}
+\item{fix}{a named list with value 'indexes' specifying the fixed indexes, and value 'values' specifying a named numeric vector with the actual fixed values.}
 
 \item{tdmore}{the tdmore object}
 
-\item{observed}{data frame with at least a TIME column, and all observed data.
-The data.frame can be empty, or could contain only a TIME column.
-The observed data will be compared to the model predictions.
+\item{observed}{data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 If not specified, we estimate the population prediction}
 
-\item{regimen}{data frame describing the treatment regimen}
+\item{regimen}{data frame describing the treatment regimen.}
 
 \item{covariates}{the model covariates}
 }
@@ -28,5 +26,5 @@ If not specified, we estimate the population prediction}
 the prediction log likelihood
 }
 \description{
-Calculate the prediction log likelihood.
+Calculate the prediction log likelihood. Fixed values are appended to the provided parameter estimate
 }

@@ -4,8 +4,15 @@
 \alias{model_prepare}
 \title{Prepare a cache object}
 \usage{
-model_prepare(model, times, regimen, parameters, covariates, iov,
-  extraArguments)
+model_prepare(
+  model,
+  times,
+  regimen,
+  parameters,
+  covariates,
+  iov,
+  extraArguments
+)
 }
 \arguments{
 \item{model}{The model itself.}

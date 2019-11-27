@@ -4,9 +4,16 @@
 \alias{model_predict.algebraic}
 \title{Predict for algebraic models}
 \usage{
-\method{model_predict}{algebraic}(model, times, regimen = NULL,
-  parameters = numeric(), covariates = NULL, iov = NULL,
-  extraArguments = list(), cache = NULL)
+\method{model_predict}{algebraic}(
+  model,
+  times,
+  regimen = NULL,
+  parameters = numeric(),
+  covariates = NULL,
+  iov = NULL,
+  extraArguments = list(),
+  cache = NULL
+)
 }
 \arguments{
 \item{model}{the algebraic model}

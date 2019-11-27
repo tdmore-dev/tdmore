@@ -154,6 +154,7 @@ predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covar
 #' @rdname residuals
 #'
 #' @importFrom stats dnorm
+#' @importFrom stats residuals
 residuals.tdmore <- function(object, predicted, observed, weighted=FALSE, inverse=FALSE, ...) {
   tdmore <- object
   for (err in tdmore$res_var) {

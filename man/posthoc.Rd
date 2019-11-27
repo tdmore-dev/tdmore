@@ -6,15 +6,35 @@
 \alias{doseSimulation}
 \title{These functions perform estimate for multiple individuals at the same time.}
 \usage{
-posthoc(x, ..., .fit = "fit", .prediction = "ipred",
-  .elapsed = "elapsed", .id = "ID")
+posthoc(
+  x,
+  ...,
+  .fit = "fit",
+  .prediction = "ipred",
+  .elapsed = "elapsed",
+  .id = "ID"
+)
 
-proseval(x, ..., .fit = "fit", .prediction = "ipred",
-  .elapsed = "elapsed", .obs = "OBS")
+proseval(
+  x,
+  ...,
+  .fit = "fit",
+  .prediction = "ipred",
+  .elapsed = "elapsed",
+  .obs = "OBS"
+)
 
-doseSimulation(x, ..., optimize, predict, .fit = "fit",
-  .iterationFit = "iterationFit", .next_observed = "next_observed",
-  .next_regimen = "next_regimen", .verbose = TRUE)
+doseSimulation(
+  x,
+  ...,
+  optimize,
+  predict,
+  .fit = "fit",
+  .iterationFit = "iterationFit",
+  .next_observed = "next_observed",
+  .next_regimen = "next_regimen",
+  .verbose = TRUE
+)
 }
 \arguments{
 \item{x}{a tbl with one or multiple rows

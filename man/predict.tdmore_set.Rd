@@ -4,9 +4,16 @@
 \alias{predict.tdmore_set}
 \title{Predict from a tdmore model set.}
 \usage{
-\method{predict}{tdmore_set}(object, newdata, regimen = NULL,
-  parameters = NULL, covariates = NULL, se = FALSE, level = 0.95,
-  ...)
+\method{predict}{tdmore_set}(
+  object,
+  newdata,
+  regimen = NULL,
+  parameters = NULL,
+  covariates = NULL,
+  se = FALSE,
+  level = 0.95,
+  ...
+)
 }
 \arguments{
 \item{object}{Object of class inheriting from `tdmore`}

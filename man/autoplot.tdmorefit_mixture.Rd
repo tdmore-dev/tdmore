@@ -4,8 +4,7 @@
 \alias{autoplot.tdmorefit_mixture}
 \title{Plot a tdmorefit_mixture object.}
 \usage{
-\method{autoplot}{tdmorefit_mixture}(x, population = TRUE, fit = TRUE,
-  ...)
+\method{autoplot}{tdmorefit_mixture}(x, population = TRUE, fit = TRUE, ...)
 }
 \arguments{
 \item{x}{the tdmorefit object}

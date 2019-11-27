@@ -4,8 +4,16 @@
 \alias{model_predict}
 \title{Prototype predict function. Implement this to add your own model type to tdmore.}
 \usage{
-model_predict(model, times, regimen, parameters, covariates, iov,
-  extraArguments, cache = NULL)
+model_predict(
+  model,
+  times,
+  regimen,
+  parameters,
+  covariates,
+  iov,
+  extraArguments,
+  cache = NULL
+)
 }
 \arguments{
 \item{model}{The model itself.}

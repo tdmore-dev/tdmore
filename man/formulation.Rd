@@ -4,8 +4,13 @@
 \alias{formulation}
 \title{Create a new formulation object.}
 \usage{
-formulation(name, unit, dosing_interval = 24, default_value = 1,
-  round_function = function(dose) {     dose })
+formulation(
+  name,
+  unit,
+  dosing_interval = 24,
+  default_value = 1,
+  round_function = function(dose) {     dose }
+)
 }
 \arguments{
 \item{name}{the formulation name}

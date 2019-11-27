@@ -5,9 +5,18 @@
 \title{Calculate the Empirical Bayesian Estimate parameters that predict
 a given dataset using a mixture model.}
 \usage{
-estimateMixtureModel(object, observed = NULL, regimen,
-  covariates = NULL, par = NULL, fix = NULL, method = "L-BFGS-B",
-  lower = NULL, upper = NULL, ...)
+estimateMixtureModel(
+  object,
+  observed = NULL,
+  regimen,
+  covariates = NULL,
+  par = NULL,
+  fix = NULL,
+  method = "L-BFGS-B",
+  lower = NULL,
+  upper = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{a tdmore, tdmore_set or tdmore_mixture object}
@@ -21,7 +30,7 @@ If not specified, we estimate the population prediction}
 
 \item{par}{optional starting parameter for the MLE minimization}
 
-\item{fix}{named vector with the fixed parameters}
+\item{fix}{named numeric vector with the fixed parameters. Names can repeat to fix parameters in multiple occasions.}
 
 \item{method}{the optimisation method, by default, method "L-BFGS-B" is used
 Can also be specified as a list, in which case all methods specified will be tried and the one finding the estimate with highest log-likelihood will be returned.}

@@ -5,8 +5,7 @@
 \title{This function tries to construct an aes
 by guessing the required variables}
 \usage{
-getAes(x, vars = c("x", "y", "ymin", "ymax"), as.aes = TRUE,
-  data = NULL)
+getAes(x, vars = c("x", "y", "ymin", "ymax"), as.aes = TRUE, data = NULL)
 }
 \arguments{
 \item{x}{tdmorefit object}

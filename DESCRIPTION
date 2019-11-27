@@ -19,7 +19,7 @@ Description: Easily define a Nonlinear Mixed-Effects Model,
     A shiny app can be created by using the `shinytdmore` package.
 Depends: R (>= 3.5.0)
 Imports: assertthat, mnormt, dplyr, numDeriv, stats, RxODE (>= 0.9.0), nlmixr (>= 1.1.0-9), deSolve, ggplot2 (>= 3.0.0), magrittr,
-  gridExtra, zoo, rlang, purrr, Matrix, mvnfast, data.table, optimr, optextras, tibble
+  gridExtra, zoo, rlang, purrr, Matrix, mvnfast, data.table, optimr, optextras, tibble, MCMCpack
 License: file LICENSE
 Encoding: UTF-8
 Language: en-US
@@ -27,7 +27,7 @@ LazyData: true
 Suggests: knitr, rmarkdown, testthat, roxygen2, devtools, vdiffr, svglite, rprojroot,
  pkgdown, bookdown, miniUI, shiny, readr, stringr, tidyr (>= 1.0.0), shinytest, withr,
  benchmarkme, microbenchmark, plotly
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.0
 VignetteBuilder: knitr
 URL: https://github.com/tdmore-dev/tdmore, https://tdmore-dev.github.io/tdmore/
 BugReports: https://github.com/tdmore-dev/tdmore/issues

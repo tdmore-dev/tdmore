@@ -4,8 +4,16 @@
 \alias{autolayer.tdmorefit}
 \title{Automatically plot a tdmorefit object}
 \usage{
-\method{autolayer}{tdmorefit}(x, color = "tomato1", fill = color,
-  alpha = 0.2, se.fit = T, level = 0.95, ..., na.rm = TRUE)
+\method{autolayer}{tdmorefit}(
+  x,
+  color = "tomato1",
+  fill = color,
+  alpha = 0.2,
+  se.fit = T,
+  level = 0.95,
+  ...,
+  na.rm = TRUE
+)
 }
 \arguments{
 \item{x}{tdmorefit object}

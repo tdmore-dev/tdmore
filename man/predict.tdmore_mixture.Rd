@@ -4,9 +4,16 @@
 \alias{predict.tdmore_mixture}
 \title{Predict from a TDMore mixture model. The model with the highest probability is used for the predictions.}
 \usage{
-\method{predict}{tdmore_mixture}(object, newdata, regimen = NULL,
-  parameters = NULL, covariates = NULL, se = FALSE, level = 0.95,
-  ...)
+\method{predict}{tdmore_mixture}(
+  object,
+  newdata,
+  regimen = NULL,
+  parameters = NULL,
+  covariates = NULL,
+  se = FALSE,
+  level = 0.95,
+  ...
+)
 }
 \arguments{
 \item{object}{Object of class inheriting from `tdmore`}

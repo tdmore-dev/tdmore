@@ -4,8 +4,14 @@
 \alias{model.frame.tdmorefit}
 \title{Get the observed values used to provide this model fit.}
 \usage{
-\method{model.frame}{tdmorefit}(formula, data = NULL, se = FALSE,
-  level = 0.95, onlyOutput = FALSE, ...)
+\method{model.frame}{tdmorefit}(
+  formula,
+  data = NULL,
+  se = FALSE,
+  level = 0.95,
+  onlyOutput = FALSE,
+  ...
+)
 }
 \arguments{
 \item{formula}{A tdmorefit object}

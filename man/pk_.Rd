@@ -27,11 +27,9 @@ pk2cptoral_(t, TIME, AMT, V, K, KA, K12, K21, SS = 0, II = Inf)
 
 pk3cptiv_(t, TIME, AMT, V, K, K12, K21, K13, K31, SS = 0, II = Inf)
 
-pk3cptinfusion_(t, TIME, AMT, RATE, V, K, K12, K21, K13, K31, SS = 0,
-  II = Inf)
+pk3cptinfusion_(t, TIME, AMT, RATE, V, K, K12, K21, K13, K31, SS = 0, II = Inf)
 
-pk3cptoral_(t, TIME, AMT, V, K, KA, K12, K21, K13, K31, SS = 0,
-  II = Inf)
+pk3cptoral_(t, TIME, AMT, V, K, KA, K12, K21, K13, K31, SS = 0, II = Inf)
 }
 \arguments{
 \item{t}{sampling times}

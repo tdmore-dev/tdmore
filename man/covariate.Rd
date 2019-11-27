@@ -4,8 +4,7 @@
 \alias{covariate}
 \title{Create a new covariate object.}
 \usage{
-covariate(name, label, unit = NULL, min = NULL, max = NULL,
-  choices = NULL)
+covariate(name, label, unit = NULL, min = NULL, max = NULL, choices = NULL)
 }
 \arguments{
 \item{name}{the covariate name}

@@ -4,8 +4,7 @@
 \alias{plot.tdmoreprofile}
 \title{Plot a tdmoreprofile object.}
 \usage{
-\method{plot}{tdmoreprofile}(x, parameters = NULL, contour = T,
-  raster = T, ...)
+\method{plot}{tdmoreprofile}(x, parameters = NULL, contour = T, raster = T, ...)
 }
 \arguments{
 \item{x}{the tdmoreprofile object}

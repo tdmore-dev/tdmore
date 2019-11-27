@@ -6,9 +6,17 @@
 The layer searches for a tdmorefit object in either the plot, or its own arguments.
 It then calls the `predict()` function and provides this data.frame instead of the original data}
 \usage{
-predictionLayer(mapping = NULL, data = NULL, geom = "line",
-  stat = "identity", position = "identity", ..., n = 101,
-  show.legend = NA, inherit.aes = TRUE)
+predictionLayer(
+  mapping = NULL,
+  data = NULL,
+  geom = "line",
+  stat = "identity",
+  position = "identity",
+  ...,
+  n = 101,
+  show.legend = NA,
+  inherit.aes = TRUE
+)
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by \code{\link[=aes]{aes()}} or

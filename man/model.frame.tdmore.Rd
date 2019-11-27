@@ -4,8 +4,7 @@
 \alias{model.frame.tdmore}
 \title{Get the specified data values, with the upper and lower bounds provided by the residual error model}
 \usage{
-\method{model.frame}{tdmore}(formula, data, se = FALSE, level = 0.95,
-  onlyOutput = FALSE, ...)
+\method{model.frame}{tdmore}(formula, data, se = FALSE, level = 0.95, onlyOutput = FALSE, ...)
 }
 \arguments{
 \item{formula}{a TDMore object}

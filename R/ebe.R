@@ -1,38 +1,20 @@
-#' Calculate the population log likelihood.
+#' Calculate the population log likelihood. Fixed values are ignored.
 #'
-#' @param par the current estimate of the parameters
-#' @param omega the omega matrix
-#' @param fix named vector with the fixed parameters, not used in this function
-#' @param tdmore the tdmore object
-#' @param observed the observed data, not used in the population log likelihood
-#' @param regimen data frame describing the treatment regimen
-#' @param covariates the model covariates, not used in the population log likelihood
-#' @param isChol was omega specified as the Cholesky decomposition?
-#'
+#' @inheritParams ll
 #' @return the population log likelihood
 pop_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FALSE) {
+  stopifnot(all.equal(rownames(omega), names(par)) )
   pdf <- mvnfast::dmvn( par, mu=par*0, sigma=omega, log=TRUE, isChol=isChol )
   sum <- sum( pdf )
   return(sum)
 }
 
-#' Calculate the prediction log likelihood.
+#' Calculate the prediction log likelihood. Fixed values are appended to the provided parameter estimate
 #'
-#' @param par the current estimate of the parameters
-#' @param omega the omega matrix
-#' @param fix named vector with the fixed parameters
-#' @param tdmore the tdmore object
-#' @param observed data frame with at least a TIME column, and all observed data.
-#' The data.frame can be empty, or could contain only a TIME column.
-#' The observed data will be compared to the model predictions.
-#' If not specified, we estimate the population prediction
-#' @param regimen data frame describing the treatment regimen
-#' @param covariates the model covariates
-#'
-#' @importFrom stats residuals
-#'
+#' @inheritParams ll
 #' @return the prediction log likelihood
 pred_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
+  stopifnot(all.equal(rownames(omega), names(par)) )
   pred <- stats::predict(object=tdmore, newdata=observed, regimen=regimen, parameters=c(fix$values,par), covariates=covariates)
   ll <- 0
   for(res_var in tdmore$res_var) {
@@ -47,9 +29,9 @@ pred_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
 
 #' Calculate the log likelihood as the sum of the population likelihood and the prediction likelihood.
 #'
-#' @param par the current estimate of the parameters
-#' @param omega the omega matrix
-#' @param fix named vector with the fixed parameters
+#' @param par a named numeric vector with parameter values; fixed parameter values are not included
+#' @param omega the omega matrix; fixed parameter values are not included
+#' @param fix a named list with value 'indexes' specifying the fixed indexes, and value 'values' specifying a named numeric vector with the actual fixed values.
 #' @param tdmore the tdmore object
 #' @param observed data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
 #' If not specified, we estimate the population prediction
@@ -59,9 +41,11 @@ pred_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
 #'
 #' @return the log likelihood
 ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FALSE) {
+  stopifnot(all.equal(rownames(omega), names(par)) )
+
   parNames <- getParameterNames(tdmore, regimen)
   if(!is.null(fix$indexes)) {
-    parNames <- parNames[-fix$indexes]
+    parNames <- parNames[-fix$indexes] #names without the fixIndexes
     names(par) <- parNames
   }
   pop_ll <- pop_ll(par, omega, fix, tdmore, observed, regimen, covariates, isChol=isChol)
@@ -82,7 +66,7 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #' @param regimen data frame describing the treatment regimen.
 #' @param covariates the model covariates
 #' @param par optional starting parameter for the MLE minimization
-#' @param fix named vector with the fixed parameters
+#' @param fix named numeric vector with the fixed parameters. Names can repeat to fix parameters in multiple occasions.
 #' @param method the optimisation method, by default, method "L-BFGS-B" is used
 #' Can also be specified as a list, in which case all methods specified will be tried and the one finding the estimate with highest log-likelihood will be returned.
 #' @param se.fit calculate the variance-covariance matrix for the fit
@@ -308,12 +292,20 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
     }
     parmat <- parmat[, names(arg$par), drop=F] #ensure same order
     multiArg <- arg
+    if(ncol(parmat)==1) {
+      # multistart drops the parameter names if only a single column is provided
+      # see https://github.com/cran/optimr/issues/1
+      multiArg$fn <- function(par, ...) {
+        names(par) <- colnames(parmat)
+        fn(par, ...)
+      }
+    }
     multiArg$parmat <- parmat
     multiArg$par <- NULL
     multiArg$hessian <- FALSE
     pointEstimates <- do.call(optimr::multistart, multiArg)
-    pointEstimate <- pointEstimates[ which.min(pointEstimates$value), ]
-    arg$par <- unlist(pointEstimate[ 1, seq_along(par)] ) ## use found 'global' optimum
+    pointEstimate <- pointEstimates[ which.min(pointEstimates$value), ,drop=FALSE]
+    arg$par <- unlist(pointEstimate[ 1, seq_along(par), drop=FALSE] ) ## use found 'global' optimum
   }
   pointEstimate <- do.call(optimr::optimr, arg)
   res <- pointEstimate$par
@@ -347,8 +339,10 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
     OFIM <- H
     varcov <- solve(OFIM) #inverse of OFIM is an estimator of the asymptotic covariance matrix
     if(varcov[1,1] < 0) varcov <- -1 * varcov
-    diag(varcov) <- abs(diag(varcov)) ## force varcov to be positive, even though this is a nasty hack!
-    chol(varcov) #try the cholesky decomposition, to double check varcov is truly semi-positive definite!
+    tryCatch( {chol(varcov)}, #try the cholesky decomposition, to double check varcov is truly semi-positive definite!
+              error=function(e) {
+                varcov <<- NULL #set varcov to NULL, signifying that MCMC methods should be used to sample uncertainty
+              })
   } else {
     varcov <- diag(.Machine$double.eps, nrow=length(updatedParNames)) #very small value, to keep matrix semi-definite
   }
@@ -365,11 +359,15 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
   if(is.null(fix$indexes)) {
     updatedVarcov <- varcov # nothing to do
   } else {
-    updatedVarcov <- matrix(0, nrow=length(parNames), ncol=length(parNames))
-    updatedVarcov[-fixIndexes, -fixIndexes] <- varcov
+    if(is.null(varcov)) {
+      updatedVarcov <- NULL
+    } else {
+      updatedVarcov <- matrix(0, nrow=length(parNames), ncol=length(parNames))
+      updatedVarcov[-fixIndexes, -fixIndexes] <- varcov
+    }
   }
 
-  dimnames(updatedVarcov) = list(parNames, parNames)
+  if(!is.null(updatedVarcov)) dimnames(updatedVarcov) = list(parNames, parNames)
   ofv <- pointEstimate$value
   tdmorefit(tdmore, observed, regimen, covariates, ofv, updatedRes, updatedVarcov, fix$values, nlmresult=pointEstimate, call=match.call())
 }
@@ -411,7 +409,7 @@ getFixedParametersIndexes <- function(parNames, fix) {
 #' @param covariates the model covariates
 #' @param ofv (optional) the OFV value
 #' @param res the found parameter values, as a named vector, or NULL to use 0.
-#' @param varcov the found varcov matrix, or NULL to use a diagonal matrix.
+#' @param varcov the found varcov matrix
 #' @param fix the fixed parameters
 #' @param nlmresult the result of the non-linear minimization
 #' @param call a informative string that gives the arguments that were used in estimate()
@@ -431,10 +429,10 @@ tdmorefit <- function(tdmore, observed=NULL, regimen, covariates=NULL, ofv=NA, r
   missingNames <- setdiff(tdmore$parameters, names(res))
   if( !is.null(missingNames) && length(missingNames) > 0 ) stop("Missing parameters: ", paste(missingNames, collapse=", "))
 
-  if(is.null(varcov)) {
-    varcov <- diag(.Machine$double.eps, nrow=N, ncol=N)
-    dimnames(varcov) = list(tdmore$parameters, tdmore$parameters)
-  }
+  # if(is.null(varcov)) {
+  #   varcov <- diag(.Machine$double.eps, nrow=N, ncol=N)
+  #   dimnames(varcov) = list(tdmore$parameters, tdmore$parameters)
+  # }
 
   structure(
     list(
@@ -556,15 +554,39 @@ fitted.tdmorefit <- function(object, ...) {
   predict.tdmore(object=object$tdmore, newdata=object$observed, regimen=object$regimen, parameters=object$res, covariates=object$covariate)
 }
 
-#' Generate the Monte-Carlo matrix.
+#' Generate parameter samples using uncertainty around the fit.
+#'
+#' If a variance-covariance matrix could be generated during estimation using asymptotic , a simple multivariate normal sampling is used.
+#' If the variance-covariance matrix is NULL, we use Metropolis-Hastings sampling.
 #'
 #' @param tdmorefit a tdmorefit object
 #' @param fix named numeric vector with the fixed parameters
 #' @param mc.maxpts number of Monte-Carlo samples
 #'
 #' @return the Monte-Carlo matrix, first column is always the 'sample' column
+#' @export
 #'
-generateMonteCarloMatrix <- function(tdmorefit, fix, mc.maxpts) {
+sampleMC <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100) {
+  if(is.null(tdmorefit$varcov)) {
+    return(
+      sampleMC_metrop(tdmorefit, fix, mc.maxpts)
+    )
+  }
+
+  sampleMC_norm(tdmorefit, fix, mc.maxpts)
+}
+
+#'
+#' Generate parameter samples using a muilti-variate normal distribution around the variance-covariance matrix
+#'
+#' @param tdmorefit a tdmorefit object
+#' @param fix named numeric vector with the fixed parameters
+#' @param mc.maxpts number of Monte-Carlo samples
+#'
+#' @return the Monte-Carlo matrix, first column is always the 'sample' column
+#' @export
+#'
+sampleMC_norm <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100) {
   parNames <- names(coef(tdmorefit))
   fixIndexes <- getFixedParametersIndexes(parNames = parNames, fix = fix)
 
@@ -591,6 +613,50 @@ generateMonteCarloMatrix <- function(tdmorefit, fix, mc.maxpts) {
   mc
 }
 
+#' Generate parameter samples using the Metropolis MCMC method.
+#'
+#' @param tdmorefit a tdmorefit object
+#' @param fix named numeric vector with the fixed parameters
+#' @param mc.maxpts number of Monte-Carlo samples
+#' @inheritParams MCMCpack::MCMCmetrop1R
+#'
+#' @return the Monte-Carlo matrix, first column is always the 'sample' column
+#' @export
+sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, verbose=0) {
+  ## TODO: integrate MCMC sampling in here
+  parNames <- names(coef(tdmorefit))
+  fixIndexes <- getFixedParametersIndexes(parNames = parNames, fix = fix)
+
+  start <- coef(tdmorefit)
+
+  omega <- tdmorefit$tdmore$omega
+  omegaChol <- Matrix::chol(omega)
+
+  tdmore <- tdmorefit$tdmore
+  cTdmore <- tdmore
+  cTdmore$cache <- model_prepare(tdmore$model, times=tdmorefit$observed$TIME, regimen=tdmorefit$regimen, parameters=start, covariates=tdmorefit$covariates, iov=tdmore$iov, extraArguments=tdmore$extraArguments)
+
+  fun <- function(par) {
+    names(par) <- parNames
+    ll(par=par, omega=omegaChol, isChol=TRUE, fix=fix, tdmore=cTdmore, observed=tdmorefit$observed, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates)
+  }
+  verboseOutput <- utils::capture.output(
+    out <- MCMCpack::MCMCmetrop1R(fun, theta.init=start, burnin=0, mcmc=mc.maxpts, V=omega, verbose=verbose)
+  )
+  if(verbose > 0) cat(verboseOutput)
+
+  ## FIXME: sample more points to arrive at an effective size of mc.maxpts?
+  #rejectionRate <- coda::rejectionRate(out)
+  #effRate <- coda::effectiveSize(out) / mc.maxpts
+
+  rejected <- out[-nrow(out), , drop = FALSE] == out[-1, , drop = FALSE]
+
+  mc <- as.data.frame(out)
+  colnames(mc) <- parNames
+  mc[ !rejected, , drop=F]
+  mc <- cbind( sample=1:nrow(mc), mc )
+}
+
 #' Predict new data using the current model
 #'
 #' @param object A tdmorefit object
@@ -599,8 +665,7 @@ generateMonteCarloMatrix <- function(tdmorefit, fix, mc.maxpts) {
 #' or a numeric vector to specify times, and predict all model output
 #' or NULL to interpolate between 0 and the maximum known times
 #' @param regimen Treatment regimen
-#' @param parameters Set parameters. If missing, or if only part of the parameters are specified,
-#' the other parameters are taken from the tdmorefit object
+#' @param parameters named numeric vector of fixed parameters
 #' @param covariates the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0
 #' @param se.fit TRUE to provide a confidence interval on the prediction, adding columns xxx.median, xxx.upper and xxx.lower
 #' FALSE to show the model prediction (IPRED)
@@ -622,7 +687,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
 
   ipred <- stats::predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=par, covariates=covariates)
   if(se.fit) {
-    mc <- generateMonteCarloMatrix(tdmorefit, fix = parameters, mc.maxpts = mc.maxpts)
+    mc <- sampleMC(tdmorefit, fix = parameters, mc.maxpts = mc.maxpts)
     uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
 
     # Prepare the tdmore cache
@@ -703,24 +768,27 @@ summariseFittedMC <- function(fittedMC, ipred, level, oNames) {
   return(retValue)
 }
 
-#' Get the log-likelihood of the predicted values.
+#' Calculate the log-likelihood of the predicted values.
+#' If fixed values were used to obtain the tdmorefit, they are considered estimated and are included in the population log-likelihood.
 #'
 #' @param object A tdmorefit object
 #' @param type log-lokelihood function type, 3 possible values: 'pop', 'pred' or 'll' (= pop + pred)
+#' @param par the parameter set to evaluate in log likelihood
 #' @param ... ignored
 #'
 #' @return A numeric value
 #' @export
 #' @importFrom stats formula model.frame
-logLik.tdmorefit <- function(object, type=c('ll', 'pop', 'pred'), ...) {
-  par <- coef(object)
+logLik.tdmorefit <- function(object, type=c('ll', 'pop', 'pred'), par=coef(object), ...) {
   tdmore <- formula(object)
   observed <- model.frame(object)
   regimen <- object$regimen
   covariates <- object$covariates
   fun <- getLikelihoodFun(type)
+  omega <- expandOmega(tdmore, getMaxOccasion(regimen))
+
   fun(par=par,
-      omega=expandOmega(tdmore, getMaxOccasion(regimen)),
+      omega=omega,
       fix=list(indexes=c(), values=c()),
       tdmore=tdmore,
       observed=observed,
@@ -935,6 +1003,7 @@ expandOmega <- function(tdmore, occasions) {
 #' regimen$AMT <- regimen$AMT*2
 #' predictionForDoubleDose <- residuals(fit, predict(fit, regimen=regimen), weighted=TRUE)
 #'
+#' @importFrom stats residuals
 residuals.tdmorefit <- function(object, data, weighted=FALSE, ...) {
   res <- residuals(object$tdmore, stats::predict(object), model.frame(object), weighted=weighted, ...)
   if(missing(data)) return(res)

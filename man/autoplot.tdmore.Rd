@@ -4,8 +4,7 @@
 \alias{autoplot.tdmore}
 \title{Plot a tdmore object as the population}
 \usage{
-\method{autoplot}{tdmore}(x, regimen = NULL, covariates = NULL,
-  newdata = NULL, ...)
+\method{autoplot}{tdmore}(x, regimen = NULL, covariates = NULL, newdata = NULL, ...)
 }
 \arguments{
 \item{x}{a tdmore object}

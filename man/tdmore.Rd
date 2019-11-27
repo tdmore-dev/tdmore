@@ -3,7 +3,6 @@
 \docType{package}
 \name{tdmore}
 \alias{tdmore}
-\alias{tdmore-package}
 \title{tdmore is a generic function to append TDM functionality to a pharmacometrics model.}
 \usage{
 tdmore(model, ...)

@@ -4,10 +4,16 @@
 \alias{model_predict.tdmore_deSolve}
 \title{Predict for tdmore_deSolve}
 \usage{
-\method{model_predict}{tdmore_deSolve}(model, times,
-  regimen = data.frame(TIME = c()), parameters = c(),
-  covariates = NULL, iov = NULL, extraArguments = list(),
-  cache = NULL)
+\method{model_predict}{tdmore_deSolve}(
+  model,
+  times,
+  regimen = data.frame(TIME = c()),
+  parameters = c(),
+  covariates = NULL,
+  iov = NULL,
+  extraArguments = list(),
+  cache = NULL
+)
 }
 \arguments{
 \item{model}{The model function}

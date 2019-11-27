@@ -4,9 +4,17 @@
 \alias{predict.tdmorefit_mixture}
 \title{Predict from a tdmorefit mixture object.}
 \usage{
-\method{predict}{tdmorefit_mixture}(object, newdata = NULL,
-  regimen = NULL, parameters = NULL, covariates = NULL,
-  se.fit = FALSE, level = 0.95, mc.maxpts = 100, ...)
+\method{predict}{tdmorefit_mixture}(
+  object,
+  newdata = NULL,
+  regimen = NULL,
+  parameters = NULL,
+  covariates = NULL,
+  se.fit = FALSE,
+  level = 0.95,
+  mc.maxpts = 100,
+  ...
+)
 }
 \arguments{
 \item{object}{A tdmorefit object}
@@ -17,8 +25,7 @@ or NULL to interpolate between 0 and the maximum known times}
 
 \item{regimen}{Treatment regimen}
 
-\item{parameters}{Set parameters. If missing, or if only part of the parameters are specified,
-the other parameters are taken from the tdmorefit object}
+\item{parameters}{named numeric vector of fixed parameters}
 
 \item{covariates}{the model covariates, named vector, or data.frame with column 'TIME', and at least TIME 0}
 

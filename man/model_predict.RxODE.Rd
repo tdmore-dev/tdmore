@@ -4,9 +4,16 @@
 \alias{model_predict.RxODE}
 \title{Predict for RxODE}
 \usage{
-\method{model_predict}{RxODE}(model, times, regimen = data.frame(TIME =
-  numeric()), parameters = numeric(), covariates = NULL, iov = NULL,
-  extraArguments = list(), cache = NULL)
+\method{model_predict}{RxODE}(
+  model,
+  times,
+  regimen = data.frame(TIME = numeric()),
+  parameters = numeric(),
+  covariates = NULL,
+  iov = NULL,
+  extraArguments = list(),
+  cache = NULL
+)
 }
 \arguments{
 \item{model}{The model itself.}

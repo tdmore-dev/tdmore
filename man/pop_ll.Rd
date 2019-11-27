@@ -2,25 +2,25 @@
 % Please edit documentation in R/ebe.R
 \name{pop_ll}
 \alias{pop_ll}
-\title{Calculate the population log likelihood.}
+\title{Calculate the population log likelihood. Fixed values are ignored.}
 \usage{
-pop_ll(par, omega, fix, tdmore, observed, regimen, covariates,
-  isChol = FALSE)
+pop_ll(par, omega, fix, tdmore, observed, regimen, covariates, isChol = FALSE)
 }
 \arguments{
-\item{par}{the current estimate of the parameters}
+\item{par}{a named numeric vector with parameter values; fixed parameter values are not included}
 
-\item{omega}{the omega matrix}
+\item{omega}{the omega matrix; fixed parameter values are not included}
 
-\item{fix}{named vector with the fixed parameters, not used in this function}
+\item{fix}{a named list with value 'indexes' specifying the fixed indexes, and value 'values' specifying a named numeric vector with the actual fixed values.}
 
 \item{tdmore}{the tdmore object}
 
-\item{observed}{the observed data, not used in the population log likelihood}
+\item{observed}{data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
+If not specified, we estimate the population prediction}
 
-\item{regimen}{data frame describing the treatment regimen}
+\item{regimen}{data frame describing the treatment regimen.}
 
-\item{covariates}{the model covariates, not used in the population log likelihood}
+\item{covariates}{the model covariates}
 
 \item{isChol}{was omega specified as the Cholesky decomposition?}
 }
@@ -28,5 +28,5 @@ pop_ll(par, omega, fix, tdmore, observed, regimen, covariates,
 the population log likelihood
 }
 \description{
-Calculate the population log likelihood.
+Calculate the population log likelihood. Fixed values are ignored.
 }
