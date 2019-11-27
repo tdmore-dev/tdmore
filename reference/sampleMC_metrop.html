@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generate the Monte-Carlo matrix. — generateMonteCarloMatrix • tdmore</title>
+<title>Generate parameter samples using the Metropolis MCMC method. — sampleMC_metrop • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,8 @@
 
 
 
-<meta property="og:title" content="Generate the Monte-Carlo matrix. — generateMonteCarloMatrix" />
-<meta property="og:description" content="Generate the Monte-Carlo matrix." />
+<meta property="og:title" content="Generate parameter samples using the Metropolis MCMC method. — sampleMC_metrop" />
+<meta property="og:description" content="Generate parameter samples using the Metropolis MCMC method." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -153,16 +153,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generate the Monte-Carlo matrix.</h1>
+    <h1>Generate parameter samples using the Metropolis MCMC method.</h1>
     <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
-    <div class="hidden name"><code>generateMonteCarloMatrix.Rd</code></div>
+    <div class="hidden name"><code>sampleMC_metrop.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Generate the Monte-Carlo matrix.</p>
+    <p>Generate parameter samples using the Metropolis MCMC method.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>generateMonteCarloMatrix</span>(<span class='no'>tdmorefit</span>, <span class='no'>fix</span>, <span class='no'>mc.maxpts</span>)</pre>
+    <pre class="usage"><span class='fu'>sampleMC_metrop</span>(<span class='no'>tdmorefit</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='no'>tdmorefit</span>$<span class='no'>fix</span>, <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,6 +178,14 @@
     <tr>
       <th>mc.maxpts</th>
       <td><p>number of Monte-Carlo samples</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>A switch which determines whether or not the progress of the
+sampler is printed to the screen.  If <code>verbose</code> is greater than 0 the
+iteration number, the \(\theta\) vector, the function value, and
+the Metropolis acceptance rate are sent to the screen every <code>verbose</code>th
+iteration.</p></td>
     </tr>
     </table>
 

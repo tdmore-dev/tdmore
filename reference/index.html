@@ -302,7 +302,8 @@ a given dataset using the model</p></td>
         <td>
           <p><code><a href="logLik.tdmorefit.html">logLik(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Get the log-likelihood of the predicted values.</p></td>
+        <td><p>Calculate the log-likelihood of the predicted values.
+If fixed values were used to obtain the tdmorefit, they are considered estimated and are included in the population log-likelihood.</p></td>
       </tr><tr>
         
         <td>
@@ -377,13 +378,13 @@ If arguments `fix` and `limits` are not set for a specific parameter, individual
         <td>
           <p><code><a href="pop_ll.html">pop_ll()</a></code> </p>
         </td>
-        <td><p>Calculate the population log likelihood.</p></td>
+        <td><p>Calculate the population log likelihood. Fixed values are ignored.</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="pred_ll.html">pred_ll()</a></code> </p>
         </td>
-        <td><p>Calculate the prediction log likelihood.</p></td>
+        <td><p>Calculate the prediction log likelihood. Fixed values are appended to the provided parameter estimate</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -599,12 +600,6 @@ The attribute contains a list with element 'tdmorefit' and all extra named argum
       </tr><tr>
         
         <td>
-          <p><code><a href="generateMonteCarloMatrix.html">generateMonteCarloMatrix()</a></code> </p>
-        </td>
-        <td><p>Generate the Monte-Carlo matrix.</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="getAes.html">getAes()</a></code> </p>
         </td>
         <td><p>This function tries to construct an aes
@@ -634,6 +629,12 @@ If the regimen does not contain an 'OCC' column, 1 is returned.</p></td>
           <p><code><a href="getMetadataByName.html">getMetadataByName()</a></code> </p>
         </td>
         <td><p>Get metadata (output, formulation or covariate) by name.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getObservedVariables.html">getObservedVariables()</a></code> </p>
+        </td>
+        <td><p>Get the observed variables from the tdmore model.</p></td>
       </tr><tr>
         
         <td>
@@ -690,7 +691,8 @@ in the caller environment</p></td>
         <td>
           <p><code><a href="logLik.tdmorefit.html">logLik(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Get the log-likelihood of the predicted values.</p></td>
+        <td><p>Calculate the log-likelihood of the predicted values.
+If fixed values were used to obtain the tdmorefit, they are considered estimated and are included in the population log-likelihood.</p></td>
       </tr><tr>
         
         <td>
@@ -758,6 +760,12 @@ TODO: Better documentation required</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="metadata.tdmore_observed_variables.html">metadata(<i>&lt;tdmore_observed_variables&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Build an 'observed variables' metadata.</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="metadata.tdmore_output.html">metadata(<i>&lt;tdmore_output&gt;</i>)</a></code> </p>
         </td>
         <td><p>Build an output metadata.</p></td>
@@ -791,6 +799,16 @@ TODO: Better documentation required</p></td>
           <p><code><a href="mpc.tdmore.html">mpc(<i>&lt;tdmore&gt;</i>)</a></code> </p>
         </td>
         <td><p>Build a 'tdmore_mpc' object based on a 'tdmore' object.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="observed_variables.html">observed_variables()</a></code> </p>
+        </td>
+        <td><p>Create an 'observed variables' object.
+These variables will be predicted and shown in the panel below the timeline.
+TODO: discuss if we keep this info as part of the UI metadata of the model.
+Should we need a config tab to configure the UI metadata?
+Do we want to persist this information in DB? Per model? Per patient? etc.</p></td>
       </tr><tr>
         
         <td>
@@ -846,7 +864,7 @@ fetches the arguments from the caller's environment.</p></td>
         <td>
           <p><code><a href="pop_ll.html">pop_ll()</a></code> </p>
         </td>
-        <td><p>Calculate the population log likelihood.</p></td>
+        <td><p>Calculate the population log likelihood. Fixed values are ignored.</p></td>
       </tr><tr>
         
         <td>
@@ -864,7 +882,7 @@ fetches the arguments from the caller's environment.</p></td>
         <td>
           <p><code><a href="pred_ll.html">pred_ll()</a></code> </p>
         </td>
-        <td><p>Calculate the prediction log likelihood.</p></td>
+        <td><p>Calculate the prediction log likelihood. Fixed values are appended to the provided parameter estimate</p></td>
       </tr><tr>
         
         <td>
@@ -972,6 +990,24 @@ If arguments `fix` and `limits` are not set for a specific parameter, individual
           <p><code><a href="roundTime.html">roundTime()</a></code> </p>
         </td>
         <td><p>For a given set of planned times, round to the nearest reference time.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sampleMC.html">sampleMC()</a></code> </p>
+        </td>
+        <td><p>Generate parameter samples using uncertainty around the fit.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sampleMC_metrop.html">sampleMC_metrop()</a></code> </p>
+        </td>
+        <td><p>Generate parameter samples using the Metropolis MCMC method.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sampleMC_norm.html">sampleMC_norm()</a></code> </p>
+        </td>
+        <td><p>Generate parameter samples using a muilti-variate normal distribution around the variance-covariance matrix</p></td>
       </tr><tr>
         
         <td>
@@ -1389,12 +1425,6 @@ The attribute contains a list with element 'tdmorefit' and all extra named argum
       </tr><tr>
         
         <td>
-          <p><code><a href="generateMonteCarloMatrix.html">generateMonteCarloMatrix()</a></code> </p>
-        </td>
-        <td><p>Generate the Monte-Carlo matrix.</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="getAes.html">getAes()</a></code> </p>
         </td>
         <td><p>This function tries to construct an aes
@@ -1424,6 +1454,12 @@ If the regimen does not contain an 'OCC' column, 1 is returned.</p></td>
           <p><code><a href="getMetadataByName.html">getMetadataByName()</a></code> </p>
         </td>
         <td><p>Get metadata (output, formulation or covariate) by name.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getObservedVariables.html">getObservedVariables()</a></code> </p>
+        </td>
+        <td><p>Get the observed variables from the tdmore model.</p></td>
       </tr><tr>
         
         <td>
@@ -1480,7 +1516,8 @@ in the caller environment</p></td>
         <td>
           <p><code><a href="logLik.tdmorefit.html">logLik(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Get the log-likelihood of the predicted values.</p></td>
+        <td><p>Calculate the log-likelihood of the predicted values.
+If fixed values were used to obtain the tdmorefit, they are considered estimated and are included in the population log-likelihood.</p></td>
       </tr><tr>
         
         <td>
@@ -1548,6 +1585,12 @@ TODO: Better documentation required</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="metadata.tdmore_observed_variables.html">metadata(<i>&lt;tdmore_observed_variables&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Build an 'observed variables' metadata.</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="metadata.tdmore_output.html">metadata(<i>&lt;tdmore_output&gt;</i>)</a></code> </p>
         </td>
         <td><p>Build an output metadata.</p></td>
@@ -1581,6 +1624,16 @@ TODO: Better documentation required</p></td>
           <p><code><a href="mpc.tdmore.html">mpc(<i>&lt;tdmore&gt;</i>)</a></code> </p>
         </td>
         <td><p>Build a 'tdmore_mpc' object based on a 'tdmore' object.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="observed_variables.html">observed_variables()</a></code> </p>
+        </td>
+        <td><p>Create an 'observed variables' object.
+These variables will be predicted and shown in the panel below the timeline.
+TODO: discuss if we keep this info as part of the UI metadata of the model.
+Should we need a config tab to configure the UI metadata?
+Do we want to persist this information in DB? Per model? Per patient? etc.</p></td>
       </tr><tr>
         
         <td>
@@ -1636,7 +1689,7 @@ fetches the arguments from the caller's environment.</p></td>
         <td>
           <p><code><a href="pop_ll.html">pop_ll()</a></code> </p>
         </td>
-        <td><p>Calculate the population log likelihood.</p></td>
+        <td><p>Calculate the population log likelihood. Fixed values are ignored.</p></td>
       </tr><tr>
         
         <td>
@@ -1654,7 +1707,7 @@ fetches the arguments from the caller's environment.</p></td>
         <td>
           <p><code><a href="pred_ll.html">pred_ll()</a></code> </p>
         </td>
-        <td><p>Calculate the prediction log likelihood.</p></td>
+        <td><p>Calculate the prediction log likelihood. Fixed values are appended to the provided parameter estimate</p></td>
       </tr><tr>
         
         <td>
@@ -1762,6 +1815,24 @@ If arguments `fix` and `limits` are not set for a specific parameter, individual
           <p><code><a href="roundTime.html">roundTime()</a></code> </p>
         </td>
         <td><p>For a given set of planned times, round to the nearest reference time.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sampleMC.html">sampleMC()</a></code> </p>
+        </td>
+        <td><p>Generate parameter samples using uncertainty around the fit.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sampleMC_metrop.html">sampleMC_metrop()</a></code> </p>
+        </td>
+        <td><p>Generate parameter samples using the Metropolis MCMC method.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sampleMC_norm.html">sampleMC_norm()</a></code> </p>
+        </td>
+        <td><p>Generate parameter samples using a muilti-variate normal distribution around the variance-covariance matrix</p></td>
       </tr><tr>
         
         <td>

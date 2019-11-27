@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate the population log likelihood. — pop_ll • tdmore</title>
+<title>Calculate the population log likelihood. Fixed values are ignored. — pop_ll • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,8 @@
 
 
 
-<meta property="og:title" content="Calculate the population log likelihood. — pop_ll" />
-<meta property="og:description" content="Calculate the population log likelihood." />
+<meta property="og:title" content="Calculate the population log likelihood. Fixed values are ignored. — pop_ll" />
+<meta property="og:description" content="Calculate the population log likelihood. Fixed values are ignored." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -153,32 +153,31 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate the population log likelihood.</h1>
+    <h1>Calculate the population log likelihood. Fixed values are ignored.</h1>
     <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
     <div class="hidden name"><code>pop_ll.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate the population log likelihood.</p>
+    <p>Calculate the population log likelihood. Fixed values are ignored.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pop_ll</span>(<span class='no'>par</span>, <span class='no'>omega</span>, <span class='no'>fix</span>, <span class='no'>tdmore</span>, <span class='no'>observed</span>, <span class='no'>regimen</span>, <span class='no'>covariates</span>,
-  <span class='kw'>isChol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>pop_ll</span>(<span class='no'>par</span>, <span class='no'>omega</span>, <span class='no'>fix</span>, <span class='no'>tdmore</span>, <span class='no'>observed</span>, <span class='no'>regimen</span>, <span class='no'>covariates</span>, <span class='kw'>isChol</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>par</th>
-      <td><p>the current estimate of the parameters</p></td>
+      <td><p>a named numeric vector with parameter values; fixed parameter values are not included</p></td>
     </tr>
     <tr>
       <th>omega</th>
-      <td><p>the omega matrix</p></td>
+      <td><p>the omega matrix; fixed parameter values are not included</p></td>
     </tr>
     <tr>
       <th>fix</th>
-      <td><p>named vector with the fixed parameters, not used in this function</p></td>
+      <td><p>a named list with value 'indexes' specifying the fixed indexes, and value 'values' specifying a named numeric vector with the actual fixed values.</p></td>
     </tr>
     <tr>
       <th>tdmore</th>
@@ -186,15 +185,16 @@
     </tr>
     <tr>
       <th>observed</th>
-      <td><p>the observed data, not used in the population log likelihood</p></td>
+      <td><p>data frame with at least a TIME column, and all observed data. The observed data will be compared to the model predictions.
+If not specified, we estimate the population prediction</p></td>
     </tr>
     <tr>
       <th>regimen</th>
-      <td><p>data frame describing the treatment regimen</p></td>
+      <td><p>data frame describing the treatment regimen.</p></td>
     </tr>
     <tr>
       <th>covariates</th>
-      <td><p>the model covariates, not used in the population log likelihood</p></td>
+      <td><p>the model covariates</p></td>
     </tr>
     <tr>
       <th>isChol</th>

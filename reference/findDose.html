@@ -162,9 +162,17 @@
     <p>Find the dose required (quick and dirty, to be optimised)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>findDose</span>(<span class='no'>tdmorefit</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='no'>tdmorefit</span>$<span class='no'>regimen</span>, <span class='kw'>doseRows</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>1e+10</span>), <span class='no'>target</span>, <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
-  <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>findDose</span>(
+  <span class='no'>tdmorefit</span>,
+  <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='no'>tdmorefit</span>$<span class='no'>regimen</span>,
+  <span class='kw'>doseRows</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>1e+10</span>),
+  <span class='no'>target</span>,
+  <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
+  <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

@@ -167,8 +167,21 @@ a given dataset using the model</h1>
 a given dataset using the model</p>
     </div>
 
-    <pre class="usage"><span class='fu'>estimate</span>(<span class='no'>object</span>, <span class='no'>observed</span>, <span class='no'>regimen</span>, <span class='no'>covariates</span>, <span class='no'>par</span>, <span class='no'>fix</span>, <span class='no'>method</span>, <span class='no'>se.fit</span>,
-  <span class='no'>lower</span>, <span class='no'>upper</span>, <span class='no'>multistart</span>, <span class='no'>control</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>estimate</span>(
+  <span class='no'>object</span>,
+  <span class='no'>observed</span>,
+  <span class='no'>regimen</span>,
+  <span class='no'>covariates</span>,
+  <span class='no'>par</span>,
+  <span class='no'>fix</span>,
+  <span class='no'>method</span>,
+  <span class='no'>se.fit</span>,
+  <span class='no'>lower</span>,
+  <span class='no'>upper</span>,
+  <span class='no'>multistart</span>,
+  <span class='no'>control</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -196,7 +209,7 @@ If not specified, we estimate the population prediction</p></td>
     </tr>
     <tr>
       <th>fix</th>
-      <td><p>named vector with the fixed parameters</p></td>
+      <td><p>named numeric vector with the fixed parameters. Names can repeat to fix parameters in multiple occasions.</p></td>
     </tr>
     <tr>
       <th>method</th>

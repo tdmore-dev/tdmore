@@ -162,15 +162,35 @@
     <p>These functions perform estimate for multiple individuals at the same time.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>posthoc</span>(<span class='no'>x</span>, <span class='no'>...</span>, <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>, <span class='kw'>.prediction</span> <span class='kw'>=</span> <span class='st'>"ipred"</span>,
-  <span class='kw'>.elapsed</span> <span class='kw'>=</span> <span class='st'>"elapsed"</span>, <span class='kw'>.id</span> <span class='kw'>=</span> <span class='st'>"ID"</span>)
+    <pre class="usage"><span class='fu'>posthoc</span>(
+  <span class='no'>x</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>,
+  <span class='kw'>.prediction</span> <span class='kw'>=</span> <span class='st'>"ipred"</span>,
+  <span class='kw'>.elapsed</span> <span class='kw'>=</span> <span class='st'>"elapsed"</span>,
+  <span class='kw'>.id</span> <span class='kw'>=</span> <span class='st'>"ID"</span>
+)
 
-<span class='fu'>proseval</span>(<span class='no'>x</span>, <span class='no'>...</span>, <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>, <span class='kw'>.prediction</span> <span class='kw'>=</span> <span class='st'>"ipred"</span>,
-  <span class='kw'>.elapsed</span> <span class='kw'>=</span> <span class='st'>"elapsed"</span>, <span class='kw'>.obs</span> <span class='kw'>=</span> <span class='st'>"OBS"</span>)
+<span class='fu'>proseval</span>(
+  <span class='no'>x</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>,
+  <span class='kw'>.prediction</span> <span class='kw'>=</span> <span class='st'>"ipred"</span>,
+  <span class='kw'>.elapsed</span> <span class='kw'>=</span> <span class='st'>"elapsed"</span>,
+  <span class='kw'>.obs</span> <span class='kw'>=</span> <span class='st'>"OBS"</span>
+)
 
-<span class='fu'>doseSimulation</span>(<span class='no'>x</span>, <span class='no'>...</span>, <span class='no'>optimize</span>, <span class='no'>predict</span>, <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>,
-  <span class='kw'>.iterationFit</span> <span class='kw'>=</span> <span class='st'>"iterationFit"</span>, <span class='kw'>.next_observed</span> <span class='kw'>=</span> <span class='st'>"next_observed"</span>,
-  <span class='kw'>.next_regimen</span> <span class='kw'>=</span> <span class='st'>"next_regimen"</span>, <span class='kw'>.verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>doseSimulation</span>(
+  <span class='no'>x</span>,
+  <span class='no'>...</span>,
+  <span class='no'>optimize</span>,
+  <span class='no'>predict</span>,
+  <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>,
+  <span class='kw'>.iterationFit</span> <span class='kw'>=</span> <span class='st'>"iterationFit"</span>,
+  <span class='kw'>.next_observed</span> <span class='kw'>=</span> <span class='st'>"next_observed"</span>,
+  <span class='kw'>.next_regimen</span> <span class='kw'>=</span> <span class='st'>"next_regimen"</span>,
+  <span class='kw'>.verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Convert the Monte-Carlo uniroot results into a recommendation object. — convertMCResultToRecommendation • tdmore</title>
+<title>Generate parameter samples using a muilti-variate normal distribution around the variance-covariance matrix — sampleMC_norm • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,8 @@
 
 
 
-<meta property="og:title" content="Convert the Monte-Carlo uniroot results into a recommendation object. — convertMCResultToRecommendation" />
-<meta property="og:description" content="Convert the Monte-Carlo uniroot results into a recommendation object." />
+<meta property="og:title" content="Generate parameter samples using a muilti-variate normal distribution around the variance-covariance matrix — sampleMC_norm" />
+<meta property="og:description" content="Generate parameter samples using a muilti-variate normal distribution around the variance-covariance matrix" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -153,52 +153,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Convert the Monte-Carlo uniroot results into a recommendation object.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/a.qdoptimize.R'><code>R/a.qdoptimize.R</code></a></small>
-    <div class="hidden name"><code>convertMCResultToRecommendation.Rd</code></div>
+    <h1>Generate parameter samples using a muilti-variate normal distribution around the variance-covariance matrix</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
+    <div class="hidden name"><code>sampleMC_norm.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Convert the Monte-Carlo uniroot results into a recommendation object.</p>
+    <p>Generate parameter samples using a muilti-variate normal distribution around the variance-covariance matrix</p>
     </div>
 
-    <pre class="usage"><span class='fu'>convertMCResultToRecommendation</span>(
-  <span class='no'>tdmorefit</span>,
-  <span class='no'>mcResult</span>,
-  <span class='no'>regimen</span>,
-  <span class='no'>doseRows</span>,
-  <span class='no'>target</span>,
-  <span class='no'>level</span>
-)</pre>
+    <pre class="usage"><span class='fu'>sampleMC_norm</span>(<span class='no'>tdmorefit</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='no'>tdmorefit</span>$<span class='no'>fix</span>, <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>mcResult</th>
-      <td><p>a dataframe with all the uniroot results, one per Monte-Carlo sample</p></td>
+      <th>tdmorefit</th>
+      <td><p>a tdmorefit object</p></td>
     </tr>
     <tr>
-      <th>regimen</th>
-      <td><p>the regimen</p></td>
+      <th>fix</th>
+      <td><p>named numeric vector with the fixed parameters</p></td>
     </tr>
     <tr>
-      <th>doseRows</th>
-      <td><p>which rows of the regimen to adapt when searching for a new dose, or NULL to take the last one</p></td>
-    </tr>
-    <tr>
-      <th>target</th>
-      <td><p>the original target</p></td>
-    </tr>
-    <tr>
-      <th>level</th>
-      <td><p>the confidence interval on the dose</p></td>
+      <th>mc.maxpts</th>
+      <td><p>number of Monte-Carlo samples</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a recommendation object</p>
+    <p>the Monte-Carlo matrix, first column is always the 'sample' column</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

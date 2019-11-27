@@ -162,9 +162,18 @@
     <p>Create a tdmorefit object manually</p>
     </div>
 
-    <pre class="usage"><span class='fu'>tdmorefit</span>(<span class='no'>tdmore</span>, <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>regimen</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>ofv</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>res</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>varcov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>nlmresult</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>call</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>tdmorefit</span>(
+  <span class='no'>tdmore</span>,
+  <span class='kw'>observed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>regimen</span>,
+  <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>ofv</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
+  <span class='kw'>res</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>varcov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>fix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>nlmresult</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>call</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -195,7 +204,7 @@
     </tr>
     <tr>
       <th>varcov</th>
-      <td><p>the found varcov matrix, or NULL to use a diagonal matrix.</p></td>
+      <td><p>the found varcov matrix</p></td>
     </tr>
     <tr>
       <th>fix</th>
