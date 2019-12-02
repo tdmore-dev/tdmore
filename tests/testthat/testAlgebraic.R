@@ -1,16 +1,19 @@
 context("Test algebraic models")
 
-myFunction <- function(t, TIME, AMT, EKA, EV, ECL, WT) {
+myFunction <- function(t, A0, A1, TIME, AMT, EKA, EV, ECL, WT) {
   V = 70 * exp(EV) * WT/70
   CL = 4 * exp(ECL) * (WT/70)^0.75
   KA = 1 * exp(EKA)
   k = CL / V
   tD = TIME
-  ifelse(t >= TIME,
-         AMT/V * (KA/(KA-k)) * (exp(-k*(t-tD)) - exp(-KA*(t-tD))),
-         0)
+
+  A0 = A0 + AMT
+  A0 = A0 * exp( -KA*(t-tD) )
+  A1 = A1 * exp( -k*(t-tD) ) +
+    AMT/V * (KA/(KA-k)) * (exp(-k*(t-tD)) - exp(-KA*(t-tD)))
+  list(A0=A0, A1=A1, CONC=A1/V)
 }
-m1 <- algebraic(myFunction)
+m1 <- algebraic(myFunction, inits=c(A0=0, A1=0))
 regimen <- data.frame(TIME=seq(0, 100, by=24), AMT=150)
 covariates <- c(WT=49)
 
@@ -30,24 +33,22 @@ test_that("model_predict function generates values as expected", {
   expect_equal(
     model_predict(model=m1, times=numeric(), parameters=c(EKA=0, EV=0, ECL=0),
                   regimen=regimen, covariates=covariates),
-    data.frame(TIME=numeric(), CONC=numeric())
+    data.frame(TIME=numeric(), A0=numeric(), A1=numeric(), CONC=numeric())
   )
   prediction <- model_predict(model=m1, times=0:15,
                               parameters=c(EKA=0, EV=0, ECL=0), covariates=covariates,
                               regimen=regimen)
   expect_equal(
     prediction %>% colnames,
-    c("TIME", "CONC")
+    c("TIME", "A0", "A1", "CONC")
   )
   expect_equal(prediction$TIME, 0:15)
-  expect_equal(prediction$CONC, myFunction(t=0:15, TIME=0, AMT=150, EKA=0, EV=0, ECL=0, WT=49) )
+  expect_equal(prediction$CONC, myFunction(t=0:15, A0=0, A1=0, TIME=0, AMT=150, EKA=0, EV=0, ECL=0, WT=49)$CONC )
 
-  expect_error(
-    model_predict(model=m1, times=0:15,
-                  parameters=c(EKA=0, EV=0, ECL=0), covariates=covariates,
-                  regimen=data.frame(TIME=c(0, 12), AMT=c(NA, 1000))),
-    "The provided regimen contains NA.*"
-  )
+  #prediction <- model_predict(model=m1, times=0:15,
+  #                parameters=c(EKA=0, EV=0, ECL=0), covariates=covariates,
+  #                regimen=data.frame(TIME=c(0, 12), AMT=c(NA, 1000)))
+  #plot(prediction, type='l')
 
   result <- model_predict(model=m1, times=seq(0, 100, by=0.1),
                           regimen=regimen,
@@ -133,9 +134,50 @@ myFunction <- function(t, TIME, AMT, EKA, EV, ECL, WT) {
   CONC <- ifelse(t >= TIME,
          AMT/V * (KA/(KA-k)) * (exp(-k*(t-tD)) - exp(-KA*(t-tD))),
          0)
-  list(CONC=CONC, V=V, CL=CL, KA=KA)
+  list(CONC=CONC, TMax=t[ which.max(CONC) ], V=V, CL=CL, KA=KA)
 }
+
+expect_error({
+  algebraic(myFunction, output=c("TMax","CONC") )
+}, regexp="You should only specify a single")
+
 m1 <- algebraic(myFunction, output="CONC")
+
+expect_error({
+  model_predict(m1, times=numeric())
+}, regexp="requires parameters `EKA, EV, ECL, WT")
+
+describe("Correctly provides output", {
+  it("only provides the output columns when no times is present", {
+    expect_equal(
+      model_predict(m1, times=numeric(), parameters=c(EKA=-0.10, EKA=0.10, EV=0, ECL=0), covariates=covariates)
+    , data.frame(TIME=numeric(), CONC=numeric()))
+  })
+
+  it("only provides the output columns when no regimen is present", {
+    expect_equal(
+      model_predict(m1, times=0:15, parameters=c(EKA=-0.10, EKA=0.10, EV=0, ECL=0), covariates=covariates)
+      , data.frame(TIME=0:15, CONC=0))
+  })
+
+  it("provides all function outputs when a regimen is present", {
+    df <- model_predict(m1, times=15, parameters=c(EKA=-0.10, EKA=0.10, EV=0, ECL=0), covariates=covariates,
+                        regimen=data.frame(TIME=c(0, 8), AMT=100))
+    expect_equal(colnames(df), c("TIME", "CONC", "TMax", "V", "CL", "KA"))
+  })
+
+  it("provides all function outputs when a regimen is present", {
+    df <- model_predict(m1, times=0:15, parameters=c(EKA=-0.10, EKA=0.10, EV=0, ECL=0), covariates=covariates,
+                        regimen=data.frame(TIME=c(0, 8), AMT=100))
+    expect_equal(colnames(df), c("TIME", "CONC", "TMax", "V", "CL", "KA"))
+  })
+})
+
+expect_equal(
+  model_predict(m1, times=15, parameters=c(EKA=-0.10, EKA=0.10, EV=0, ECL=0), covariates=covariates,
+                regimen=data.frame(TIME=c(0, 8), AMT=100))
+  , data.frame(TIME=15, CONC=0))
+
 test_that("multiple model outputs", {
   prediction <- model_predict(model=m1, times=0:15,
                               parameters=c(EKA=-10, EKA=10, EV=0, ECL=0), covariates=covariates,

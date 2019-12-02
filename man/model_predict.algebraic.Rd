@@ -18,20 +18,21 @@
 \arguments{
 \item{model}{the algebraic model}
 
+\item{times}{numeric vector at which to provide prediction values}
+
 \item{regimen}{dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)}
 
 \item{parameters}{a named numeric vector}
 
 \item{covariates}{named numeric vector, or data.frame with column 'TIME', and at least TIME 0}
 
-\item{iov}{character array with the IOV terms, NULL if no IOV, IOV on KA only}
-
-\item{newdata}{dataframe with a column 'TIME' and 'CONC'. Other columns are ignored.}
+\item{iov}{character array with the IOV terms, NULL if no IOV. These values should then be present in the parameters vector, and be repeated for
+max(regimen$OCC).}
 }
 \value{
-A data.frame similar to the newdata data frame, but with CONC column filled out.
+A data.frame containing all output of the prediction function of the algebraic model
 }
 \description{
-We only support dosing into the default compartment, and only bolus doses
+Predict for algebraic models
 }
 \keyword{internal}

@@ -13,23 +13,98 @@
 \alias{pk3cptoral_}
 \title{Algebraic equations for PK models}
 \usage{
-pk1cptiv_(t, TIME, AMT, V, K, SS = 0, II = Inf)
+pk1cptiv_(t, A1 = 0, TIME, AMT, V, K, SS = 0, II = Inf)
 
-pk1cptinfusion_(t, TIME, AMT, RATE, V, K, SS = 0, II = Inf)
+pk1cptinfusion_(t, A1 = 0, TIME, AMT, RATE, V, K, SS = 0, II = Inf)
 
-pk1cptoral_(t, TIME, AMT, V, K, KA, SS = 0, II = Inf)
+pk1cptoral_(t, A0 = 0, A1 = 0, TIME, AMT, V, K, KA, SS = 0, II = Inf)
 
-pk2cptiv_(t, TIME, AMT, V, K, K12, K21, SS = 0, II = Inf)
+pk2cptiv_(t, A1 = 0, A2 = 0, TIME, AMT, V, K, K12, K21, SS = 0, II = Inf)
 
-pk2cptinfusion_(t, TIME, AMT, RATE, V, K, K12, K21, SS = 0, II = Inf)
+pk2cptinfusion_(
+  t,
+  A1 = 0,
+  A2 = 0,
+  TIME,
+  AMT,
+  RATE,
+  V,
+  K,
+  K12,
+  K21,
+  SS = 0,
+  II = Inf
+)
 
-pk2cptoral_(t, TIME, AMT, V, K, KA, K12, K21, SS = 0, II = Inf)
+pk2cptoral_(
+  t,
+  A0 = 0,
+  A1 = 0,
+  A2 = 0,
+  TIME,
+  AMT,
+  V,
+  K,
+  KA,
+  K12,
+  K21,
+  SS = 0,
+  II = Inf
+)
 
-pk3cptiv_(t, TIME, AMT, V, K, K12, K21, K13, K31, SS = 0, II = Inf)
+pk3cptiv_(
+  t,
+  A1 = 0,
+  A2 = 0,
+  A3 = 0,
+  TIME,
+  AMT,
+  V,
+  K,
+  K12,
+  K21,
+  K13,
+  K31,
+  SS = 0,
+  II = Inf
+)
 
-pk3cptinfusion_(t, TIME, AMT, RATE, V, K, K12, K21, K13, K31, SS = 0, II = Inf)
+pk3cptinfusion_(
+  t,
+  A1 = 0,
+  A2 = 0,
+  A3 = 0,
+  TIME,
+  AMT,
+  RATE,
+  V,
+  K,
+  K12,
+  K21,
+  K13,
+  K31,
+  SS = 0,
+  II = Inf
+)
 
-pk3cptoral_(t, TIME, AMT, V, K, KA, K12, K21, K13, K31, SS = 0, II = Inf)
+pk3cptoral_(
+  t,
+  A0 = 0,
+  A1 = 0,
+  A2 = 0,
+  A3 = 0,
+  TIME,
+  AMT,
+  V,
+  K,
+  KA,
+  K12,
+  K21,
+  K13,
+  K31,
+  SS = 0,
+  II = Inf
+)
 }
 \arguments{
 \item{t}{sampling times}

@@ -2,25 +2,25 @@
 #' Algebraic functions are assumed to be dose-linear, meaning that they can be calculated for a single dose
 #' and then summed up for multiple doses.
 #'
-#' @param fun a function with 'time' as the first argument, and additional parameters as needed.
-#' In case parameters will be estimated, they should have a mean of '0' and be normal-distributed.
+#' @param fun function with named arguments. The first argument is always `time` (a numeric vector), the other arguments
+#' may be the initial state, the regimen (TIME, AMT, II, ADDL, RATE, DURATION, CMT, SS), or
+#' the covariates or parameters (remaining arguments). These are all single numbers.
 #'
-#' The function can also include parameters `TIME`, `AMT`, `II`, `ADDL`, `RATE`, `DURATION`, `CMT`.
-#' These are then taken from the treatment regimen.
+#' The initial values should be viewed as 'initial value at dosing time `TIME`.
+#' `AMT` may be NA, which is seen as a change in covariates (rather than a new administration).
 #'
-#' The function returns a single vector with the concentrations for the given times.
-#'
-#' It can also return a named list of values.
-#' The vector with the output name will be summed up across multiple administrations.
-#' Any other values will be treated as parameter values. The output will be observed using last-observation-carry-forward.
-#'
-#' @param output Name for the output
-#'
+#' The function returns a named list with numeric vectors of size `time` or size `1`.
+#' @param inits named numeric vector with the initial states for the model
+#' These states should also be present in the output list of the function.
+#' @param na.rm time-varying covariates result in a new call to the prediction function,
+#' using AMT=NA. If TRUE, any AMT=NA is changed by AMT=0. Some models apply special rules
+#' when a new dose is applied. They may set this switch to FALSE to receive AMT=NA for when a time-varying covariate changes
+#' (but no actual treatment occurs).
 #' @return An algebraic prediction model
-#' @importFrom utils tail
 #' @export
-algebraic <- function(fun, output="CONC") {
-  if(length(output) != 1) stop("You should only specify a single 'output'")
+algebraic <- function(fun, inits=NULL, na.rm=TRUE) {
+  stopifnot(is.logical(na.rm))
+
   argNames <- names(formals(fun))
 
   tArg <- argNames[1]
@@ -29,126 +29,38 @@ algebraic <- function(fun, output="CONC") {
   regimenNames <- c("TIME", "AMT", "II", "ADDL", "RATE", "DURATION", "CMT", "SS")
   regimenNames <- argNames[argNames %in% regimenNames]
   pNames <- argNames[! argNames %in% c(regimenNames)]
+  initsAuto <- FALSE
+  if(is.null(inits)) {
+    #auto-detect inits
+    initsAuto <- TRUE
+    definedArgs <- pNames[ ! sapply( formals(fun)[pNames] , is.name) ]
+    inits <- unlist( formals(fun)[definedArgs] )
+  }
+  if( ! all(names(inits) %in% pNames) ) stop("Not all initial values are function arguments to `fun`")
+  pNames <- setdiff(pNames, names(inits)) #remove inits
 
   structure(list(
     output=output,
-    predictFunction = function(times, regimen, parameters, covariates, iov) {
-      if(!all(colnames(regimen) %in% c(regimenNames, "OCC")) || !all(regimenNames %in% colnames(regimen)))
-        stop("Algebraic function requires regimen names `", paste(regimenNames, collapse=", "), "',
-             but regimen provided the following columns: `", paste(colnames(regimen), collapse=", "), "'")
-
-      if(anyNA(regimen)) stop("The provided regimen contains NA. Cannot calculate algebraic model...")
-
-      if(length(times) ==0) {
-        df <- data.frame(TIME=numeric(0))
-        df[, output] <- numeric(0)
-        return(df)
-      }
-
-      regimen <- regimen[ regimen$TIME <= max(times, -Inf), ]
-
-      df <- data.frame(TIME=times)
-      if(nrow(regimen) == 0) {
-        df[, output] <- rep(0, length.out=length(times))
-        return( df ) #not entirely happy, because the extra output will not be in there...
-      }
-
-      regimenResult = apply(regimen, 1, function(regimenRow) {
-        iovPrediction <- !is.null(iov)
-        iovIndexes <- which(names(parameters) %in% iov)
-        iovParameters <- parameters[iovIndexes]
-        parameters <- parameters[!duplicated(names(parameters))]
-
-        # Use IOV value corresponding to regimen occasion
-        if(iovPrediction) {
-          occasion <- regimenRow[['OCC']]
-          for(iov_term in iov) {
-            iovValueIndexes <- which(names(iovParameters)==iov_term)
-            if(occasion > length(iovValueIndexes))
-              stop(paste("Missing IOV values for", iov_term))
-            iovValue <- iovParameters[[iovValueIndexes[occasion]]]
-            parameters[iov_term] <- iovValue
-          }
-        }
-
-        # Fixed covariates
-        if(is.null(covariates) || is.numeric(covariates)) {
-          parameters <- c(parameters, covariates)
-
-        # Time-varying covariates (only works at regimen times)
-        } else {
-          covariates <- covariates[order(covariates$TIME),]
-          cNames <- colnames(covariates)
-          cNames <- cNames[cNames != "TIME"]
-          selectedRow <- utils::tail(which((covariates$TIME <= as.numeric(regimenRow[['TIME']]))==TRUE), n=1)
-          covs <- unlist(covariates[selectedRow, cNames])
-          parameters <- parameters[!(names(parameters) %in% names(covariates))]
-          parameters <- c(parameters, covs)
-        }
-
-        args <- list(times)
-        names(args) <- tArg
-
-        args <- c(args, as.list(regimenRow[!(names(regimenRow) %in% c("OCC"))])) # add regimen names
-        args <- c(args, parameters) # add parameters
-
-        funValue <- do.call(fun, args=args)
-        if(!is.list(funValue)) {
-          funValue[times < args$TIME] <- 0
-          out <- list(funValue)
-          names(out) <- output
-          out
-        } else {
-          stopifnot( output %in% names(funValue))
-          funValue[[output]][times < args$TIME] <- 0
-
-          n <- lapply(funValue, length)
-          stopifnot( n[[output]] == length(times) )
-          stopifnot( all( n[ names(n) != output ] == 1 ))
-          funValue
-        }
-      })
-      #We now have a list of all results from each treatment
-
-      ## We need to SUM the concentrations
-      ## And fetch the appropriate parameter values from the right regimen result
-      CONCs <- vapply(regimenResult, function(x) { x[[output]] }, FUN.VALUE=numeric(length(times)) )
-
-      if(length(times)==0) {
-        for(outputCol in names( regimenResult[[1]] ))df[, outputCol] <- numeric()
-      } else if (length(times)==1) {
-        df[, output] <- sum(CONCs)
-        i <- max(which(times >= regimen$TIME))
-        otherNames <- setdiff( names(regimenResult[[1]]), output)
-        for(j in otherNames) df[, j] <- vapply( regimenResult[i], function(x){ x[[j]] }, numeric(1))
-      } else {
-        df[, output] <- apply(CONCs, 1, sum) ## why was na.rm here?
-        i <- vapply(times, function(t) {
-          max(which(t >= regimen$TIME))
-        }, integer(1)) #find the nearest treatment regimen
-        otherNames <- setdiff( names(regimenResult[[1]]), output)
-        for(j in otherNames) df[, j] <- vapply( regimenResult[i], function(x){ x[[j]] }, numeric(1))
-      }
-      return(df)
-    },
-    parameters = pNames
-  ),
-  class = "algebraic")
+    fun=fun,
+    inits=inits,
+    initsAuto=initsAuto,
+    na.rm=na.rm,
+    parameters=pNames
+  ), class = "algebraic")
 }
 
 #' Predict for algebraic models
 #'
-#' We only support dosing into the default compartment, and only bolus doses
-#'
 #' @param model the algebraic model
-#' @param newdata dataframe with a column 'TIME' and 'CONC'. Other columns are ignored.
+#' @param times numeric vector at which to provide prediction values
 #' @param regimen dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)
 #' @param parameters a named numeric vector
 #' @param covariates named numeric vector, or data.frame with column 'TIME', and at least TIME 0
-#' @param iov character array with the IOV terms, NULL if no IOV, IOV on KA only
+#' @param iov character array with the IOV terms, NULL if no IOV. These values should then be present in the parameters vector, and be repeated for
+#' max(regimen$OCC).
 #'
 #' @return
-#' A data.frame similar to the newdata data frame, but with CONC column filled out.
+#' A data.frame containing all output of the prediction function of the algebraic model
 #'
 #' @export
 #' @keywords internal
@@ -157,34 +69,75 @@ model_predict.algebraic <- function(model, times, regimen=NULL, parameters=numer
     regimen <- data.frame(TIME=numeric(), AMT=numeric())
     if(!is.null(iov)) regimen$OCC <- numeric()
   }
+  # covariates is either NULL, a numeric vector, or a data.frame
 
-  # Check times and regimen objects
-  checkTimes(times)
-  checkRegimen(regimen, iov)
-  regimen <- flatten(regimen)
-
-  # Check parameters and covariates
-  assertthat::assert_that(is.numeric(parameters))
-
-  # Check covariates
-  if (is.null(covariates) || is.numeric(covariates)) {
-    pNames <- names(c(parameters, covariates))
-  } else if (is.data.frame(covariates)) {
-    cNames <- colnames(covariates)
-    cNames <- cNames[cNames != "TIME"]
-    pNames <- unique(c(names(parameters), cNames))
-  } else {
-    stop("Covariates should be either a numeric vector or data frame")
+  ## Construct a single 'event' data.frame and
+  ## slice into time windows
+  if(! 0 %in% regimen$TIME ) {
+    startRegimen <- data.frame(TIME=0)
+    if(!is.null(iov)) startRegimen$OCC = 1
+    regimen <- dplyr::bind_rows(startRegimen, regimen)
   }
 
-  if(!setequal(pNames, model$parameters))
-    stop("Algebraic function requires parameters `", paste(model$parameters, collapse=", "), "',
-             but was provided the following: `", paste(pNames, collapse=", "), "'")
+  if(is.data.frame(covariates)) {
+    events <- regimen %>%
+      dplyr::full_join(covariates, by="TIME") %>%
+      mutate_at(vars(OCC), na.locf) %>% #cover the holes
+      dplyr::arrange(TIME)
+  } else {
+    if(is.numeric(covariates) && length(covariates) >= 1) {
+      events <- cbind(regimen, as.list(covariates))
+    } else if(is.null(covariates)) {
+      events <- regimen
+    } else {
+      stop("Invalid covariates provided: ", covariates)
+    }
+  }
 
-  # Predict concentrations
-  model$predictFunction(times, regimen, parameters, covariates, iov)
+  if(is.null(iov)) {
+    if(length(parameters) > 0) events <- cbind(events, as.list(parameters))
+  } else {
+    ## ensure we start with occ=1
+    stopifnot(events$OCC[1] == 1)
+    ## ensure there are enough iovParameters for the number of occasions
+    maxOcc <- max(events$OCC)
+    iovParameters <- list()
+    for(i in iov) iovParameters[[i]] <- parameters[ names(parameters) == i ]
+    lapply(iovParameters, function(x) {stopifnot(length(x) == maxOcc) })
+
+    # add to events list
+    iovParameters <- tibble::as_tibble(iovParameters)
+    iovParameters$OCC <- seq_len(maxOcc)
+    events <- dplyr::left_join( events, iovParameters, by="OCC")
+  }
+
+  if(model$na.rm) events$AMT[ is.na(events$AMT) ] <- 0
+
+  inits <- model$inits
+  result <- list()
+  for(i in seq_along(events$TIME)) {
+    tStart <- events$TIME[i]
+    tEnd <- if(i==nrow(events)) Inf else events$TIME[i+1]
+    tObs <- times[ times >= tStart & times < tEnd ]
+
+    funtimes <- c(tObs, tEnd)
+    arglist <- c(
+      list(funtimes),
+      as.list(events[i, ,drop=F]),
+      as.list(inits)
+    )
+
+    out <- do.call(model$fun, arglist)
+    out <- cbind(TIME=funtimes, as.data.frame(out))
+
+    result[[i]] <- out[-nrow(out), ,drop=FALSE]
+    availableInits <- intersect(names(inits), colnames(out)) #we only use the available initial estimates
+    inits <- out[nrow(out), availableInits, drop=TRUE]
+    names(inits) <- availableInits
+  }
+
+  dplyr::bind_rows(result)
 }
-
 
 #' Build a tdmore object based on an algebraic model
 #'

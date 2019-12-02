@@ -6,22 +6,25 @@
 Algebraic functions are assumed to be dose-linear, meaning that they can be calculated for a single dose
 and then summed up for multiple doses.}
 \usage{
-algebraic(fun, output = "CONC")
+algebraic(fun, inits = NULL, na.rm = TRUE)
 }
 \arguments{
-\item{fun}{a function with 'time' as the first argument, and additional parameters as needed.
-In case parameters will be estimated, they should have a mean of '0' and be normal-distributed.
+\item{fun}{function with named arguments. The first argument is always `time` (a numeric vector), the other arguments
+may be the initial state, the regimen (TIME, AMT, II, ADDL, RATE, DURATION, CMT, SS), or
+the covariates or parameters (remaining arguments). These are all single numbers.
 
-The function can also include parameters `TIME`, `AMT`, `II`, `ADDL`, `RATE`, `DURATION`, `CMT`.
-These are then taken from the treatment regimen.
+The initial values should be viewed as 'initial value at dosing time `TIME`.
+`AMT` may be NA, which is seen as a change in covariates (rather than a new administration).
 
-The function returns a single vector with the concentrations for the given times.
+The function returns a named list with numeric vectors of size `time` or size `1`.}
 
-It can also return a named list of values.
-The vector with the output name will be summed up across multiple administrations.
-Any other values will be treated as parameter values. The output will be observed using last-observation-carry-forward.}
+\item{inits}{named numeric vector with the initial states for the model
+These states should also be present in the output list of the function.}
 
-\item{output}{Name for the output}
+\item{na.rm}{time-varying covariates result in a new call to the prediction function,
+using AMT=NA. If TRUE, any AMT=NA is changed by AMT=0. Some models apply special rules
+when a new dose is applied. They may set this switch to FALSE to receive AMT=NA for when a time-varying covariate changes
+(but no actual treatment occurs).}
 }
 \value{
 An algebraic prediction model

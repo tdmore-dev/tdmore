@@ -17,7 +17,40 @@ solveODE <- function(model, times, TIME, AMT, II=NULL, RATE=NULL, N=200, ...) {
 
   params <- list(...)
   result <- rxSolve(m1, params = unlist(params), events = ev, atol=1E-12, rtol=1E-12, maxsteps=N*10*1000) %>% as.data.frame
-  result$CONC
+  result
+}
+expect_same <- function(aResult, odeResult) {
+  if(!is.list(aResult) ) stop()
+  if(length(names(aResult)) == 0) stop()
+  withCallingHandlers( {
+    for(i in names(aResult)) {
+      expect_equal(aResult[[i]], odeResult[, i] )
+    }
+  }, error=function(e){
+    for(i in seq_along(aResult)) {
+      plot(aResult[[i]], ylab=names(aResult)[i])
+      lines(odeResult[,names(aResult)[i]])
+    }
+  })
+}
+simulate_same <- function(fun, model, times, regimen, parameters) {
+  m1 <- algebraic(fun)
+  res1 <- model_predict(m1, times=times, regimen=regimen, parameters=parameters)
+
+  m2 <- RxODE(model)
+  res2 <- model_predict(m2, times=times, regimen=regimen, parameters=parameters, extraArguments=list( atol=1E-12, rtol=1E-12, ssAtol=1E-12, ssRtol=1E-12, maxsteps=100*1000))
+
+  withCallingHandlers({
+    expect_equal(
+      res1,
+      res2[ ,colnames(res1)] #same order
+    )
+  }, error=function(e) {
+    for(i in seq(2, ncol(res1))) {
+      plot(res1$TIME, res1[, i], ylab=colnames(res1)[i])
+      lines(res2$TIME, res2[, colnames(res1)[i]])
+    }
+  })
 }
 
 times <- seq(0, 24, by=0.1)
@@ -31,45 +64,60 @@ test_that("1cpt models", {
   d/dt(A1) = -K*A1;
   CONC = A1 / V;
   "
-expect_equal(
-  pk1cptiv_(times, tD, AMT, K=0.3, V=10),
-  solveODE(model, times, tD, AMT, K=0.3, V=10)
+expect_error(
+  expect_same(
+    pk1cptiv_(times, TIME=tD, AMT=AMT, K=0.3, V=10),
+    solveODE(model, times, TIME=tD, AMT=AMT, K=0.3, V=15) # not using the same parameters; should be different!
+  )
 )
 
-expect_equal(
-  pk1cptiv_(times, tD, AMT, K=0.03, V=20, II=24, SS=1),
-  solveODE(model, times, tD, AMT, K=0.03, V=20, II=24)
+expect_same(
+  pk1cptiv_(times, TIME=tD, AMT=AMT, K=0.3, V=10),
+  solveODE(model, times, TIME=tD, AMT=AMT, K=0.3, V=10)
 )
+simulate_same(pk1cptiv_, model, times, regimen=data.frame(TIME=c(0, 12), AMT=AMT), parameters=c(K=0.3, V=10))
+
+expect_same(
+  pk1cptiv_(times, TIME=tD, AMT=AMT, K=0.03, V=20, II=24, SS=1),
+  solveODE(model, times, TIME=tD, AMT=AMT, K=0.03, V=20, II=24)
+)
+simulate_same(pk1cptiv_, model, times, regimen=data.frame(TIME=0, AMT=AMT, SS=1, II=12), parameters=c(K=0.3, V=10))
 
 
-expect_equal(
-  pk1cptinfusion_(times, tD, AMT, K=0.3, V=10, RATE=25),
-  solveODE(model, times, tD, AMT, K=0.3, V=10, RATE=25)
+expect_same(
+  pk1cptinfusion_(times, TIME=tD, AMT=AMT, K=0.3, V=10, RATE=25),
+  solveODE(model, times, TIME=tD, AMT=AMT, K=0.3, V=10, RATE=25)
 )
+simulate_same(pk1cptinfusion_, model, times, regimen=data.frame(TIME=c(0, 12), AMT=AMT, RATE=25), parameters=c(K=0.3, V=10))
 
-expect_equal(
-  pk1cptinfusion_(times, tD, AMT, K=0.03, V=20, II=24, RATE=25, SS=1),
-  solveODE(model, times, tD, AMT, K=0.03, V=20, II=24, RATE=25)
+expect_same(
+  pk1cptinfusion_(times, TIME=tD, AMT=AMT, K=0.03, V=20, II=24, RATE=25, SS=1),
+  solveODE(model, times, TIME=tD, AMT=AMT, K=0.03, V=20, II=24, RATE=25)
 )
+simulate_same(pk1cptinfusion_, model, times, regimen=data.frame(TIME=0, AMT=AMT, RATE=25, SS=1, II=12), parameters=c(K=0.3, V=10))
+
 model <- "
 d/dt(A0) = -KA*A0;
 d/dt(A1) = KA*A0 -K*A1;
 CONC = A1 / V;
 "
-expect_equal(
-  pk1cptoral_(times, tD, AMT, KA=0.3, K=0.03, V=20),
-  solveODE(model, times, tD, AMT, KA=0.3, K=0.03, V=20)
+expect_same(
+  pk1cptoral_(times, TIME=tD, AMT=AMT, KA=0.3, K=0.03, V=20),
+  solveODE(model, times, TIME=tD, AMT=AMT, KA=0.3, K=0.03, V=20)
+)
+simulate_same(pk1cptoral_, model, times, regimen=data.frame(TIME=c(0, 12), AMT=AMT), parameters=c(KA=0.3, K=0.03, V=10))
+
+expect_same(
+  pk1cptoral_(times, TIME=tD, AMT=AMT, KA=0.3, K=0.03, V=20, II=24, SS=1),
+  solveODE(model, times, TIME=tD, AMT=AMT, KA=0.3, K=0.03, V=20, II=24)
 )
 
-expect_equal(
-  pk1cptoral_(times, tD, AMT, KA=0.3, K=0.03, V=20, II=24, SS=1),
-  solveODE(model, times, tD, AMT, KA=0.3, K=0.03, V=20, II=24)
-)
+
 })
 
 
 expect_warning(
-pk1cptinfusion_(times, tD, AMT, K=0.03, V=20, II=24, RATE=2, SS=1),
+pk1cptinfusion_(times, TIME=tD, AMT=AMT, K=0.03, V=20, II=24, RATE=2, SS=1),
 "Infusion time larger than interdose interval"
 )
 
@@ -81,26 +129,29 @@ test_that("2cpt models", {
   d/dt(A2) = K12*A1 - K21*A2;
   CONC = A1 / V;
   "
-  expect_equal(
-    pk2cptiv_(times, tD, AMT, K=0.3, V=10, K12=0.13, K21=0.08),
-    solveODE(model, times, tD, AMT, K=0.3, V=10, K12=0.13, K21=0.08)
+  expect_same(
+    pk2cptiv_(times, TIME=tD, AMT=AMT, K=0.3, V=10, K12=0.13, K21=0.08),
+    solveODE(model, times, TIME=tD, AMT=AMT, K=0.3, V=10, K12=0.13, K21=0.08)
   )
+  simulate_same(pk2cptiv_, model, times, regimen=data.frame(TIME=c(0, 12), AMT=AMT), parameters=c(K=0.3, V=10, K12=0.13, K21=0.08))
 
-  expect_equal(
-    pk2cptiv_(times, tD, AMT, K=0.03, V=20, K12=0.13, K21=0.08, II=24, SS=1),
-    solveODE(model, times, tD, AMT, K=0.03, V=20, K12=0.13, K21=0.08, II=24)
+  expect_same(
+    pk2cptiv_(times, TIME=tD, AMT=AMT, K=0.03, V=20, K12=0.13, K21=0.08, II=24, SS=1),
+    solveODE(model, times, TIME=tD, AMT=AMT, K=0.03, V=20, K12=0.13, K21=0.08, II=24)
   )
+  simulate_same(pk2cptiv_, model, times, regimen=data.frame(TIME=c(0), AMT=AMT, SS=1, II=12), parameters=c(K=0.3, V=10, K12=0.13, K21=0.08))
 
-
-  expect_equal(
-    pk2cptinfusion_(times, tD, AMT, K=0.3, V=10, K12=0.13, K21=0.08, RATE=25),
-    solveODE(model, times, tD, AMT, K=0.3, V=10, K12=0.13, K21=0.08, RATE=25)
+  expect_same(
+    pk2cptinfusion_(times, TIME=tD, AMT=AMT, K=0.3, V=10, K12=0.13, K21=0.08, RATE=25),
+    solveODE(model, times, TIME=tD, AMT=AMT, K=0.3, V=10, K12=0.13, K21=0.08, RATE=25)
   )
+  simulate_same(pk2cptinfusion_, model, times, regimen=data.frame(TIME=c(0, 12), AMT=AMT, RATE=25), parameters=c(K=0.3, V=10, K12=0.13, K21=0.08))
 
-  expect_equal(
-    pk2cptinfusion_(times, tD, AMT, K=0.03, V=20, K12=0.13, K21=0.08, II=24, RATE=25, SS=1),
-    solveODE(model, times, tD, AMT, K=0.03, V=20, K12=0.13, K21=0.08, II=24, RATE=25)
+  expect_same(
+    pk2cptinfusion_(times, TIME=tD, AMT=AMT, K=0.03, V=20, K12=0.13, K21=0.08, II=24, RATE=25, SS=1),
+    solveODE(model, times, TIME=tD, AMT=AMT, K=0.03, V=20, K12=0.13, K21=0.08, II=24, RATE=25)
   )
+  simulate_same(pk2cptinfusion_, model, times, regimen=data.frame(TIME=0, AMT=AMT, RATE=25, II=24, SS=1), parameters=c(K=0.3, V=10, K12=0.13, K21=0.08))
   model <- "
   d/dt(A0) = -KA*A0;
   d/dt(A1) = KA*A0 -K*A1 -K12*A1 + K21*A2;
@@ -108,15 +159,17 @@ test_that("2cpt models", {
 
   CONC = A1 / V;
   "
-  expect_equal(
-    pk2cptoral_(times, tD, AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08),
-    solveODE(model, times, tD, AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08)
+  expect_same(
+    pk2cptoral_(times, TIME=tD, AMT=AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08),
+    solveODE(model, times, TIME=tD, AMT=AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08)
   )
+  simulate_same(pk2cptoral_, model, times, regimen=data.frame(TIME=c(0, 12), AMT=AMT), parameters=c(KA=0.3, K=0.03, V=10, K12=0.13, K21=0.08))
 
-  expect_equal(
-    pk2cptoral_(times, tD, AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08, II=24, SS=1),
-    solveODE(model, times, tD, AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08, II=24)
+  expect_same(
+    pk2cptoral_(times, TIME=tD, AMT=AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08, II=24, SS=1),
+    solveODE(model, times, TIME=tD, AMT=AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08, II=24)
   )
+  simulate_same(pk2cptoral_, model, times, regimen=data.frame(TIME=0, AMT=AMT, II=24, SS=1), parameters=c(KA=0.3, K=0.03, V=10, K12=0.13, K21=0.08))
 })
 
 
@@ -128,25 +181,30 @@ test_that("3cpt models", {
   d/dt(A3) = K13*A1 - K31*A3;
   CONC = A1 / V;
   "
-  expect_equal(
-    pk3cptiv_(times, tD, AMT, K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09),
-    solveODE(model, times, tD, AMT, K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09)
+  expect_same(
+    pk3cptiv_(times, TIME=tD, AMT=AMT, K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09),
+    solveODE(model, times, TIME=tD, AMT=AMT, K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09)
   )
+  simulate_same(pk3cptiv_, model, times, regimen=data.frame(TIME=c(0, 12), AMT=AMT), parameters=c(K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09))
 
-  expect_equal(
-    pk3cptiv_(times, tD, AMT, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09, II=24, SS=1),
-    solveODE(model, times, tD, AMT, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09, II=24)
+  expect_same(
+    pk3cptiv_(times, TIME=tD, AMT=AMT, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09, II=24, SS=1),
+    solveODE(model, times, TIME=tD, AMT=AMT, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09, II=24)
   )
+  simulate_same(pk3cptiv_, model, times, regimen=data.frame(TIME=0, AMT=AMT, II=12, SS=1), parameters=c(K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09))
 
-  expect_equal(
-    pk3cptinfusion_(times, tD, AMT, K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09, RATE=25),
-    solveODE(model, times, tD, AMT, K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09, RATE=25)
+  expect_same(
+    pk3cptinfusion_(times, TIME=tD, AMT=AMT, K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09, RATE=25),
+    solveODE(model, times, TIME=tD, AMT=AMT, K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09, RATE=25)
   )
+  simulate_same(pk3cptinfusion_, model, times, regimen=data.frame(TIME=c(0, 12), AMT=AMT, RATE=25), parameters=c(K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09))
 
-  expect_equal(
-    pk3cptinfusion_(times, tD, AMT, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09, II=24, RATE=25, SS=1),
-    solveODE(model, times, tD, AMT, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09, II=24, RATE=25)
+  expect_same(
+    pk3cptinfusion_(times, TIME=tD, AMT=AMT, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09, II=24, RATE=25, SS=1),
+    solveODE(model, times, TIME=tD, AMT=AMT, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09, II=24, RATE=25)
   )
+  simulate_same(pk3cptinfusion_, model, times, regimen=data.frame(TIME=0, AMT=AMT, II=12, SS=1, RATE=25), parameters=c(K=0.3, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09))
+
   model <- "
   d/dt(A0) = -KA*A0;
   d/dt(A1) = KA*A0 -K*A1 -K12*A1 + K21*A2 -K13*A1 + K31*A3;
@@ -155,15 +213,17 @@ test_that("3cpt models", {
 
   CONC = A1 / V;
   "
-  expect_equal(
-    pk3cptoral_(times, tD, AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09),
-    solveODE(model, times, tD, AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09)
+  expect_same(
+    pk3cptoral_(times, TIME=tD, AMT=AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09),
+    solveODE(model, times, TIME=tD, AMT=AMT, KA=0.3, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.09)
   )
+  simulate_same(pk3cptoral_, model, times, regimen=data.frame(TIME=c(0, 12), AMT=AMT), parameters=c(KA=0.3, K=0.03, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09))
 
-  expect_equal(
-    pk3cptoral_(times, tD, AMT, KA=3, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.9, II=24, SS=1),
-    solveODE(model, times, tD, AMT, KA=3, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.9, II=24)
+  expect_same(
+    pk3cptoral_(times, TIME=tD, AMT=AMT, KA=3, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.9, II=24, SS=1),
+    solveODE(model, times, TIME=tD, AMT=AMT, KA=3, K=0.03, V=20, K12=0.13, K21=0.08, K13=0.2, K31=0.9, II=24)
   )
+  simulate_same(pk3cptoral_, model, times, regimen=data.frame(TIME=0, AMT=AMT, II=12, SS=1), parameters=c(KA=0.3, K=0.03, V=10, K12=0.13, K21=0.08, K13=0.2, K31=0.09))
 })
 
 
