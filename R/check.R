@@ -127,10 +127,6 @@ checkRegimen <- function(regimen, iov) {
   assert_that(is.data.frame(regimen))
   assert_that(all(c("TIME", "AMT") %in% colnames(regimen)),
               msg="A required column is missing in the treatment regimen")
-  assert_that(
-    all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "DURATION", "CMT", "II", "ADDL", "SS", "OCC")),
-    msg="A spurious column in the treatment regimen is present. Please remove it."
-  )
 
   # XXX: Not a strict requirement! II + SS is also possible...
   #if ("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))

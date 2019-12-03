@@ -127,11 +127,10 @@ predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covar
   predicted <- model_predict(model=tdmore$model, times=times, regimen=regimen, parameters=par, covariates=covariates, iov=tdmore$iov, extraArguments=c(..., tdmore$extraArguments), cache=tdmore$cache)
 
   if (is.data.frame(newdata)) {
-    i <- colnames(newdata) %in% colnames(predicted)
-    assert_that(all(i), msg=paste0("newdata contains unknown column(s): ",
-                        paste(colnames(newdata)[!i], collapse="; ")))
-    # Only use the outputs specified in newdata
-    predicted <- predicted[ , colnames(newdata), drop=FALSE ]
+    ## Swap out all the values in newdata with their predictions
+    i <- intersect(colnames(newdata), colnames(predicted))
+    newdata[ ,i] <- predicted[ ,i]
+    predicted <- newdata
   }
 
   # Finally, add residual error if needed
