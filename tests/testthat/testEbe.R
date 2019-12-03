@@ -73,10 +73,16 @@ test_that("We can use multiple methods and pick the best one", {
   #             "Rcgmin", "Rvmmin", "hjn")
 
 
-  multistart <- estimate(fit, multistart=TRUE)
+  out <- capture.output(
+    multistart <- estimate(fit, multistart=TRUE)
+  )
 
-  multistart <- estimate(fit, multistart=c(ECL=2, EV1=2))
-  multistart <- estimate(fit, multistart=c(ECL=2))
+  out <- capture.output(
+    multistart <- estimate(fit, multistart=c(ECL=2, EV1=2))
+  )
+  out <- capture.output(
+    multistart <- estimate(fit, multistart=c(ECL=2))
+  )
 
   fitNoSe <- estimate(fit, se.fit=F)
   expect_true( all( diag(vcov(fitNoSe)) < 1e-8 ) )
@@ -84,7 +90,9 @@ test_that("We can use multiple methods and pick the best one", {
   fixed <- estimate(fit, fix=c(EV1=1.2))
   expect_equal( coef(fixed)['EV1'] %>% unname , 1.2 )
 
-  multiFix <- estimate(fit, fix=c(EV1=1.2), multistart=c(ECL=2))
+  out <- capture.output(
+    multiFix <- estimate(fit, fix=c(EV1=1.2), multistart=c(ECL=2))
+  )
   expect_equal(coef(multiFix), coef(fixed), tolerance=1e-5)
   expect_equal(logLik(multiFix), logLik(fixed))
 
@@ -106,13 +114,13 @@ test_that("We can generate uncertainty using MCMC", {
   out2 <- sampleMC_metrop(tdmorefit, mc.maxpts=1000)
 
   if(interactive()) { ## no real test is possible to compare these two different methods...
-  ggplot(mapping=aes(x=value)) +
-    geom_density(data=out1 %>% tidyr::pivot_longer(cols=-sample), aes(color="norm")) +
-    geom_density(data=out2 %>% tidyr::pivot_longer(cols=-sample), aes(color="metrop")) +
-    geom_vline(data=tibble::enframe(coef(tdmorefit)), aes(xintercept=value)) +
-    facet_wrap(~name)
-  autoplot(tdmorefit, newdata=seq(0, 24, by=0.1))
-  tdmorefit$varcov <- NULL
-  autoplot(tdmorefit, newdata=seq(0, 24, by=0.1))
+    ggplot(mapping=aes(x=value)) +
+      geom_density(data=out1 %>% tidyr::pivot_longer(cols=-sample), aes(color="norm")) +
+      geom_density(data=out2 %>% tidyr::pivot_longer(cols=-sample), aes(color="metrop")) +
+      geom_vline(data=tibble::enframe(coef(tdmorefit)), aes(xintercept=value)) +
+      facet_wrap(~name)
+    autoplot(tdmorefit, newdata=seq(0, 24, by=0.1))
+    tdmorefit$varcov <- NULL
+    autoplot(tdmorefit, newdata=seq(0, 24, by=0.1))
   }
 })
