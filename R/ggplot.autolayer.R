@@ -29,20 +29,25 @@ autolayer.tdmorefit <- function(x, color="tomato1", fill=color, alpha=0.2, se.fi
   z <- c(z, predictionLayer(mapping=mapping_line, data=x, geom="line", color=color, se.fit=se.fit, level=level, ..., na.rm=na.rm) ) #aes mapping determined automatically
   if(se.fit) z <- c(z, predictionLayer(mapping=mapping_ribbon, data=x, geom="ribbon", fill=fill, alpha=alpha, se.fit=se.fit, level=level, ..., na.rm=na.rm) )
 
+  z <- c(z, autolayer_observed(x, mapping_line, available, na.rm))
+
+  z
+}
+
+autolayer_observed <- function(x, mapping_line, available, na.rm) {
   yName <- getAes(x, "y", data=available, as.aes=F)$y
   observed <- model.frame(x)
+  if(! yName %in% colnames(observed)) return(NULL)
   yValues <- observed[ , yName, drop=TRUE]
 
   if(
     (!na.rm && length(yValues) > 0)
     ||
     (na.rm && length( stats::na.omit(yValues) ) > 0 )
-      ) {
+  ) {
     ## OK, we can also display observed points!
-    z <- c(z, geom_point(mapping=mapping_line, data=observed, na.rm=na.rm)) # add default na.rm=TRUE
+    return( geom_point(mapping=mapping_line, data=observed, na.rm=na.rm)) # add default na.rm=TRUE
   }
-
-  z
 }
 
 #' Automatically create the required layers for a recommendation object
