@@ -656,7 +656,7 @@ sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batc
     ll(par=par, omega=omegaChol, isChol=TRUE, fix=fix, tdmore=cTdmore, observed=tdmorefit$observed, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates)
   }
   verboseOutput <- utils::capture.output(
-    out <- MCMCpack::MCMCmetrop1R(fun, theta.init=start, seed=floor(runif(1)*1E6), burnin=0, mcmc=mc.batch, V=omega, verbose=verbose)
+    out <- MCMCpack::MCMCmetrop1R(fun, theta.init=start, seed=floor(stats::runif(1)*1E6), burnin=0, mcmc=mc.batch, V=omega, verbose=verbose)
   )
   if(verbose > 0) cat(verboseOutput)
 
