@@ -46,7 +46,8 @@ posthoc <- function(x, ..., .fit="fit", .prediction="ipred", .elapsed="elapsed",
     #You can try this yourself:
     #> foo <- list(bla1 = 1, bla2 = data.frame(TIME=3, CONC=2))
     #> as_tibble(foo)
-    res <- lapply(x, function(x){if(rlang::is_atomic(x)) x else list(x)})
+    #Note we also wrap named vectors in a list, otherwise the names are destroyed when they are included in the tibble
+    res <- lapply(x, function(x){if(rlang::is_atomic(x) && !rlang::is_named(x)) x else list(x)})
     if(!is.null(.fit)) res[[.fit]] <- list( fit )
     if(!is.null(.elapsed)) res[[.elapsed]] <- list( toc - tic )
     if(!is.null(.prediction)) res[[.prediction]] <- list( stats::predict(fit) )
@@ -141,7 +142,10 @@ doseSimulation <- function(x, ..., optimize, predict,
 
     truth <- x[[.fit]]
     regimen <- truth$regimen
-    observed <- tibble::tibble(TIME=numeric()) ## specifying NULL will reuse the tdmorefit observed values!!
+    ## specifying NULL as observed will reuse the tdmorefit observed values!!
+    ## we want to have something that contains all of the outputs, so that
+    ## plotting works easily
+    observed <- model.frame(truth, data = numeric())
     repeat {
       if(.verbose) cat("Iteration #", nrow(observed), "\n")
       # 1) a fit is generated using up-to-now observed concentrations
@@ -174,7 +178,7 @@ doseSimulation <- function(x, ..., optimize, predict,
 
     outTibble <- bind_rows(output)
 
-    res <- lapply(x, function(x){if(rlang::is_atomic(x)) x else list(x)})
+    res <- lapply(x, function(x){if(rlang::is_atomic(x) && !rlang::is_named(x)) x else list(x)})
     outTibble[, names(res)] <- res
 
     outTibble
