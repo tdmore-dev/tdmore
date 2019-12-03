@@ -88,6 +88,6 @@ describe("findDose works correctly", {
 
   it("updateRegimen works correctly", {
     modRegimen <- updateRegimen( regimen, newDose=1234)
-    expect_equal(modRegimen$AMT, c(1000, 1000, 1000, 1234) )
+    expect_equal(modRegimen$AMT, c(1000, 1000, 1234) )
   })
 })

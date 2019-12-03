@@ -109,6 +109,8 @@ pk3cptoral_(
 \arguments{
 \item{t}{sampling times}
 
+\item{A1}{initial state for A1 at TIME}
+
 \item{TIME}{dosing time}
 
 \item{AMT}{dosing amount}
@@ -123,11 +125,17 @@ pk3cptoral_(
 
 \item{RATE}{infusion rate}
 
+\item{A0}{initial state for A0 at TIME}
+
 \item{KA}{absorption constant}
+
+\item{A2}{initial state for A2 at TIME}
 
 \item{K12}{transfer rate from central compartment to peripheral compartment A}
 
 \item{K21}{transfer rate from peripheral compartment A to central compartment}
+
+\item{A3}{initial state for A3 at TIME}
 
 \item{K13}{transfer rate from central compartment to peripheral compartment B}
 

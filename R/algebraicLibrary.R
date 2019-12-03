@@ -2,7 +2,7 @@
 ### See https://www.sciencedirect.com/science/article/pii/S1056871915000362
 
 ### Ask R CMD CHECK to ignore the use of locally assigned variables
-if(getRversion() >= "2.15.1")  utils::globalVariables(c("D", "tD", "TInf", "Tau", "Alpha", "Beta", "Gamma", "A", "B", "C"))
+if(getRversion() >= "2.15.1")  utils::globalVariables(c("D", "tD", "TInf", "Tau", "Alpha", "Beta", "Gamma", "A", "B", "C", "lambda1", "lambda2", "lambda3", "E1", "E2", "E3"))
 
 #'
 #' Algebraic equations for PK models
@@ -20,6 +20,10 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("D", "tD", "TInf", "Tau"
 #' @param K21 transfer rate from peripheral compartment A to central compartment
 #' @param K13 transfer rate from central compartment to peripheral compartment B
 #' @param K31 transfer rate from peripheral compartment B to central compartment
+#' @param A0 initial state for A0 at TIME
+#' @param A1 initial state for A1 at TIME
+#' @param A2 initial state for A2 at TIME
+#' @param A3 initial state for A3 at TIME
 #'
 #' @return vector of same size as `t`, with the concentrations
 #' @name pk_
@@ -29,7 +33,11 @@ prepare1cpt_ <- function(env=parent.frame()) {
   assign('tD', env$TIME, envir=env)
   assign('D', env$AMT, envir=env)
   assign('Tau', env$II, envir=env)
-  if(!is.null(env$RATE)) assign('TInf', env$AMT / env$RATE, envir=env)
+  if(!is.null(env$RATE)) {
+    TInf <- env$AMT / env$RATE
+    if(env$RATE == 0) TInf <- 0
+    assign('TInf', TInf, envir=env)
+  }
   if( length(env$TInf) > 0 && env$TInf > env$Tau ) warning("Infusion time larger than interdose interval")
 }
 
@@ -52,13 +60,13 @@ pk1cptinfusion_ <- function(t, A1=0, TIME, AMT, RATE, V, K, SS=0, II=Inf) {
   prepare1cpt_()
   if(SS==0) {
     A1i = A1
-    A1 = D/TInf * 1/(K)* ifelse(t-tD <= TInf,
+    A1 = RATE * 1/(K)* ifelse(t-tD <= TInf,
            (1 - exp(-K*(t-tD)) ),
            (1 - exp(-K*TInf) )*exp(-K*(t-tD-TInf))
     )
     A1 = A1 + A1i * exp(-K*(t-tD) ) # add initial
   } else {
-    A1 = D/TInf * 1/(K) * ifelse(t-tD <= TInf,
+    A1 = RATE * 1/(K) * ifelse(t-tD <= TInf,
                               (1-exp(-K*(t-tD))) +   exp(-K*Tau)*(1-exp(-K*TInf))*exp(-K*(t-tD-TInf))/(1-exp(-K*Tau)),
                               (1-exp(-K*TInf)) * exp(-K*(t-tD-TInf)) / (1-exp(-K*Tau))
     )
@@ -176,7 +184,7 @@ pk2cptinfusion_ <- function(t, A1=0, A2=0, TIME, AMT, RATE, V, K, K12, K21, SS=0
 
     list(A1=A1, A2=A2, CONC=A1/V)
   } else {
-    CONC = D/TInf * ifelse(t-tD <= TInf,
+    CONC = RATE * ifelse(t-tD <= TInf,
                     A/Alpha*(
                       (1-exp(-Alpha*(t-tD))) +
                         exp(-Alpha*Tau) * (1-exp(-Alpha*TInf))* exp(-Alpha*(t-tD-TInf)) / (1-exp(-Alpha*Tau))
@@ -437,7 +445,7 @@ pk3cptinfusion_ <- function(t, A1=0, A2=0, A3=0, TIME, AMT, RATE, V, K, K12, K21
 
     list(A1=A1, A2=A2, A3=A3, CONC=A1/V)
   } else {
-    CONC = D/TInf * ifelse(t-tD <= TInf,
+    CONC = RATE * ifelse(t-tD <= TInf,
                     A/Alpha*(
                       (1-exp(-Alpha*(t-tD))) +
                         exp(-Alpha*Tau) * (1-exp(-Alpha*TInf))* exp(-Alpha*(t-tD-TInf)) / (1-exp(-Alpha*Tau))

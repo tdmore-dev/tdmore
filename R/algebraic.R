@@ -80,10 +80,9 @@ model_predict.algebraic <- function(model, times, regimen=NULL, parameters=numer
   }
 
   if(is.data.frame(covariates)) {
-    events <- regimen %>%
-      dplyr::full_join(covariates, by="TIME") %>%
-      mutate_at(vars(OCC), na.locf) %>% #cover the holes
-      dplyr::arrange(TIME)
+    events <- dplyr::full_join(regimen, covariates, by="TIME")
+    events <- dplyr::arrange(events, .data$TIME)
+    if("OCC" %in% colnames(regimen)) events$OCC <- zoo::na.locf(events$OCC) #cover the holes
   } else {
     if(is.numeric(covariates) && length(covariates) >= 1) {
       events <- cbind(regimen, as.list(covariates))
@@ -109,9 +108,13 @@ model_predict.algebraic <- function(model, times, regimen=NULL, parameters=numer
     iovParameters <- tibble::as_tibble(iovParameters)
     iovParameters$OCC <- seq_len(maxOcc)
     events <- dplyr::left_join( events, iovParameters, by="OCC")
+    events <- cbind(events, as.list(parameters[setdiff(names(parameters), iov) ]))
   }
 
   if(model$na.rm) events$AMT[ is.na(events$AMT) ] <- 0
+  fakeDuration <- c( events$TIME[-nrow(events)] - events$TIME[-1], 1 )
+  if(model$na.rm & "DURATION" %in% colnames(events)) events$DURATION[is.na(events$DURATION)] <- fakeDuration[is.na(events$DURATION)]
+  if(model$na.rm & "RATE" %in% colnames(events)) events$RATE[is.na(events$RATE)] <- 0
 
   inits <- model$inits
   result <- list()
@@ -121,9 +124,13 @@ model_predict.algebraic <- function(model, times, regimen=NULL, parameters=numer
     tObs <- times[ times >= tStart & times < tEnd ]
 
     funtimes <- c(tObs, tEnd)
+    thisEvents <- as.list(
+      events[i,
+             intersect(colnames(events), names(formals(model$fun))),
+             drop=F]) #only take the event names that actually feature as function arguments (ignore FIX, OCC, ...)
     arglist <- c(
       list(funtimes),
-      as.list(events[i, ,drop=F]),
+      thisEvents,
       as.list(inits)
     )
 
