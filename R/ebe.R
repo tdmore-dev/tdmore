@@ -25,6 +25,12 @@ pred_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
     thisLL <- res_var$ll(ipred, obs)
     ll <- ll + sum(thisLL, na.rm=TRUE )
   }
+  if(ll==0) {
+    vars <- sapply(tdmore$res_var, function(x){x$var})
+    if(nrow(observed)>0 && !any(vars %in% colnames(observed))) {
+      warning("Observed has rows, but none contributed to pred_ll. Are you definitely sure an output column is present? ", paste(vars))
+    }
+  }
   return(ll)
 }
 
