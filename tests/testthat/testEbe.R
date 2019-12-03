@@ -132,8 +132,8 @@ describe("We can generate uncertainty using MCMC", {
 
   it("looks like fuzzy catterpillars", {
     p <- c(0.1, 0.5, 0.9)
-    p_funs <- map(p, ~partial(quantile, probs = .x, na.rm = TRUE)) %>%
-      set_names(p)
+    p_funs <- purrr::map(p, ~purrr::partial(stats::quantile, probs = .x, na.rm = TRUE)) %>%
+      rlang::set_names(p)
     out2$slice <- cut(out2$chain.sample, breaks=seq(0, 10000, by=100) )
     summary <- out2 %>% group_by(chain, slice) %>% summarize_at(vars(ECL), p_funs) %>%
       tidyr::pivot_longer(cols = 3:5) %>%
