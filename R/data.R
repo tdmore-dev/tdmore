@@ -66,7 +66,7 @@ dataTibble <- function(...) {
     purrr::map(args[argsWithId], ~split(.x[, colnames(.x)!="ID"], .x$ID))
   )
   myTibble <- c(
-    list(ID=ID),
+    if(is.null(ID)) NULL else list(ID=ID),
     argsForTibble[ names(args) ] #use same order as specified in arguments
   )
   tibble::as_tibble(myTibble)
