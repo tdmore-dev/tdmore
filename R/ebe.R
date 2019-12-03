@@ -245,9 +245,9 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
     stop("Log-likelihood is ", value, " at starting values `par`. Cannot start optimization routine.")
 
   # Function to optimise
-  fn <- function(par, ...) {
+  fn <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol) {
     tryCatch({
-      val <- -2 * ll(par=par, ...)
+      val <- -2 * ll(par=par, omega=omega, fix=fix, tdmore=tdmore, observed=observed, regimen=regimen, covariates=covariates, isChol=isChol)
       #cat("LL calculated for ", str(par), ": ", val, "\n")
       val
     }, error = function(e) {
