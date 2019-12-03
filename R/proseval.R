@@ -159,7 +159,7 @@ doseSimulation <- function(x, ..., optimize, predict,
       if(is.null(optimizeResult$nextTime)) optimizeResult$nextTime <- truth$observed$TIME[ nrow(observed)+1 ]
 
       extra <- optimizeResult$extra
-      if(!is.null(extra)) res[ , names(extra) ] <- extra
+      if(!is.null(extra)) res[ , names(extra) ] <- list(extra)
 
       if(!all( is.finite(optimizeResult$nextTime) )) {
         output <- c(output, list(res) )
