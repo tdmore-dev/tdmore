@@ -106,21 +106,59 @@ test_that("We can use multiple methods and pick the best one", {
 
 
 
-test_that("We can generate uncertainty using MCMC", {
+describe("We can generate uncertainty using MCMC", {
   observed <- data.frame(TIME=c(10, 12), CONC=c(0.04, 0.03))
   tdmorefit <- estimate(m1, observed=observed, regimen=regimen, covariates=c(WT=70))
 
-  out1 <- sampleMC_norm(tdmorefit, mc.maxpts=1000)
-  out2 <- sampleMC_metrop(tdmorefit, mc.maxpts=1000)
+  N <- 5000
+  out1 <- sampleMC_norm(tdmorefit, mc.maxpts=N)
+  expect_equivalent(
+    mean(out1$ECL),
+    coef(tdmorefit)['ECL'],
+    tolerance=0.05
+  ) # should have the same mean
 
-  if(interactive()) { ## no real test is possible to compare these two different methods...
-    ggplot(mapping=aes(x=value)) +
-      geom_density(data=out1 %>% tidyr::pivot_longer(cols=-sample), aes(color="norm")) +
-      geom_density(data=out2 %>% tidyr::pivot_longer(cols=-sample), aes(color="metrop")) +
-      geom_vline(data=tibble::enframe(coef(tdmorefit)), aes(xintercept=value)) +
-      facet_wrap(~name)
-    autoplot(tdmorefit, newdata=seq(0, 24, by=0.1))
-    tdmorefit$varcov <- NULL
-    autoplot(tdmorefit, newdata=seq(0, 24, by=0.1))
-  }
+  out2 <- sampleMC_metrop(tdmorefit, mc.maxpts=N)
+  it("has a mean around the mode", {
+    expect_equivalent(
+      mean(out2$ECL),
+      coef(tdmorefit)['ECL'],
+      tolerance=0.1
+    ) # should have the same mean, more or less
+  })
+  it("generates sufficient samples", {
+    expect_gte(nrow(out2), N)
+  })
+
+  it("looks like fuzzy catterpillars", {
+    p <- c(0.1, 0.5, 0.9)
+    p_funs <- map(p, ~partial(quantile, probs = .x, na.rm = TRUE)) %>%
+      set_names(p)
+    out2$slice <- cut(out2$chain.sample, breaks=seq(0, 10000, by=100) )
+    summary <- out2 %>% group_by(chain, slice) %>% summarize_at(vars(ECL), p_funs) %>%
+      tidyr::pivot_longer(cols = 3:5) %>%
+      ungroup() %>%
+      arrange(value)
+    q10 <- which(summary$name == "0.1")
+    q50 <- which(summary$name == "0.5")
+    q90 <- which(summary$name == "0.9")
+    howManyBelow <- mean(q10 < min(q50) & q10 < min(q90 ) )
+    expect_gte(howManyBelow, 0.9) #90% of 0.1 quantiles should be below all the others
+    howManyAbove <- mean(q90 > max(q50) & q90 > max(q10) )
+    expect_gte(howManyBelow, 0.9) #90% of 0.9 quantiles should be above all the others
+  })
+
+  ggplot(out2, aes(x=chain.sample, y=EV1, color=factor(chain))) + geom_step() +
+    geom_hline(data=. %>% group_by(chain) %>% summarize(yintercept=mean(EV1)), aes(yintercept=yintercept))
+
+  ggplot() + aes(x=EV1) + stat_density(data=out1, aes(color="rnorm"), fill=NA) + stat_density(data=out2, aes(color="MC"), fill=NA)
+  ggplot() + aes(x=ECL) + stat_density(data=out1, aes(color="rnorm"), fill=NA) + stat_density(data=out2, aes(color="MC"), fill=NA)
+
+  ggplot(mapping=aes(x=EV1, y=ECL))+
+    stat_density2d(data=out1, aes(color="rnorm")) +
+    stat_density2d(data=out2, aes(color="MC"))
+
+  autoplot(tdmorefit, newdata=seq(0, 24, by=0.1))
+  tdmorefit$varcov <- NULL
+  autoplot(tdmorefit, newdata=seq(0, 24, by=0.1))
 })

@@ -4,7 +4,13 @@
 \alias{sampleMC_metrop}
 \title{Generate parameter samples using the Metropolis MCMC method.}
 \usage{
-sampleMC_metrop(tdmorefit, fix = tdmorefit$fix, mc.maxpts = 100, verbose = 0)
+sampleMC_metrop(
+  tdmorefit,
+  fix = tdmorefit$fix,
+  mc.maxpts = 100,
+  mc.batch = floor(mc.maxpts/2),
+  verbose = 0
+)
 }
 \arguments{
 \item{tdmorefit}{a tdmorefit object}
@@ -12,6 +18,8 @@ sampleMC_metrop(tdmorefit, fix = tdmorefit$fix, mc.maxpts = 100, verbose = 0)
 \item{fix}{named numeric vector with the fixed parameters}
 
 \item{mc.maxpts}{number of Monte-Carlo samples}
+
+\item{mc.batch}{number of points to run per batch}
 
 \item{verbose}{A switch which determines whether or not the progress of the
 sampler is printed to the screen.  If \code{verbose} is greater than 0 the

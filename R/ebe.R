@@ -19,6 +19,7 @@ pred_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates) {
   ll <- 0
   for(res_var in tdmore$res_var) {
     i <- res_var$var
+    if(! i %in% colnames(pred)) next #not in observed values, ignore
     ipred <- pred[, i, drop=TRUE]
     obs <- observed[, i, drop=TRUE]
     thisLL <- res_var$ll(ipred, obs)
@@ -618,12 +619,26 @@ sampleMC_norm <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100) {
 #' @param tdmorefit a tdmorefit object
 #' @param fix named numeric vector with the fixed parameters
 #' @param mc.maxpts number of Monte-Carlo samples
+#' @param mc.batch number of points to run per batch
 #' @inheritParams MCMCpack::MCMCmetrop1R
 #'
 #' @return the Monte-Carlo matrix, first column is always the 'sample' column
 #' @export
-sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, verbose=0) {
-  ## TODO: integrate MCMC sampling in here
+sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batch=floor(mc.maxpts/2), verbose=0) {
+  if(!is.null(mc.maxpts)) {
+    p <- dplyr::progress_estimated(n=mc.maxpts)
+    N <- 0
+    result <- list()
+    while(N < mc.maxpts) { #sample until we have enough
+      out <- sampleMC_metrop(tdmorefit, fix=fix, mc.maxpts=NULL, mc.batch=mc.batch, verbose=verbose)
+      N <- N + nrow(out)
+      p$i <- if(N>mc.maxpts) mc.maxpts else N #progress reporting
+      p$print()
+      result <- c(result, list(cbind(chain=length(result)+1, out)) )
+    }
+    result <- dplyr::bind_rows(result) %>% dplyr::rename(chain.sample = sample)
+    return(cbind(sample=1:nrow(result), result))
+  }
   parNames <- names(coef(tdmorefit))
   fixIndexes <- getFixedParametersIndexes(parNames = parNames, fix = fix)
 
@@ -641,19 +656,18 @@ sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, verbose
     ll(par=par, omega=omegaChol, isChol=TRUE, fix=fix, tdmore=cTdmore, observed=tdmorefit$observed, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates)
   }
   verboseOutput <- utils::capture.output(
-    out <- MCMCpack::MCMCmetrop1R(fun, theta.init=start, burnin=0, mcmc=mc.maxpts, V=omega, verbose=verbose)
+    out <- MCMCpack::MCMCmetrop1R(fun, theta.init=start, seed=floor(runif(1)*1E6), burnin=0, mcmc=mc.batch, V=omega, verbose=verbose)
   )
   if(verbose > 0) cat(verboseOutput)
 
-  ## FIXME: sample more points to arrive at an effective size of mc.maxpts?
   #rejectionRate <- coda::rejectionRate(out)
-  #effRate <- coda::effectiveSize(out) / mc.maxpts
+  #effRate <- coda::effectiveSize(out) / mc.batch
 
-  rejected <- out[-nrow(out), , drop = FALSE] == out[-1, , drop = FALSE]
+  rejected <- out[-nrow(out),1, drop=TRUE] == out[-1,1,drop=TRUE] #just test on column 1; sufficient
 
   mc <- as.data.frame(out)
   colnames(mc) <- parNames
-  mc[ !rejected, , drop=F]
+  mc <- mc[ !rejected, , drop=F]
   mc <- cbind( sample=1:nrow(mc), mc )
 }
 
@@ -688,6 +702,10 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
   ipred <- stats::predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=par, covariates=covariates)
   if(se.fit) {
     mc <- sampleMC(tdmorefit, fix = parameters, mc.maxpts = mc.maxpts)
+    if(colnames(mc)[2] == "chain" && colnames(mc)[3] == "chain.sample") {
+      ## remove these values
+      mc <- mc[ , c(-2, -3), drop=FALSE]
+    }
     uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
 
     # Prepare the tdmore cache
