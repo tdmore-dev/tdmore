@@ -162,23 +162,98 @@
     <p>Algebraic equations for PK models</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pk1cptiv_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+    <pre class="usage"><span class='fu'>pk1cptiv_</span>(<span class='no'>t</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
 
-<span class='fu'>pk1cptinfusion_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>RATE</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+<span class='fu'>pk1cptinfusion_</span>(<span class='no'>t</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>RATE</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
 
-<span class='fu'>pk1cptoral_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>KA</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+<span class='fu'>pk1cptoral_</span>(<span class='no'>t</span>, <span class='kw'>A0</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>KA</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
 
-<span class='fu'>pk2cptiv_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+<span class='fu'>pk2cptiv_</span>(<span class='no'>t</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
 
-<span class='fu'>pk2cptinfusion_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>RATE</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+<span class='fu'>pk2cptinfusion_</span>(
+  <span class='no'>t</span>,
+  <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='no'>TIME</span>,
+  <span class='no'>AMT</span>,
+  <span class='no'>RATE</span>,
+  <span class='no'>V</span>,
+  <span class='no'>K</span>,
+  <span class='no'>K12</span>,
+  <span class='no'>K21</span>,
+  <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>
+)
 
-<span class='fu'>pk2cptoral_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>KA</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+<span class='fu'>pk2cptoral_</span>(
+  <span class='no'>t</span>,
+  <span class='kw'>A0</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='no'>TIME</span>,
+  <span class='no'>AMT</span>,
+  <span class='no'>V</span>,
+  <span class='no'>K</span>,
+  <span class='no'>KA</span>,
+  <span class='no'>K12</span>,
+  <span class='no'>K21</span>,
+  <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>
+)
 
-<span class='fu'>pk3cptiv_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='no'>K13</span>, <span class='no'>K31</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+<span class='fu'>pk3cptiv_</span>(
+  <span class='no'>t</span>,
+  <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>A3</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='no'>TIME</span>,
+  <span class='no'>AMT</span>,
+  <span class='no'>V</span>,
+  <span class='no'>K</span>,
+  <span class='no'>K12</span>,
+  <span class='no'>K21</span>,
+  <span class='no'>K13</span>,
+  <span class='no'>K31</span>,
+  <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>
+)
 
-<span class='fu'>pk3cptinfusion_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>RATE</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='no'>K13</span>, <span class='no'>K31</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+<span class='fu'>pk3cptinfusion_</span>(
+  <span class='no'>t</span>,
+  <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>A3</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='no'>TIME</span>,
+  <span class='no'>AMT</span>,
+  <span class='no'>RATE</span>,
+  <span class='no'>V</span>,
+  <span class='no'>K</span>,
+  <span class='no'>K12</span>,
+  <span class='no'>K21</span>,
+  <span class='no'>K13</span>,
+  <span class='no'>K31</span>,
+  <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>
+)
 
-<span class='fu'>pk3cptoral_</span>(<span class='no'>t</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>KA</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='no'>K13</span>, <span class='no'>K31</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)</pre>
+<span class='fu'>pk3cptoral_</span>(
+  <span class='no'>t</span>,
+  <span class='kw'>A0</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>A3</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='no'>TIME</span>,
+  <span class='no'>AMT</span>,
+  <span class='no'>V</span>,
+  <span class='no'>K</span>,
+  <span class='no'>KA</span>,
+  <span class='no'>K12</span>,
+  <span class='no'>K21</span>,
+  <span class='no'>K13</span>,
+  <span class='no'>K31</span>,
+  <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,6 +261,10 @@
     <tr>
       <th>t</th>
       <td><p>sampling times</p></td>
+    </tr>
+    <tr>
+      <th>A1</th>
+      <td><p>initial state for A1 at TIME</p></td>
     </tr>
     <tr>
       <th>TIME</th>
@@ -216,8 +295,16 @@
       <td><p>infusion rate</p></td>
     </tr>
     <tr>
+      <th>A0</th>
+      <td><p>initial state for A0 at TIME</p></td>
+    </tr>
+    <tr>
       <th>KA</th>
       <td><p>absorption constant</p></td>
+    </tr>
+    <tr>
+      <th>A2</th>
+      <td><p>initial state for A2 at TIME</p></td>
     </tr>
     <tr>
       <th>K12</th>
@@ -226,6 +313,10 @@
     <tr>
       <th>K21</th>
       <td><p>transfer rate from peripheral compartment A to central compartment</p></td>
+    </tr>
+    <tr>
+      <th>A3</th>
+      <td><p>initial state for A3 at TIME</p></td>
     </tr>
     <tr>
       <th>K13</th>

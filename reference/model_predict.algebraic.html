@@ -43,7 +43,7 @@
 
 
 <meta property="og:title" content="Predict for algebraic models — model_predict.algebraic" />
-<meta property="og:description" content="We only support dosing into the default compartment, and only bolus doses" />
+<meta property="og:description" content="Predict for algebraic models" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -159,7 +159,7 @@
     </div>
 
     <div class="ref-description">
-    <p>We only support dosing into the default compartment, and only bolus doses</p>
+    <p>Predict for algebraic models</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for algebraic</span>
@@ -182,6 +182,10 @@
       <td><p>the algebraic model</p></td>
     </tr>
     <tr>
+      <th>times</th>
+      <td><p>numeric vector at which to provide prediction values</p></td>
+    </tr>
+    <tr>
       <th>regimen</th>
       <td><p>dataframe with column 'TIME' and adhering to standard NONMEM specifications otherwise (columns AMT, RATE, CMT)</p></td>
     </tr>
@@ -195,17 +199,14 @@
     </tr>
     <tr>
       <th>iov</th>
-      <td><p>character array with the IOV terms, NULL if no IOV, IOV on KA only</p></td>
-    </tr>
-    <tr>
-      <th>newdata</th>
-      <td><p>dataframe with a column 'TIME' and 'CONC'. Other columns are ignored.</p></td>
+      <td><p>character array with the IOV terms, NULL if no IOV. These values should then be present in the parameters vector, and be repeated for
+max(regimen$OCC).</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.frame similar to the newdata data frame, but with CONC column filled out.</p>
+    <p>A data.frame containing all output of the prediction function of the algebraic model</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
