@@ -7,6 +7,7 @@ library(dplyr)
 library(ggplot2)
 library(purrr)
 
+context("TDMore and NLMixr should give same posthoc results")
 
 # Execute nlmixr model fit ------------------------------------------------
 describe("nlmixr and tdmore give same results", {
@@ -27,13 +28,21 @@ describe("nlmixr and tdmore give same results", {
       linCmt() ~ add(add.sd)
     })
   }
-  fit <- nlmixr(one.cmt, theo_sd, est="focei", control = foceiControl(covMethod = ""))
+
+  file <- testthat::test_path("ref/theo_sd_nlmixr.RDs")
+  if(file.exists(file)) {
+    fit <- readRDS(file)
+  } else {
+    message("Generating nlmixr fit...")
+    fit <- nlmixr(one.cmt, theo_sd, est="focei", control = foceiControl(covMethod = ""))
+    saveRDS(fit, file)
+  }
 
   m1 <- tdmore(fit)
   obs <- theo_sd %>% filter(EVID==0) %>% rename(nlmixr_lincmt_pred=DV) #tdmore.nlmixrUI guesses the name of the output
   tmt <- theo_sd %>% filter(EVID!=0)
   db <- dataTibble(object=m1, observed=obs, regimen=tmt)
-  posthocFit <- posthoc(db)
+  posthocFit <- posthoc(db, control=list(trace=1))
 
   it("reports the same ETA estimates", {
     posthocFit$coef <- map(posthocFit$fit, ~tibble::enframe(coef(.x)))
