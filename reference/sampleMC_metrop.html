@@ -162,7 +162,13 @@
     <p>Generate parameter samples using the Metropolis MCMC method.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sampleMC_metrop</span>(<span class='no'>tdmorefit</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='no'>tdmorefit</span>$<span class='no'>fix</span>, <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
+    <pre class="usage"><span class='fu'>sampleMC_metrop</span>(
+  <span class='no'>tdmorefit</span>,
+  <span class='kw'>fix</span> <span class='kw'>=</span> <span class='no'>tdmorefit</span>$<span class='no'>fix</span>,
+  <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='kw'>mc.batch</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='no'>mc.maxpts</span>/<span class='fl'>2</span>),
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>0</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,6 +184,10 @@
     <tr>
       <th>mc.maxpts</th>
       <td><p>number of Monte-Carlo samples</p></td>
+    </tr>
+    <tr>
+      <th>mc.batch</th>
+      <td><p>number of points to run per batch</p></td>
     </tr>
     <tr>
       <th>verbose</th>
