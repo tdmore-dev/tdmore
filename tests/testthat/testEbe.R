@@ -135,10 +135,12 @@ describe("We can generate uncertainty using MCMC", {
     p_funs <- purrr::map(p, ~purrr::partial(stats::quantile, probs = .x, na.rm = TRUE)) %>%
       rlang::set_names(p)
     out2$slice <- cut(out2$chain.sample, breaks=seq(0, 10000, by=100) )
-    summary <- out2 %>% group_by(chain, slice) %>% summarize_at(vars(ECL), p_funs) %>%
+    summary <- out2 %>%
+      dplyr::group_by(chain, slice) %>%
+      dplyr::summarize_at(vars(ECL), p_funs) %>%
       tidyr::pivot_longer(cols = 3:5) %>%
-      ungroup() %>%
-      arrange(value)
+      dplyr::ungroup() %>%
+      dplyr::arrange(value)
     q10 <- which(summary$name == "0.1")
     q50 <- which(summary$name == "0.5")
     q90 <- which(summary$name == "0.9")
