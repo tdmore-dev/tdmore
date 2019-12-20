@@ -6,7 +6,7 @@ library(testthat)
 context("Test that the nlmixr class works as intended")
 
 # Load the default tdmore
-tdmore <- (default_model) %>% tdmore()
+tdmore <- getModel("default")
 
 regimen <- data.frame(
   TIME=seq(0, 1)*24,

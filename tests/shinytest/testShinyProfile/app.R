@@ -3,7 +3,7 @@ library(RxODE)
 library(nlmixr)
 library(ggplot2)
 
-tdmore <- (meropenem_model) %>% tdmore()
+tdmore <- getModel("meropenem")
 regimen <- data.frame(
   TIME=c(0, 8, 16),            # Every 8 hour and for 1 day, an injection is given
   AMT=c(1000, 1000, 1000),     # 1g is administered

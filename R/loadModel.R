@@ -8,7 +8,7 @@ getModel <- function(name=defaultModel(), dir=system.file(package=pkg, "models")
   file <- dir(path=dir, pattern=paste0(name, "\\.[rR]$"))
   if(length(file)==0) stop("Model `", name, "' not found in directory `", dir, "'")
   env <- new.env()
-  result <- source(file.path(dir, file), local=env)
+  result <- source(file.path(dir, file), local=env, keep.source=TRUE)
   result$value
 }
 

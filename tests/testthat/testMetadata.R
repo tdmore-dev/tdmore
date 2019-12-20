@@ -25,7 +25,7 @@ test_that("To string methods work as expected", {
 })
 
 test_that("Metadata are compatible with TDMore", {
-  m1 <- (meropenem_model_wt) %>% tdmore() %>% metadata(output1, output2) %>% metadata(cov1, cov2) %>% metadata(formulation1,formulation2) %>% metadata(target)
+  m1 <- getModel("meropenem_wt") %>% metadata(output1, output2) %>% metadata(cov1, cov2) %>% metadata(formulation1,formulation2) %>% metadata(target)
 
   expect_equal(m1$metadata, list(output1, output2, cov1, cov2, formulation1, formulation2, target))
   expect_equal(getMetadataByName(m1, "CONC"), output1)

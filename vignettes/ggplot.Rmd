@@ -20,7 +20,7 @@ set.seed(0)
 ```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE}
 library(tdmore)
 library(ggplot2)
-m1 <- tdmore(meropenem_model)
+m1 <- getModel("meropenem")
 regimen <- data.frame(AMT=2000, TIME=seq(0, 50, by=8), DURATION=2)
 
 population <- estimate(m1, regimen=regimen)

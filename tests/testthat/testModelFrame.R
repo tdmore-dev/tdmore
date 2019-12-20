@@ -2,7 +2,7 @@ library(testthat)
 
 context('Test model.frame functions')
 
-m1 <- tdmore(meropenem_model)
+m1 <- getModel("meropenem")
 test_that("model.frame correctly returns values", {
   expect_error( model.frame(m1) )
   expect_equal(

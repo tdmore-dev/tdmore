@@ -6,7 +6,7 @@ library(testthat)
 context("Test that a clear error message is raised if no covariates are specified")
 
 # Load the default tdmore
-tdmore <- (default_model) %>% tdmore()
+tdmore <- getModel("default")
 
 regimen <- data.frame(
   TIME=seq(0, 1)*24,

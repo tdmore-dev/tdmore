@@ -1,3 +1,4 @@
+library(tdmore)
 nlmixr::nlmixrUI(function(){
   ini({
     TVV1 <- 24.4;
@@ -22,4 +23,4 @@ nlmixr::nlmixrUI(function(){
     CONC = center / V1
     CONC ~ prop(EPS_PROP) # Proportional error linked to the PK model
   })
-})
+}) %>% tdmore()

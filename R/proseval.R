@@ -20,7 +20,7 @@
 #' require(magrittr)
 #' require(ggplot2)
 #' data <- dataTibble(
-#'     object=meropenem_model %>% tdmore(),
+#'     object=getModel("meropenem"),
 #'     observed=data.frame(ID=c(1,1,2,2), TIME=c(8,10,8,10), CONC=c(1.5,0.3,0.8,0.2))
 #' )
 #' fit <- data %>%

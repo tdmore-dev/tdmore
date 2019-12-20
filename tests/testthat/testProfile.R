@@ -10,7 +10,7 @@ context("Test that the profile method works as intended")
 set.seed(0)
 
 # Load the Meropenem model
-tdmore <- (meropenem_model) %>% tdmore()
+tdmore <- getModel("meropenem")
 
 # Predicting new data
 regimen <- data.frame(

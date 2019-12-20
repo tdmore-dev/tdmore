@@ -106,7 +106,7 @@ data1 <- predict(
 # Test integration of mixture models with tdmore set
 #---------------------------------------------------
 
-m3 <- (meropenem_model_wt) %>% tdmore()
+m3 <- getModel("meropenem_wt")
 set <- tdmore_set(m3, mixture)
 
 # Plot should be model 1

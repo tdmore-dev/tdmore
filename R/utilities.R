@@ -47,6 +47,7 @@ meltPredictions <- function(x, se=FALSE) {
 #' The function always returns a temporary lib directory.
 #'
 #' @param pkgName the dev package name
+#' @param quiet FALSE to display log messages
 #' @return a directory that can be added to libPaths
 #'
 #' @export

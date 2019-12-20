@@ -130,17 +130,5 @@ reference:
   desc: >
     A library of models, to get you started.
   contents:
-  - default_model
-  - fluticasone_model
-  - meropenem_1param_model
-  - meropenem_model
-  - meropenem_model_wt
-  - meropenem_omega0_model
-  - pheno
-  - pheno_nlmixr
-  - theopp
-  - theopp_nlmixr
-  - two_error_models
-  - sunitinib_pkpd_model
   - linCmt
   - pk_

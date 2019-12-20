@@ -11,7 +11,7 @@ set.seed(0)
 describe("findDose works correctly", {
 
   # Load the Meropenem model
-  tdmore <- (meropenem_model) %>% tdmore()
+  tdmore <- getModel("meropenem")
   # Predicting new data
   regimen <- data.frame(
     TIME=c(0, 8, 16),            # Every 8 hour and for 1 day, an injection is given

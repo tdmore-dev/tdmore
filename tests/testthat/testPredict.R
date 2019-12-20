@@ -69,7 +69,7 @@ expected_output <- '
 4 3.7 3.7 61 61 10 0.163934426229508 0.163934426229508 4.29229351871117 0.000186812188372243 261.829904641381 157.544393164328
 ' %>% read.table(text=., header=T)
 
-m2 <- tdmore(default_model)
+m2 <- getModel("default")
 test_that("predict.tdmore() single profiles with covariates model", {
   #missing covariates should give error
   expect_error( predict(m2, newdata=c()), ".*covariate.*WT.*missing")

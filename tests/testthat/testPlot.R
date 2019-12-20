@@ -8,7 +8,7 @@ context("Test we get plots as we expected")
 set.seed(0)
 
 # Load the default tdmore
-tdmore <- (default_model) %>% tdmore()
+tdmore <- getModel("default")
 
 regimen <- data.frame(
   TIME=seq(0, 1)*24,

@@ -6,7 +6,7 @@ library(testthat)
 context("Fully test the EBE routines")
 
 # Load the default tdmore
-m1 <- default_model %>% tdmore()
+m1 <- getModel("default")
 regimen <- data.frame(
   TIME=seq(0, 1)*24,
   AMT=5 #5mg

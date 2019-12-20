@@ -1,6 +1,6 @@
 context("Proseval and other multi-ID methods work correctly")
 
-m1 <- default_model %>% tdmore
+m1 <- getModel("default")
 regimen <- data.frame(TIME=0, AMT=1000, DURATION=0.5)
 cov <- c(WT=70)
 

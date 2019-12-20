@@ -9,10 +9,10 @@ context("Test that the model set class is working")
 set.seed(0)
 
 # Load the Meropenem model with WT covariate
-m1 <- (meropenem_model_wt) %>% tdmore()
+m1 <- getModel("meropenem_wt")
 
 # Load the Meropenem model without covariates
-m2 <- (meropenem_model) %>% tdmore()
+m2 <- getModel("meropenem")
 
 # Create a model set
 set <- tdmore_set(m1, m2)

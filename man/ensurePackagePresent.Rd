@@ -9,6 +9,8 @@ ensurePackagePresent(pkgName = "tdmore", quiet = TRUE)
 }
 \arguments{
 \item{pkgName}{the dev package name}
+
+\item{quiet}{FALSE to display log messages}
 }
 \value{
 a directory that can be added to libPaths

@@ -9,7 +9,7 @@ context("Test a 1-parameter-model")
 set.seed(0)
 
 # Load the Meropenem model
-tdmore <- (meropenem_1param_model) %>% tdmore()
+tdmore <- getModel("meropenem_1param")
 
 # Predicting new data
 regimen <- data.frame(
