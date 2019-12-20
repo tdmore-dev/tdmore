@@ -1,6 +1,7 @@
 # Model taken from literature: Soulele, K., et al.
 # 'Population pharmacokinetics of fluticasone propionate/salmeterol using two different dry powder inhalers.'
 # European Journal of Pharmaceutical Sciences 80 (2015): 33-42."
+library(tdmore)
 nlmixr::nlmixrUI(function(){
   ini({
     TVKa <- 3.87
@@ -33,4 +34,8 @@ nlmixr::nlmixrUI(function(){
     CONC = center / V1 * 1000
     CONC ~ prop(EPS_PROP) + add(EPS_ADD)
   })
-})
+}) %>%
+  tdmore::tdmore() %>%
+  tdmore::metadata(tdmore::output(name="CONC", label="Concentration", unit="mg/L")) %>%
+  tdmore::metadata(tdmore::formulation(name="Drug", unit="mg", dosing_interval=8, default_value=5, round_function=function(x){round(x*2)/2})) %>%
+  tdmore::metadata(tdmore::target(min=12, max=20))

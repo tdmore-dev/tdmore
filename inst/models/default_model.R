@@ -1,3 +1,4 @@
+library(tdmore)
 nlmixr::nlmixrUI(function(){
   ini({
     TVKA <- 3.7
@@ -24,4 +25,11 @@ nlmixr::nlmixrUI(function(){
     CONC = center / V1
     CONC ~ prop(EPS_PROP)
   })
-})
+}) %>%
+  tdmore() %>%
+  metadata(covariate(name="WT", label="Weight", unit="kg", min=15, max=300)) %>%
+  metadata(output(name="CONC", label="Concentration", unit="mg/L")) %>%
+  metadata(formulation(name="Drug", unit="mg", dosing_interval=8, default_value=5, round_function=function(x){round(x*2)/2})) %>%
+  metadata(target(min=12, max=20))
+
+
