@@ -50,7 +50,7 @@ meltPredictions <- function(x, se=FALSE) {
 #' @return a directory that can be added to libPaths
 #'
 #' @export
-ensurePackagePresent <- function(pkgName="tdmore") {
+ensurePackagePresent <- function(pkgName="tdmore", quiet=TRUE) {
   tmp_lib <- tempfile("R_LIBS")
   dir.create(tmp_lib)
 
@@ -59,6 +59,11 @@ ensurePackagePresent <- function(pkgName="tdmore") {
   ## If no good version is available, then install the library in a temporary path and return this path
   pkgPat <- path.package(pkgName, quiet=T)
   if(is.null(pkgPat) || pkgName %in% devtools::dev_packages() || startsWith(pkgPat, Sys.getenv("R_LIBS_USER")) ) {
+    if(!quiet) message("Package ", pkgName, appendLF=F)
+    if(!quiet && is.null(pkgPat)) message(" is not available. ", appendLF=F)
+    if(!quiet && pkgName %in% devtools::dev_packages()) message(" is loaded as dev package. ", appendLF=F)
+    if(!quiet && pkgName %in% devtools::dev_packages()) message(" is available in R_LIBS_USER. ", appendLF=F)
+    if(!quiet) message("Installing new version...")
     #Either the package is not available
     #or it is currently in the dev packages
     #or we are about to load the (outdated) installed version!
@@ -74,7 +79,9 @@ ensurePackagePresent <- function(pkgName="tdmore") {
                                              "--with-keep.source",
                                              "--with-keep.parse.data",
                                              "--no-multiarch"),
-                            quiet = T)
+                            quiet = quiet)
+  } else {
+    if(!quiet) message("Package ", pkgName, " is available in temporary library, not installing new version...")
   }
   return(tmp_lib)
 }

@@ -5,7 +5,7 @@
 \title{This function will check if the given package is loaded from a non-standard path.
 If so, we are probably running in a sub-process of a test.}
 \usage{
-ensurePackagePresent(pkgName = "tdmore")
+ensurePackagePresent(pkgName = "tdmore", quiet = TRUE)
 }
 \arguments{
 \item{pkgName}{the dev package name}
