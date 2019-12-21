@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Default example model
-TODO: Better documentation required — meropenem_model_wt • tdmore</title>
+<title>Get the first available model name in the given directory — defaultModel • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -43,10 +42,8 @@ TODO: Better documentation required — meropenem_model_wt • tdmore</title>
 
 
 
-<meta property="og:title" content="Default example model
-TODO: Better documentation required — meropenem_model_wt" />
-<meta property="og:description" content="Default example model
-TODO: Better documentation required" />
+<meta property="og:title" content="Get the first available model name in the given directory — defaultModel" />
+<meta property="og:description" content="Get the first available model name in the given directory" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -156,29 +153,40 @@ TODO: Better documentation required" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Default example model
-TODO: Better documentation required</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/modelLibrary.R'><code>R/modelLibrary.R</code></a></small>
-    <div class="hidden name"><code>meropenem_model_wt.Rd</code></div>
+    <h1>Get the first available model name in the given directory</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/loadModel.R'><code>R/loadModel.R</code></a></small>
+    <div class="hidden name"><code>defaultModel.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Default example model
-TODO: Better documentation required</p>
+    <p>Get the first available model name in the given directory</p>
     </div>
 
-    <pre class="usage"><span class='no'>meropenem_model_wt</span></pre>
+    <pre class="usage"><span class='fu'>defaultModel</span>(<span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='kw'>package</span> <span class='kw'>=</span> <span class='no'>pkg</span>, <span class='st'>"models"</span>), <span class='kw'>pkg</span> <span class='kw'>=</span> <span class='st'>"tdmore"</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>dir</th>
+      <td><p>model directory; uses the package `models` directory by default</p></td>
+    </tr>
+    <tr>
+      <th>pkg</th>
+      <td><p>the package in which to search for a `models` directory</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>an nlmixrUI model</p>
+    <p>character string with model filename</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#format">Format</a></li>
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
     </ul>
 
   </div>

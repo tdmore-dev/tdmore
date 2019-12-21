@@ -167,7 +167,7 @@ If so, we are probably running in a sub-process of a test.</h1>
 If it is available, but as a dev_package, then we need to install the current version.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ensurePackagePresent</span>(<span class='kw'>pkgName</span> <span class='kw'>=</span> <span class='st'>"tdmore"</span>)</pre>
+    <pre class="usage"><span class='fu'>ensurePackagePresent</span>(<span class='kw'>pkgName</span> <span class='kw'>=</span> <span class='st'>"tdmore"</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -175,6 +175,10 @@ If it is available, but as a dev_package, then we need to install the current ve
     <tr>
       <th>pkgName</th>
       <td><p>the dev package name</p></td>
+    </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>FALSE to display log messages</p></td>
     </tr>
     </table>
 

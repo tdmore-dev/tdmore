@@ -497,10 +497,9 @@ This is done by re-executing the 'estimate' function, but with no observed data<
       </tr><tr>
         
         <td>
-          <p><code><a href="default_model.html">default_model</a></code> </p>
+          <p><code><a href="defaultModel.html">defaultModel()</a></code> </p>
         </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
+        <td><p>Get the first available model name in the given directory</p></td>
       </tr><tr>
         
         <td>
@@ -580,13 +579,6 @@ Note that the column and row names of the returned matrix are strictly identical
       </tr><tr>
         
         <td>
-          <p><code><a href="fluticasone_model.html">fluticasone_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="formula.tdmorefit.html">formula(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
         </td>
         <td><p>Get the model used to provide this fit</p></td>
@@ -636,6 +628,12 @@ If the regimen does not contain an 'OCC' column, 1 is returned.</p></td>
           <p><code><a href="getMetadataByName.html">getMetadataByName()</a></code> </p>
         </td>
         <td><p>Get metadata (output, formulation or covariate) by name.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getModel.html">getModel()</a></code> </p>
+        </td>
+        <td><p>This searches for the given model name in a directory</p></td>
       </tr><tr>
         
         <td>
@@ -690,6 +688,12 @@ in the caller environment</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="listModels.html">listModels()</a></code> </p>
+        </td>
+        <td><p>This lists the models in a directory</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="ll.html">ll()</a></code> </p>
         </td>
         <td><p>Calculate the log likelihood as the sum of the population likelihood and the prediction likelihood.</p></td>
@@ -706,34 +710,6 @@ If fixed values were used to obtain the tdmorefit, they are considered estimated
           <p><code><a href="mergeCovariates.html">mergeCovariates()</a></code> </p>
         </td>
         <td><p>Merge covariates.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_1param_model.html">meropenem_1param_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_model.html">meropenem_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_model_wt.html">meropenem_model_wt</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_omega0_model.html">meropenem_omega0_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
       </tr><tr>
         
         <td>
@@ -1063,13 +1039,6 @@ TIME column must be present.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="sunitinib_pkpd_model.html">sunitinib_pkpd_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="target.html">target()</a></code> </p>
         </td>
         <td><p>Create a new target.</p></td>
@@ -1191,13 +1160,6 @@ The first model matching the covariates from the 'observed' data will be used.</
           <p><code><a href="transformRegimen.html">transformRegimen()</a></code> </p>
         </td>
         <td><p>Transform a specific treatment regimen using a modifier</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="two_error_models.html">two_error_models</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
       </tr><tr>
         
         <td>
@@ -1329,10 +1291,9 @@ This is done by re-executing the 'estimate' function, but with no observed data<
       </tr><tr>
         
         <td>
-          <p><code><a href="default_model.html">default_model</a></code> </p>
+          <p><code><a href="defaultModel.html">defaultModel()</a></code> </p>
         </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
+        <td><p>Get the first available model name in the given directory</p></td>
       </tr><tr>
         
         <td>
@@ -1412,13 +1373,6 @@ Note that the column and row names of the returned matrix are strictly identical
       </tr><tr>
         
         <td>
-          <p><code><a href="fluticasone_model.html">fluticasone_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="formula.tdmorefit.html">formula(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
         </td>
         <td><p>Get the model used to provide this fit</p></td>
@@ -1468,6 +1422,12 @@ If the regimen does not contain an 'OCC' column, 1 is returned.</p></td>
           <p><code><a href="getMetadataByName.html">getMetadataByName()</a></code> </p>
         </td>
         <td><p>Get metadata (output, formulation or covariate) by name.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getModel.html">getModel()</a></code> </p>
+        </td>
+        <td><p>This searches for the given model name in a directory</p></td>
       </tr><tr>
         
         <td>
@@ -1522,6 +1482,12 @@ in the caller environment</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="listModels.html">listModels()</a></code> </p>
+        </td>
+        <td><p>This lists the models in a directory</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="ll.html">ll()</a></code> </p>
         </td>
         <td><p>Calculate the log likelihood as the sum of the population likelihood and the prediction likelihood.</p></td>
@@ -1538,34 +1504,6 @@ If fixed values were used to obtain the tdmorefit, they are considered estimated
           <p><code><a href="mergeCovariates.html">mergeCovariates()</a></code> </p>
         </td>
         <td><p>Merge covariates.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_1param_model.html">meropenem_1param_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_model.html">meropenem_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_model_wt.html">meropenem_model_wt</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_omega0_model.html">meropenem_omega0_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
       </tr><tr>
         
         <td>
@@ -1895,13 +1833,6 @@ TIME column must be present.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="sunitinib_pkpd_model.html">sunitinib_pkpd_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="target.html">target()</a></code> </p>
         </td>
         <td><p>Create a new target.</p></td>
@@ -2026,13 +1957,6 @@ The first model matching the covariates from the 'observed' data will be used.</
       </tr><tr>
         
         <td>
-          <p><code><a href="two_error_models.html">two_error_models</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="updateRegimen.html">updateRegimen()</a></code> </p>
         </td>
         <td><p>Update a regimen with the specified dose.</p></td>
@@ -2107,87 +2031,6 @@ a given dataset using a mixture model.</p></td>
         </th>
       </tr>
       <tr>
-        
-        <td>
-          <p><code><a href="default_model.html">default_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fluticasone_model.html">fluticasone_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_1param_model.html">meropenem_1param_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_model.html">meropenem_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_model_wt.html">meropenem_model_wt</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meropenem_omega0_model.html">meropenem_omega0_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pheno.html">pheno</a></code> </p>
-        </td>
-        <td><p>Phenobarbitol dataset, as included in the NONMEM distribution.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pheno_nlmixr.html">pheno_nlmixr</a></code> </p>
-        </td>
-        <td><p>NlmixrUI object describing Phenobarbitol 1-compartment model with IV administration
-and allometric scaling on weight</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="theopp.html">theopp</a></code> </p>
-        </td>
-        <td><p>Theophylline dataset, as included in the NONMEM distribution.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="theopp_nlmixr.html">theopp_nlmixr</a></code> </p>
-        </td>
-        <td><p>NlmixrUI object describing theophylline 1-compartment model with oral absorption</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="two_error_models.html">two_error_models</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="sunitinib_pkpd_model.html">sunitinib_pkpd_model</a></code> </p>
-        </td>
-        <td><p>Default example model
-TODO: Better documentation required</p></td>
-      </tr><tr>
         
         <td>
           <p><code><a href="linCmt.html">linCmt()</a></code> </p>
