@@ -10,7 +10,7 @@ expect_not_equal <- function(a, b) {
 
 context("Test the predict function (on both tdmore and tdmorefit objects)")
 
-m1 <- fluticasone_model %>% tdmore()
+m1 <- getModel("fluticasone")
 regimen <- data.frame(
   TIME=seq(0, by=24, length.out=10),
   AMT=500 # 500ug standard dose

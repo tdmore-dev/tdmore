@@ -6,7 +6,7 @@ context("Test the Sunitinib PK/PD model")
 set.seed(0)
 
 # Load the default tdmore
-tdmore <- (sunitinib_pkpd_model) %>% tdmore(maxsteps=1E3*500)
+tdmore <- getModel("sunitinib_pkpd") %>% tdmore(maxsteps=1E3*500)
 
 # Checking the error model
 expect_output(print(tdmore$res_var[[1]]) ,
