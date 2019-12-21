@@ -1011,7 +1011,7 @@ expandOmega <- function(tdmore, occasions) {
 #' @examples
 #' observed <- data.frame(TIME=5, CONC=0.060)
 #' regimen=data.frame(TIME=0, AMT=10)
-#' fit <- estimate(getModel("default")),
+#' fit <- estimate(getModel("default"),
 #'     regimen=regimen,
 #'     observed=observed,
 #'     covariates=c(WT=70)
