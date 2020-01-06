@@ -75,10 +75,16 @@ ensurePackagePresent <- function(pkgName="tdmore", quiet=TRUE) {
                             lib = tmp_lib,
                             pkg$path,
                             type = "source",
-                            INSTALL_opts = c("--example",
-                                             "--install-tests",
+                            INSTALL_opts = c(#"--example",
+                                             #"--install-tests",
                                              "--with-keep.source",
                                              "--with-keep.parse.data",
+                                             "--no-docs",
+                                             "--no-html",
+                                             "--no-lock",
+                                             "--no-help", "--no-demo", "--no-exec", "--data-compress=none",
+                                             "--no-byte-compile", "--no-staged-install",
+                                             "--no-test-load",
                                              "--no-multiarch"),
                             quiet = quiet)
   } else {
