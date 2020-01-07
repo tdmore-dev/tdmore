@@ -13,7 +13,7 @@ RUN R -e 'devtools::install_version("shinytest")'
 RUN R -e 'webdriver::install_phantomjs()'
 # Add local phantomjs to path
 ENV PATH=/root/bin:$PATH
-ENV QT_QPA_PLATFORM=phantom
+ENV QT_QPA_PLATFORM=minimal
 
 ## Install R package dependencies manually, to enable caching
 RUN R -e 'devtools::install_version("deSolve")'

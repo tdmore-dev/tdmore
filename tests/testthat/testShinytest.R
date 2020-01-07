@@ -18,7 +18,6 @@ context("Perform all shinytest tests")
 
 tmp_lib <- tdmore::ensurePackagePresent("tdmore")
 
-onCi <- !isTRUE(as.logical(Sys.getenv("CI")))
 testpath <- rprojroot::find_package_root_file("tests/shinytest")
 tests <- dir(testpath)
 
