@@ -19,13 +19,14 @@ cache:
     - travis_phantomjs
 
 # Install PhantomJS (if not cached)
+# We need to install lbzip2 first
 before_install:
+  - sudo apt-get -y install lbzip2
   - Rscript -e 'install.packages("shinytest")'
   - Rscript -e 'shinytest::installDependencies()'
 
 apt_packages:
   - libudunits2-dev
-  - lbzip2
 
 r_packages:
   - covr
