@@ -15,8 +15,6 @@ env:
 
 cache:
   packages: true
-  directories:
-    - travis_phantomjs
 
 # Install PhantomJS (if not cached)
 # We need to install lbzip2 first

@@ -3,17 +3,21 @@ FROM rocker/tidyverse:latest
 
 WORKDIR /app/tdmore
 
+## BUGFIX: Manually update devtools
+## Due to issue r-lib/devtools#2129
+## Can be removed once devtools CRAN version is updated
+RUN R -e 'if( packageVersion("devtools") != "2.2.1") stop("Devtools package version: ", packageVersion("devtools"), "; bugfix in Dockerfile not needed anymore, please remove!")'
+RUN R -e 'remotes::install_github("r-lib/devtools")'
+
 ## Install package dependencies
 # for RxODE
 RUN apt-get update && apt-get install -y libudunits2-dev
 
 ## Install phantomjs / shinytest
-RUN apt-get update && apt-get install -y phantomjs lbzip2
+RUN apt-get update && apt-get install -y lbzip2
 RUN R -e 'devtools::install_version("shinytest")'
-RUN R -e 'webdriver::install_phantomjs()'
-# Add local phantomjs to path
-ENV PATH=/root/bin:$PATH
-ENV QT_QPA_PLATFORM=minimal
+RUN R -e 'shinytest::installDependencies()'
+ENV OPENSSL_CONF /etc/ssl/
 
 ## Install R package dependencies manually, to enable caching
 RUN R -e 'devtools::install_version("deSolve")'
@@ -74,10 +78,3 @@ RUN R -e 'devtools::install_dev_deps()'
 ## Install full package
 COPY . .
 RUN R -e 'devtools::install(dependencies=TRUE)'
-
-## BUGFIX: Manually update devtools
-## Due to issue r-lib/devtools#2129
-## Can be removed once devtools CRAN version is updated
-RUN R -e 'if( packageVersion("devtools") != "2.2.1") stop("Devtools package version: ", packageVersion("devtools"), "; bugfix in Dockerfile not needed anymore, please remove!")'
-RUN R -e 'remotes::install_github("r-lib/devtools")'
-
