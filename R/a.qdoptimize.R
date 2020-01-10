@@ -17,7 +17,7 @@ findDose <- function(tdmorefit, regimen=tdmorefit$regimen, doseRows=NULL, interv
   # Check if IOV is present in model
   iov <- tdmorefit$tdmore$iov
   if (!is.null(iov)) {
-    tdmorefitRegimen <- tdmorefit$regimen
+    #tdmorefitRegimen <- tdmorefit$regimen
     ## this is not required!
     #assert_that(getMaxOccasion(tdmorefitRegimen)  getMaxOccasion(regimen),
     #            msg="Number of occasions is different in tdmorefit regimen and findDose regimen")
@@ -26,6 +26,9 @@ findDose <- function(tdmorefit, regimen=tdmorefit$regimen, doseRows=NULL, interv
     doseRows <- nrow(regimen)
 
   if(nrow(target) > 1) {
+    stop("Cannot find the dose to hit multiple targets. Split the treatment regimen and perform findDose separately per target.")
+  }
+  if(ncol(target[, colnames(target) != "TIME", drop=FALSE]) > 1) {
     stop("Cannot find the dose to hit multiple targets. Split the treatment regimen and perform findDose separately per target.")
   }
 
