@@ -31,12 +31,11 @@ metadata.tdmore_observed_variables <- function(x, ...) {
 #' Get the observed variables from the tdmore model.
 #'
 #' @param model tdmore model
-#' @return a list of observed variables
+#' @return a character vector of observed variables
 #' @export
 getObservedVariables <- function(model) {
   metadata <- getMetadataByName(model, "OBSERVED_VARIABLES")
   if (is.null(metadata)) {
-    print("No observed variable attached to model")
     return(c())
   } else {
     return(metadata$variables)
