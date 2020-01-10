@@ -34,7 +34,7 @@ findDose <- function(tdmorefit, regimen=tdmorefit$regimen, doseRows=NULL, interv
     rootFunction <- function(AMT) {
       myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)
       obs <- stats::predict(tdmorefit, newdata = target, regimen = myRegimen)
-      result <- obs[, colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
+      result <- obs[, colnames(obs) != "TIME", drop=TRUE] - target[, colnames(target) != "TIME", drop=TRUE]
       if(length(result) > 1) stop("Cannot use findDose to hit multiple targets!")
       result
     }
@@ -54,7 +54,7 @@ findDose <- function(tdmorefit, regimen=tdmorefit$regimen, doseRows=NULL, interv
       mcRootFunction <- function(AMT) {
         myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)
         obs <- predict.tdmore(object = tdmorefit$tdmore, newdata = target, regimen = myRegimen, parameters = res, covariates = tdmorefit$covariates)
-        obs[, colnames(obs) != "TIME"] - target[, colnames(target) != "TIME"]
+        obs[, colnames(obs) != "TIME", drop=TRUE] - target[, colnames(target) != "TIME", drop=TRUE]
       }
 
       result <- runUniroot(mcRootFunction, interval, ...)

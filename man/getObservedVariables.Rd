@@ -10,7 +10,7 @@ getObservedVariables(model)
 \item{model}{tdmore model}
 }
 \value{
-a list of observed variables
+a character vector of observed variables
 }
 \description{
 Get the observed variables from the tdmore model.
