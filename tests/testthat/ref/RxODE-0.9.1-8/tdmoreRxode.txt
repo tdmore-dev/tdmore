@@ -1,5 +1,5 @@
 Structural model: RxODE 
-Parameters: ECL EVc 
+Parameters: EVc ECL 
 Covariates: / 
 Output(s):
 CONC  : proportional  ( prop= 0.23  )

@@ -119,8 +119,11 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     covariates$time <- covariates$TIME
     covariates <- covariates[, setdiff(names(covariates), "TIME") ]
     ev <- data.table::rbindlist(list(covariates, ev), fill=TRUE) %>% dplyr::arrange(.data$time)
-    for(i in setdiff(names(covariates), c("time", "evid")))
-      ev[,i] <- zoo::na.locf(ev[, i], na.rm=FALSE)
+    for(i in setdiff(names(covariates), c("time", "evid"))) {
+      value <- zoo::na.locf(ev[, i], na.rm=FALSE)
+      if(!is.finite(value[1])) stop("Covariate ", i, " has non-finite value at time 0, cannot predict")
+      ev[,i] <- value
+    }
   }
 
   ev <- ev %>% dplyr::arrange(.data$time, factor(.data$evid, levels=c(1, 0, 2) )) #FIRST regimen, so OCC can propagate correctly

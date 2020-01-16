@@ -55,12 +55,12 @@ plot(tdmore, regimen)
 
 # Compute PRED
 pred <- tdmore %>% estimate(regimen = regimen)
-expect_equal(pred$res, c(ECL=0.0, EVc=0.0))
+expect_equal(pred$res, c(EVc=0.0, ECL=0.0))
 
 # Compute IPRED
 observed <- data.frame(TIME=c(2), CONC=c(0.040))
 ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
-expect_equal(round(ipred$res, digits=4), c(ECL=0.0336, EVc=0.1175))
+expect_equal(round(ipred$res, digits=4), c(EVc=0.1175, ECL=0.0336))
 
 # Default IPRED plot
 plot(ipred) + coord_cartesian(xlim=c(0, 100))

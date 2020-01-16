@@ -29,8 +29,8 @@ test_that("Metadata are compatible with TDMore", {
 
   expect_equal(m1$metadata, list(output1, output2, cov1, cov2, formulation1, formulation2, target))
   expect_equal(getMetadataByName(m1, "CONC"), output1)
-  expect_equal(getMetadataByName(m1, getMetadataByClass(m1,"tdmore_formulation")[[1]]$name), formulation1)
-  expect_equal(getMetadataByName(m1, getMetadataByClass(m1,"tdmore_formulation")[[2]]$name), formulation2)
+  expect_equal(getMetadataByName(m1, getMetadataByClass(m1,"tdmore_formulation", all=T)[[1]]$name), formulation1)
+  expect_equal(getMetadataByName(m1, getMetadataByClass(m1,"tdmore_formulation", all=T)[[2]]$name), formulation2)
   expect_equal(getMetadataByName(m1, "TARGET"), target)
 })
 
