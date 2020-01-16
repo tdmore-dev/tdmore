@@ -11,7 +11,9 @@
 
 \item{res_var}{the residual variability}
 
-\item{parameters}{list of parameter names, or NULL to use all parameters names from RxODE}
+\item{parameters}{list of parameter names, or NULL to automatically detect
+The automatic detection will analyze omega first, to see if there are names present.
+If not, it will use all parameters from the RxODE model}
 
 \item{omega}{omega variance-covariance matrix, or NULL to use a diagonal matrix of variances 1}
 

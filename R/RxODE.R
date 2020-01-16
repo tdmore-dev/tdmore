@@ -2,7 +2,9 @@
 #'
 #' @param model the RxODE model
 #' @param res_var the residual variability
-#' @param parameters list of parameter names, or NULL to use all parameters names from RxODE
+#' @param parameters list of parameter names, or NULL to automatically detect
+#' The automatic detection will analyze omega first, to see if there are names present.
+#' If not, it will use all parameters from the RxODE model
 #' @param omega omega variance-covariance matrix, or NULL to use a diagonal matrix of variances 1
 #' @param iov list of parameter names related to IOV, NULL if no IOV
 #' @param ... extra arguments will be passed to the model_predict call
@@ -12,6 +14,15 @@
 #'
 #' @example inst/examples/RxODE.R
 tdmore.RxODE <- function(model, res_var, parameters=NULL, omega=NULL, iov=NULL, ...) {
+  if(is.null(parameters)) {
+    # try to guess using the omega matrix
+    if(!is.null(names(omega)) ) parameters <- names(omega)
+    else if(!is.null(rownames(omega)) ) parameters <- rownames(omega)
+    else if(!is.null(colnames(omega)) ) parameters <- colnames(omega)
+    else {
+      # keep it NULL; get the parameters from RxODE model instead
+    }
+  }
   tdmore <- structure(list(
     model=model,
     omega=omega,
