@@ -4,12 +4,14 @@
 \alias{getMetadataByName}
 \title{Get metadata (output, formulation or covariate) by name.}
 \usage{
-getMetadataByName(tdmore, metaName)
+getMetadataByName(tdmore, metaName, all = FALSE)
 }
 \arguments{
 \item{tdmore}{the tdmore model}
 
 \item{metaName}{the name of the metadata}
+
+\item{all}{whether to return only a single element, or all of them (in a list)}
 }
 \value{
 the first metadata item that matches the given name

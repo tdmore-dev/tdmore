@@ -4,12 +4,14 @@
 \alias{getMetadataByClass}
 \title{Get metadata by class.}
 \usage{
-getMetadataByClass(tdmore, metaClass)
+getMetadataByClass(tdmore, metaClass, all = FALSE)
 }
 \arguments{
 \item{tdmore}{the tdmore model}
 
 \item{metaClass}{the class of the metadata}
+
+\item{all}{whether to return only a single element, or all of them (in a list)}
 }
 \value{
 the metadata items that matches the given class

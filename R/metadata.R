@@ -194,14 +194,15 @@ toString.tdmore_target <- function(x, ...) {
 #'
 #' @param tdmore the tdmore model
 #' @param metaName the name of the metadata
+#' @param all whether to return only a single element, or all of them (in a list)
 #' @return the first metadata item that matches the given name
 #' @export
-getMetadataByName <- function(tdmore, metaName) {
+getMetadataByName <- function(tdmore, metaName, all=FALSE) {
   if(is.null(metaName)) return(NULL)
   hasMetadata <- function(x) {if ('name' %in% names(x)) x$name==metaName else FALSE}
   i <- vapply(tdmore$metadata, hasMetadata, FUN.VALUE=logical(1))
   if(any(i)) {
-    tdmore$metadata[[i]]
+    if(all) tdmore$metadata[i] else tdmore$metadata[[which.max(i)]]
   } else {
     NULL
   }
@@ -212,13 +213,14 @@ getMetadataByName <- function(tdmore, metaName) {
 #' @param tdmore the tdmore model
 #' @param metaClass the class of the metadata
 #' @return the metadata items that matches the given class
+#' @param all whether to return only a single element, or all of them (in a list)
 #' @export
-getMetadataByClass <- function(tdmore, metaClass) {
+getMetadataByClass <- function(tdmore, metaClass, all=FALSE) {
   if(is.null(metaClass)) return(NULL)
   hasMetadata <- function(x) {inherits(x, metaClass) }
   i <- vapply(tdmore$metadata, hasMetadata, FUN.VALUE=logical(1))
   if(any(i)) {
-    tdmore$metadata[[i]]
+    if(all) tdmore$metadata[i] else tdmore$metadata[[which.max(i)]]
   } else {
     NULL
   }
