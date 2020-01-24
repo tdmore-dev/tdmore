@@ -96,6 +96,8 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 
   # Set up the covariates
   if (is.numeric(covariates)){
+    i <- is.na(covariates)
+    if(any(i)) stop("Covariate ", names(covariates)[i], " has NA value, cannot predict")
     parameters <- c(parameters, covariates)
     covariates <- NULL
   } else if(is.data.frame(covariates)) {
@@ -121,7 +123,7 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     ev <- data.table::rbindlist(list(covariates, ev), fill=TRUE) %>% dplyr::arrange(.data$time)
     for(i in setdiff(names(covariates), c("time", "evid"))) {
       value <- zoo::na.locf(ev[, i], na.rm=FALSE)
-      if(!is.finite(value[1])) stop("Covariate ", i, " has non-finite value at time 0, cannot predict")
+      if(is.na(value[1])) stop("Covariate ", i, " has NA starting value, cannot predict")
       ev[,i] <- value
     }
   }
