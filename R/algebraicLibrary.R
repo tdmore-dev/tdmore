@@ -546,23 +546,25 @@ pk3cptoral_ <- function(t, A0=0, A1=0, A2=0, A3=0, TIME, AMT, V, K, KA, K12, K21
 
 
 # Getting parameters from parent frame ------------------------------------
-pkFromParentFrame <- function(fName=as.character(sys.call())[1], env=parent.frame()) {
-  # Infer name of function call
-  fAlgebraicName <- paste0(fName, "_")
+pkFromParentFrame <- function(fun) {
+  fAlgebraicName <- quote(fun)
 
   # Find that function, and its arguments
-  myFun <- match.fun(FUN=fAlgebraicName)
+  myFun <- fun
   myFormals <- formals(myFun)
 
-  # Check for the arguments
-  args <- mget(names(myFormals), envir=env, ifnotfound=myFormals)
-  missing <- unlist( lapply(args, is.name) )
-  if(any(missing)) {
-    stop("Could not execute algebraic function ", fAlgebraicName,", ",
-         "argument(s) ", paste(names(myFormals)[missing], collapse=", "), " not found."  )
-  }
+  # Create a wrapper function
+  function(env=parent.frame()) {
+    # Check for the arguments
+    args <- mget(names(myFormals), envir=env, ifnotfound=myFormals)
+    missing <- unlist( lapply(args, is.name) )
+    if(any(missing)) {
+      stop("Could not execute algebraic function ", fAlgebraicName,", ",
+           "argument(s) ", paste(names(myFormals)[missing], collapse=", "), " not found."  )
+    }
 
-  do.call(myFun, args)
+    do.call(myFun, args)
+  }
 }
 
 #' Executes the requested PK model, and
@@ -578,31 +580,31 @@ NULL
 
 #' @export
 #' @rdname pk
-pk1cptiv <- pkFromParentFrame
+pk1cptiv <- pkFromParentFrame(pk1cptiv_)
 #' @export
 #' @rdname pk
-pk1cptinfusion <- pkFromParentFrame
+pk1cptinfusion <- pkFromParentFrame(pk1cptinfusion_)
 #' @export
 #' @rdname pk
-pk1cptoral <- pkFromParentFrame
+pk1cptoral <- pkFromParentFrame(pk1cptoral_)
 #' @export
 #' @rdname pk
-pk2cptiv <- pkFromParentFrame
+pk2cptiv <- pkFromParentFrame(pk2cptiv_)
 #' @export
 #' @rdname pk
-pk2cptinfusion <- pkFromParentFrame
+pk2cptinfusion <- pkFromParentFrame(pk2cptinfusion_)
 #' @export
 #' @rdname pk
-pk2cptoral <- pkFromParentFrame
+pk2cptoral <- pkFromParentFrame(pk2cptoral_)
 #' @export
 #' @rdname pk
-pk3cptiv <- pkFromParentFrame
+pk3cptiv <- pkFromParentFrame(pk3cptiv_)
 #' @export
 #' @rdname pk
-pk3cptinfusion <- pkFromParentFrame
+pk3cptinfusion <- pkFromParentFrame(pk3cptinfusion_)
 #' @export
 #' @rdname pk
-pk3cptoral <- pkFromParentFrame
+pk3cptoral <- pkFromParentFrame(pk3cptoral_)
 
 
 # NONMEM-style definition -------------------------------------------------

@@ -14,29 +14,29 @@
 \title{Executes the requested PK model, and
 fetches the arguments from the caller's environment.}
 \usage{
-pk1cptiv(fName = as.character(sys.call())[1], env = parent.frame())
+pk1cptiv(env = parent.frame())
 
-pk1cptinfusion(fName = as.character(sys.call())[1], env = parent.frame())
+pk1cptinfusion(env = parent.frame())
 
-pk1cptoral(fName = as.character(sys.call())[1], env = parent.frame())
+pk1cptoral(env = parent.frame())
 
-pk2cptiv(fName = as.character(sys.call())[1], env = parent.frame())
+pk2cptiv(env = parent.frame())
 
-pk2cptinfusion(fName = as.character(sys.call())[1], env = parent.frame())
+pk2cptinfusion(env = parent.frame())
 
-pk2cptoral(fName = as.character(sys.call())[1], env = parent.frame())
+pk2cptoral(env = parent.frame())
 
-pk3cptiv(fName = as.character(sys.call())[1], env = parent.frame())
+pk3cptiv(env = parent.frame())
 
-pk3cptinfusion(fName = as.character(sys.call())[1], env = parent.frame())
+pk3cptinfusion(env = parent.frame())
 
-pk3cptoral(fName = as.character(sys.call())[1], env = parent.frame())
+pk3cptoral(env = parent.frame())
 }
 \arguments{
-\item{fName}{function name to delegate this call too
+\item{env}{environment in which to search the function arguments
 filled in automatically}
 
-\item{env}{environment in which to search the function arguments
+\item{fName}{function name to delegate this call too
 filled in automatically}
 }
 \description{
