@@ -76,6 +76,8 @@ metadata.tdmore <- function(tdmore, ...) {
     index <- index + 1
     tdmore$metadata[[index]] <- arg
   }
+  names(tdmore$metadata) <- vapply(tdmore$metadata, function(x){x$name}, FUN.VALUE=character(1))
+
   return(tdmore)
 }
 
@@ -86,10 +88,11 @@ metadata.tdmore <- function(tdmore, ...) {
 #' @param unit the unit, can be null
 #' @param min the minimum value, can be null
 #' @param max the maximum value, can be null
-#' @param choices a list of choices, e.g. list(Fast=0, Slow=1)
+#' @param choices a numeric named vector of choices, e.g. c(Fast=0, Slow=1)
 #' @return a tdmore_covariate object
 #' @export
 covariate <- function(name, label, unit=NULL, min=NULL, max=NULL, choices=NULL) {
+  if(!is.null(choices)) stopifnot( is.numeric(choices) )
   structure(list(
     name=name,
     label=label,

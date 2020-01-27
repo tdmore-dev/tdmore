@@ -17,7 +17,7 @@ covariate(name, label, unit = NULL, min = NULL, max = NULL, choices = NULL)
 
 \item{max}{the maximum value, can be null}
 
-\item{choices}{a list of choices, e.g. list(Fast=0, Slow=1)}
+\item{choices}{a numeric named vector of choices, e.g. c(Fast=0, Slow=1)}
 }
 \value{
 a tdmore_covariate object
