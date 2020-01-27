@@ -570,8 +570,6 @@ pkFromParentFrame <- function(fun) {
 #' Executes the requested PK model, and
 #' fetches the arguments from the caller's environment.
 #'
-#' @param fName function name to delegate this call too
-#' filled in automatically
 #' @param env environment in which to search the function arguments
 #' filled in automatically
 #'

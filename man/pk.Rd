@@ -35,9 +35,6 @@ pk3cptoral(env = parent.frame())
 \arguments{
 \item{env}{environment in which to search the function arguments
 filled in automatically}
-
-\item{fName}{function name to delegate this call too
-filled in automatically}
 }
 \description{
 Executes the requested PK model, and
