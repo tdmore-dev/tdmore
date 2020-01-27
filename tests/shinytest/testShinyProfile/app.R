@@ -3,6 +3,12 @@ library(RxODE)
 library(nlmixr)
 library(ggplot2)
 
+### ensure input/output/export all have a consistent order
+### Sorting order is different between en_US and C locales!
+### See ?Comparison
+### Fix is to force the locale to C for collation
+Sys.setlocale(category="LC_COLLATE", "C")
+
 tdmore <- getModel("meropenem")
 regimen <- data.frame(
   TIME=c(0, 8, 16),            # Every 8 hour and for 1 day, an injection is given

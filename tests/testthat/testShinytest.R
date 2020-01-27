@@ -18,7 +18,8 @@ context("Perform all shinytest tests")
 
 tmp_lib <- tdmore::ensurePackagePresent("tdmore")
 
-testpath <- rprojroot::find_package_root_file("tests/shinytest")
+testpath <- testthat::test_path("../shinytest/")
+message("Searching for shiny tests in ", testpath)
 tests <- dir(testpath)
 
 for(appDir in tests) {

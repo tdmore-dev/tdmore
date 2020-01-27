@@ -1,9 +1,9 @@
 {
   "input": {
-    "click": null,
-    "dblclick": null,
     "ECL": -0.258646227779221,
     "EV1": null,
+    "click": null,
+    "dblclick": null,
     "var": "ECL"
   },
   "output": {

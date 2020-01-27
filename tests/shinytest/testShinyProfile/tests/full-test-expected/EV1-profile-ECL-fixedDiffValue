@@ -1,10 +1,10 @@
 {
   "input": {
+    "ECL": -5,
+    "EV1": null,
     "brush": null,
     "click": null,
     "dblclick": null,
-    "ECL": -5,
-    "EV1": null,
     "var": "EV1"
   },
   "output": {
