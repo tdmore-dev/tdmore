@@ -175,3 +175,82 @@ updateRegimen <- function(regimen, doseRows = NULL, newDose) {
 
   return(updatedRegimen)
 }
+
+
+#' Automatically guesses the target troughs for a given regimen
+#'
+#' @param regimen a treatment regimen
+#' @param deltamin how much can we move the trough back to match an existing treatment time? in percentage of interdose-interval
+#' @param deltaplus how much can we move the trough forward to match an existing treatment time? in percentage of interdose-interval
+#' This method emits an error if any other treatment is found in the interval between `time` and `time+ii*(1-deltamin)`
+#'
+#' @return a numeric vector with the corresponding troughs
+#' @export
+getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4) {
+  stopifnot( "FORM" %in% colnames(regimen) )
+  getII <- function(x) {
+    form <- tdmore::getMetadataByName(model, x)
+    if(is.null(form)) stop("Formulation `", x, "' is not defined in the model metadata")
+    form$dosing_interval
+  }
+  regimen$II <- purrr::map_dbl(regimen$FORM, getII)
+
+  trough <- purrr::pmap_dbl(list(
+    regimen$TIME,
+    regimen$TIME + regimen$II*(1-deltamin),
+    regimen$TIME + regimen$II,
+    regimen$TIME + regimen$II*(1+deltaplus)),
+    function(start, min, val, max) {
+      x <- regimen$TIME
+      error <- x > start & x < min #any treatments in the no-go zone?
+      if(any(error)) stop("A treatment was detected between ", start, " and ", min, " at ", regimen$TIME[error])
+
+      i <- x >= min & x <= max #is any existing treatment within the min-max interval?
+      if(any(i)) {
+        #if yes, use that treatment time as trough
+        x[which.max(i)]
+      } else {
+        #if not, use the calculated trough
+        val
+      }
+    }
+  )
+  trough
+}
+
+#' Optimize the regimen, using the metadata defined by the model
+#'
+#' This performs a step-wise optimization.
+#'
+#' @param fit tdmorefit object
+#' @param regimen the treatment regimen to optimize
+#'
+#' @export
+optimize <- function(fit, regimen=fit$regimen) {
+  target <- list(
+    TIME=getTroughs(fit$tdmore, regimen[regimen$FIX==FALSE, ])
+  )
+  targetMetadata <- tdmore::getMetadataByClass(fit$tdmore, "tdmore_target")
+  outputVar <- fit$tdmore$res_var[[1]]$var
+  target[outputVar] <- mean( c(targetMetadata$min, targetMetadata$max) )
+  target <- tibble::as_tibble(target)
+
+  #step-wise: row per row
+  for(i in seq_along(target$TIME)) {
+    row <- target[i, ]
+    iterationRows <- which( regimen$FIX == FALSE & regimen$TIME < row$TIME )
+    if(length(iterationRows) == 0) next
+    rec <- findDose(fit, regimen, iterationRows, target=row)
+    regimen <- rec$regimen
+    regimen$FIX[iterationRows] <- TRUE #fix these rows in place!
+  }
+
+  return(structure(
+    list(
+      tdmorefit=tdmorefit,
+      regimen = regimen,
+      target=target
+    ),
+    class = c("recommendation")
+  ))
+}
