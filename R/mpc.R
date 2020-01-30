@@ -29,6 +29,9 @@ predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, c
     covariates <- as.data.frame(as.list(c(TIME=0, covariates)))
   }
 
+  if(is.unsorted(regimen$TIME)) stop()
+  if(! "OCC" %in% colnames(regimen)) regimen$OCC <- seq_len(nrow(regimen)) #add an OCC column if missing
+
   # Retrieve initial thetas
   theta <- object$mpc_theta
   thetaNames <- names(theta)
@@ -59,6 +62,11 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
     covariates <- as.data.frame(as.list(c(TIME=0, covariates)))
   }
 
+  if(!"OCC" %in% colnames(regimen)) {
+    warning("OCC column missing, adding...")
+    regimen$OCC <- seq_len(nrow(regimen))
+  }
+
   # Retrieve initial thetas
   theta <- object$mpc_theta
   thetaNames <- names(theta)
@@ -84,11 +92,11 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
   # Normal case: observed data present
   observedMpc <- addIterationColumn(regimen, observed)
   maxIter <- max(observedMpc$ITER)
+  maxOcc <- getMaxOccasion(regimen) #maxIter is sometimes lower than maxOcc, e.g. if there are more treatments planned after the last observation
 
   N <- length(object$iov)
-  varcov <- matrix(data=0,
-                   nrow=N*maxIter, ncol=N*maxIter,
-                   dimnames=list(rep(object$iov, maxIter), rep(object$iov, maxIter)))
+
+  varcov <- expandOmega(object, maxOcc) #use omega by default
 
   for (iterIndex in seq_len(maxIter + 1)) {
     if (iterIndex > 1) {
@@ -122,11 +130,20 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
     }
   }
 
+  # the remaining occasions should have estimated coefficients of '0'
+  parNames <- getParameterNames(object, regimen)
+  res <- rep(0, length(parNames)) #set up vector of '0'
+  names(res) <- parNames #and put in the names
+  res[ seq_along(ipred$res) ] <- ipred$res #put in the parameter estimates so far, rest will stay 0
+  ipred$res <- res
+
   # Put the original data back in the `observed` and `regimen` slot
   ipred$observed <- observed
   ipred$regimen <- regimen
   ipred$varcov <- varcov
   ipred$fix <- c()
+
+
 
   return(ipred)
 }
