@@ -140,7 +140,12 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
 
     df <- list()
     df$OCC <- unique(regimen$OCC)
-    for(i in iov) df[[i]] <- iovParameters[ names(iovParameters) == i ]
+    N <- length(df$OCC)
+    for(i in iov) {
+      par <- iovParameters[ names(iovParameters) == i ]
+      par <- c(par, rep(0, N-length(par))) #pad with extra zero for new occasions
+      df[[i]] <- par
+    }
 
     # Add parameters to ev
     ev <- dplyr::left_join(ev, as.data.frame(df), by="OCC")
