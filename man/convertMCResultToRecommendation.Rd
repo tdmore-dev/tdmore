@@ -6,7 +6,8 @@
 \usage{
 convertMCResultToRecommendation(
   tdmorefit,
-  mcResult,
+  mc,
+  result,
   regimen,
   doseRows,
   target,
@@ -14,7 +15,9 @@ convertMCResultToRecommendation(
 )
 }
 \arguments{
-\item{mcResult}{a dataframe with all the uniroot results, one per Monte-Carlo sample}
+\item{mc}{a dataframe with all the monte-carlo samples for parameters}
+
+\item{result}{list with uniroot results}
 
 \item{regimen}{the regimen}
 

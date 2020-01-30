@@ -47,9 +47,8 @@ findDose <- function(tdmorefit, regimen=tdmorefit$regimen, doseRows=NULL, interv
   } else {
     # Find the dose for each Monte-Carlo sample
     mc <- sampleMC(tdmorefit, mc.maxpts = mc.maxpts)
-    uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
 
-    mcResult <- purrr::map_dfr(mc$sample, function(i) {
+    result <- purrr::map(mc$sample, function(i) {
       row <- mc[i,,drop=F] #make vector
       res <- unlist(row[-1]) # Remove 'sample' column
       names(res) <- names(coef(tdmorefit))
@@ -60,14 +59,10 @@ findDose <- function(tdmorefit, regimen=tdmorefit$regimen, doseRows=NULL, interv
         obs[, colnames(obs) != "TIME", drop=TRUE] - target[, colnames(target) != "TIME", drop=TRUE]
       }
 
-      result <- runUniroot(mcRootFunction, interval, ...)
-      names(row) <- uniqueColnames
-      cbind(row, dose = result$root, f.root = result$f.root, iter = result$iter, estim.prec = result$estim.prec)
+      runUniroot(mcRootFunction, interval, ...)
     })
 
-    colnames(mcResult)[seq_len(length(uniqueColnames))] <- colnames(mc)
-
-    return(convertMCResultToRecommendation(tdmorefit, mcResult, regimen, doseRows, target, level))
+    return(convertMCResultToRecommendation(tdmorefit, mc, result, regimen, doseRows, target, level))
   }
 }
 
@@ -112,7 +107,7 @@ convertResultToRecommendation <- function(tdmorefit, result, regimen, doseRows, 
         newDose = result$root
       ),
       target=target,
-      result = result
+      result = list(result)
     ),
     class = c("recommendation")
   ))
@@ -120,7 +115,8 @@ convertResultToRecommendation <- function(tdmorefit, result, regimen, doseRows, 
 
 #' Convert the Monte-Carlo uniroot results into a recommendation object.
 #'
-#' @param mcResult a dataframe with all the uniroot results, one per Monte-Carlo sample
+#' @param mc a dataframe with all the monte-carlo samples for parameters
+#' @param result list with uniroot results
 #' @param regimen the regimen
 #' @param doseRows which rows of the regimen to adapt when searching for a new dose, or NULL to take the last one
 #' @param target the original target
@@ -129,12 +125,14 @@ convertResultToRecommendation <- function(tdmorefit, result, regimen, doseRows, 
 #' @return a recommendation object
 #' @importFrom dplyr summarise
 #' @keywords internal
-convertMCResultToRecommendation <- function(tdmorefit, mcResult, regimen, doseRows, target, level) {
+convertMCResultToRecommendation <- function(tdmorefit, mc, result, regimen, doseRows, target, level) {
+  doses <- purrr::map_dbl(result, ~.x$root)
+
   ciLevel <- (1-level)/2
   dose <- c(
-    dose.median = as.numeric(median(mcResult$dose)),
-    dose.lower = as.numeric(quantile(mcResult$dose, ciLevel)),
-    dose.upper = as.numeric(quantile(mcResult$dose, 1 - ciLevel))
+    dose.median = as.numeric(median(doses)),
+    dose.lower = as.numeric(quantile(doses, ciLevel)),
+    dose.upper = as.numeric(quantile(doses, 1 - ciLevel))
   )
   return(structure(
     list(
@@ -145,7 +143,7 @@ convertMCResultToRecommendation <- function(tdmorefit, mcResult, regimen, doseRo
         doseRows = doseRows,
         newDose = dose['dose.median']
       ),
-      result = mcResult,
+      result=result,
       target=target
     ),
     class = c("recommendation")
@@ -227,29 +225,41 @@ getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4) {
 #'
 #' @export
 optimize <- function(fit, regimen=fit$regimen) {
+  if(! "FIX" %in% colnames(regimen) ) regimen$FIX <- FALSE
   target <- list(
     TIME=getTroughs(fit$tdmore, regimen[regimen$FIX==FALSE, ])
   )
   targetMetadata <- tdmore::getMetadataByClass(fit$tdmore, "tdmore_target")
+  if(is.null(targetMetadata)) stop("No target defined in model metadata")
   outputVar <- fit$tdmore$res_var[[1]]$var
   target[outputVar] <- mean( c(targetMetadata$min, targetMetadata$max) )
   target <- tibble::as_tibble(target)
 
+  modified <- rep(FALSE, nrow(regimen))
+  result <- list()
   #step-wise: row per row
   for(i in seq_along(target$TIME)) {
     row <- target[i, ]
-    iterationRows <- which( regimen$FIX == FALSE & regimen$TIME < row$TIME )
+    iterationRows <- which( regimen$FIX == FALSE & regimen$TIME < row$TIME & !modified )
     if(length(iterationRows) == 0) next
     rec <- findDose(fit, regimen, iterationRows, target=row)
     regimen <- rec$regimen
-    regimen$FIX[iterationRows] <- TRUE #fix these rows in place!
+    roundedAmt <- purrr::pmap_dbl(list(regimen$AMT, regimen$FORM), function(amt, form) {
+      form <- tdmore::getMetadataByName(fit$tdmore, form)
+      form$round_function(amt)
+    })
+    regimen$AMT[iterationRows] <- roundedAmt[iterationRows] #rounded amounts only
+    modified[ iterationRows ] <- TRUE
+    result <- c( result, rec$result )
   }
 
   return(structure(
     list(
-      tdmorefit=tdmorefit,
+      tdmorefit=fit,
+      dose=regimen$AMT[ modified ],
       regimen = regimen,
-      target=target
+      target=target,
+      result=result
     ),
     class = c("recommendation")
   ))
