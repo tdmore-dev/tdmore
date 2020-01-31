@@ -366,9 +366,9 @@ getParameterNames <- function(tdmore, regimen) {
   if(is.null(iov)) {
     retValue <- tdmore$parameters
   } else {
-    if(! "OCC" %in% colnames(regimen)) regimen$OCC <- seq_len(nrow(regimen)) #add OCC to regimen to support IOV
+    maxOcc <- if(is.data.frame(regimen)) getMaxOccasion(regimen) else if (is.numeric(regimen)) regimen else stop("Bad Regimen argument")
     retValue <- c(parameters[!(parameters %in% iov)],
-                  rep(parameters[(parameters %in% iov)], getMaxOccasion(regimen)))
+                  rep(parameters[(parameters %in% iov)], maxOcc))
   }
   return(retValue)
 }

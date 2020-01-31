@@ -3,7 +3,7 @@
 \name{getMaxOccasion}
 \alias{getMaxOccasion}
 \title{Get the highest occasion number in a regimen.
-If the regimen does not contain an 'OCC' column, 1 is returned.}
+If the regimen does not contain an 'OCC' column, the number of rows in the regimen is returned (each regimen a separate occasion)}
 \usage{
 getMaxOccasion(regimen)
 }
@@ -15,5 +15,5 @@ the highest occasion number
 }
 \description{
 Get the highest occasion number in a regimen.
-If the regimen does not contain an 'OCC' column, 1 is returned.
+If the regimen does not contain an 'OCC' column, the number of rows in the regimen is returned (each regimen a separate occasion)
 }

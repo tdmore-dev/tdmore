@@ -46,7 +46,7 @@ findDose <- function(tdmorefit, regimen=tdmorefit$regimen, doseRows=NULL, interv
 
   } else {
     # Find the dose for each Monte-Carlo sample
-    mc <- sampleMC(tdmorefit, mc.maxpts = mc.maxpts)
+    mc <- sampleMC(tdmorefit, mc.maxpts = mc.maxpts)$mc
 
     result <- purrr::map(mc$sample, function(i) {
       row <- mc[i,,drop=F] #make vector
@@ -177,6 +177,7 @@ updateRegimen <- function(regimen, doseRows = NULL, newDose) {
 
 #' Automatically guesses the target troughs for a given regimen
 #'
+#' @param model tdmore model with formulation metadata
 #' @param regimen a treatment regimen
 #' @param deltamin how much can we move the trough back to match an existing treatment time? in percentage of interdose-interval
 #' @param deltaplus how much can we move the trough forward to match an existing treatment time? in percentage of interdose-interval
@@ -186,12 +187,7 @@ updateRegimen <- function(regimen, doseRows = NULL, newDose) {
 #' @export
 getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4) {
   stopifnot( "FORM" %in% colnames(regimen) )
-  getII <- function(x) {
-    form <- tdmore::getMetadataByName(model, x)
-    if(is.null(form)) stop("Formulation `", x, "' is not defined in the model metadata")
-    form$dosing_interval
-  }
-  regimen$II <- purrr::map_dbl(regimen$FORM, getII)
+  regimen$II <- getDosingInterval(regimen$FORM, model)
 
   trough <- purrr::pmap_dbl(list(
     regimen$TIME,
@@ -222,15 +218,21 @@ getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4) {
 #'
 #' @param fit tdmorefit object
 #' @param regimen the treatment regimen to optimize
+#' @param targetMetadata defined targets as list(min=X, max=Y). If NULL, taken from the model metadata.
 #'
 #' @export
-optimize <- function(fit, regimen=fit$regimen) {
+optimize <- function(fit, regimen=fit$regimen, targetMetadata=NULL) {
   if(! "FIX" %in% colnames(regimen) ) regimen$FIX <- FALSE
   target <- list(
     TIME=getTroughs(fit$tdmore, regimen[regimen$FIX==FALSE, ])
   )
-  targetMetadata <- tdmore::getMetadataByClass(fit$tdmore, "tdmore_target")
-  if(is.null(targetMetadata)) stop("No target defined in model metadata")
+  if(is.null(targetMetadata)) {
+    targetMetadata <- tdmore::getMetadataByClass(fit$tdmore, "tdmore_target")
+    if(is.null(targetMetadata)) stop("No target defined in model metadata")
+  }
+
+  stopifnot( all( c("min", "max") %in% names(targetMetadata) ) )
+
   outputVar <- fit$tdmore$res_var[[1]]$var
   target[outputVar] <- mean( c(targetMetadata$min, targetMetadata$max) )
   target <- tibble::as_tibble(target)

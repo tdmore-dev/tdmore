@@ -4,12 +4,14 @@
 \alias{optimize}
 \title{Optimize the regimen, using the metadata defined by the model}
 \usage{
-optimize(fit, regimen = fit$regimen)
+optimize(fit, regimen = fit$regimen, targetMetadata = NULL)
 }
 \arguments{
 \item{fit}{tdmorefit object}
 
 \item{regimen}{the treatment regimen to optimize}
+
+\item{targetMetadata}{defined targets as list(min=X, max=Y). If NULL, taken from the model metadata.}
 }
 \description{
 This performs a step-wise optimization.

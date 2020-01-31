@@ -9,7 +9,8 @@ sampleMC_metrop(
   fix = tdmorefit$fix,
   mc.maxpts = 100,
   mc.batch = floor(mc.maxpts/2),
-  verbose = 0
+  verbose = 0,
+  tune = 1
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ sampler is printed to the screen.  If \code{verbose} is greater than 0 the
 iteration number, the \eqn{\theta} vector, the function value, and
 the Metropolis acceptance rate are sent to the screen every \code{verbose}th
 iteration.}
+
+\item{tune}{tuning parameter to reduce `omega`}
 }
 \value{
 the Monte-Carlo matrix, first column is always the 'sample' column

@@ -60,7 +60,7 @@ hasOccasion <- function(regimen) {
 }
 
 #' Get the highest occasion number in a regimen.
-#' If the regimen does not contain an 'OCC' column, 1 is returned.
+#' If the regimen does not contain an 'OCC' column, the number of rows in the regimen is returned (each regimen a separate occasion)
 #'
 #' @param regimen the specified regimen
 #' @return the highest occasion number
@@ -69,7 +69,7 @@ getMaxOccasion <- function(regimen) {
   if(hasOccasion(regimen)) {
     retValue <- max(regimen$OCC)
   } else {
-    retValue <- 1
+    retValue <- nrow(regimen)
   }
   return(retValue)
 }

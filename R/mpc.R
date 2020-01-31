@@ -131,18 +131,18 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
   }
 
   # the remaining occasions should have estimated coefficients of '0'
-  parNames <- getParameterNames(object, regimen)
-  res <- rep(0, length(parNames)) #set up vector of '0'
-  names(res) <- parNames #and put in the names
-  res[ seq_along(ipred$res) ] <- ipred$res #put in the parameter estimates so far, rest will stay 0
-  ipred$res <- res
+  #parNames <- getParameterNames(object, regimen)
+  #res <- rep(0, length(parNames)) #set up vector of '0'
+  #names(res) <- parNames #and put in the names
+  #res[ seq_along(ipred$res) ] <- ipred$res #put in the parameter estimates so far, rest will stay 0
+  #ipred$res <- res
+  ipred$res <- processParameters(parameters=ipred$res, tdmore=object, regimen=regimen)
 
   # Put the original data back in the `observed` and `regimen` slot
   ipred$observed <- observed
   ipred$regimen <- regimen
   ipred$varcov <- varcov
   ipred$fix <- c()
-
 
 
   return(ipred)
@@ -155,9 +155,9 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
 #' @return an updated covariates dataframe
 #'
 mergeCovariates <- function(ebeCovariates, covariates) {
-  join <- dplyr::full_join(ebeCovariates, covariates, by="TIME")
-  join <- join[order(join$TIME), ]
-  return(zoo::na.locf(join))
+  dplyr::full_join(ebeCovariates, covariates, by="TIME") %>%
+    arrange(.data$TIME) %>%
+    tidyr::fill(dplyr::everything(), .direction="downup")
 }
 
 #' MPC is a generic function to make a tdmore model compatible with MPC.

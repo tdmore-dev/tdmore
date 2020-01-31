@@ -617,7 +617,7 @@ sampleMC_norm <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100) {
   }
   mc <- cbind( sample=1:mc.maxpts, mc )
   row.names(mc) <- NULL
-  mc
+  list(mc=mc)
 }
 
 #' Generate parameter samples using the Metropolis MCMC method.
@@ -626,31 +626,74 @@ sampleMC_norm <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100) {
 #' @param fix named numeric vector with the fixed parameters
 #' @param mc.maxpts number of Monte-Carlo samples
 #' @param mc.batch number of points to run per batch
+#' @param tune tuning parameter to reduce `omega`
 #' @inheritParams MCMCpack::MCMCmetrop1R
 #'
 #' @return the Monte-Carlo matrix, first column is always the 'sample' column
 #' @export
-sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batch=floor(mc.maxpts/2), verbose=0) {
+sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batch=floor(mc.maxpts/2), verbose=0, tune=1) {
   if(!is.null(mc.maxpts)) {
     p <- dplyr::progress_estimated(n=mc.maxpts)
     N <- 0
+    sampled <- 0
+    accepted <- 0
     result <- list()
     while(N < mc.maxpts) { #sample until we have enough
-      out <- sampleMC_metrop(tdmorefit, fix=fix, mc.maxpts=NULL, mc.batch=mc.batch, verbose=verbose)
-      N <- N + nrow(out)
+      out <- sampleMC_metrop(tdmorefit, fix=fix, mc.maxpts=NULL, mc.batch=mc.batch, verbose=verbose, tune=tune)
+      # https://projecteuclid.org/euclid.aoap/1034625254
+      # Tune the proposal variance so that the average acceptance rate is roughly 1/4.
+      if(out$acceptance < 0.1) tune = tune / 2 #jump around less
+      else if (out$acceptance > 0.5) tune = tune * 2 #jump around more
+
+      N <- N + nrow(out$mc)
       p$i <- if(N>mc.maxpts) mc.maxpts else N #progress reporting
       p$print()
-      result <- c(result, list(cbind(chain=length(result)+1, out)) )
+      result <- c(result, list(out) )
     }
-    result <- dplyr::bind_rows(result) %>% dplyr::rename(chain.sample = sample)
-    return(cbind(sample=1:nrow(result), result))
+
+    mc <- lapply(seq_along(result), function(i) {
+      mc <- result[[i]]$mc
+      if(nrow(mc) == 0) return(NULL)
+      cbind(chain=i, result[[i]]$mc)
+    })
+    mc <- purrr::reduce(mc, rbind) #required instead of bind_rows, to maintain duplicate columns in case of IOV
+    ### right now, we have 'chain' and 'sample' columns
+    ## avoid any dplyr verbs, because they cannot handle repeated column names
+    parNames <- colnames(mc)[c(-1, -2)]
+    mc <- cbind(sample=seq_len(nrow(mc)), chain=mc$chain, chain.sample=mc$sample, mc[, c(-1, -2), drop=FALSE]) # add chain.sample column
+    colnames(mc)[4:ncol(mc)] <- parNames
+    ## sample, chain, chain.sample, rest
+
+    sampled=sum( purrr::map_dbl(result, ~.x$sampled) )
+    accepted=sum( purrr::map_dbl(result, ~.x$accepted) )
+    acceptance=accepted / sampled
+    return( list(
+      mc=mc,
+      sampled=sampled,
+      accepted=accepted,
+      acceptance=acceptance
+    ))
   }
-  parNames <- names(coef(tdmorefit))
-  fixIndexes <- getFixedParametersIndexes(parNames = parNames, fix = fix)
+  maxOcc <- getMaxOccasion(tdmorefit$regimen)
+  start <- processParameters(coef(tdmorefit), tdmorefit$tdmore, tdmorefit$regimen)
 
-  start <- coef(tdmorefit)
-
+  ## Ok, thinking time
+  ## If you use omega, it will generate proposal distributions that are only based on the initial population,
+  ## BUT are possibly very far from the posthoc distribution.
+  ## If this is the case, the MH-sampler will not accept any proposed parameters, since all generated proposals are
+  ## unlikely in the posthoc distribution. Acceptance rate will be 0.
+  ##
+  ## In essence, we are jumping around a large parameter space with only a very small space
+  ## that yields good options!
+  ##
+  ## An alternative is to jump around using the actual variance-covariance matrix from the optimization step.
+  ## However, the reason we are in MH-sampling is exactly because this variance-covariance matrix is difficult to establish!
+  ##
+  ## A pragmatic solution is to use a smaller omega to jump around, increasing the acceptance rate. Yes,
+  ## this is a biased estimate of uncertainty, but it is better than nothing...
   omega <- tdmorefit$tdmore$omega
+  omega <- expandOmega(tdmorefit$tdmore, maxOcc)
+
   omegaChol <- Matrix::chol(omega)
 
   tdmore <- tdmorefit$tdmore
@@ -658,12 +701,12 @@ sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batc
   cTdmore$cache <- model_prepare(tdmore$model, times=tdmorefit$observed$TIME, regimen=tdmorefit$regimen, parameters=start, covariates=tdmorefit$covariates, iov=tdmore$iov, extraArguments=tdmore$extraArguments)
 
   fun <- function(par) {
-    names(par) <- parNames
+    names(par) <- names(start)
     ll(par=par, omega=omegaChol, isChol=TRUE, fix=fix, tdmore=cTdmore, observed=tdmorefit$observed, regimen=tdmorefit$regimen, covariates=tdmorefit$covariates)
   }
-  verboseOutput <- utils::capture.output(
-    out <- MCMCpack::MCMCmetrop1R(fun, theta.init=start, seed=floor(stats::runif(1)*1E6), burnin=0, mcmc=mc.batch, V=omega, verbose=verbose)
-  )
+  verboseOutput <- utils::capture.output({
+    out <- MCMCpack::MCMCmetrop1R(fun, theta.init=start, seed=floor(stats::runif(1)*1E6), burnin=0, mcmc=mc.batch, V=omega*tune, verbose=verbose)
+  })
   if(verbose > 0) cat(verboseOutput)
 
   #rejectionRate <- coda::rejectionRate(out)
@@ -672,9 +715,11 @@ sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batc
   rejected <- out[-nrow(out),1, drop=TRUE] == out[-1,1,drop=TRUE] #just test on column 1; sufficient
 
   mc <- as.data.frame(out)
-  colnames(mc) <- parNames
+  colnames(mc) <- names(start)
   mc <- mc[ !rejected, , drop=F]
-  mc <- cbind( sample=1:nrow(mc), mc )
+  mc <- cbind( sample=seq_len(nrow(mc)), mc )
+
+  list(mc=mc, sampled=nrow(out), accepted=sum(!rejected), acceptance=sum(!rejected) / nrow(out) )
 }
 
 #' Predict new data using the current model
@@ -707,11 +752,14 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
 
   ipred <- stats::predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=par, covariates=covariates)
   if(se.fit) {
-    mc <- sampleMC(tdmorefit, fix = parameters, mc.maxpts = mc.maxpts)
+    out <- sampleMC(tdmorefit, fix = parameters, mc.maxpts = mc.maxpts)
+    mc <- out$mc
+    ## remove 'chain' and 'chain.sample'
     if(colnames(mc)[2] == "chain" && colnames(mc)[3] == "chain.sample") {
       ## remove these values
       mc <- mc[ , c(-2, -3), drop=FALSE]
     }
+
     uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
 
     # Prepare the tdmore cache
@@ -734,8 +782,8 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
       return(fittedMC)
     }
     oNames <- getPredictOutputNames(newdata, colnames(fittedMC), names(coef(tdmorefit)))
-    return(summariseFittedMC(fittedMC, ipred, level, oNames))
-
+    summary <- summariseFittedMC(fittedMC, ipred, level, oNames)
+    return(summary)
   } else {
     ipred
   }

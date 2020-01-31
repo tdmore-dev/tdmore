@@ -7,6 +7,8 @@
 getTroughs(model, regimen, deltamin = 1/4, deltaplus = 1/4)
 }
 \arguments{
+\item{model}{tdmore model with formulation metadata}
+
 \item{regimen}{a treatment regimen}
 
 \item{deltamin}{how much can we move the trough back to match an existing treatment time? in percentage of interdose-interval}

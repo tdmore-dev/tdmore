@@ -111,14 +111,14 @@ describe("We can generate uncertainty using MCMC", {
   tdmorefit <- estimate(m1, observed=observed, regimen=regimen, covariates=c(WT=70))
 
   N <- 5000
-  out1 <- sampleMC_norm(tdmorefit, mc.maxpts=N)
+  out1 <- sampleMC_norm(tdmorefit, mc.maxpts=N)$mc
   expect_equivalent(
     mean(out1$ECL),
     coef(tdmorefit)['ECL'],
     tolerance=0.05
   ) # should have the same mean
 
-  out2 <- sampleMC_metrop(tdmorefit, mc.maxpts=N)
+  out2 <- sampleMC_metrop(tdmorefit, mc.maxpts=N)$mc
   it("has a mean around the mode", {
     expect_equivalent(
       mean(out2$ECL),

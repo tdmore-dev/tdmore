@@ -1,3 +1,21 @@
+#' Get the dosing interval for the given formulation
+#'
+#' @param x formulation (character vector)
+#' @param model a tdmore model with formulation metadata
+#'
+#' @examples
+#' if(FALSE) {
+#' regimen <- data.frame(TIME=0, AMT=5, FORM="CompoundA")
+#' regimen$II <- getDosingInterval(regimen$FORM, model)
+#' }
+#' @export
+getDosingInterval <- function(x, model) {
+  if(length(x)>1) return( purrr::map_dbl(x, getDosingInterval, model) )
+  form <- tdmore::getMetadataByName(model, x)
+  if(is.null(form)) stop("Formulation `", x, "' is not defined in the model metadata")
+  form$dosing_interval
+}
+
 #' Metadata is a generic function to append metadata to a TDMore model.
 #'
 #' @param ... extra arguments
