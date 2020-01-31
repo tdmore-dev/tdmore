@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generate parameter samples using the Metropolis MCMC method. — sampleMC_metrop • tdmore</title>
+<title>Get the dosing interval for the given formulation — getDosingInterval • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,8 @@
 
 
 
-<meta property="og:title" content="Generate parameter samples using the Metropolis MCMC method. — sampleMC_metrop" />
-<meta property="og:description" content="Generate parameter samples using the Metropolis MCMC method." />
+<meta property="og:title" content="Get the dosing interval for the given formulation — getDosingInterval" />
+<meta property="og:description" content="Get the dosing interval for the given formulation" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -153,67 +153,42 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generate parameter samples using the Metropolis MCMC method.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
-    <div class="hidden name"><code>sampleMC_metrop.Rd</code></div>
+    <h1>Get the dosing interval for the given formulation</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/metadata.R'><code>R/metadata.R</code></a></small>
+    <div class="hidden name"><code>getDosingInterval.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Generate parameter samples using the Metropolis MCMC method.</p>
+    <p>Get the dosing interval for the given formulation</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sampleMC_metrop</span>(
-  <span class='no'>tdmorefit</span>,
-  <span class='kw'>fix</span> <span class='kw'>=</span> <span class='no'>tdmorefit</span>$<span class='no'>fix</span>,
-  <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>mc.batch</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='no'>mc.maxpts</span>/<span class='fl'>2</span>),
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>tune</span> <span class='kw'>=</span> <span class='fl'>1</span>
-)</pre>
+    <pre class="usage"><span class='fu'>getDosingInterval</span>(<span class='no'>x</span>, <span class='no'>model</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>tdmorefit</th>
-      <td><p>a tdmorefit object</p></td>
+      <th>x</th>
+      <td><p>formulation (character vector)</p></td>
     </tr>
     <tr>
-      <th>fix</th>
-      <td><p>named numeric vector with the fixed parameters</p></td>
-    </tr>
-    <tr>
-      <th>mc.maxpts</th>
-      <td><p>number of Monte-Carlo samples</p></td>
-    </tr>
-    <tr>
-      <th>mc.batch</th>
-      <td><p>number of points to run per batch</p></td>
-    </tr>
-    <tr>
-      <th>verbose</th>
-      <td><p>A switch which determines whether or not the progress of the
-sampler is printed to the screen.  If <code>verbose</code> is greater than 0 the
-iteration number, the \(\theta\) vector, the function value, and
-the Metropolis acceptance rate are sent to the screen every <code>verbose</code>th
-iteration.</p></td>
-    </tr>
-    <tr>
-      <th>tune</th>
-      <td><p>tuning parameter to reduce `omega`</p></td>
+      <th>model</th>
+      <td><p>a tdmore model with formulation metadata</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>the Monte-Carlo matrix, first column is always the 'sample' column</p>
-
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span>(<span class='fl'>FALSE</span>) {
+<span class='no'>regimen</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>TIME</span><span class='kw'>=</span><span class='fl'>0</span>, <span class='kw'>AMT</span><span class='kw'>=</span><span class='fl'>5</span>, <span class='kw'>FORM</span><span class='kw'>=</span><span class='st'>"CompoundA"</span>)
+<span class='no'>regimen</span>$<span class='no'>II</span> <span class='kw'>&lt;-</span> <span class='fu'>getDosingInterval</span>(<span class='no'>regimen</span>$<span class='no'>FORM</span>, <span class='no'>model</span>)
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>

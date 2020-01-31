@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generate parameter samples using the Metropolis MCMC method. — sampleMC_metrop • tdmore</title>
+<title>Optimize the regimen, using the metadata defined by the model — optimize • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,8 +42,8 @@
 
 
 
-<meta property="og:title" content="Generate parameter samples using the Metropolis MCMC method. — sampleMC_metrop" />
-<meta property="og:description" content="Generate parameter samples using the Metropolis MCMC method." />
+<meta property="og:title" content="Optimize the regimen, using the metadata defined by the model — optimize" />
+<meta property="og:description" content="This performs a step-wise optimization." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -153,67 +153,40 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generate parameter samples using the Metropolis MCMC method.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
-    <div class="hidden name"><code>sampleMC_metrop.Rd</code></div>
+    <h1>Optimize the regimen, using the metadata defined by the model</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/a.qdoptimize.R'><code>R/a.qdoptimize.R</code></a></small>
+    <div class="hidden name"><code>optimize.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Generate parameter samples using the Metropolis MCMC method.</p>
+    <p>This performs a step-wise optimization.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sampleMC_metrop</span>(
-  <span class='no'>tdmorefit</span>,
-  <span class='kw'>fix</span> <span class='kw'>=</span> <span class='no'>tdmorefit</span>$<span class='no'>fix</span>,
-  <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>mc.batch</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='no'>mc.maxpts</span>/<span class='fl'>2</span>),
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>tune</span> <span class='kw'>=</span> <span class='fl'>1</span>
-)</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/stats/optimize.html'>optimize</a></span>(<span class='no'>fit</span>, <span class='kw'>regimen</span> <span class='kw'>=</span> <span class='no'>fit</span>$<span class='no'>regimen</span>, <span class='kw'>targetMetadata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>tdmorefit</th>
-      <td><p>a tdmorefit object</p></td>
+      <th>fit</th>
+      <td><p>tdmorefit object</p></td>
     </tr>
     <tr>
-      <th>fix</th>
-      <td><p>named numeric vector with the fixed parameters</p></td>
+      <th>regimen</th>
+      <td><p>the treatment regimen to optimize</p></td>
     </tr>
     <tr>
-      <th>mc.maxpts</th>
-      <td><p>number of Monte-Carlo samples</p></td>
-    </tr>
-    <tr>
-      <th>mc.batch</th>
-      <td><p>number of points to run per batch</p></td>
-    </tr>
-    <tr>
-      <th>verbose</th>
-      <td><p>A switch which determines whether or not the progress of the
-sampler is printed to the screen.  If <code>verbose</code> is greater than 0 the
-iteration number, the \(\theta\) vector, the function value, and
-the Metropolis acceptance rate are sent to the screen every <code>verbose</code>th
-iteration.</p></td>
-    </tr>
-    <tr>
-      <th>tune</th>
-      <td><p>tuning parameter to reduce `omega`</p></td>
+      <th>targetMetadata</th>
+      <td><p>defined targets as list(min=X, max=Y). If NULL, taken from the model metadata.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>the Monte-Carlo matrix, first column is always the 'sample' column</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
     </ul>
 
   </div>

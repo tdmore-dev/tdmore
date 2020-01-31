@@ -606,6 +606,12 @@ by guessing the required variables</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="getDosingInterval.html">getDosingInterval()</a></code> </p>
+        </td>
+        <td><p>Get the dosing interval for the given formulation</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="getLikelihoodFun.html">getLikelihoodFun()</a></code> </p>
         </td>
         <td><p>Get the right likelihood function for the specified type.</p></td>
@@ -615,7 +621,7 @@ by guessing the required variables</p></td>
           <p><code><a href="getMaxOccasion.html">getMaxOccasion()</a></code> </p>
         </td>
         <td><p>Get the highest occasion number in a regimen.
-If the regimen does not contain an 'OCC' column, 1 is returned.</p></td>
+If the regimen does not contain an 'OCC' column, the number of rows in the regimen is returned (each regimen a separate occasion)</p></td>
       </tr><tr>
         
         <td>
@@ -660,6 +666,12 @@ E.g. 2 occasions: "ECL", "EKA", "ECL_IOV", "EKA_IOV", "ECL_IOV", "EKA_IOV"</p></
           <p><code><a href="getPredictOutputNames.html">getPredictOutputNames()</a></code> </p>
         </td>
         <td><p>Return the output names of the fitted MC matrix.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getTroughs.html">getTroughs()</a></code> </p>
+        </td>
+        <td><p>Automatically guesses the target troughs for a given regimen</p></td>
       </tr><tr>
         
         <td>
@@ -792,6 +804,12 @@ These variables will be predicted and shown in the panel below the timeline.
 TODO: discuss if we keep this info as part of the UI metadata of the model.
 Should we need a config tab to configure the UI metadata?
 Do we want to persist this information in DB? Per model? Per patient? etc.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="optimize.html">optimize()</a></code> </p>
+        </td>
+        <td><p>Optimize the regimen, using the metadata defined by the model</p></td>
       </tr><tr>
         
         <td>
@@ -1400,6 +1418,12 @@ by guessing the required variables</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="getDosingInterval.html">getDosingInterval()</a></code> </p>
+        </td>
+        <td><p>Get the dosing interval for the given formulation</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="getLikelihoodFun.html">getLikelihoodFun()</a></code> </p>
         </td>
         <td><p>Get the right likelihood function for the specified type.</p></td>
@@ -1409,7 +1433,7 @@ by guessing the required variables</p></td>
           <p><code><a href="getMaxOccasion.html">getMaxOccasion()</a></code> </p>
         </td>
         <td><p>Get the highest occasion number in a regimen.
-If the regimen does not contain an 'OCC' column, 1 is returned.</p></td>
+If the regimen does not contain an 'OCC' column, the number of rows in the regimen is returned (each regimen a separate occasion)</p></td>
       </tr><tr>
         
         <td>
@@ -1454,6 +1478,12 @@ E.g. 2 occasions: "ECL", "EKA", "ECL_IOV", "EKA_IOV", "ECL_IOV", "EKA_IOV"</p></
           <p><code><a href="getPredictOutputNames.html">getPredictOutputNames()</a></code> </p>
         </td>
         <td><p>Return the output names of the fitted MC matrix.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getTroughs.html">getTroughs()</a></code> </p>
+        </td>
+        <td><p>Automatically guesses the target troughs for a given regimen</p></td>
       </tr><tr>
         
         <td>
@@ -1586,6 +1616,12 @@ These variables will be predicted and shown in the panel below the timeline.
 TODO: discuss if we keep this info as part of the UI metadata of the model.
 Should we need a config tab to configure the UI metadata?
 Do we want to persist this information in DB? Per model? Per patient? etc.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="optimize.html">optimize()</a></code> </p>
+        </td>
+        <td><p>Optimize the regimen, using the metadata defined by the model</p></td>
       </tr><tr>
         
         <td>

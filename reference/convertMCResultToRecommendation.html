@@ -164,7 +164,8 @@
 
     <pre class="usage"><span class='fu'>convertMCResultToRecommendation</span>(
   <span class='no'>tdmorefit</span>,
-  <span class='no'>mcResult</span>,
+  <span class='no'>mc</span>,
+  <span class='no'>result</span>,
   <span class='no'>regimen</span>,
   <span class='no'>doseRows</span>,
   <span class='no'>target</span>,
@@ -175,8 +176,12 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>mcResult</th>
-      <td><p>a dataframe with all the uniroot results, one per Monte-Carlo sample</p></td>
+      <th>mc</th>
+      <td><p>a dataframe with all the monte-carlo samples for parameters</p></td>
+    </tr>
+    <tr>
+      <th>result</th>
+      <td><p>list with uniroot results</p></td>
     </tr>
     <tr>
       <th>regimen</th>
