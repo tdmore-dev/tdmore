@@ -61,7 +61,7 @@ describe("doseSimulation", {
     db <- dataTibble(object=m1, observed, regimen, covariates=cov)
     fits <- posthoc(db) %>% select(-elapsed, -ipred)
     sim <- doseSimulation(fits, control=list(trace=1), optimize=function( fit, regimen, truth ){
-      rows <- which(regimen$TIME > max(fit$observed$TIME))
+      rows <- which(regimen$TIME > max(c(-Inf, fit$observed$TIME)))
       if(length(rows)==0) return(regimen) #nothing to adapt
       rec <- findDose(fit, regimen, doseRows=rows, target=data.frame(TIME=24+8, CONC=16))
       list( regimen=rec$regimen, extra=list(recommendation=rec) )
