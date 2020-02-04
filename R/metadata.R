@@ -10,6 +10,7 @@
 #' }
 #' @export
 getDosingInterval <- function(x, model) {
+  if(length(x) == 0) return(numeric(0))
   if(length(x)>1) return( purrr::map_dbl(x, getDosingInterval, model) )
   form <- tdmore::getMetadataByName(model, x)
   if(is.null(form)) stop("Formulation `", x, "' is not defined in the model metadata")
@@ -221,6 +222,7 @@ toString.tdmore_target <- function(x, ...) {
 getMetadataByName <- function(tdmore, metaName, all=FALSE) {
   if(is.null(metaName)) return(NULL)
   hasMetadata <- function(x) {if ('name' %in% names(x)) x$name==metaName else FALSE}
+  if(length(tdmore$metadata)==0) return(NULL) #no metadata
   i <- vapply(tdmore$metadata, hasMetadata, FUN.VALUE=logical(1))
   if(any(i)) {
     if(all) tdmore$metadata[i] else tdmore$metadata[[which.max(i)]]
@@ -238,6 +240,7 @@ getMetadataByName <- function(tdmore, metaName, all=FALSE) {
 #' @export
 getMetadataByClass <- function(tdmore, metaClass, all=FALSE) {
   if(is.null(metaClass)) return(NULL)
+  if(length(tdmore$metadata)==0) return(NULL) #no metadata
   hasMetadata <- function(x) {inherits(x, metaClass) }
   i <- vapply(tdmore$metadata, hasMetadata, FUN.VALUE=logical(1))
   if(any(i)) {
