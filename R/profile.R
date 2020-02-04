@@ -18,7 +18,7 @@ plot.tdmoreprofile <- function(x, parameters=NULL, contour=T, raster=T, ...) {
     selectedParameters <- parameters
   }
 
-  assert_that(all(selectedParameters %in% colnames(profile$profile)))
+  stopifnot(all(selectedParameters %in% colnames(profile$profile)))
   length <- length(selectedParameters)
 
   if(length >= 2) {

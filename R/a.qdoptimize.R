@@ -16,12 +16,6 @@
 findDose <- function(tdmorefit, regimen=tdmorefit$regimen, doseRows=NULL, interval=c(0, 1E10), target, se.fit = FALSE, level = 0.95, mc.maxpts = 100, ...) {
   # Check if IOV is present in model
   iov <- tdmorefit$tdmore$iov
-  if (!is.null(iov)) {
-    #tdmorefitRegimen <- tdmorefit$regimen
-    ## this is not required!
-    #assert_that(getMaxOccasion(tdmorefitRegimen)  getMaxOccasion(regimen),
-    #            msg="Number of occasions is different in tdmorefit regimen and findDose regimen")
-  }
   if(is.null(doseRows))
     doseRows <- nrow(regimen)
 

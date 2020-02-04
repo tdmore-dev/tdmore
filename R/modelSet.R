@@ -11,11 +11,10 @@
 tdmore_set <- function(...) {
   models <- list(...)
   for (model in models) {
-    assert_that(is.tdmore(model) |
-                  inherits(model, "tdmore_mixture"),
-                msg = "Only tdmore or tdmore_mixture models can be added to a tdmore set")
+    if(! (is.tdmore(model) |  inherits(model, "tdmore_mixture")) )
+                stop("Only tdmore or tdmore_mixture models can be added to a tdmore set")
   }
-  assert_that(length(models) >= 1, msg = "You should provide at least one tdmore model")
+  if(length(models) == 0) stop("You should provide at least one tdmore model")
 
   tdmoreSet <- structure(list(models = models), class = "tdmore_set")
 
@@ -59,6 +58,6 @@ findFirstCompatibleModel <- function(tdmore_set, covariates) {
       chosenModel <- model
     }, error = function(e) {})
   }
-  assert_that(!is.null(chosenModel), msg = "No model is compatible with the provided covariates")
+  if(is.null(chosenModel)) stop("No model is compatible with the provided covariates")
   return(chosenModel)
 }

@@ -8,7 +8,7 @@
 #' The model contained within is actually an RxODE object.
 #' @export
 tdmore.nlmixrUI <- function(model, iov=NULL, ...) {
-  assert_that(inherits(model, "nlmixrUI"))
+  stopifnot(inherits(model, "nlmixrUI"))
 
   # The processing below relies on the nlmixrUI object structure
   # It the structure changes, we'll have to adapt the code
@@ -24,7 +24,7 @@ tdmore.nlmixrUI <- function(model, iov=NULL, ...) {
   errorDf <- data.frame(cond=model$condition, errorType=model$err, value=model$est)
   errorDf <- errorDf %>% subset(errorDf$errorType %in% c("add", "prop", "exp"))
   predDf <- model$predDf
-  assert_that(nrow(predDf) >= 1, msg = "No error model defined, please define one")
+  if(nrow(predDf) == 0) stop("No error model defined, please define one")
   errorModels <- list()
   for (index in 1:nrow(predDf)) {
     row <- predDf[index,]

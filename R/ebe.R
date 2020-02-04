@@ -894,10 +894,10 @@ profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c
   if(!is.null(fix)) profiledParameters <- profiledParameters[ !(profiledParameters %in% names(fix)) ]
 
   limitsAsList <- !is.null(limits) && is.list(limits)
-  if(limitsAsList) assert_that(all(names(limits) %in% profiledParameters))
+  if(limitsAsList) stopifnot(all(names(limits) %in% profiledParameters))
 
   limitsAsNumeric <- !is.null(limits) && is.numeric(limits)
-  if(limitsAsNumeric) assert_that(length(limits)==2)
+  if(limitsAsNumeric) stopifnot(length(limits)==2)
 
   fun <- getLikelihoodFun(type)
 

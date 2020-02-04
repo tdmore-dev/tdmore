@@ -1,8 +1,8 @@
 ## Check `r-source/src/library/stats/R/models.R` for a reference on all
 ## model functions in the R `stats` package. We try to use these function
 ## definitions as a base here.
+## In the future, the `hardhat` package may be a good way to implement this as well...
 
-assert_that <- assertthat::assert_that
 # Structural model: how to predict --------------------------------------------------------
 #' Prepare a cache object
 #'
@@ -204,7 +204,7 @@ model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, onlyOutput=F
   if(is.null(data)) data <- numeric()
 
   if(is.data.frame(data)) {
-    assert_that("TIME" %in% colnames(data))
+    stopifnot("TIME" %in% colnames(data))
   } else {
     # Built a data.frame with TIME column and all residual error columns
     data <- as.numeric(data)
@@ -324,7 +324,7 @@ processParameters <- function(parameters, tdmore, regimen, defaultValues=NULL) {
   }
 
   ## Use the defaultValues, but possibly extend with 0 for e.g. IOV
-  assert_that(identical(
+  stopifnot(identical(
     names(defaultValues),
     parameterNames[seq_along(defaultValues)] ))
   Nmissing <- length(parameterNames) - length(defaultValues)
@@ -334,9 +334,9 @@ processParameters <- function(parameters, tdmore, regimen, defaultValues=NULL) {
   if(is.null(parameters)) return(par)
   if(length(parameters)==1 && is.na(parameters)) return(par)
 
-  assert_that(is.numeric(parameters))
-  assert_that(all(names(parameters) %in% names(par)),
-              msg=paste("Unknown parameters", paste(names(parameters[!(names(parameters) %in% names(par))]), collapse = ",")))
+  stopifnot(is.numeric(parameters))
+  if(!all(names(parameters) %in% names(par)))
+              stop(paste("Unknown parameters", paste(names(parameters[!(names(parameters) %in% names(par))]), collapse = ",")))
   par[names(parameters)] <- parameters # set par from argument
   iov <- tdmore$iov
   if(!is.null(iov)) {
@@ -344,7 +344,7 @@ processParameters <- function(parameters, tdmore, regimen, defaultValues=NULL) {
       updatedPar <- parameters[which(names(parameters)==iov_term)]
       if(length(updatedPar) > 0) {
         parIndexes <- which(names(par)==iov_term)
-        # assert_that(length(updatedPar) == length(parIndexes),
+        # stopifnot(length(updatedPar) == length(parIndexes),
         #             msg=paste0("Incorrect number of initial values for IOV term ", iov_term, " (", length(parIndexes), " needed)"))
         par[parIndexes[1:length(updatedPar)]] <- updatedPar
       }

@@ -11,12 +11,12 @@
 #'
 #' @example inst/examples/deSolve.R
 tdmore_deSolve <- function(parameters, add=0, prop=0, exp=0, ...) {
-  assertthat::is.number(add)
-  assertthat::is.number(prop)
-  assertthat::is.number(exp)
+  stopifnot(is.numeric(add))
+  stopifnot(is.numeric(prop))
+  stopifnot(is.numeric(exp))
   ## Exponential and add/prop are mutually exclusive
-  if(exp != 0) assert_that(add==0 & prop==0)
-  if(add != 0 || prop != 0) assert_that(exp == 0)
+  if(exp != 0) stopifnot(add==0 & prop==0)
+  if(add != 0 || prop != 0) stopifnot(exp == 0)
 
   structure(list(
     model=structure(list(extraArgs=list(...)), class="tdmore_deSolve"),
@@ -50,19 +50,19 @@ model_predict.tdmore_deSolve <- function(model, times, regimen=data.frame(TIME=c
   # Verify arguments are good
   samplingTimes <- as.numeric(times)
 
-  assert_that(is.data.frame(regimen))
-  assert_that(all(c("TIME", "AMT") %in% colnames(regimen)))
+  stopifnot(is.data.frame(regimen))
+  stopifnot(all(c("TIME", "AMT") %in% colnames(regimen)))
   if("RATE" %in% colnames(regimen)) stop("Rate not allowed in deSolve model; use AMT and work this out yourself.")
-  #assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "CMT", "II", "ADDL")))
+  #stopifnot(all(colnames(regimen) %in% c("TIME", "AMT", "RATE", "CMT", "II", "ADDL")))
   #if("II" %in% colnames(regimen) || "ADDL" %in% colnames(regimen))
-  #  assert_that(all(c("II", "ADDL") %in% colnames(regimen)))
-  assert_that(all(colnames(regimen) %in% c("TIME", "AMT", "CMT", "II", "ADDL")))
+  #  stopifnot(all(c("II", "ADDL") %in% colnames(regimen)))
+  stopifnot(all(colnames(regimen) %in% c("TIME", "AMT", "CMT", "II", "ADDL")))
 
   params = NULL
   if(is.data.frame(parameters)) {
     stop("Changing parameters is not supported in deSolve")
   } else {
-    assert_that(is.numeric(parameters))
+    stopifnot(is.numeric(parameters))
     pNames <- names(parameters)
     params = parameters
   }

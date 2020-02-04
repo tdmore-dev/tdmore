@@ -78,18 +78,19 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   ### Probably not a solver issue, but rather
   ### issue that the DLL of RxODE is no longer loaded
   ### (especially when running in Simulo)
-  if(!RxODE::rxDllLoaded(model)) {
-    warning("RxDLL was not loaded, loading...")
-    RxODE::rxLoad(model)
-    if(!RxODE::rxDllLoaded(model)) stop("Tried to reload RxDLL, but failed. Cannot continue!")
-  }
+  # XXX: This is not necessary anymore
+  #if(!RxODE::rxDllLoaded(model)) {
+  #  warning("RxDLL was not loaded, loading...")
+  #  RxODE::rxLoad(model)
+  #  if(!RxODE::rxDllLoaded(model)) stop("Tried to reload RxDLL, but failed. Cannot continue!")
+  #}
 
   # Check times and regimen objects
   checkTimes(times)
   checkRegimen(regimen, iov)
 
   # Check parameters
-  assert_that(is.numeric(parameters))
+  stopifnot(is.numeric(parameters))
   i <- names(parameters) %in% iov
   iovParameters <- parameters[i] #split the parameters in two arrays
   parameters <- parameters[!i]
@@ -101,8 +102,8 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
     parameters <- c(parameters, covariates)
     covariates <- NULL
   } else if(is.data.frame(covariates)) {
-    assert_that("TIME" %in% colnames(covariates))
-    assert_that(0 %in% covariates$TIME)
+    stopifnot("TIME" %in% colnames(covariates))
+    stopifnot(0 %in% covariates$TIME)
   } else if (length(covariates)==0) {
     covariates <- NULL
     # nothing, all good

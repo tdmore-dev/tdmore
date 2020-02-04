@@ -61,7 +61,7 @@ evaluate <- function(tdmorefit, regimen, searchspace, evaluators) {
     tmp[[ which(lastDose > tmax) ]] <- searchspace
     searchspace <- tmp
   }
-  sapply(searchspace, function(x) {assert_that(is.null(x) || inherits(x, "searchspace"))})
+  sapply(searchspace, function(x) {stopifnot(is.null(x) || inherits(x, "searchspace"))})
 
   ## We need a table with all possibilities for all rows
   ## 1.AMT 1.II 2.AMT 3.AMT

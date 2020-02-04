@@ -8,12 +8,12 @@
 tdmore_mixture <- function(..., probs) {
   models <- list(...)
   for (model in models) {
-    assert_that(is.tdmore(model), msg = "Only tdmore models can be added to the tdmore mixture")
+    if(!is.tdmore(model)) stop("Only tdmore models can be added to the tdmore mixture")
   }
-  assert_that(length(models) >= 2, msg = "You should provide at least two tdmore models to create a tdmore mixture")
-  assert_that(is.numeric(probs), msg = "probs is not numeric")
-  assert_that(length(models) == length(probs), msg = "There must be as many models as probabilities defined in the numeric vector 'probs'")
-  assert_that(isTRUE(all.equal(target = 1, current = sum(probs), tolerance = 1e-6)), msg = "Sum of probabilities must be 1")
+  if(! length(models) >= 2) stop("You should provide at least two tdmore models to create a tdmore mixture")
+  if(!is.numeric(probs)) stop("probs is not numeric")
+  if(length(models) != length(probs)) stop("There must be as many models as probabilities defined in the numeric vector 'probs'")
+  if(!isTRUE(all.equal(target = 1, current = sum(probs), tolerance = 1e-6))) stop("Sum of probabilities must be 1")
   tdmoreMixture <- structure(list(
     models=models,
     probs=probs

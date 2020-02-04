@@ -39,7 +39,7 @@ predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, c
   # Make distinction between covariates
   allCovariates <- object$covariates
   trueCovariates <- allCovariates[!(allCovariates %in% thetaNames)]
-  assert_that(all(trueCovariates %in% colnames(covariates)), msg="Missing covariates")
+  if(!all(trueCovariates %in% colnames(covariates))) stop("Missing covariates")
 
   # Add missing initial thetas if not there
   missingThetas <- thetaNames[!(thetaNames %in% colnames(covariates))]
@@ -74,8 +74,8 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
   # Make distinction between covariates
   allCovariates <- object$covariates
   trueCovariates <- allCovariates[!(allCovariates %in% thetaNames)]
-  assert_that(sum(thetaNames %in% colnames(covariates))==0, msg="You shouldn't give thetas in covariates")
-  assert_that(all(trueCovariates %in% colnames(covariates)), msg="Some covariates are missing")
+  if(any(thetaNames %in% colnames(covariates))) stop("You shouldn't give thetas in covariates")
+  if(!all(trueCovariates %in% colnames(covariates))) stop("Some covariates are missing")
 
   # Initialisation
   ebeCovariates <- as.data.frame(as.list(theta)) # Thetas (MPC parameters) specified to tdmore via the covariates dataframe
