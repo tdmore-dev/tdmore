@@ -12,7 +12,8 @@
 #'
 #' @export
 errorModel <- function(var="CONC", add=0, prop=0, type=NULL) {
-  assertthat::is.string(var)
+  stopifnot(is.character(var))
+  stopifnot(length(var)==1)
   if(add!=0 && prop==0) allowedType="constant"
   else if(prop!=0 && add==0) allowedType="proportional"
   else if (prop != 0 && add != 0) allowedType=c("combined2", "combined1")
