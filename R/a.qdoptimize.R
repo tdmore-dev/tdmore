@@ -228,7 +228,9 @@ optimize <- function(fit, regimen=fit$regimen, targetMetadata=NULL) {
   stopifnot( all( c("min", "max") %in% names(targetMetadata) ) )
 
   outputVar <- fit$tdmore$res_var[[1]]$var
-  target[outputVar] <- mean( c(targetMetadata$min, targetMetadata$max) )
+  targetValue <- mean( c(targetMetadata$min, targetMetadata$max) )
+  if(is.na(targetValue)) stop("Target not defined, cannot optimize treatment...")
+  target[outputVar] <- targetValue
   target <- tibble::as_tibble(target)
 
   modified <- rep(FALSE, nrow(regimen))
