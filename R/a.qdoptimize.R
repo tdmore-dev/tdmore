@@ -212,7 +212,7 @@ getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4) {
 #'
 #' @param fit tdmorefit object
 #' @param regimen the treatment regimen to optimize
-#' @param targetMetadata defined targets as list(min=X, max=Y). If NULL, taken from the model metadata.
+#' @param targetMetadata defined targets as list(min=X, max=Y). If NULL or all NA, taken from the model metadata.
 #'
 #' @export
 optimize <- function(fit, regimen=fit$regimen, targetMetadata=NULL) {
@@ -220,7 +220,7 @@ optimize <- function(fit, regimen=fit$regimen, targetMetadata=NULL) {
   target <- list(
     TIME=getTroughs(fit$tdmore, regimen[regimen$FIX==FALSE, ])
   )
-  if(is.null(targetMetadata)) {
+  if(is.null(targetMetadata) || all(is.na(targetMetadata))) {
     targetMetadata <- tdmore::getMetadataByClass(fit$tdmore, "tdmore_target")
     if(is.null(targetMetadata)) stop("No target defined in model metadata")
   }

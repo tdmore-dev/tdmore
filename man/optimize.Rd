@@ -11,7 +11,7 @@ optimize(fit, regimen = fit$regimen, targetMetadata = NULL)
 
 \item{regimen}{the treatment regimen to optimize}
 
-\item{targetMetadata}{defined targets as list(min=X, max=Y). If NULL, taken from the model metadata.}
+\item{targetMetadata}{defined targets as list(min=X, max=Y). If NULL or all NA, taken from the model metadata.}
 }
 \description{
 This performs a step-wise optimization.
