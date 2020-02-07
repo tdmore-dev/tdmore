@@ -96,7 +96,10 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   parameters <- parameters[!i]
 
   # Set up the covariates
-  if (is.numeric(covariates)){
+  if(is.data.frame(covariates) && nrow(covariates)==0) {
+    #ignore; treat it as NULL
+    covariates <- NULL
+  } else if (is.numeric(covariates)){
     i <- is.na(covariates)
     if(any(i)) stop("Covariate ", names(covariates)[i], " has NA value, cannot predict")
     parameters <- c(parameters, covariates)
