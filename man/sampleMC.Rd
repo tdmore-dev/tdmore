@@ -4,7 +4,12 @@
 \alias{sampleMC}
 \title{Generate parameter samples using uncertainty around the fit.}
 \usage{
-sampleMC(tdmorefit, fix = tdmorefit$fix, mc.maxpts = 100)
+sampleMC(
+  tdmorefit,
+  fix = tdmorefit$fix,
+  mc.maxpts = 100,
+  .progress = interactive()
+)
 }
 \arguments{
 \item{tdmorefit}{a tdmorefit object}
@@ -12,6 +17,10 @@ sampleMC(tdmorefit, fix = tdmorefit$fix, mc.maxpts = 100)
 \item{fix}{named numeric vector with the fixed parameters}
 
 \item{mc.maxpts}{number of Monte-Carlo samples}
+
+\item{.progress}{Allows to specify a plyr-like progress object
+A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
+This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.}
 }
 \value{
 the Monte-Carlo matrix, first column is always the 'sample' column

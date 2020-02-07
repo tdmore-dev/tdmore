@@ -569,14 +569,17 @@ fitted.tdmorefit <- function(object, ...) {
 #' @param tdmorefit a tdmorefit object
 #' @param fix named numeric vector with the fixed parameters
 #' @param mc.maxpts number of Monte-Carlo samples
+#' @param .progress Allows to specify a plyr-like progress object
+#' A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
+#' This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.
 #'
 #' @return the Monte-Carlo matrix, first column is always the 'sample' column
 #' @export
 #'
-sampleMC <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100) {
+sampleMC <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, .progress=interactive()) {
   if(is.null(tdmorefit$varcov)) {
     return(
-      sampleMC_metrop(tdmorefit, fix, mc.maxpts)
+      sampleMC_metrop(tdmorefit, fix, mc.maxpts, .progress=.progress)
     )
   }
 
@@ -628,12 +631,17 @@ sampleMC_norm <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100) {
 #' @param mc.batch number of points to run per batch
 #' @param tune tuning parameter to reduce `omega`
 #' @inheritParams MCMCpack::MCMCmetrop1R
+#' @param .progress Allows to specify a plyr-like progress object
+#' A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
+#' This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.
 #'
 #' @return the Monte-Carlo matrix, first column is always the 'sample' column
 #' @export
-sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batch=floor(mc.maxpts/2), verbose=0, tune=1) {
+sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batch=floor(mc.maxpts/2), verbose=0, tune=1, .progress=interactive()) {
   if(!is.null(mc.maxpts)) {
-    p <- dplyr::progress_estimated(n=mc.maxpts)
+    p <- to_dplyr_progress(.progress)
+    p$initialize(n=mc.maxpts, min_time=3)
+
     N <- 0
     sampled <- 0
     accepted <- 0
@@ -657,6 +665,7 @@ sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batc
       cbind(chain=i, result[[i]]$mc)
     })
     mc <- purrr::reduce(mc, rbind) #required instead of bind_rows, to maintain duplicate columns in case of IOV
+    mc <- mc[seq(length.out=mc.maxpts), ] #only keep the first X rows, not all rows!
     ### right now, we have 'chain' and 'sample' columns
     ## avoid any dplyr verbs, because they cannot handle repeated column names
     parNames <- colnames(mc)[c(-1, -2)]
@@ -737,12 +746,15 @@ sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batc
 #' @param level The confidence interval, or NA to return all mc.maxpts results
 #' @param mc.maxpts Maximum number of points to sample in Monte Carlo simulation
 #' @param ... ignored
+#' @param .progress Allows to specify a plyr-like progress object
+#' A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
+#' This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.
 #'
 #' @return A data.frame
 #' @export
 #'
 #' @importFrom stats coef vcov median quantile
-predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NULL, covariates=NULL, se.fit=FALSE, level=0.95, mc.maxpts=100, ...) {
+predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NULL, covariates=NULL, se.fit=FALSE, level=0.95, mc.maxpts=100, ..., .progress=interactive()) {
   tdmorefit <- object
   if(is.null(regimen)) regimen=tdmorefit$regimen
   if(is.null(newdata)) newdata <- model.frame(tdmorefit)
@@ -752,6 +764,9 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
 
   ipred <- stats::predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=par, covariates=covariates)
   if(se.fit) {
+    p <- to_dplyr_progress(.progress)
+    p$initialize(n=mc.maxpts, min_time=3)
+
     out <- sampleMC(tdmorefit, fix = parameters, mc.maxpts = mc.maxpts)
     mc <- out$mc
     ## remove 'chain' and 'chain.sample'
@@ -766,6 +781,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     cTdmore <- tdmorefit$tdmore
     cTdmore$cache <- model_prepare(cTdmore$model, times=ipred$TIME, regimen=regimen, parameters=par, covariates=covariates, iov=cTdmore$iov, extraArguments=cTdmore$extraArguments)
     fittedMC <- purrr::map_dfr(mc$sample, function(i) {
+      p$tick()$print()
       row <- mc[i,,drop=TRUE] #make vector
       res <- unlist(row[-1]) # Remove 'sample'
       names(res) <- names(coef(tdmorefit))

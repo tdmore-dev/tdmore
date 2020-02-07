@@ -13,7 +13,8 @@
   se.fit = FALSE,
   level = 0.95,
   mc.maxpts = 100,
-  ...
+  ...,
+  .progress = interactive()
 )
 }
 \arguments{
@@ -37,6 +38,10 @@ FALSE to show the model prediction (IPRED)}
 \item{mc.maxpts}{Maximum number of points to sample in Monte Carlo simulation}
 
 \item{...}{ignored}
+
+\item{.progress}{Allows to specify a plyr-like progress object
+A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
+This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.}
 }
 \value{
 A data.frame

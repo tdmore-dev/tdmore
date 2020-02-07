@@ -10,7 +10,8 @@ sampleMC_metrop(
   mc.maxpts = 100,
   mc.batch = floor(mc.maxpts/2),
   verbose = 0,
-  tune = 1
+  tune = 1,
+  .progress = interactive()
 )
 }
 \arguments{
@@ -29,6 +30,10 @@ the Metropolis acceptance rate are sent to the screen every \code{verbose}th
 iteration.}
 
 \item{tune}{tuning parameter to reduce `omega`}
+
+\item{.progress}{Allows to specify a plyr-like progress object
+A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
+This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.}
 }
 \value{
 the Monte-Carlo matrix, first column is always the 'sample' column
