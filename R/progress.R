@@ -39,7 +39,7 @@ to_dplyr_progress <- function(x) {
     return(p)
   }
   if(R6::is.R6(x) && inherits(x, "Progress"))
-    return(p)
+    return(x)
 
   stop("Cannot translate .progress argument to a dplyr-compatible progress function...")
 }
