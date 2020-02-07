@@ -4,7 +4,7 @@
 \alias{getTroughs}
 \title{Automatically guesses the target troughs for a given regimen}
 \usage{
-getTroughs(model, regimen, deltamin = 1/4, deltaplus = 1/4)
+getTroughs(model, regimen, deltamin = 1/4, deltaplus = 1/4, adj = 0.001)
 }
 \arguments{
 \item{model}{tdmore model with formulation metadata}
@@ -15,6 +15,9 @@ getTroughs(model, regimen, deltamin = 1/4, deltaplus = 1/4)
 
 \item{deltaplus}{how much can we move the trough forward to match an existing treatment time? in percentage of interdose-interval
 This method emits an error if any other treatment is found in the interval between `time` and `time+ii*(1-deltamin)`}
+
+\item{adj}{some prediction models will display the peak rather than the trough if we use the exact treatment time.
+To counteract this, `trough - adj` is returned.}
 }
 \value{
 a numeric vector with the corresponding troughs

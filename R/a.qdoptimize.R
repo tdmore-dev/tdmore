@@ -176,10 +176,12 @@ updateRegimen <- function(regimen, doseRows = NULL, newDose) {
 #' @param deltamin how much can we move the trough back to match an existing treatment time? in percentage of interdose-interval
 #' @param deltaplus how much can we move the trough forward to match an existing treatment time? in percentage of interdose-interval
 #' This method emits an error if any other treatment is found in the interval between `time` and `time+ii*(1-deltamin)`
+#' @param adj some prediction models will display the peak rather than the trough if we use the exact treatment time.
+#' To counteract this, `trough - adj` is returned.
 #'
 #' @return a numeric vector with the corresponding troughs
 #' @export
-getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4) {
+getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=0.001) {
   stopifnot( "FORM" %in% colnames(regimen) )
   regimen$II <- getDosingInterval(regimen$FORM, model)
 
@@ -203,7 +205,7 @@ getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4) {
       }
     }
   )
-  trough
+  trough - adj
 }
 
 #' Optimize the regimen, using the metadata defined by the model
