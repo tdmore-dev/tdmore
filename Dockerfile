@@ -74,7 +74,8 @@ RUN R -e 'devtools::install_version("vdiffr")'
 COPY DESCRIPTION .
 RUN R -e 'devtools::install_deps()'
 RUN R -e 'devtools::install_dev_deps()'
+RUN R -e 'devtools::install_deps(dependencies=TRUE)' #bustcache: 07-FEB-2020
 
-## Install full package
+## Install full package; dependencies were installed earlier
 COPY . .
-RUN R -e 'devtools::install(dependencies=TRUE)'
+RUN R -e 'devtools::install(dependencies=FALSE)'
