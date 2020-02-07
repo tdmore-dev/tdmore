@@ -38,6 +38,8 @@ to_dplyr_progress <- function(x) {
     p <- DplyrProgressFacade$new(n=1, proxy=x)
     return(p)
   }
+  if(R6::is.R6(x) && inherits(x, "Progress"))
+    return(p)
 
   stop("Cannot translate .progress argument to a dplyr-compatible progress function...")
 }
