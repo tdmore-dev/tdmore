@@ -4,7 +4,7 @@
 \alias{getTroughs}
 \title{Automatically guesses the target troughs for a given regimen}
 \usage{
-getTroughs(model, regimen, deltamin = 1/4, deltaplus = 1/4, adj = 0.001)
+getTroughs(model, regimen, deltamin = 1/4, deltaplus = 1/4, adj = 1e-15)
 }
 \arguments{
 \item{model}{tdmore model with formulation metadata}

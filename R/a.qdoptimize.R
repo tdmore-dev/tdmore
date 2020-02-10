@@ -181,7 +181,7 @@ updateRegimen <- function(regimen, doseRows = NULL, newDose) {
 #'
 #' @return a numeric vector with the corresponding troughs
 #' @export
-getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=0.001) {
+getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=1e-15) {
   stopifnot( "FORM" %in% colnames(regimen) )
   regimen$II <- getDosingInterval(regimen$FORM, model)
 
