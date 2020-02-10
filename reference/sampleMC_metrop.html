@@ -168,7 +168,8 @@
   <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>,
   <span class='kw'>mc.batch</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='no'>mc.maxpts</span>/<span class='fl'>2</span>),
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>tune</span> <span class='kw'>=</span> <span class='fl'>1</span>
+  <span class='kw'>tune</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>.progress</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -201,6 +202,12 @@ iteration.</p></td>
     <tr>
       <th>tune</th>
       <td><p>tuning parameter to reduce `omega`</p></td>
+    </tr>
+    <tr>
+      <th>.progress</th>
+      <td><p>Allows to specify a plyr-like progress object
+A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
+This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.</p></td>
     </tr>
     </table>
 

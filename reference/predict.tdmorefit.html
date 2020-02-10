@@ -172,7 +172,8 @@
   <span class='kw'>se.fit</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>,
   <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='no'>...</span>
+  <span class='no'>...</span>,
+  <span class='kw'>.progress</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -216,6 +217,12 @@ FALSE to show the model prediction (IPRED)</p></td>
     <tr>
       <th>...</th>
       <td><p>ignored</p></td>
+    </tr>
+    <tr>
+      <th>.progress</th>
+      <td><p>Allows to specify a plyr-like progress object
+A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
+This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.</p></td>
     </tr>
     </table>
 

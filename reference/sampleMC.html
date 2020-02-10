@@ -164,7 +164,12 @@ If the variance-covariance matrix is NULL, we use Metropolis-Hastings sampling."
 If the variance-covariance matrix is NULL, we use Metropolis-Hastings sampling.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sampleMC</span>(<span class='no'>tdmorefit</span>, <span class='kw'>fix</span> <span class='kw'>=</span> <span class='no'>tdmorefit</span>$<span class='no'>fix</span>, <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
+    <pre class="usage"><span class='fu'>sampleMC</span>(
+  <span class='no'>tdmorefit</span>,
+  <span class='kw'>fix</span> <span class='kw'>=</span> <span class='no'>tdmorefit</span>$<span class='no'>fix</span>,
+  <span class='kw'>mc.maxpts</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='kw'>.progress</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -180,6 +185,12 @@ If the variance-covariance matrix is NULL, we use Metropolis-Hastings sampling.<
     <tr>
       <th>mc.maxpts</th>
       <td><p>number of Monte-Carlo samples</p></td>
+    </tr>
+    <tr>
+      <th>.progress</th>
+      <td><p>Allows to specify a plyr-like progress object
+A plyr progress object is a list with 3 function definitions: `init(N)`, `step()` and `term()`.
+This can also be specified as a boolean. TRUE uses the default dplyr progress_estimated.</p></td>
     </tr>
     </table>
 
