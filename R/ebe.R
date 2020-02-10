@@ -908,6 +908,7 @@ profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c
   omegas <- diag(tdmorefit$tdmore$omega)
   profiledParameters <- model$parameters
   if(!is.null(fix)) profiledParameters <- profiledParameters[ !(profiledParameters %in% names(fix)) ]
+  if(length(profiledParameters)==0) stop("No parameters to profile")
 
   limitsAsList <- !is.null(limits) && is.list(limits)
   if(limitsAsList) stopifnot(all(names(limits) %in% profiledParameters))

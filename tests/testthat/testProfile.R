@@ -7,10 +7,13 @@ library(dplyr)
 
 context("Test that the profile method works as intended")
 
-set.seed(0)
+profile <- function(...) {
+  set.seed(0)
+  stats::profile(...)
+}
 
-# Load the Meropenem model
-tdmore <- getModel("meropenem")
+# Load the fluticasone model with 5 IIV parameters
+tdmore <- getModel("fluticasone")
 
 # Predicting new data
 regimen <- data.frame(
@@ -21,42 +24,47 @@ regimen <- data.frame(
 
 # Estimating individual parameters
 pred <- tdmore %>% estimate(regimen = regimen)
-observed <- data.frame(TIME=c(9, 16), CONC=c(30, 6))
+observed <- data.frame(TIME=c(9, 16), CONC=c(55, 40))
 
 ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
 plot(ipred)
 
-# Compute different profiles
-# TODO: Use vdiffr to check values
-profile <- profile(ipred, maxpts = 20)
-plot(profile)
-plot(profile, raster = F)
-plot(profile, contour = F)
-plot(profile, parameters="ECL") #TODO: Gives the wrong figure
+# Compute profile on 3 parameters
+profile <- profile(ipred, maxpts = 10, fix=coef(ipred)[c("EV2", "EQ")])
+
+expect_error( plot(profile), regexp="Cannot produce plot in more than 2 dimensions")
+expect_warning({
+  z <- plot(profile, parameters=c("ECL", "EV1"))
+}, regexp="multiple .*scores for a given parameter combination")
+
+z <- z + facet_wrap(~EKa)
+#print(z) #Ka does not shift the LL-surface of ECL/EV1
+vdiffr::expect_doppelganger("profile_with_Ka_facet", z)
+
+z <- plot(profile, parameters="EKa")
+#print(z) #Ka clearly does not matter
+vdiffr::expect_doppelganger("profile_on_Ka", z)
 
 # You can specify NA to estimate the parameter at every step
-profile <- profile(ipred, maxpts = 20, fix=c(ECL=NA))
-plot(profile)
-# Or simply provide a FIX parameter so it is the same throughout
-profile <- profile(ipred, maxpts = 20, fix=coef(ipred)['ECL'])
-plot(profile)
+profile <- profile(ipred, maxpts=20, fix=c(EKa=0, coef(ipred)[c("EV2", "EQ")]))
+z1 <- plot(profile, parameters="ECL") #LL-profile with EV1 jumping around
+vdiffr::expect_doppelganger("ecl_different_ev1", z1)
 
-#TODO: specifying 3 parameters does not give an error message
-#Instead, the first 2 are drawn while silently ignoring the 3rd parameter
-plot(profile, parameters=c("ECL", "EV1") )
-expect_warning({
+profile <- profile(ipred, maxpts=20, fix=c(EV1=NA, EKa=0, coef(ipred)[c("EV2", "EQ")]))
+z2 <- plot(profile) #LL-profile with EV1 estimated
+vdiffr::expect_doppelganger("ecl_optimized_ev1", z2)
+
+#gridExtra::grid.arrange(z1 + coord_cartesian(xlim=c(-0.5, 0.5), ylim=c(0, 0.003)),
+#                        z2 + coord_cartesian(xlim=c(-0.5, 0.5), ylim=c(0, 0.003)))
+
+expect_error({
   plot(profile, parameters=list() )
 })
+
 # Error if requesting a parameter that does not exist
 expect_error(
   plot(profile, parameters="NO_EXIST")
 )
 
-profile <- profile(ipred, maxpts = 20, limits = list(ECL=c(-0.8,0.5), EV1=c(-0.8,0.9)))
-plot(profile)
-
-profile <- profile(ipred, maxpts = 20, limits = list(ECL=c(-0.5,0)))
-plot(profile)
-
-profile <- profile(ipred, maxpts = 20, limits = list(EV1=c(-1,1)), fix=c(ECL=-0.15))
-plot(profile)
+profile <- profile(ipred, maxpts = 20, limits = list(ECL=c(-0.3,0.3), EV1=c(-0.8,0)), fix=coef(ipred)[c("EKa", "EV2", "EQ")])
+vdiffr::expect_doppelganger("profile_limits", plot(profile, contour=F))
