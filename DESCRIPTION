@@ -19,7 +19,7 @@ Description: Easily define a Nonlinear Mixed-Effects Model,
     A shiny app can be created by using the `shinytdmore` package.
 Depends: R (>= 3.5.0)
 Imports: mnormt, dplyr, numDeriv, stats, RxODE (>= 0.9.0), nlmixr (>= 1.1.0-9), deSolve, ggplot2 (>= 3.0.0), magrittr,
-  gridExtra, zoo, rlang, purrr, Matrix, mvnfast, data.table, optimr, optextras, tibble, MCMCpack
+  gridExtra, zoo, rlang, purrr, Matrix, mvnfast, data.table, optimr, optextras, tibble, MCMCpack, R6
 License: file LICENSE
 Encoding: UTF-8
 Language: en-US
