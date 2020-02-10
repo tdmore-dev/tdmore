@@ -1,15 +1,5 @@
 ## ShinyProfile runs a shiny gadget for a given profile
 
-to_plyr <- function(x) {
-  ## x is a shiny::Progress object
-  N <- 1
-  list(
-    init=function(N) {N <<- N},
-    step=function() {x$inc(1/N, detail="Rendering...")},
-    term=function() {}
-  )
-}
-
 #' Open a Shiny Gadget to explore the log-likelihood profile
 #' of a specific fit
 #' @inheritParams shinyProfileApp
@@ -81,14 +71,16 @@ shinyProfileApp <- function(fitted, fix=NULL, ...) {
         c(prefs$zoom$ymin, prefs$zoom$ymax)
       )
       if(length(plotVars) == 1) limits=limits[1]
+      if(length(plotVars) == 3) stop("Cannot explore more than 2 variables at the same time")
       names(limits) <- plotVars
 
       progress <- shiny::Progress$new()
       on.exit(progress$close())
+      progress$set(message="Calculating")
       profile <- stats::profile(fitted=tdmorefit,
                                   fix=selected()[! names %in% plotVars],
                                   limits=limits,
-                                  .progress=to_plyr(progress),
+                                  .progress=progress,
                                   ...)
       profile
     })
