@@ -113,6 +113,9 @@ predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covar
   tdmore <- object
   checkCovariates(tdmore, covariates)
 
+  # only keep actual covariates, remove others not specified in model
+  if(!is.null(covariates)) covariates <- covariates[intersect(names(covariates), c("TIME", object$covariates))]
+
   # Process regimen
   if(is.null(regimen)) regimen <- data.frame(TIME=numeric(), AMT=numeric())
 
