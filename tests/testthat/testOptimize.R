@@ -55,7 +55,9 @@ describe("optimize", {
     myRegimen$FIX <- TRUE
     myRegimen$FIX[2] <- FALSE
     rec1 <- optimize(ipred, regimen=myRegimen)
-    rec2 <- findDose(ipred, regimen=myRegimen, doseRows=which(!myRegimen$FIX), target=tibble::tibble(TIME=myRegimen$TIME[2]+24, CONC=7.5))
+    target <- tibble::tibble(TIME=subtractSingleMantissa(myRegimen$TIME[2]+24), CONC=7.5)
+
+    rec2 <- findDose(ipred, regimen=myRegimen, doseRows=which(!myRegimen$FIX), target=target)
     expect_equal(rec1, rec2)
   })
   it("Optimizes the whole treatment", {
