@@ -772,7 +772,9 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     ## remove 'chain' and 'chain.sample'
     if(colnames(mc)[2] == "chain" && colnames(mc)[3] == "chain.sample") {
       ## remove these values
-      mc <- mc[ , c(-2, -3), drop=FALSE]
+      mc['chain'] <- NULL
+      mc['chain.sample'] <- NULL
+      #mc <- mc[ , c(-2, -3), drop=FALSE] ## This renames the columns!!
     }
 
     uniqueColnames <- make.unique(colnames(mc)) # needed for dplyr to have unique colnames
@@ -780,7 +782,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     # Prepare the tdmore cache
     cTdmore <- tdmorefit$tdmore
     cTdmore$cache <- model_prepare(cTdmore$model, times=ipred$TIME, regimen=regimen, parameters=par, covariates=covariates, iov=cTdmore$iov, extraArguments=cTdmore$extraArguments)
-    fittedMC <- purrr::map_dfr(mc$sample, function(i) {
+    fittedMC <- lapply(mc$sample, function(i) {
       p$tick()$print()
       row <- mc[i,,drop=TRUE] #make vector
       res <- unlist(row[-1]) # Remove 'sample'
@@ -791,7 +793,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
       resArray <- cbind(row, pred)
       resArray
     })
-
+    fittedMC <- purrr::reduce(fittedMC, rbind) #required instead of bind_rows, to maintain duplicate columns in case of IOV
     colnames(fittedMC)[seq_len(length(uniqueColnames))] <- colnames(mc)
 
     if(is.na(level)) { #user requested full dataframe without summary
