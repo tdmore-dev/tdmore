@@ -168,6 +168,22 @@ updateRegimen <- function(regimen, doseRows = NULL, newDose) {
   return(updatedRegimen)
 }
 
+subtractSingleMantissa <- function(x) {
+  exponent <- floor(log2(x))
+  mantissa <- x * 2^(-exponent)
+
+  x <- mantissa * 2^exponent
+
+  mantissa2 <- mantissa - 2^-52 #52 bits for mantissa
+  x2 <- mantissa2 * 2^exponent
+
+  # x2 is 1 single bit lower than x
+  # sprintf("%a", x)
+  # sprintf("%a", x2)
+  #
+
+  x2
+}
 
 #' Automatically guesses the target troughs for a given regimen
 #'
@@ -177,11 +193,13 @@ updateRegimen <- function(regimen, doseRows = NULL, newDose) {
 #' @param deltaplus how much can we move the trough forward to match an existing treatment time? in percentage of interdose-interval
 #' This method emits an error if any other treatment is found in the interval between `time` and `time+ii*(1-deltamin)`
 #' @param adj some prediction models will display the peak rather than the trough if we use the exact treatment time.
-#' To counteract this, `trough - adj` is returned.
+#' To counteract this, we subtract an infitisemal small number. Specify an actual number,
+#' or specify TRUE to subtract a single bit from the mantissa (the lowest theoretical amount to ensure the returned
+#' value is lower than the treatment TIME)
 #'
 #' @return a numeric vector with the corresponding troughs
 #' @export
-getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=1e-15) {
+getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=TRUE) {
   stopifnot( "FORM" %in% colnames(regimen) )
   regimen$II <- getDosingInterval(regimen$FORM, model)
 
@@ -205,6 +223,12 @@ getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=1e-15) {
       }
     }
   )
+  if(is.numeric(adj)) return( trough - adj )
+  if(isTRUE(adj)) {
+    # see https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html for background
+    # https://stackoverflow.com/questions/50217954/double-precision-64-bit-representation-of-numeric-value-in-r-sign-exponent
+    vapply(trough, subtractSingleMantissa, FUN.VALUE=numeric(1))
+  }
   trough - adj
 }
 
@@ -215,9 +239,10 @@ getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=1e-15) {
 #' @param fit tdmorefit object
 #' @param regimen the treatment regimen to optimize
 #' @param targetMetadata defined targets as list(min=X, max=Y). If NULL or all NA, taken from the model metadata.
+#' @inheritParams getTroughs
 #'
 #' @export
-optimize <- function(fit, regimen=fit$regimen, targetMetadata=NULL) {
+optimize <- function(fit, regimen=fit$regimen, targetMetadata=NULL, adj=TRUE) {
   if(! "FIX" %in% colnames(regimen) ) regimen$FIX <- FALSE
   target <- list(
     TIME=getTroughs(fit$tdmore, regimen[regimen$FIX==FALSE, ])

@@ -4,7 +4,7 @@
 \alias{optimize}
 \title{Optimize the regimen, using the metadata defined by the model}
 \usage{
-optimize(fit, regimen = fit$regimen, targetMetadata = NULL)
+optimize(fit, regimen = fit$regimen, targetMetadata = NULL, adj = TRUE)
 }
 \arguments{
 \item{fit}{tdmorefit object}
@@ -12,6 +12,11 @@ optimize(fit, regimen = fit$regimen, targetMetadata = NULL)
 \item{regimen}{the treatment regimen to optimize}
 
 \item{targetMetadata}{defined targets as list(min=X, max=Y). If NULL or all NA, taken from the model metadata.}
+
+\item{adj}{some prediction models will display the peak rather than the trough if we use the exact treatment time.
+To counteract this, we subtract an infitisemal small number. Specify an actual number,
+or specify TRUE to subtract a single bit from the mantissa (the lowest theoretical amount to ensure the returned
+value is lower than the treatment TIME)}
 }
 \description{
 This performs a step-wise optimization.
