@@ -227,7 +227,7 @@ getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=TRUE) {
   if(isTRUE(adj)) {
     # see https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html for background
     # https://stackoverflow.com/questions/50217954/double-precision-64-bit-representation-of-numeric-value-in-r-sign-exponent
-    vapply(trough, subtractSingleMantissa, FUN.VALUE=numeric(1))
+    return( vapply(trough, subtractSingleMantissa, FUN.VALUE=numeric(1)) )
   }
   trough - adj
 }
@@ -245,7 +245,7 @@ getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=TRUE) {
 optimize <- function(fit, regimen=fit$regimen, targetMetadata=NULL, adj=TRUE) {
   if(! "FIX" %in% colnames(regimen) ) regimen$FIX <- FALSE
   target <- list(
-    TIME=getTroughs(fit$tdmore, regimen[regimen$FIX==FALSE, ])
+    TIME=getTroughs(fit$tdmore, regimen[regimen$FIX==FALSE, ], adj=adj)
   )
   if(is.null(targetMetadata) || all(is.na(targetMetadata))) {
     targetMetadata <- tdmore::getMetadataByClass(fit$tdmore, "tdmore_target")
