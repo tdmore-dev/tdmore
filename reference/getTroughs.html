@@ -162,7 +162,7 @@
     <p>Automatically guesses the target troughs for a given regimen</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getTroughs</span>(<span class='no'>model</span>, <span class='no'>regimen</span>, <span class='kw'>deltamin</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fl'>4</span>, <span class='kw'>deltaplus</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fl'>4</span>, <span class='kw'>adj</span> <span class='kw'>=</span> <span class='fl'>1e-15</span>)</pre>
+    <pre class="usage"><span class='fu'>getTroughs</span>(<span class='no'>model</span>, <span class='no'>regimen</span>, <span class='kw'>deltamin</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fl'>4</span>, <span class='kw'>deltaplus</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fl'>4</span>, <span class='kw'>adj</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -187,7 +187,9 @@ This method emits an error if any other treatment is found in the interval betwe
     <tr>
       <th>adj</th>
       <td><p>some prediction models will display the peak rather than the trough if we use the exact treatment time.
-To counteract this, `trough - adj` is returned.</p></td>
+To counteract this, we subtract an infitisemal small number. Specify an actual number,
+or specify TRUE to subtract a single bit from the mantissa (the lowest theoretical amount to ensure the returned
+value is lower than the treatment TIME)</p></td>
     </tr>
     </table>
 
