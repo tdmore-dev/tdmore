@@ -637,7 +637,7 @@ sampleMC_norm <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100) {
 #'
 #' @return the Monte-Carlo matrix, first column is always the 'sample' column
 #' @export
-sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batch=floor(mc.maxpts/2), verbose=0, tune=1, .progress=interactive()) {
+sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batch=min(10, floor(mc.maxpts/2)), verbose=0, tune=1, .progress=interactive()) {
   if(!is.null(mc.maxpts)) {
     p <- to_dplyr_progress(.progress)
     p$initialize(n=mc.maxpts, min_time=3)
@@ -721,7 +721,8 @@ sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batc
   #rejectionRate <- coda::rejectionRate(out)
   #effRate <- coda::effectiveSize(out) / mc.batch
 
-  rejected <- out[-nrow(out),1, drop=TRUE] == out[-1,1,drop=TRUE] #just test on column 1; sufficient
+  rejected <- c(FALSE, #first row is always OK!
+                out[-nrow(out),1, drop=TRUE] == out[-1,1,drop=TRUE]) #just test on column 1; sufficient
 
   mc <- as.data.frame(out)
   colnames(mc) <- names(start)
