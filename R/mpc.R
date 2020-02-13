@@ -13,7 +13,9 @@
 addIterationColumn <- function(regimen, observed) {
   i <- findInterval(observed$TIME, regimen$TIME, left.open=T)
   OCC <- regimen$OCC[i]
-  observed$ITER <- as.numeric( factor(OCC) ) #count from 1 to N
+  ITER <- as.numeric( factor(OCC) ) #count from 1 to N
+  ITER <- c(rep(1, nrow(observed)-length(ITER)), ITER ) #pad left with 1; observations without regimen are part of the first occasion
+  observed$ITER <- ITER
   observed
 }
 
