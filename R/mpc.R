@@ -12,9 +12,10 @@
 #'
 addIterationColumn <- function(regimen, observed) {
   i <- findInterval(observed$TIME, regimen$TIME, left.open=T)
+  i[ i==0 ] <- 1 #move to the first iteration for points before the first occasion
   OCC <- regimen$OCC[i]
   ITER <- as.numeric( factor(OCC) ) #count from 1 to N
-  ITER <- c(rep(1, nrow(observed)-length(ITER)), ITER ) #pad left with 1; observations without regimen are part of the first occasion
+  ITER <- ITER
   observed$ITER <- ITER
   observed
 }

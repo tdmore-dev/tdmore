@@ -6,13 +6,23 @@ library(ggplot2)
 
 context("Test that MPC estimation works as intended")
 
-test_that("addIterationColumn works as expected", {
-  regimen <- data.frame(TIME=seq(0, 7*24, by=24), AMT=50, OCC=1:8)
-  observed <- data.frame(TIME=c(23, 45, 47, 6*24-1) )
-  expect_equal(
-    tdmore:::addIterationColumn(regimen, observed)$ITER,
-    c(1,2,2,3)
-  )
+describe("addIterationColumn", {
+  it("adds the right iteration number", {
+    regimen <- data.frame(TIME=seq(0, 7*24, by=24), AMT=50, OCC=1:8)
+    observed <- data.frame(TIME=c(23, 45, 47, 6*24-1) )
+    expect_equal(
+      tdmore:::addIterationColumn(regimen, observed)$ITER,
+      c(1,2,2,3)
+  )})
+
+  it("pad 1 to the left part of the observations", {
+    regimen <- data.frame(TIME=50+seq(0, 7*24, by=24), AMT=50, OCC=1:8)
+    observed <- data.frame(TIME=c(23, 45, 47, 6*24-1) )
+    expect_equal(
+      tdmore:::addIterationColumn(regimen, observed)$ITER,
+      c(1,1,1,2)
+    )
+  })
 })
 
 
