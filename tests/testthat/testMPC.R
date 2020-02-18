@@ -8,12 +8,11 @@ context("Test that MPC estimation works as intended")
 
 
 # Comparison with EBE -----------------------------------------------------
+theta <-  c(TVCL= 3.7,TVV1 =61)
 m1_rxOde <- nlmixrUI(function(){
   ini({
     TVKA <- 3.7
     TVQ <- 10
-    TVCL <- 3.7
-    TVV1 <- 61
     ECL ~ 0.0784 #ETA1, 28%
     EV1 ~ 0.0361 #ETA2, 19%
     EPS_PROP <- 0.23 # Proportional error, 23% SD
@@ -46,7 +45,7 @@ regimen <- tibble(
   AMT=5,
   OCC=floor(TIME/24)+1
 )
-pop <- estimate(m1, regimen=regimen, covariates=covariates)
+pop <- estimate(m1, regimen=regimen, covariates=c(theta,covariates))
 plot(pop, fit=F, se.fit=F) + coord_cartesian(xlim=c(0, 7*24))
 
 movingParameter <- tibble::tibble(
@@ -55,7 +54,7 @@ movingParameter <- tibble::tibble(
   TVCL=3.7*exp(seq(0.5, -0.8, length.out=6)), #clearance gradually decreases dramatically
   TVV1=61
 )
-set.seed(1242)
+set.seed(1235)
 observed <- predict(pop,
                     newdata=tibble(TIME=c(24, 48, 72, 96, 120)+8-0.5, CONC=NA), #predict troughs
                     covariates=movingParameter) %>%
@@ -64,12 +63,12 @@ observed <- predict(pop,
 plot(pop, fit=F, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) + geom_point(data=observed, aes(x=TIME, y=CONC))
 
 ipredEbe <- estimate(pop, observed=filter(observed, TIME < 120))
+plot(ipredEbe, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) +
+  geom_point(data=observed, shape=3, aes(x=TIME, y=CONC)) +
+  labs(title="EBE without IOV")
 
 describe("Classical EBE", {
   it("does not follow gradual time evolutions", {
-    plot(ipredEbe, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) +
-      geom_point(data=observed, shape=3, aes(x=TIME, y=CONC)) +
-      labs(title="EBE without IOV")
     cwres <- residuals(ipredEbe, weighted=TRUE)
     expect_lt(head(cwres$CONC, n=1), 0.1) #model prediction is above
     expect_gt(tail(cwres$CONC, n=1), -0.1) #model prediction is below
@@ -92,16 +91,16 @@ m1_iov <- m1_rxOde %>% tdmore(iov=c("EV1", "ECL"))
 ipredEbe <- estimate(m1_iov,
                      observed=filter(observed, TIME < 120),
                      regimen=filter(regimen, TIME<120), #performance optimization
-                     covariates=covariates)
+                     covariates=c(theta,covariates))
 ipredEbe$regimen <- regimen
+plot(ipredEbe, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) +
+  geom_point(data=observed, shape=3, aes(x=TIME, y=CONC)) +
+  labs(title="EBE with IOV")
 describe("EBE with IOV", {
   it("does follows gradual time evolutions from the past", {
-    plot(ipredEbe, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) +
-      geom_point(data=observed, shape=3, aes(x=TIME, y=CONC)) +
-      labs(title="EBE with IOV")
     cwres <- residuals(ipredEbe, weighted=TRUE)
-    #expect_lt(head(cwres$CONC, n=1), 0) #model prediction is above
-    #expect_gt(tail(cwres$CONC, n=1), 0) #model prediction is below
+    expect_lt(head(cwres$CONC, n=1), 0) #model prediction is above
+    expect_gt(tail(cwres$CONC, n=1), 0) #model prediction is below
   })
   it("mispredicts the next time point", {
     predicted <- predict(ipredEbe, newdata=tail(observed, n=1))
@@ -118,13 +117,14 @@ describe("EBE with IOV", {
 
 # Estimate with MPC
 m1_mpc <- m1_iov %>% mpc()
-covariates <- c(WT=70) # No need to give the MPC thetas for an MPC model
+covariates <- c(theta, WT=70)
 ipred <- estimate(m1_mpc, regimen=regimen, covariates=covariates, observed=filter(observed, TIME < 120))
+plot(ipred, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) +
+  geom_point(data=observed, shape=3, aes(x=TIME, y=CONC)) +
+  labs(title="MPC")
 describe("MPC", {
   it("does follows gradual time evolutions from the past", {
-    plot(ipred, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) +
-      geom_point(data=observed, shape=3, aes(x=TIME, y=CONC)) +
-      labs(title="MPC")
+
     cwres <- residuals(ipredEbe, weighted=TRUE) #TODO: this is not the right test
     expect_lt(head(cwres$CONC, n=1), 0) #model prediction is above
     expect_gt(tail(cwres$CONC, n=1), 0) #model prediction is below
@@ -157,7 +157,7 @@ regimen <- data.frame(
   AMT=2
 )
 
-pop <- estimate(m1, regimen=regimen, covariates=c(WT=70))
+pop <- estimate(m1, regimen=regimen, covariates=c(theta, WT=70))
 plot(pop, se.fit=F, fit=F) + coord_cartesian(xlim=c(0, 4))
 parameterPlot.tdmorefit(pop, newdata=seq(0, 4, by=0.1))
 
