@@ -133,6 +133,8 @@ PredictionLayer <- ggplot2::ggproto(
         range <- range( c(scales$x$dimension(), layout$coord$limits$x), na.rm=TRUE )
         if(any(!is.finite(range))) stop("Prediction layer does not know where to interpolate.\nPlease specify an x-coordinate range for this plot using e.g. coord_cartesian(), or add some actual data.")
         xseq <- seq(range[1], range[2], length.out=n)
+        events <- getEvents(self$params$tdmorefit, self$params$object, self$params$regimen, self$params$covariates)
+        xseq <- includeEvents(xseq, events)
       } else if (is.numeric(n)) {
         xseq <- n
       } else if (is.null(n)) {
@@ -165,6 +167,24 @@ PredictionLayer <- ggplot2::ggproto(
     data
   }
 )
+
+# Includes the regimen, observed and covariate times of the tdmorefit into
+# the xseq sequence, as well as an event just before and just after.
+includeEvents <- function(xseq, events) {
+  range <- range(xseq)
+  events <- c(events, modifyMantissa(events, 2^-52), modifyMantissa(events, -2^-52))
+  events <- events[ events > range[1] & events < range[2] ]
+  xseq <- unique( sort( c(xseq, events) ) )
+}
+
+getEvents <- function(...) {
+  result <- lapply(list(...), function(i) {
+    if(is.data.frame(i) & "TIME" %in% colnames(i)) return(i$TIME)
+    if(is.tdmorefit(i)) return(getEvents(i$regimen, i$observed, i$covariates))
+    NULL
+  })
+  unlist(result)
+}
 
 #' This function tries to construct an aes
 #' by guessing the required variables
