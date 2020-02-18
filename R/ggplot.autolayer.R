@@ -167,3 +167,28 @@ plot.tdmore <- autoplot.tdmore
 #' @export
 #' @importFrom graphics plot
 plot.tdmorefit_mixture <- autoplot.tdmorefit_mixture
+
+#' Generate a plot of the parameters
+#'
+#' @inheritParams predict.tdmorefit
+#' @param x tdmorefit object
+#' @param vars the variables to plot, as a character vector. If missing, this is taken from the observed_variables metadata
+#'
+#' @export
+parameterPlot.tdmorefit <- function(x, newdata, vars, ...) {
+  z <- ggplot(data=x, ...)
+  z <- z + ggplot2::scale_x_continuous() + ggplot2::scale_y_continuous()
+
+  observedVariables <- getMetadataByClass(x$tdmore, "tdmore_observed_variables")
+  if(missing(vars)) vars <- observedVariables$variables
+  if(is.null(vars) || length(vars) == 0) stop("No observed_variables metadata specified!")
+  df <- stats::predict(x, newdata=newdata) %>% tidyr::pivot_longer(cols=!!vars, values_to="IPRED")
+  dfBase <- stats::predict(as.population(x), newdata=newdata) %>% tidyr::pivot_longer(cols=!!vars, values_to="PRED")
+  df <- dplyr::bind_cols(df, dfBase)
+
+  for(i in observedVariables$variables) {
+    z <- z + geom_line(aes_(x=~TIME, y=~IPRED/PRED - 1, linetype=i), data=dplyr::filter(df, name == !!i) )
+  }
+
+  z + labs(x="Time" , y="Deviation from typical value ", linetype="")
+}

@@ -5,6 +5,7 @@
 #' @name tdmore
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
+#' @importFrom tibble tibble
 #' @docType package
 NULL
 
