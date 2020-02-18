@@ -163,7 +163,7 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for tdmore</span>
-<span class='fu'>mpc</span>(<span class='no'>x</span>, <span class='no'>theta</span>, <span class='no'>suffix</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>mpc</span>(<span class='no'>x</span>, <span class='no'>parameters</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -173,12 +173,8 @@
       <td><p>a model object (type not defined)</p></td>
     </tr>
     <tr>
-      <th>theta</th>
-      <td><p>named vector with the initial values</p></td>
-    </tr>
-    <tr>
-      <th>suffix</th>
-      <td><p>a suffix to add to the theta names</p></td>
+      <th>parameters</th>
+      <td><p>select which parameters should be mpc parameters. MPC parameters are cumulatively summed across occasions.</p></td>
     </tr>
     <tr>
       <th>...</th>

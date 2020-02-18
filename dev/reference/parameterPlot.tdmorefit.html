@@ -6,9 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add an iteration column 'ITER' to the observed dataframe.
-The iteration column determines in which MPC iteration each observation
-will be included. — addIterationColumn • tdmore</title>
+<title>Generate a plot of the parameters — parameterPlot.tdmorefit • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -44,10 +42,8 @@ will be included. — addIterationColumn • tdmore</title>
 
 
 
-<meta property="og:title" content="Add an iteration column 'ITER' to the observed dataframe.
-The iteration column determines in which MPC iteration each observation
-will be included. — addIterationColumn" />
-<meta property="og:description" content="This is calculated by matching the corresponding OCC from the regimen (time-wise)." />
+<meta property="og:title" content="Generate a plot of the parameters — parameterPlot.tdmorefit" />
+<meta property="og:description" content="Generate a plot of the parameters" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -157,42 +153,46 @@ will be included. — addIterationColumn" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add an iteration column 'ITER' to the observed dataframe.
-The iteration column determines in which MPC iteration each observation
-will be included.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/mpc.R'><code>R/mpc.R</code></a></small>
-    <div class="hidden name"><code>addIterationColumn.Rd</code></div>
+    <h1>Generate a plot of the parameters</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ggplot.autolayer.R'><code>R/ggplot.autolayer.R</code></a></small>
+    <div class="hidden name"><code>parameterPlot.tdmorefit.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This is calculated by matching the corresponding OCC from the regimen (time-wise).</p>
+    <p>Generate a plot of the parameters</p>
     </div>
 
-    <pre class="usage"><span class='fu'>addIterationColumn</span>(<span class='no'>regimen</span>, <span class='no'>observed</span>)</pre>
+    <pre class="usage"><span class='fu'>parameterPlot.tdmorefit</span>(<span class='no'>x</span>, <span class='no'>newdata</span>, <span class='no'>vars</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>regimen</th>
-      <td><p>regimen</p></td>
+      <th>x</th>
+      <td><p>tdmorefit object</p></td>
     </tr>
     <tr>
-      <th>observed</th>
-      <td><p>observed</p></td>
+      <th>newdata</th>
+      <td><p>A data.frame with new data and the columns to predict,
+or a numeric vector to specify times, and predict all model output
+or NULL to interpolate between 0 and the maximum known times</p></td>
+    </tr>
+    <tr>
+      <th>vars</th>
+      <td><p>the variables to plot, as a character vector. If missing, this is taken from the observed_variables metadata</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>ignored</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>modified observed dataframe, with an 'ITER' column</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
     </ul>
 
   </div>

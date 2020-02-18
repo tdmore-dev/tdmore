@@ -402,14 +402,6 @@ If arguments `fix` and `limits` are not set for a specific parameter, individual
       </tr><tr>
         
         <td>
-          <p><code><a href="addIterationColumn.html">addIterationColumn()</a></code> </p>
-        </td>
-        <td><p>Add an iteration column 'ITER' to the observed dataframe.
-The iteration column determines in which MPC iteration each observation
-will be included.</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="algebraic.html">algebraic()</a></code> </p>
         </td>
         <td><p>Use an external function to generate an algebraic model, capable of being used with tdmore()
@@ -725,12 +717,6 @@ If fixed values were used to obtain the tdmorefit, they are considered estimated
       </tr><tr>
         
         <td>
-          <p><code><a href="mergeCovariates.html">mergeCovariates()</a></code> </p>
-        </td>
-        <td><p>Merge covariates.</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="metadata.html">metadata()</a></code> </p>
         </td>
         <td><p>Metadata is a generic function to append metadata to a TDMore model.</p></td>
@@ -825,6 +811,12 @@ Do we want to persist this information in DB? Per model? Per patient? etc.</p></
       </tr><tr>
         
         <td>
+          <p><code><a href="parameterPlot.tdmorefit.html">parameterPlot.tdmorefit()</a></code> </p>
+        </td>
+        <td><p>Generate a plot of the parameters</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="pheno.html">pheno</a></code> </p>
         </td>
         <td><p>Phenobarbitol dataset, as included in the NONMEM distribution.</p></td>
@@ -913,7 +905,7 @@ fetches the arguments from the caller's environment.</p></td>
         <td>
           <p><code><a href="predict.tdmore_mpc.html">predict(<i>&lt;tdmore_mpc&gt;</i>)</a></code> </p>
         </td>
-        <td><p>MPC predict method.</p></td>
+        <td><p>MPC predict method. This simply generates a cumulative sum for all</p></td>
       </tr><tr>
         
         <td>
@@ -964,6 +956,12 @@ It then calls the `predict()` function and provides this data.frame instead of t
           <p><code><a href="print.tdmoreCurried.html">print(<i>&lt;tdmoreCurried&gt;</i>)</a></code> </p>
         </td>
         <td><p>Print a tdmoreCurried object.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="print.tdmore_mpc.html">print(<i>&lt;tdmore_mpc&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Print a tdmore_mpc object</p></td>
       </tr><tr>
         
         <td>
@@ -1220,14 +1218,6 @@ If the vector/list is named, names will be used as the column and row names of t
       </tr><tr>
         
         <td>
-          <p><code><a href="addIterationColumn.html">addIterationColumn()</a></code> </p>
-        </td>
-        <td><p>Add an iteration column 'ITER' to the observed dataframe.
-The iteration column determines in which MPC iteration each observation
-will be included.</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="algebraic.html">algebraic()</a></code> </p>
         </td>
         <td><p>Use an external function to generate an algebraic model, capable of being used with tdmore()
@@ -1543,12 +1533,6 @@ If fixed values were used to obtain the tdmorefit, they are considered estimated
       </tr><tr>
         
         <td>
-          <p><code><a href="mergeCovariates.html">mergeCovariates()</a></code> </p>
-        </td>
-        <td><p>Merge covariates.</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="metadata.html">metadata()</a></code> </p>
         </td>
         <td><p>Metadata is a generic function to append metadata to a TDMore model.</p></td>
@@ -1643,6 +1627,12 @@ Do we want to persist this information in DB? Per model? Per patient? etc.</p></
       </tr><tr>
         
         <td>
+          <p><code><a href="parameterPlot.tdmorefit.html">parameterPlot.tdmorefit()</a></code> </p>
+        </td>
+        <td><p>Generate a plot of the parameters</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="pheno.html">pheno</a></code> </p>
         </td>
         <td><p>Phenobarbitol dataset, as included in the NONMEM distribution.</p></td>
@@ -1731,7 +1721,7 @@ fetches the arguments from the caller's environment.</p></td>
         <td>
           <p><code><a href="predict.tdmore_mpc.html">predict(<i>&lt;tdmore_mpc&gt;</i>)</a></code> </p>
         </td>
-        <td><p>MPC predict method.</p></td>
+        <td><p>MPC predict method. This simply generates a cumulative sum for all</p></td>
       </tr><tr>
         
         <td>
@@ -1782,6 +1772,12 @@ It then calls the `predict()` function and provides this data.frame instead of t
           <p><code><a href="print.tdmoreCurried.html">print(<i>&lt;tdmoreCurried&gt;</i>)</a></code> </p>
         </td>
         <td><p>Print a tdmoreCurried object.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="print.tdmore_mpc.html">print(<i>&lt;tdmore_mpc&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Print a tdmore_mpc object</p></td>
       </tr><tr>
         
         <td>
