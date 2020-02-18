@@ -118,7 +118,13 @@ describe("We can generate uncertainty using MCMC", {
     tolerance=0.05
   ) # should have the same mean
 
+  set.seed(1234)
   out2 <- sampleMC_metrop(tdmorefit, mc.maxpts=N)$mc
+  if(interactive()) {
+    ggplot(out2 %>% tidyr::pivot_longer(cols=c(ECL, EV1)), aes(x=chain.sample, y=value, color=factor(chain), group=chain)) +
+      geom_line() +
+      facet_wrap(~name)
+  }
   it("has a mean around the mode", {
     expect_equivalent(
       mean(out2$ECL),

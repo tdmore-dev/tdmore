@@ -8,7 +8,7 @@ sampleMC_metrop(
   tdmorefit,
   fix = tdmorefit$fix,
   mc.maxpts = 100,
-  mc.batch = min(10, floor(mc.maxpts/2)),
+  mc.batch = max(10, floor(mc.maxpts/2)),
   verbose = 0,
   tune = 1,
   .progress = interactive()

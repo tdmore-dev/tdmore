@@ -636,7 +636,7 @@ sampleMC_norm <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100) {
 #'
 #' @return the Monte-Carlo matrix, first column is always the 'sample' column
 #' @export
-sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batch=min(10, floor(mc.maxpts/2)), verbose=0, tune=1, .progress=interactive()) {
+sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batch=max(10, floor(mc.maxpts/2)), verbose=0, tune=1, .progress=interactive()) {
   if(!is.null(mc.maxpts)) {
     p <- to_dplyr_progress(.progress)
     p$initialize(n=mc.maxpts, min_time=3)
