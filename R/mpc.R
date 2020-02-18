@@ -1,56 +1,16 @@
-#'
-#' Add an iteration column 'ITER' to the observed dataframe.
-#' The iteration column determines in which MPC iteration each observation
-#' will be included.
-#'
-#' This is calculated by matching the corresponding OCC from the regimen (time-wise).
-#'
-#' @param regimen regimen
-#' @param observed observed
-#'
-#' @return modified observed dataframe, with an 'ITER' column
-#'
-addIterationColumn <- function(regimen, observed) {
-  i <- findInterval(observed$TIME, regimen$TIME, left.open=T)
-  i[ i==0 ] <- 1 #move to the first iteration for points before the first occasion
-  OCC <- regimen$OCC[i]
-  ITER <- as.numeric( factor(OCC) ) #count from 1 to N
-  ITER <- ITER
-  observed$ITER <- ITER
-  observed
-}
-
-#'
-#' MPC predict method.
+#' MPC predict method. This simply generates a cumulative sum for all
 #'
 #' @inheritParams predict.tdmore
 #' @return a data.frame with all observed values at the given time points
 #' @export
 #'
 predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
-  if (!is.data.frame(covariates)) {
-    covariates <- as.data.frame(as.list(c(TIME=0, covariates)))
+  for(par in object$iov) {
+    i <- which(names(parameters) == par)
+    parameters[i] <- cumsum(parameters[i])
   }
 
-  if(is.unsorted(regimen$TIME)) stop()
-  if(! "OCC" %in% colnames(regimen)) regimen$OCC <- seq_len(nrow(regimen)) #add an OCC column if missing
-
-  # Retrieve initial thetas
-  theta <- object$mpc_theta
-  thetaNames <- names(theta)
-
-  # Make distinction between covariates
-  allCovariates <- object$covariates
-  trueCovariates <- allCovariates[!(allCovariates %in% thetaNames)]
-  if(!all(trueCovariates %in% colnames(covariates))) stop("Missing covariates")
-
-  # Add missing initial thetas if not there
-  missingThetas <- thetaNames[!(thetaNames %in% colnames(covariates))]
-  for (missingTheta in missingThetas) {
-    covariates[, missingTheta] <- theta[[missingTheta]]
-  }
-
-  return(predict.tdmore(object=object, newdata=newdata, regimen=regimen, parameters=parameters, covariates=covariates, se=se, level=level, ...))
+  NextMethod()
 }
 
 #'
@@ -60,118 +20,65 @@ predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, c
 #' @return a tdmorefit
 #' @export
 #'
+#' @importFrom dplyr filter
+#'
 estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), ...) {
-  if (!is.data.frame(covariates)) {
-    covariates <- as.data.frame(as.list(c(TIME=0, covariates)))
-  }
-
   if(!"OCC" %in% colnames(regimen)) {
     warning("OCC column missing, adding...")
     regimen$OCC <- seq_len(nrow(regimen))
   }
+  stopifnot(is.null(fix)) #MPC assumes FIX is empty
+  if(nrow(regimen)==0) return(NextMethod()) #nothing to be done!
+  if(is.null(observed) || nrow(observed)==0) return(NextMethod())
 
-  # Retrieve initial thetas
-  theta <- object$mpc_theta
-  thetaNames <- names(theta)
+  # advance the fit per occasion
+  occasions <- tibble(
+    OCC=unique(regimen$OCC)
+    )
+  occasions$from <- regimen$TIME[ match(occasions$OCC, regimen$OCC) ] #shows first match
+  occasions$from[1] <- 0
+  occasions$to <- c(occasions$from[-1], Inf)
 
-  # Make distinction between covariates
-  allCovariates <- object$covariates
-  trueCovariates <- allCovariates[!(allCovariates %in% thetaNames)]
-  if(any(thetaNames %in% colnames(covariates))) stop("You shouldn't give thetas in covariates")
-  if(!all(trueCovariates %in% colnames(covariates))) stop("Some covariates are missing")
-
-  # Initialisation
-  ebeCovariates <- as.data.frame(as.list(theta)) # Thetas (MPC parameters) specified to tdmore via the covariates dataframe
-  ebeCovariates$TIME <- 0
   fix <- c()
+  estim <- function(to) {
+    thisRegimen <- filter(regimen, .data$TIME < to) #strictly less !
+    #only observations in the current occasion (and before, since those parameters cannot move anymore anyway)
+    thisObserved <- filter(observed, .data$TIME <= to) #we count ON the occasion as well
+    fit <- estimate.default(
+      object, observed=thisObserved, regimen=thisRegimen, covariates=covariates, par=par, fix=fix, method=method, se.fit=se.fit,
+      lower=lower, upper=upper, multistart=multistart, control=control, ...
+    )
+    fix <<- coef(fit)
+    fit
+  }
+  fits <- lapply(occasions$to, estim)
 
-  # Special case: no observed data
-  if (is.null(observed) || nrow(observed) == 0) {
-    # Note that se.fit=T => varcov can then be used to plot BSV in population
-    ipred <- estimate.default(object, regimen=regimen, covariates=mergeCovariates(ebeCovariates, covariates), se.fit=TRUE, control=control, ...)
-    return(ipred)
+  fit <- fits[[ length(fits) ]] #last fit
+  fit$res <- coef(fit)
+  fit$fix <- c()
+  varcovsMissing <- vapply(fits, function(x) is.null(x$varcov), FUN.VALUE=TRUE)
+  if(any(varcovsMissing)) {
+    fit$varcov <- NULL
+  } else {
+    varcovs <- lapply(fits, function(x) {
+      i <- seq_len(nrow(x$varcov))
+      if(length(x$fix) > 0) i <- utils::tail(i, n=-1*length(x$fix)) #only the actual varcov, not the FIX part
+      x$varcov[i, i]
+    })
+    fit$varcov <- Matrix::.bdiag(varcovs) %>% as.matrix()
   }
 
-  # Normal case: observed data present
-  observedMpc <- addIterationColumn(regimen, observed)
-  maxIter <- max(observedMpc$ITER)
-  maxOcc <- getMaxOccasion(regimen) #maxIter is sometimes lower than maxOcc, e.g. if there are more treatments planned after the last observation
-
-  N <- length(object$iov)
-
-  varcov <- expandOmega(object, maxOcc) #use omega by default
-
-  for (iterIndex in seq_len(maxIter + 1)) {
-    if (iterIndex > 1) {
-      startOccasion <- regimen$TIME[ match(iterIndex, regimen$OCC) ]
-      if (is.na(startOccasion)) {
-        break
-      }
-      previousEbe <- stats::predict(ipred, newdata=startOccasion)[, paste0(thetaNames, object$mpc_suffix)]
-      names(previousEbe) <- paste0(thetaNames)
-      previousEbe$TIME <- startOccasion
-      ebeCovariates <- dplyr::bind_rows(ebeCovariates, previousEbe)
-      fix <- coef(ipred)
-    }
-    if (iterIndex <= maxIter) {
-      currentObsTime <- observedMpc %>% dplyr::filter(.data$ITER==iterIndex) %>% dplyr::pull(.data$TIME) %>% dplyr::last()
-      ipred <- estimate.default(object,
-          #limit regimen; less to simulate and last occasion = current iteration!
-          regimen=regimen %>% dplyr::filter(.data$TIME < currentObsTime),
-          observed=observedMpc %>% dplyr::filter(.data$ITER==iterIndex) %>% dplyr::select(-dplyr::one_of("ITER")),
-          covariates=mergeCovariates(ebeCovariates, covariates),
-          fix=fix, se.fit=se.fit, control=control, ...)
-      i <- (iterIndex-1)*N + seq_len(N) #copy last SE
-      if(is.null(varcov) || is.null(ipred$varcov)) {
-        varcov <- NULL # too bad, varcov cannot be used
-      } else {
-        varcov[i, i] <- ipred$varcov[i, i]
-      }
-    } else {
-      # Last extra iteration copies final covariates dataframe (with all MPC parameters) to ipred
-      ipred$covariates <- mergeCovariates(ebeCovariates, covariates)
-    }
-  }
-
-  # the remaining occasions should have estimated coefficients of '0'
-  #parNames <- getParameterNames(object, regimen)
-  #res <- rep(0, length(parNames)) #set up vector of '0'
-  #names(res) <- parNames #and put in the names
-  #res[ seq_along(ipred$res) ] <- ipred$res #put in the parameter estimates so far, rest will stay 0
-  #ipred$res <- res
-  ipred$res <- processParameters(parameters=ipred$res, tdmore=object, regimen=regimen)
-
-  # Put the original data back in the `observed` and `regimen` slot
-  ipred$observed <- observed
-  ipred$regimen <- regimen
-  ipred$varcov <- varcov
-  ipred$fix <- c()
-
-
-  return(ipred)
-}
-
-#' Merge covariates.
-#'
-#' @param ebeCovariates EBE covariates
-#' @param covariates 'true' time-varying covariates
-#' @return an updated covariates dataframe
-#'
-mergeCovariates <- function(ebeCovariates, covariates) {
-  dplyr::full_join(ebeCovariates, covariates, by="TIME") %>%
-    arrange(.data$TIME) %>%
-    tidyr::fill(dplyr::everything(), .direction="downup")
+  return(fit)
 }
 
 #' MPC is a generic function to make a tdmore model compatible with MPC.
 #'
 #' @param x a model object (type not defined)
-#' @param theta named vector with the initial values
-#' @param suffix a suffix to add to the theta names
+#' @param parameters select which parameters should be mpc parameters. MPC parameters are cumulatively summed across occasions.
 #' @param ... extra arguments
 #' @return an object of class tdmore_mpc
 #' @export
-mpc <- function(x, theta, suffix, ...) {
+mpc <- function(x, parameters, ...) {
   UseMethod("mpc")
 }
 
@@ -181,9 +88,7 @@ mpc <- function(x, theta, suffix, ...) {
 #' @inheritParams mpc
 #' @return an object of class tdmore_mpc
 #' @export
-mpc.tdmore <- function(x, theta, suffix, ...) {
-  x$mpc_theta <- theta
-  x$mpc_suffix <- suffix
+mpc.tdmore <- function(x, parameters, ...) {
   class(x) <- append("tdmore_mpc", "tdmore")
   if( !setequal(x$parameters, x$iov) ) stop("For MPC, all parameters should be IOV")
   return(x)
@@ -197,4 +102,14 @@ mpc.tdmore <- function(x, theta, suffix, ...) {
 #' @export
 is.mpc <- function(x) {
   inherits(x, "tdmore_mpc")
+}
+
+#' Print a tdmore_mpc object
+#'
+#' @param x object
+#' @param ... ignored
+#' @export
+print.tdmore_mpc <- function(x, ...) {
+  cat("Mpc model\n")
+  NextMethod()
 }

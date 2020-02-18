@@ -56,7 +56,7 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
     names(par) <- parNames
   }
   pop_ll <- pop_ll(par, omega, fix, tdmore, observed, regimen, covariates, isChol=isChol)
-  if(nrow(observed) == 0) {
+  if(is.null(observed) || nrow(observed) == 0) {
     pred_ll <- 0
   } else {
     pred_ll <- pred_ll(par, omega, fix, tdmore, observed, regimen, covariates)
@@ -199,7 +199,6 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
 
     # if using an MPC object, remove the theta names from the stored covariates first
     covariates <- covariates %||% object$covariates
-    if(is.mpc(object$tdmore) && !is.null(covariates)) covariates <- covariates[, setdiff(colnames(covariates), names(object$tdmore$mpc_theta)) ]
 
     return(
       estimate(object$tdmore,

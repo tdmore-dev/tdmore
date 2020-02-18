@@ -2,7 +2,7 @@
 % Please edit documentation in R/mpc.R
 \name{predict.tdmore_mpc}
 \alias{predict.tdmore_mpc}
-\title{MPC predict method.}
+\title{MPC predict method. This simply generates a cumulative sum for all}
 \usage{
 \method{predict}{tdmore_mpc}(
   object,
@@ -42,5 +42,5 @@ The first row of the data.frame should be time 0.}
 a data.frame with all observed values at the given time points
 }
 \description{
-MPC predict method.
+MPC predict method. This simply generates a cumulative sum for all
 }

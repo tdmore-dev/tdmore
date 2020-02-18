@@ -46,6 +46,8 @@ modelCode <- function(){
   ini({
     TVV2 <- 7.01;
     TVQ <- 4.97;
+    TVCL <- 9.87;
+    TVV1 <- 24.4;
     ECL ~ 0.194 # This value corresponds to OMEGA_CL (44% SD)
     EV1 ~ 0.287 # This value corresponds to OMEGA_V1 (54% SD)
     EPS_PROP <- 0.371 # Proportional error (37% SD)
@@ -58,9 +60,6 @@ modelCode <- function(){
     K12 <- Q/V1
     K21 <- Q/V2
     
-    TVCL_next <- CL
-    TVV1_next <- V1
-
     d/dt(center) = - CL/V1 * center - K12*center + K21 * periph
     d/dt(periph) = K12*center - K21 * periph
 
@@ -72,12 +71,14 @@ modelCode <- function(){
 library(tdmore)
 #classical EBE model
 m1 <- nlmixrUI(modelCode) %>%
-  tdmore()
+  tdmore() %>%
+  metadata(observed_variables(c("CL", "V1")))
 
 #MPC model
 m2 <- nlmixrUI(modelCode) %>% 
   tdmore(iov=c("ECL", "EV1")) %>%  #all parameters need to be IOV
-  mpc(theta=c(TVCL=9.87, TVV1=24.4), suffix="_next")
+  mpc() %>%
+  metadata(observed_variables(c("CL", "V1")))
 ```
 
 This model can now be used as any other TDMore model.
@@ -94,12 +95,14 @@ regimen <- data.frame(
 tdmorefit <- estimate(m1, regimen=regimen %>% dplyr::select(-OCC),
                       covariates=c(TVCL=9.87, TVV1=24.4),
                       observed=data.frame(TIME=c(7, 15, 23), CONC=c(10, 20, 30)))
-z1 <- plot(tdmorefit, population=F) + ggplot2::scale_y_log10() + ggplot2::ggtitle("EBE")
+z1a <- plot(tdmorefit, population=F) + ggplot2::scale_y_log10() + ggplot2::ggtitle("EBE")
+z1b <- parameterPlot.tdmorefit(tdmorefit, newdata=seq(5, 30))
 
 tdmorefit <- estimate(m2, regimen=regimen, observed=data.frame(TIME=c(7, 15, 23), CONC=c(10, 20, 30)))
-z2 <- plot(tdmorefit, population=F) + ggplot2::scale_y_log10() + ggplot2::ggtitle("MPC")
+z2a <- plot(tdmorefit, population=F) + ggplot2::scale_y_log10() + ggplot2::ggtitle("MPC")
+z2b <- parameterPlot.tdmorefit(tdmorefit, newdata=seq(5, 30))
 
-gridExtra::grid.arrange(z1, z2, nrow=1)
+gridExtra::grid.arrange(z1a, z2a, z1b, z2b, nrow=2)
 ```
 
 ### Code appendix

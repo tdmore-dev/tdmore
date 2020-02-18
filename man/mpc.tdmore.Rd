@@ -4,14 +4,12 @@
 \alias{mpc.tdmore}
 \title{Build a 'tdmore_mpc' object based on a 'tdmore' object.}
 \usage{
-\method{mpc}{tdmore}(x, theta, suffix, ...)
+\method{mpc}{tdmore}(x, parameters, ...)
 }
 \arguments{
 \item{x}{a model object (type not defined)}
 
-\item{theta}{named vector with the initial values}
-
-\item{suffix}{a suffix to add to the theta names}
+\item{parameters}{select which parameters should be mpc parameters. MPC parameters are cumulatively summed across occasions.}
 
 \item{...}{extra arguments}
 }

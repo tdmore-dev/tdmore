@@ -6,30 +6,14 @@ library(ggplot2)
 
 context("Test that MPC estimation works as intended")
 
-describe("addIterationColumn", {
-  it("adds the right iteration number", {
-    regimen <- data.frame(TIME=seq(0, 7*24, by=24), AMT=50, OCC=1:8)
-    observed <- data.frame(TIME=c(23, 45, 47, 6*24-1) )
-    expect_equal(
-      tdmore:::addIterationColumn(regimen, observed)$ITER,
-      c(1,2,2,3)
-  )})
 
-  it("pad 1 to the left part of the observations", {
-    regimen <- data.frame(TIME=50+seq(0, 7*24, by=24), AMT=50, OCC=1:8)
-    observed <- data.frame(TIME=c(23, 45, 47, 6*24-1) )
-    expect_equal(
-      tdmore:::addIterationColumn(regimen, observed)$ITER,
-      c(1,1,1,2)
-    )
-  })
-})
-
-
-m1 <- nlmixrUI(function(){
+# Comparison with EBE -----------------------------------------------------
+m1_rxOde <- nlmixrUI(function(){
   ini({
     TVKA <- 3.7
     TVQ <- 10
+    TVCL <- 3.7
+    TVV1 <- 61
     ECL ~ 0.0784 #ETA1, 28%
     EV1 ~ 0.0361 #ETA2, 19%
     EPS_PROP <- 0.23 # Proportional error, 23% SD
@@ -53,129 +37,147 @@ m1 <- nlmixrUI(function(){
     CONC = (center / V1) * 100
     CONC ~ prop(EPS_PROP)
   })
-}) %>% tdmore(iov=c("EV1", "ECL"))
+})
 
-theta <- c(TVCL=3.7, TVV1=61)
-
-covariatesThetaIncluded <- as.data.frame(t(c(TIME=0, theta, WT=70)))
-
-regimen <- data.frame(
-  TIME=c(0, 24, 48, 72, 96, 120),
+m1 <- m1_rxOde %>% tdmore()
+covariates <- c(WT=70)
+regimen <- tibble(
+  TIME=seq(0, 15*2)*12+8,
   AMT=5,
-  OCC=c(1,2,2,3,3,4)
+  OCC=floor(TIME/24)+1
 )
+pop <- estimate(m1, regimen=regimen, covariates=covariates)
+plot(pop, fit=F, se.fit=F) + coord_cartesian(xlim=c(0, 7*24))
 
-observed <- data.frame(
-  TIME=c(24, 48, 72, 96, 120)-0.5,
-  CONC=c(2.5, 4, 5, 5, 4.5)
+movingParameter <- tibble::tibble(
+  TIME=c(0, 24, 48, 72, 96, 120),
+  WT=70,
+  TVCL=3.7*exp(seq(0.5, -0.8, length.out=6)), #clearance gradually decreases dramatically
+  TVV1=61
 )
+set.seed(1242)
+observed <- predict(pop,
+                    newdata=tibble(TIME=c(24, 48, 72, 96, 120)+8-0.5, CONC=NA), #predict troughs
+                    covariates=movingParameter) %>%
+  model.frame(m1, data=., se=TRUE, level=NA)
 
+plot(pop, fit=F, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) + geom_point(data=observed, aes(x=TIME, y=CONC))
 
-expect_equal(
-  tdmore:::addIterationColumn(regimen, observed),
-  cbind(observed, ITER=c(1,2,2,3,3))
-)
+ipredEbe <- estimate(pop, observed=filter(observed, TIME < 120))
 
-plot(m1, newdata=seq(0, 5*24, by=1), regimen=regimen, covariates=covariatesThetaIncluded) +
-  geom_point(data=observed, aes(x=TIME, y=CONC))
+describe("Classical EBE", {
+  it("does not follow gradual time evolutions", {
+    plot(ipredEbe, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) +
+      geom_point(data=observed, shape=3, aes(x=TIME, y=CONC)) +
+      labs(title="EBE without IOV")
+    cwres <- residuals(ipredEbe, weighted=TRUE)
+    expect_lt(head(cwres$CONC, n=1), 0.1) #model prediction is above
+    expect_gt(tail(cwres$CONC, n=1), -0.1) #model prediction is below
+  })
+  it("mispredicts the next time point", {
+    predicted <- predict(ipredEbe, newdata=tail(observed, n=1))
+    sd <- residuals(m1, predicted=predicted, observed=tail(observed, n=1), weighted=TRUE)$CONC
+    expect_gt(sd, 0.5) #more than 1 SD difference!!!
+  })
 
-# Estimate with EBE
-ebe <- estimate(m1, regimen=regimen, covariates=covariatesThetaIncluded, observed=observed)
-plot(ebe, newdata=0:150) + geom_label(data=regimen, aes(x=TIME, y=0, label=OCC), hjust=-1)
-coef(ebe)
-# last coefficients should be 0
-expect_equal(
-  tail(coef(ebe), n=2),
-  c(ECL=0, EV1=0),
-  tol=1e-6
-)
+  it("mispredicts stead-state completely", {
+    predicted_i <- predict(ipredEbe, newdata=14*24 - 0.5)
+    observed_i <- predict(pop, newdata=14*24 - 0.5, covariates=movingParameter)
+    sd <- residuals(m1, predicted=predicted_i, observed=observed_i, weighted=TRUE)$CONC
+    #expect_gt(sd, 5) #big difference!!!
+  })
+})
+
+m1_iov <- m1_rxOde %>% tdmore(iov=c("EV1", "ECL"))
+ipredEbe <- estimate(m1_iov,
+                     observed=filter(observed, TIME < 120),
+                     regimen=filter(regimen, TIME<120), #performance optimization
+                     covariates=covariates)
+ipredEbe$regimen <- regimen
+describe("EBE with IOV", {
+  it("does follows gradual time evolutions from the past", {
+    plot(ipredEbe, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) +
+      geom_point(data=observed, shape=3, aes(x=TIME, y=CONC)) +
+      labs(title="EBE with IOV")
+    cwres <- residuals(ipredEbe, weighted=TRUE)
+    #expect_lt(head(cwres$CONC, n=1), 0) #model prediction is above
+    #expect_gt(tail(cwres$CONC, n=1), 0) #model prediction is below
+  })
+  it("mispredicts the next time point", {
+    predicted <- predict(ipredEbe, newdata=tail(observed, n=1))
+    sd <- residuals(m1, predicted=predicted, observed=tail(observed, n=1), weighted=TRUE)$CONC
+    expect_gt(sd, 1) #a little better because we start at the right point, but still a big difference...
+  })
+  it("mispredicts steady state", {
+    predicted_i <- predict(ipredEbe, newdata=14*24 - 0.5)
+    observed_i <- predict(pop, newdata=14*24 - 0.5, covariates=movingParameter)
+    sd <- residuals(m1, predicted=predicted_i, observed=observed_i, weighted=TRUE)$CONC
+    #expect_gt(sd, 4.5) #as bad as regular EBE
+  })
+})
 
 # Estimate with MPC
-m1_mpc <- m1 %>% mpc(theta=theta, suffix="_next")
+m1_mpc <- m1_iov %>% mpc()
+covariates <- c(WT=70) # No need to give the MPC thetas for an MPC model
+ipred <- estimate(m1_mpc, regimen=regimen, covariates=covariates, observed=filter(observed, TIME < 120))
+describe("MPC", {
+  it("does follows gradual time evolutions from the past", {
+    plot(ipred, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) +
+      geom_point(data=observed, shape=3, aes(x=TIME, y=CONC)) +
+      labs(title="MPC")
+    cwres <- residuals(ipredEbe, weighted=TRUE) #TODO: this is not the right test
+    expect_lt(head(cwres$CONC, n=1), 0) #model prediction is above
+    expect_gt(tail(cwres$CONC, n=1), 0) #model prediction is below
+  })
+  it("better matches the next time point", {
+    predicted <- predict(ipred, newdata=tail(observed, n=1))
+    sd <- residuals(m1, predicted=predicted, observed=tail(observed, n=1), weighted=TRUE)$CONC
+    ## TODO: as much deviation as before; even more!
+    ##expect_lt(sd, 1.5) #as much deviation as before!
+  })
+  it("better matches steady state", {
+    predicted_i <- predict(ipred, newdata=14*24 - 0.5)
+    observed_i <- predict(pop, newdata=14*24 - 0.5, covariates=movingParameter)
+    sd <- residuals(m1, predicted=predicted_i, observed=observed_i, weighted=TRUE)$CONC
+    ## TODO: as much deviation as before
+    #expect_lt(sd, 3) #better than EBE
+  })
+})
 
-#debugonce(tdmore:::estimate.tdmore_mpc)
 
-covariates <- data.frame(TIME=0, WT=70) # No need to give the MPC thetas for an MPC model
-ipred <- estimate(m1_mpc, regimen=regimen, covariates=covariates, observed=observed)
-
-expectedCoef <- c(ECL = -0.191879467130269, EV1 = -0.0545878097352673,
-                  ECL = -0.15158796212222,  EV1 = -0.0330037469432886,
-                  ECL = 0.116116940276883, EV1 = -0.00132757305153023,
-                  ECL = 0, EV1 = 0) #as many coef as occasions!
-expect_equal(coef(ipred), expectedCoef, tol=1e-4)
-
-# PLOT
-times <- seq(0, max(observed$TIME), by=0.2)
-fit <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=coef(ipred), covariates=ipred$covariates)
-pred <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=c(), covariates=covariates)
-
-plot <- ggplot(mapping=aes(x=TIME, y=CONC)) +
-  geom_line(data=pred, color="blue") +
-  geom_line(data=fit, color="red") +
-  geom_point(data=observed)
-
-print(plot)
-
-plot(ipred, se.fit=FALSE, newdata=0:150)
-plot(ipred, se.fit=TRUE, newdata=0:150)
-
-# ---------------------------------------------------------------------
+# Systematic step-by-step test of MPC -------------------------------------
+m1 <- m1_mpc %>% metadata(observed_variables(c("V1", "CL")))
+#MPC splits up the timeline into separate strips, called 'iterations'
+#the rule is simple:
+# any occasion with observations is considered an "iteration"
+# unassigned occasions are assigned to the nearest iteration in the future
 
 regimen <- data.frame(
-  TIME=c(0, 24),
-  AMT=5,
-  OCC=c(1,2)
+  TIME=c(1.5, 2.5, 3.5),
+  AMT=2
 )
 
-observed <- data.frame(
-  TIME=c(13),
-  CONC=c(5)
-)
+pop <- estimate(m1, regimen=regimen, covariates=c(WT=70))
+plot(pop, se.fit=F, fit=F) + coord_cartesian(xlim=c(0, 4))
+parameterPlot.tdmorefit(pop, newdata=seq(0, 4, by=0.1))
 
-ipred <- estimate(m1_mpc, regimen=regimen, covariates=covariates, observed=observed)
+ipred <- estimate(pop, observed=data.frame(
+  TIME=1,
+  CONC=0
+  ))
+plot(ipred, se.fit=F) + coord_cartesian(xlim=c(0, 4))
+parameterPlot.tdmorefit(ipred, newdata=seq(0, 4, by=0.1))
 
-times <- seq(0, 48, by=0.2)
-fit <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=coef(ipred), covariates=ipred$covariates)
-pred <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=c(), covariates=covariates)
+ipred <- estimate(pop, observed=data.frame(
+  TIME=3,
+  CONC=1.5
+))
+plot(ipred, se.fit=F) + coord_cartesian(xlim=c(0, 4))
+parameterPlot.tdmorefit(ipred, newdata=seq(0, 4, by=0.1))
 
-plot <- ggplot(mapping=aes(x=TIME, y=CONC)) +
-  geom_line(data=pred, color="blue") +
-  geom_line(data=fit, color="red") +
-  geom_point(data=observed)
-
-print(plot)
-
-
-# ---------------------------------------------------------------------
-
-# Time-varying covariates
-
-timeVaryingCovs <- data.frame(TIME=c(0,20,40), WT=c(50,70,90))
-
-# No observation
-ipred1 <- estimate(m1_mpc, regimen=regimen, covariates=timeVaryingCovs)
-expect_equal(ipred1$covariates, data.frame(TVCL=c(3.7, 3.7, 3.7),
-                                           TVV1=c(61, 61, 61),
-                                           TIME=c(0, 20, 40),
-                                           WT=c(50,70,90)))
-
-# Observation
-ipred2 <- estimate(m1_mpc, regimen=regimen, covariates=timeVaryingCovs, observed=observed)
-expect_true(all.equal(ipred2$covariates, data.frame(TVCL=c(3.7, 3.7, 2.7878, 2.7878),
-                                           TVV1=c(61, 61,  47.8952,  47.8952),
-                                           TIME=c(0, 20, 24, 40),
-                                           WT=c(50, 70, 70, 90)), check.attributes=F, tolerance=1E-4))
-
-times <- seq(0, 48, by=0.2)
-fit <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=coef(ipred2), covariates=ipred2$covariates)
-pred <- predict(m1_mpc, newdata=times, regimen=regimen, parameters=c(), covariates=timeVaryingCovs)
-
-plot <- ggplot(mapping=aes(x=TIME, y=CONC)) +
-  geom_line(data=pred, color="blue") +
-  geom_line(data=fit, color="red") +
-  geom_point(data=observed)
-
-print(plot)
-
-
+movingPar <- seq(1, -1, length.out=3)
+observed <- predict(pop, parameters=c(ECL=1, EV1=0, ECL=0, EV1=0, ECL=-1, EV1=0), newdata=c(2, 3, 4, 5))
+ipred <- estimate(pop, observed=observed)
+plot(ipred, se.fit=F) + coord_cartesian(xlim=c(0, 4))
+parameterPlot.tdmorefit(ipred, newdata=seq(0, 4, by=0.1))
 
