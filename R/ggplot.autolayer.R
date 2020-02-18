@@ -187,7 +187,7 @@ parameterPlot.tdmorefit <- function(x, newdata, vars, ...) {
   df <- dplyr::bind_cols(df, dfBase)
 
   for(i in observedVariables$variables) {
-    z <- z + geom_line(aes_(x=~TIME, y=~IPRED/PRED - 1, linetype=i), data=dplyr::filter(df, name == !!i) )
+    z <- z + geom_line(aes_(x=~TIME, y=~IPRED/PRED - 1, linetype=i), data=dplyr::filter(df, .data$name == !!i) )
   }
 
   z + labs(x="Time" , y="Deviation from typical value ", linetype="")
