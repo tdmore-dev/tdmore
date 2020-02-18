@@ -168,14 +168,18 @@ updateRegimen <- function(regimen, doseRows = NULL, newDose) {
   return(updatedRegimen)
 }
 
-subtractSingleMantissa <- function(x) {
+modifyMantissa <- function(x, a=-2^-52) {
+  sign <- sign(x)
+  x <- abs(x)
   exponent <- floor(log2(x))
   mantissa <- x * 2^(-exponent)
 
   x <- mantissa * 2^exponent
 
-  mantissa2 <- mantissa - 2^-52 #52 bits for mantissa
+  mantissa2 <- mantissa + a #52 bits for mantissa
   x2 <- mantissa2 * 2^exponent
+  x2[sign == 0] <- a
+  x2[sign == -1] <- -1 * x2
 
   # x2 is 1 single bit lower than x
   # sprintf("%a", x)
@@ -227,7 +231,7 @@ getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=TRUE) {
   if(isTRUE(adj)) {
     # see https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html for background
     # https://stackoverflow.com/questions/50217954/double-precision-64-bit-representation-of-numeric-value-in-r-sign-exponent
-    return( vapply(trough, subtractSingleMantissa, FUN.VALUE=numeric(1)) )
+    return( vapply(trough, modifyMantissa, FUN.VALUE=numeric(1), a=-2^-52) )
   }
   trough - adj
 }
