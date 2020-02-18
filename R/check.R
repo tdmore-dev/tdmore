@@ -134,7 +134,15 @@ checkRegimen <- function(regimen, iov) {
 
   if ("OCC" %in% colnames(regimen)) {
     if (is.null(iov)) {
-      warning("No IOV exists in model")
+      shouldWarn <- getOption("tdmore.warnIov", NA)
+      if(is.na(shouldWarn)) {
+        warning("No IOV exists in model\nThis warning will appear once during the runtime of this application. To enable consistently, set options(tdmore.warnIov)")
+        options(tdmore.warnIov=FALSE)
+      } else if (shouldWarn) {
+        warning("No IOV exists in model")
+      } else {
+        # do not warn
+      }
       #XXX: this is not an issue...
     } else {
       uniqueOcc <- unique(regimen$OCC)

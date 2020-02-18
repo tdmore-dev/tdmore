@@ -85,7 +85,15 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   #  if(!RxODE::rxDllLoaded(model)) stop("Tried to reload RxDLL, but failed. Cannot continue!")
   #}
   if(!is.null(iov) && length(iov) > 0 && !"OCC" %in% colnames(regimen)) {
-    warning("Adding OCC column to regimen")
+    shouldWarn <- getOption("tdmore.warnIov", NA)
+    if(is.na(shouldWarn)) {
+      warning("Adding OCC column to regimen\nThis warning will appear once during the runtime of this application. To enable consistently, set options(tdmore.warnIov)")
+      options(tdmore.warnIov=FALSE)
+    } else if (shouldWarn) {
+      warning("Adding OCC column to regimen")
+    } else {
+      # do not warn
+    }
     regimen$OCC <- seq_len(nrow(regimen))
   }
 
