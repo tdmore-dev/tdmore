@@ -134,7 +134,8 @@ checkRegimen <- function(regimen, iov) {
 
   if ("OCC" %in% colnames(regimen)) {
     if (is.null(iov)) {
-      stop("No IOV exists in model")
+      warning("No IOV exists in model")
+      #XXX: this is not an issue...
     } else {
       uniqueOcc <- unique(regimen$OCC)
       if(!all(uniqueOcc == 1:max(regimen$OCC)))
