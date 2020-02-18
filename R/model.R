@@ -340,6 +340,14 @@ processParameters <- function(parameters, tdmore, regimen, defaultValues=NULL) {
   stopifnot(is.numeric(parameters))
   if(!all(names(parameters) %in% names(par)))
               stop(paste("Unknown parameters", paste(names(parameters[!(names(parameters) %in% names(par))]), collapse = ",")))
+  if( length(parameters) > length(par) ) {
+    #par vector is too short (e.g. because we passed the coefficients of a previous fit with more occasions?
+    for(i in unique(names(parameters))) {
+      index <- which(names(parameters) == i)
+      indexToRemove <- index[ -seq_len( sum(names(par) ==i) ) ]
+      if(length(indexToRemove) > 0) parameters <- parameters[ -indexToRemove ]
+    }
+  }
   par[names(parameters)] <- parameters # set par from argument
   iov <- tdmore$iov
   if(!is.null(iov)) {
