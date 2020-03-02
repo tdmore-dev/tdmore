@@ -763,7 +763,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
   if(is.null(covariates)) covariates <- tdmorefit$covariates
 
   ipred <- stats::predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=par, covariates=covariates)
-  if(se.fit) {
+  if(mc.maxpts > 0 && se.fit) {
     p <- to_dplyr_progress(.progress)
     p$initialize(n=mc.maxpts, min_time=3)
 
@@ -801,6 +801,10 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     }
     oNames <- getPredictOutputNames(newdata, colnames(fittedMC), names(coef(tdmorefit)))
     summary <- summariseFittedMC(fittedMC, ipred, level, oNames)
+    return(summary)
+  } else if (mc.maxpts==0 && se.fit) {
+    oNames <- getPredictOutputNames(newdata, colnames(ipred), names(coef(tdmorefit)))
+    summary <- summariseFittedMC(ipred, ipred, level, oNames)
     return(summary)
   } else {
     ipred
