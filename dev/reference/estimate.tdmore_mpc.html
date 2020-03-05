@@ -176,7 +176,8 @@
   <span class='kw'>upper</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>multistart</span> <span class='kw'>=</span> <span class='no'>F</span>,
   <span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  <span class='no'>...</span>
+  <span class='no'>...</span>,
+  <span class='kw'>.progress</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -250,6 +251,10 @@ This will `trace` the estimation progress
 and `report` every 10 iterations. It limits the precision of the `L-BFGS-B` method to 3 significant digits (`factr` is multiplied with the machine precision, `1e12 * 1e-16 = 1e-4`).</p>
 <p>Incidentally, 3 significant digits <a href='http://holford.fmhs.auckland.ac.nz/research/sigdig'>is the default value for NONMEM</a>.
 Without the above option, `estimate` will calculate with a relative precision of `1e-8`.</p></td>
+    </tr>
+    <tr>
+      <th>.progress</th>
+      <td><p>progress bar definition</p></td>
     </tr>
     </table>
 
