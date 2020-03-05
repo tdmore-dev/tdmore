@@ -17,12 +17,15 @@ predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, c
 #' MPC estimate method.
 #'
 #' @inheritParams estimate
+#' @param .progress progress bar definition
 #' @return a tdmorefit
 #' @export
 #'
 #' @importFrom dplyr filter
 #'
-estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), ...) {
+estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), ..., .progress=NULL) {
+  p <- to_dplyr_progress(.progress)
+
   if(!"OCC" %in% colnames(regimen)) {
     warning("OCC column missing, adding...")
     regimen$OCC <- seq_len(nrow(regimen))
@@ -40,10 +43,11 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
   occasions$to <- c(occasions$from[-1], Inf)
 
   fix <- c()
-  estim <- function(to) {
+  estim <- function(from, to) {
     thisRegimen <- filter(regimen, .data$TIME < to) #strictly less !
     #only observations in the current occasion (and before, since those parameters cannot move anymore anyway)
-    thisObserved <- filter(observed, .data$TIME <= to) #we count ON the occasion as well
+    #thisObserved <- filter(observed, .data$TIME <= to) #we count ON the occasion as well
+    thisObserved <- filter(observed, .data$TIME > from & .data$TIME <= to) #we count ON the occasion as well
     fit <- estimate.default(
       object, observed=thisObserved, regimen=thisRegimen, covariates=covariates, par=par, fix=fix, method=method, se.fit=se.fit,
       lower=lower, upper=upper, multistart=multistart, control=control, ...
@@ -51,7 +55,11 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
     fix <<- coef(fit)
     fit
   }
-  fits <- lapply(occasions$to, estim)
+  p$initialize(n=length(occasions$to))
+  fits <- lapply(1:nrow(occasions), function(i){
+    p$tick()$print()
+    estim(occasions$from[i], occasions$to[i])
+  })
 
   fit <- fits[[ length(fits) ]] #last fit
   fit$res <- coef(fit)

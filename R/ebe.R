@@ -155,7 +155,8 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
                              lower=NA, upper=NA,
                              multistart=F,
                              control=list(trace=getOption("tdmore.trace", default=interactive()*1), REPORT=10, factr=1e13),
-                             ...) {
+                             ...,
+                             .progress=NULL) {
   if(missing(observed)) observed <- NULL
   if(missing(regimen)) regimen <- NULL
   if(missing(covariates)) covariates <- NULL
@@ -281,6 +282,10 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
     control=control,
     ...
   )
+  if(nrow(observed)==0) {
+    control <- c(list(maxit=0), control) #no iterations, just use default!
+  }
+
   if(!isFALSE(multistart)) {
     if(isTRUE(multistart)) {
       multistart <- sqrt( diag(omega)[ names(arg$par) ] )

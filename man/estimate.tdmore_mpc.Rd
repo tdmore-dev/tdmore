@@ -17,7 +17,8 @@
   upper = NULL,
   multistart = F,
   control = list(),
-  ...
+  ...,
+  .progress = NULL
 )
 }
 \arguments{
@@ -66,6 +67,8 @@ and `report` every 10 iterations. It limits the precision of the `L-BFGS-B` meth
 
 Incidentally, 3 significant digits \href{http://holford.fmhs.auckland.ac.nz/research/sigdig}{is the default value for NONMEM}.
 Without the above option, `estimate` will calculate with a relative precision of `1e-8`.}
+
+\item{.progress}{progress bar definition}
 }
 \value{
 a tdmorefit

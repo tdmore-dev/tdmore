@@ -118,7 +118,8 @@ describe("EBE with IOV", {
 # Estimate with MPC
 m1_mpc <- m1_iov %>% mpc()
 covariates <- c(theta, WT=70)
-ipred <- estimate(m1_mpc, regimen=regimen, covariates=covariates, observed=filter(observed, TIME < 120))
+ipred <- estimate(m1_mpc, regimen=regimen, covariates=covariates, observed=filter(observed, TIME < 120),
+                  .progress="text")
 plot(ipred, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) +
   geom_point(data=observed, shape=3, aes(x=TIME, y=CONC)) +
   labs(title="MPC")
