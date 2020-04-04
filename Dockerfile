@@ -3,12 +3,6 @@ FROM rocker/tidyverse:latest
 
 WORKDIR /app/tdmore
 
-## BUGFIX: Manually update devtools
-## Due to issue r-lib/devtools#2129
-## Can be removed once devtools CRAN version is updated
-RUN R -e 'if( packageVersion("devtools") != "2.2.1") stop("Devtools package version: ", packageVersion("devtools"), "; bugfix in Dockerfile not needed anymore, please remove!")'
-RUN R -e 'remotes::install_github("r-lib/devtools")'
-
 ## Install package dependencies
 # for RxODE
 RUN apt-get update && apt-get install -y libudunits2-dev
