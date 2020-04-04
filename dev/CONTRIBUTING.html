@@ -17,23 +17,27 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="bootstrap-toc.css">
+<script src="bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="pkgdown.css" rel="stylesheet">
@@ -43,8 +47,7 @@
 
 
 <meta property="og:title" content="Contributing to the tdmore R package" />
-<meta property="og:image" content="/logo.png" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="/logo.svg" />
 
 <meta name="robots" content="noindex" />
 <meta name="robots" content="noindex">
@@ -62,7 +65,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-title-body">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -134,7 +137,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/tdmore-dev/tdmore">
+  <a href="https://github.com/tdmore-dev/tdmore/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -182,14 +185,14 @@
 <ul>
 <li>First, you build a <code>ggplot</code> object. This method is an S3 generic based on the <code>data</code> argument, and usually <code>ggplot.default</code> gets called. This method uses <code>fortify()</code> to ensure the provided data argument is a data.frame. See <code>fortify.lm</code> for an example where an <code>lm</code> object is converted by using the observed data, appended with the model predictions.</li>
 <li>Then, you create <code>geom_</code> and <code>stat_</code> objects. Both of these functions actually result in the same thing: a <code>layer()</code> object being created, with the layer referring to specific Stat and Geom classes.</li>
-<li>Then, you add the new <code>layer</code> to your <code>ggplot</code> object. This function can also be abused to add other things, e.g. a new replacement data.frame. See the <code>ggplot_add</code> S3 method.</li>
+<li>Then, you add the new <code>layer</code> to your <code>ggplot</code> object. This function can also be abused to add other things, e.g.Â a new replacement data.frame. See the <code>ggplot_add</code> S3 method.</li>
 </ul>
 <p>The above structure can then be converted into graphics, either through <code><a href="https://rdrr.io/r/base/print.html">print(x)</a></code>, or through specialized libraries like <code>ggplotly()</code>. It is important that no special Geom, Stat or Layer objects are used; they may not be translateable by <code>ggplotly</code>.</p>
 <p>When building the plot, the following happens:</p>
 <ul>
 <li>The data for each layer is calculated. In case the data argument is empty, the data from the ggplot is used. In case the data is a function, the data from the ggplot is filtered through that function. In case it is something else, then that data is used.</li>
 <li>The <code>Layer.setup_data</code> method is called. This gets access to the original plot data and all layer parameters.</li>
-<li>Afterwards, the plot is fully built. Scales and facets are calculated, the data.frame is severely changed, compute_aesthetics is used to fill the data.frame with <code>x</code>, <code>y</code>, … and finally the geom’s are drawn.</li>
+<li>Afterwards, the plot is fully built. Scales and facets are calculated, the data.frame is severely changed, compute_aesthetics is used to fill the data.frame with <code>x</code>, <code>y</code>, â¦ and finally the geomâs are drawn.</li>
 </ul>
 <p>There are a lot of different ways to integrate ggplot2 support in this flow. Requirements:</p>
 <ol>
@@ -209,14 +212,14 @@
 </ul>
 <p>One working method is to simply use a fake <code>stat_predict()</code> function that converts the given arguments to a call into geom_line or geom_ribbon. It can only convert into a single geom though! Furthermore, we would have to pass all tdmore arguments to every <code>stat_predict()</code> if there are multiple ones.</p>
 <p>We can improve on this by creating a special <code>ggplot</code> object: <code>ggtdmore</code>. We do this by creating a special <code>ggplot.tdmorefit</code> function that creates a ggplot with the observations data.frame (similar to <code>fortify.lm</code>), but also adds the tdmorefit and newdata/regimen/covariates parameters to the ggtdmore object.</p>
-<p>We can further improve. Instead of allowing stat_predict to only create a single geom, we can create a special <code>StatPredict</code> object. We can then implement <code>ggplot_add.StatPredict</code> (called during <code>ggplot() + stat_predict()</code>, where we can add multiple specific geom’s to the ggplot.</p>
+<p>We can further improve. Instead of allowing stat_predict to only create a single geom, we can create a special <code>StatPredict</code> object. We can then implement <code>ggplot_add.StatPredict</code> (called during <code>ggplot() + stat_predict()</code>, where we can add multiple specific geomâs to the ggplot.</p>
 <p>Finally, we can go a little further and add a special <code>layer(layer_class=PredictLayer)</code> instead. This will allow us to override <code>setup_data</code>, so the simulation is only performed when we render the plot. This should also allow replacement of the <code>data</code> argument. This works perfectly fine (see ggplot_integration_layer.R), but is only available in the Github version. The ggplot2 release schedule was as follows:</p>
 </div>
 <div id="version-date" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-date" class="anchor"></a>| Version | Date |</h2>
 <p>| 2.0.0 | December 2015 | | 2.1.0 | February 2016 | | 2.2.0 | November 2016 | | 2.2.1 | December 2016 | | 3.0.0 | June 2018 | | 3.1.0 | October 2018 | | 3.2.0 | ???? |</p>
-<p>We fear that users may wait a very long time for the release of ggplot2 3.2.0. We can depend on ggplot2 3.0.0 instead, which only offers the <code>ggplot_add</code> extension method. This means we can only perform the prediction while the plot is being defined (using <code>ggplot_add</code>), and <em>not</em> when the plot is being built. Things like <code>template %+% newfit</code> are not possible…</p>
+<p>We fear that users may wait a very long time for the release of ggplot2 3.2.0. We can depend on ggplot2 3.0.0 instead, which only offers the <code>ggplot_add</code> extension method. This means we can only perform the prediction while the plot is being defined (using <code>ggplot_add</code>), and <em>not</em> when the plot is being built. Things like <code>template %+% newfit</code> are not possibleâ¦</p>
 <p>In conclusion:</p>
 <ul>
 <li>
@@ -230,6 +233,12 @@
 
   </div>
 
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
+  </div>
+
 </div>
 
 
@@ -240,7 +249,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
 </div>
 
       </footer>
