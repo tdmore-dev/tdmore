@@ -49,7 +49,7 @@ observed <- data.frame(TIME=c(7, 23, 75), CONC=c(1.25, 0.55, 0.8))
 # Simple estimate test with IOV
 fit <- estimate(object = tdmore, regimen = regimen, observed = observed)
 expectedValues <- c(ECL=-0.0102, EKA=0.0463, ECL_IOV=0.1026, EKA_IOV=0.0137, ECL_IOV=-0.1060, EKA_IOV=-0.0021)
-expect_equal(round(coef(fit), digits=4), expectedValues)
+expect_equal(coef(fit), expectedValues, tol=1e-4)
 
 data2 <- predict(fit, newdata=0:96, regimen=regimen)
 ggplot(data2, aes(x = TIME, y=CONC)) + geom_line()
@@ -90,7 +90,7 @@ regimen <- data.frame(
 # No worries, future occasions are estimated at '0'
 dose <- findDose(fit, regimen, target=data.frame(TIME=120, CONC=1), se.fit=T)
 plot(fit, newdata=0:120, regimen = dose$regimen)
-expect_equal(dose$dose[["dose.median"]], 242, tolerance=0.01)
+expect_equal(dose$dose[["dose.median"]], 240, tolerance=0.01)
 
 # Test timevarying covariates
 regimen <- data.frame(
