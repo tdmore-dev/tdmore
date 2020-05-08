@@ -163,7 +163,9 @@ test_that("expandOmega works as intended", {
 })
 
 test_that("estimate with too large initial values gets adapted correctly", {
-  fit <- estimate(object = tdmore, regimen = regimen, observed = observed, covariates=c(WT=70))
-  fit2 <- estimate(fit, par=coef(fit), regimen=rbind(regimen, data.frame(TIME=60, AMT=200, OCC=3)) ) #should work fine
-  fit3 <- estimate(fit, par=coef(fit), regimen=regimen[1, ,drop=FALSE] ) #should work fine
+  expect_error({
+    fit <- estimate(object = tdmore, regimen = regimen, observed = observed, covariates=c(WT=70))
+    fit2 <- estimate(fit, par=coef(fit), regimen=rbind(regimen, data.frame(TIME=60, AMT=200, OCC=3)) ) #should work fine
+    fit3 <- estimate(fit, par=coef(fit), regimen=regimen[1, ,drop=FALSE] ) #should work fine
+  }, NA) #expect NO error
 })

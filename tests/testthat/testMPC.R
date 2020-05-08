@@ -55,10 +55,14 @@ movingParameter <- tibble::tibble(
   TVV1=61
 )
 set.seed(1235)
-observed <- predict(pop,
+
+options(tdmore.warnIov=NULL)
+expect_warning({
+  observed <- predict(pop,
                     newdata=tibble(TIME=c(24, 48, 72, 96, 120)+8-0.5, CONC=NA), #predict troughs
                     covariates=movingParameter) %>%
   model.frame(m1, data=., se=TRUE, level=NA)
+}, regexp="No IOV exists")
 
 plot(pop, fit=F, se.fit=F) + coord_cartesian(xlim=c(0, 7*24)) + geom_point(data=observed, aes(x=TIME, y=CONC))
 
@@ -158,7 +162,9 @@ regimen <- data.frame(
   AMT=2
 )
 
-pop <- estimate(m1, regimen=regimen, covariates=c(theta, WT=70))
+testthat::expect_warning({
+  pop <- estimate(m1, regimen=regimen, covariates=c(theta, WT=70))
+}, regexp="OCC column missing")
 plot(pop, se.fit=F, fit=F) + coord_cartesian(xlim=c(0, 4))
 parameterPlot.tdmorefit(pop, newdata=seq(0, 4, by=0.1))
 
