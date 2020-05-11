@@ -185,14 +185,14 @@
 <ul>
 <li>First, you build a <code>ggplot</code> object. This method is an S3 generic based on the <code>data</code> argument, and usually <code>ggplot.default</code> gets called. This method uses <code>fortify()</code> to ensure the provided data argument is a data.frame. See <code>fortify.lm</code> for an example where an <code>lm</code> object is converted by using the observed data, appended with the model predictions.</li>
 <li>Then, you create <code>geom_</code> and <code>stat_</code> objects. Both of these functions actually result in the same thing: a <code>layer()</code> object being created, with the layer referring to specific Stat and Geom classes.</li>
-<li>Then, you add the new <code>layer</code> to your <code>ggplot</code> object. This function can also be abused to add other things, e.g.Â a new replacement data.frame. See the <code>ggplot_add</code> S3 method.</li>
+<li>Then, you add the new <code>layer</code> to your <code>ggplot</code> object. This function can also be abused to add other things, e.g. a new replacement data.frame. See the <code>ggplot_add</code> S3 method.</li>
 </ul>
 <p>The above structure can then be converted into graphics, either through <code><a href="https://rdrr.io/r/base/print.html">print(x)</a></code>, or through specialized libraries like <code>ggplotly()</code>. It is important that no special Geom, Stat or Layer objects are used; they may not be translateable by <code>ggplotly</code>.</p>
 <p>When building the plot, the following happens:</p>
 <ul>
 <li>The data for each layer is calculated. In case the data argument is empty, the data from the ggplot is used. In case the data is a function, the data from the ggplot is filtered through that function. In case it is something else, then that data is used.</li>
 <li>The <code>Layer.setup_data</code> method is called. This gets access to the original plot data and all layer parameters.</li>
-<li>Afterwards, the plot is fully built. Scales and facets are calculated, the data.frame is severely changed, compute_aesthetics is used to fill the data.frame with <code>x</code>, <code>y</code>, â¦ and finally the geomâs are drawn.</li>
+<li>Afterwards, the plot is fully built. Scales and facets are calculated, the data.frame is severely changed, compute_aesthetics is used to fill the data.frame with <code>x</code>, <code>y</code>, … and finally the geom’s are drawn.</li>
 </ul>
 <p>There are a lot of different ways to integrate ggplot2 support in this flow. Requirements:</p>
 <ol>
@@ -212,14 +212,14 @@
 </ul>
 <p>One working method is to simply use a fake <code>stat_predict()</code> function that converts the given arguments to a call into geom_line or geom_ribbon. It can only convert into a single geom though! Furthermore, we would have to pass all tdmore arguments to every <code>stat_predict()</code> if there are multiple ones.</p>
 <p>We can improve on this by creating a special <code>ggplot</code> object: <code>ggtdmore</code>. We do this by creating a special <code>ggplot.tdmorefit</code> function that creates a ggplot with the observations data.frame (similar to <code>fortify.lm</code>), but also adds the tdmorefit and newdata/regimen/covariates parameters to the ggtdmore object.</p>
-<p>We can further improve. Instead of allowing stat_predict to only create a single geom, we can create a special <code>StatPredict</code> object. We can then implement <code>ggplot_add.StatPredict</code> (called during <code>ggplot() + stat_predict()</code>, where we can add multiple specific geomâs to the ggplot.</p>
+<p>We can further improve. Instead of allowing stat_predict to only create a single geom, we can create a special <code>StatPredict</code> object. We can then implement <code>ggplot_add.StatPredict</code> (called during <code>ggplot() + stat_predict()</code>, where we can add multiple specific geom’s to the ggplot.</p>
 <p>Finally, we can go a little further and add a special <code>layer(layer_class=PredictLayer)</code> instead. This will allow us to override <code>setup_data</code>, so the simulation is only performed when we render the plot. This should also allow replacement of the <code>data</code> argument. This works perfectly fine (see ggplot_integration_layer.R), but is only available in the Github version. The ggplot2 release schedule was as follows:</p>
 </div>
 <div id="version-date" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-date" class="anchor"></a>| Version | Date |</h2>
 <p>| 2.0.0 | December 2015 | | 2.1.0 | February 2016 | | 2.2.0 | November 2016 | | 2.2.1 | December 2016 | | 3.0.0 | June 2018 | | 3.1.0 | October 2018 | | 3.2.0 | ???? |</p>
-<p>We fear that users may wait a very long time for the release of ggplot2 3.2.0. We can depend on ggplot2 3.0.0 instead, which only offers the <code>ggplot_add</code> extension method. This means we can only perform the prediction while the plot is being defined (using <code>ggplot_add</code>), and <em>not</em> when the plot is being built. Things like <code>template %+% newfit</code> are not possibleâ¦</p>
+<p>We fear that users may wait a very long time for the release of ggplot2 3.2.0. We can depend on ggplot2 3.0.0 instead, which only offers the <code>ggplot_add</code> extension method. This means we can only perform the prediction while the plot is being defined (using <code>ggplot_add</code>), and <em>not</em> when the plot is being built. Things like <code>template %+% newfit</code> are not possible…</p>
 <p>In conclusion:</p>
 <ul>
 <li>
@@ -249,7 +249,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

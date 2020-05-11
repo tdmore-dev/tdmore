@@ -199,9 +199,9 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'># # Example for using deSolve with tdmore
 # rm(list=ls(all=TRUE))
-# func <- function(t, y, parms) {
-#   ETA1 <- as.numeric(parms['ETA1'])
-#   ETA2 <- as.numeric(parms['ETA2'])
+# func &lt;- function(t, y, parms) {
+#   ETA1 &lt;- as.numeric(parms['ETA1'])
+#   ETA2 &lt;- as.numeric(parms['ETA2'])
 #   CL = 23.6 * exp(ETA1*0.42)
 #   Vc = 1070 * exp(ETA2*1.11);
 #   ka=4.48;
@@ -212,27 +212,27 @@
 #   dcentr = ka*abs - CL/Vc*centr
 #   return(list(c(dabs,dcentr), c(CONC=CONC)))
 # }
-# model <- tdmore_deSolve(parameters=c("ETA1", "ETA2"),
+# model &lt;- tdmore_deSolve(parameters=c("ETA1", "ETA2"),
 #                         add=3.7,
 #                         func=func,
 #                         y=c(abs=0, centr=0),
 #                         ynames=FALSE)
-# regimen <- data.frame(
+# regimen &lt;- data.frame(
 #   TIME=c(0, 24),
 #   AMT=c(15, 15),
 #   II=c(0, 24),
 #   ADDL=c(0, 10)
 # )
-# pred <- predict(model, newdata=0:24, regimen=regimen)
+# pred &lt;- predict(model, newdata=0:24, regimen=regimen)
 # ggplot(pred, aes(x=TIME, y=CONC)) + geom_line()
 #
-# observed <- data.frame(TIME=c(2.4, 23), CONC=c(10, 5))
-# ipredfit <- model %>%
+# observed &lt;- data.frame(TIME=c(2.4, 23), CONC=c(10, 5))
+# ipredfit &lt;- model %&gt;%
 #   estimate(observed, regimen)
-# z <- plot(ipredfit)
+# z &lt;- plot(ipredfit)
 # print(z)
 #
-# D <- findDose(ipredfit, regimen=regimen, target=data.frame(TIME=48, CONC=13.5))
+# D &lt;- findDose(ipredfit, regimen=regimen, target=data.frame(TIME=48, CONC=13.5))
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -249,7 +249,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
