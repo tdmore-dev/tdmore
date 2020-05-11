@@ -48,13 +48,19 @@ test_that("estimation with observed values produced individual estimate", {
 observed <- data.frame(TIME=c(2,26), CONC=c(0.040, 0.0675))
 covariates <- data.frame(TIME=0, WT=70)
 ipred <- tdmore %>% estimate(observed = observed, regimen = regimen, covariates = covariates)
+ipred$res <- signif(ipred$res, 6)
+ipred$varcov <- signif(ipred$varcov, 4)
 
+## Different systems will have different digits after 1e-6...
+## expect_known_output(dput(ipred), "testPlot-ipred")
+
+set.seed(0)
 test_that("Find dose example and test", {
   p2 <- plot(ipred, newdata=data.frame(TIME=seq(0, 48, by=0.1), CONC=NA))
   expect_doppelganger("ipred2-tdmore-plot", p2)
 })
 
-
+set.seed(0)
 test_that("plot() with numeric vector as newdata", {
   p2 <- plot(ipred, newdata=seq(0, 48, by=0.1))
   expect_doppelganger("ipred2-tdmore-plot2", p2)

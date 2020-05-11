@@ -1,0 +1,52 @@
+structure(list(tdmore = structure(list(model = <environment>, 
+    omega = structure(c(0.0784, 0, 0, 0.0361), .Dim = c(2L, 2L
+    ), .Dimnames = list(c("ECL", "EV1"), c("ECL", "EV1"))), res_var = list(
+        structure(list(var = "CONC", type = "proportional", sigma = function (ipred) 
+        {
+            prop * ipred
+        }, res = function (ipred, obs) 
+        {
+            obs - ipred
+        }, wres = function (ipred, obs) 
+        {
+            res(ipred, obs)/sigma(ipred)
+        }, inv_res = function (ipred, res) 
+        {
+            ipred + res
+        }, inv_wres = function (ipred, wres) 
+        {
+            inv_res(ipred, wres * sigma(ipred))
+        }, ll = function (ipred, obs, log = TRUE) 
+        {
+            sd <- sigma(ipred)
+            i <- sd != 0
+            if (!any(i)) 
+                return(0)
+            dnorm(ipred[i], obs[i], sd = sd[i], log = log)
+        }, add = 0, prop = 0.23), class = "error_model")), parameters = c("ECL", 
+    "EV1"), covariates = "WT", iov = NULL, extraArguments = list(), 
+    metadata = list(WT = structure(list(name = "WT", label = "Weight", 
+        unit = "kg", min = 15, max = 300, choices = NULL), class = "tdmore_covariate"), 
+        CONC = structure(list(name = "CONC", label = "Concentration", 
+            unit = "mg/L", default_value = 1), class = "tdmore_output"), 
+        Drug = structure(list(name = "Drug", unit = "mg", dosing_interval = 8, 
+            default_value = 5, round_function = function (x) 
+            {
+                round(x * 2)/2
+            }), class = "tdmore_formulation"), TARGET = structure(list(
+            name = "TARGET", min = 12, max = 20), class = "tdmore_target"))), class = "tdmore"), 
+    observed = structure(list(TIME = c(2, 26), CONC = c(0.04, 
+    0.0675)), class = "data.frame", row.names = c(NA, -2L)), 
+    regimen = structure(list(TIME = c(0, 24), AMT = c(5, 5)), class = "data.frame", row.names = c(NA, 
+    -2L)), covariates = structure(list(TIME = 0, WT = 70), class = "data.frame", row.names = c(NA, 
+    -1L)), ofv = -14.0799581787173, logLik = 7.03997908935865, 
+    res = c(ECL = 0.0523825, EV1 = 0.137561), varcov = structure(c(0.07667, 
+    -0.008346, -0.008346, 0.02709), .Dim = c(2L, 2L), .Dimnames = list(
+        c("ECL", "EV1"), c("ECL", "EV1"))), fix = NULL, nlmresult = list(
+        par = c(ECL = 0.0523825012215714, EV1 = 0.137561443030607
+        ), value = -14.0799581787173, counts = c(`function` = 8L, 
+        gradient = 8L), convergence = 0L, message = "CONVERGENCE: REL_REDUCTION_OF_F <= FACTR*EPSMCH", 
+        hessian = structure(c(26.9893071763484, 8.31385897896949, 
+        8.31385897896949, 76.3832494462247), .Dim = c(2L, 2L))), 
+    call = estimate.default(object = ., observed = observed, 
+        regimen = regimen, covariates = covariates)), class = "tdmorefit")

@@ -27,10 +27,16 @@ pred <- tdmore %>% estimate(regimen = regimen)
 observed <- data.frame(TIME=c(9, 16), CONC=c(55, 40))
 
 ipred <- tdmore %>% estimate(observed = observed, regimen = regimen)
+ipred$res <- signif(ipred$res, 4)
+ipred$varcov <- signif(ipred$varcov, 2)
 plot(ipred)
 
 # Compute profile on 3 parameters
 profile <- profile(ipred, maxpts = 10, fix=coef(ipred)[c("EV2", "EQ")])
+profile$profile$logLik <- signif( profile$profile$logLik, 3 ) #round log likelihood
+
+# not reproducible on different machines...
+#expect_known_output(dput(profile), "profile-value")
 
 expect_error( plot(profile), regexp="Cannot produce plot in more than 2 dimensions")
 expect_warning({
@@ -39,7 +45,10 @@ expect_warning({
 
 z <- z + facet_wrap(~EKa)
 #print(z) #Ka does not shift the LL-surface of ECL/EV1
-expect_doppelganger("profile_with_Ka_facet", z)
+print(z)
+
+## This is the only thing we cannot make reproducible...
+#expect_doppelganger("profile_with_Ka_facet", z)
 
 z <- plot(profile, parameters="EKa")
 #print(z) #Ka clearly does not matter
