@@ -30,7 +30,7 @@ expectUpdate(timeout=30*1000, output="plot", EV1="")
 app$snapshot(filename="EV1-estimated-ECL-profiled")
 
 ## When I profile both ECL and EV1
-expectUpdate(timeout=30*1000, output="plot", var=c("ECL", "EV1")) #long wait!
+expectUpdate(timeout=60*1000, output="plot", var=c("ECL", "EV1")) #long wait!
 ## Then a 2d-profile for EV1 and ECL is shown
 app$snapshot(filename="EV1,ECL-profiled")
 
