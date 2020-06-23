@@ -85,7 +85,7 @@ result <- predict(population, newdata=seq(0, 20*24, by=4),
 
 ggplot(result, aes(x=TIME, y=CONC, color=regimen, fill=regimen)) +
   stat_summary(fun.data=median_hilow, geom="ribbon", alpha=0.3) +
-  stat_summary(fun.y=median, geom="line") +
+  stat_summary(fun=median, geom="line") +
   labs(title="Concentration over time")
 ```
 
@@ -107,8 +107,8 @@ db <- predict(population, newdata=seq(7.5, 20*24, by=3*24),  #every 3 days
   group_by(sample) %>% select(-center, -periph) %>% 
   nest(observed=c(TIME, CONC)) %>% ## ensure a single data.frame per subject
   mutate(observed.re = map(observed, ~model.frame(m1, data = .x, se=TRUE, level=NA)) ) %>% ## add residual error
-  rowwise() %>% mutate(fit = list( tdmorefit(m1, observed=observed.re, regimen=regimen, res = c(EKa=EKa, ECL=ECL, EV1=EV1, EV2=EV2, EQ=EQ)) )) %>% ## Create the 'truth' using the true parameters used to simulate
-  transmute(ID=sample, fit, object=list(fit$tdmore))
+  rowwise() %>% mutate(fit = list( tdmorefit(m1, observed=observed.re, regimen=regimen, res = c(EKa=EKa, ECL=ECL, EV1=EV1, EV2=EV2, EQ=EQ)) ), object=list(fit$tdmore)) %>% ## Create the 'truth' using the true parameters used to simulate
+  ungroup() %>% rename(ID=sample) %>% select(ID, fit, object)
 ``` 
 
 ### Naive treatment adaptation
@@ -131,7 +131,7 @@ optimize <- function(fit, regimen, truth) {
 
 simulationResultNaive <- db %>%
   mutate(control=list(list(maxit=0)), se.fit=F) %>% #we do not need a fit; so use 'maxit=0' to not lose time with calculating a fit
-  doseSimulation(db, optimize=optimize) %>%
+  doseSimulation(optimize=optimize) %>%
   mutate(method="Naive")
 
 simulationResultNaive %>% group_by(ID) %>% filter(row_number() == n()) %>%
