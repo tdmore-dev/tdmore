@@ -5,7 +5,9 @@
 \alias{pheno_nlmixr}
 \title{NlmixrUI object describing Phenobarbitol 1-compartment model with IV administration
 and allometric scaling on weight}
-\format{A fitted Nlmixr model}
+\format{
+A fitted Nlmixr model
+}
 \usage{
 pheno_nlmixr
 }

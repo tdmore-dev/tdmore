@@ -4,7 +4,8 @@
 \name{theopp}
 \alias{theopp}
 \title{Theophylline dataset, as included in the NONMEM distribution.}
-\format{A data frame with 12x13 rows: 1 administration and 12 observation rows
+\format{
+A data frame with 12x13 rows: 1 administration and 12 observation rows
 \describe{
   \item{ID}{Subject ID}
   \item{AMT}{Theophylline dose, in mg}
@@ -12,7 +13,8 @@
   \item{CONC}{Concentration, in mg/L}
   \item{EVID}{0 for observation, 1 for administration}
   \item{WT}{Weight in kg}
-}}
+}
+}
 \usage{
 theopp
 }

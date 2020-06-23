@@ -165,7 +165,9 @@ regimen <- data.frame(
 testthat::expect_warning({
   pop <- estimate(m1, regimen=regimen, covariates=c(theta, WT=70))
 }, regexp="OCC column missing")
-plot(pop, se.fit=F, fit=F) + coord_cartesian(xlim=c(0, 4))
+plot(pop, newdata=seq(0, 4, length.out=100), se.fit=F, fit=F)
+## TODO: ggplot new version does not seem to work
+#+ coord_cartesian(xlim=c(0, 4))
 parameterPlot.tdmorefit(pop, newdata=seq(0, 4, by=0.1))
 
 ipred <- estimate(pop, observed=data.frame(

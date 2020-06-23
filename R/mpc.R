@@ -24,7 +24,7 @@ predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, c
 #' @importFrom dplyr filter
 #'
 estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), ..., .progress=NULL) {
-  p <- to_dplyr_progress(.progress)
+  p <- to_progress(.progress)
 
   if(!"OCC" %in% colnames(regimen)) {
     warning("OCC column missing, adding...")
@@ -55,9 +55,9 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
     fix <<- coef(fit)
     fit
   }
-  p$initialize(n=length(occasions$to))
+  p$initialize(total=length(occasions$to))
   fits <- lapply(1:nrow(occasions), function(i){
-    p$tick()$print()
+    p$tick()
     estim(occasions$from[i], occasions$to[i])
   })
 

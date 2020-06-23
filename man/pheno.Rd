@@ -4,7 +4,8 @@
 \name{pheno}
 \alias{pheno}
 \title{Phenobarbitol dataset, as included in the NONMEM distribution.}
-\format{A data frame with 744 rows
+\format{
+A data frame with 744 rows
 \describe{
   \item{ID}{Subject ID}
   \item{TIME}{Time of observation, in days after first dose}
@@ -14,7 +15,8 @@
   \item{DV}{Concentration, in mg/L}
   \item{EVID}{1 for administration, 0 for observation}
   \item{MDV}{1 for administration, 0 for observation}
-}}
+}
+}
 \usage{
 pheno
 }

@@ -643,8 +643,8 @@ sampleMC_norm <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100) {
 #' @export
 sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batch=max(10, floor(mc.maxpts/2)), verbose=0, tune=1, .progress=interactive()) {
   if(!is.null(mc.maxpts)) {
-    p <- to_dplyr_progress(.progress)
-    p$initialize(n=mc.maxpts, min_time=3)
+    p <- to_progress(.progress)
+    p$initialize(total=mc.maxpts)
 
     N <- 0
     sampled <- 0
@@ -658,8 +658,7 @@ sampleMC_metrop <- function(tdmorefit, fix=tdmorefit$fix, mc.maxpts=100, mc.batc
       else if (out$acceptance > 0.5) tune = tune * 2 #jump around more
 
       N <- N + nrow(out$mc)
-      p$i <- if(N>mc.maxpts) mc.maxpts else N #progress reporting
-      p$print()
+      p$tick(nrow(out$mc))
       result <- c(result, list(out) )
     }
 
@@ -769,8 +768,8 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
 
   ipred <- stats::predict(object=tdmorefit$tdmore, newdata=newdata, regimen=regimen, parameters=par, covariates=covariates)
   if(mc.maxpts > 0 && se.fit) {
-    p <- to_dplyr_progress(.progress)
-    p$initialize(n=mc.maxpts, min_time=3)
+    p <- to_progress(.progress)
+    p$initialize(total=mc.maxpts)
 
     out <- sampleMC(tdmorefit, fix = parameters, mc.maxpts = mc.maxpts)
     mc <- out$mc
@@ -788,7 +787,7 @@ predict.tdmorefit <- function(object, newdata=NULL, regimen=NULL, parameters=NUL
     cTdmore <- tdmorefit$tdmore
     cTdmore$cache <- model_prepare(cTdmore$model, times=ipred$TIME, regimen=regimen, parameters=par, covariates=covariates, iov=cTdmore$iov, extraArguments=cTdmore$extraArguments)
     fittedMC <- lapply(mc$sample, function(i) {
-      p$tick()$print()
+      p$tick()
       row <- mc[i,,drop=TRUE] #make vector
       res <- unlist(row[-1]) # Remove 'sample'
       names(res) <- names(coef(tdmorefit))
@@ -965,11 +964,11 @@ profile.tdmorefit <- function(fitted, fix=NULL, maxpts = 50, limits=NULL, type=c
   omega <- expandOmega(model, getMaxOccasion(tdmorefit$regimen))
   omega <- chol(omega) #performance improvement
 
-  p <- to_dplyr_progress(.progress)
-  p$initialize(n=nrow(grid), min_time=3)
+  p <- to_progress(.progress)
+  p$initialize(total=nrow(grid))
 
   profile <- apply(grid, 1, function(estimate) {
-    p$tick()$print()
+    p$tick()
     eta <- as.numeric(estimate)
     names(eta) <- model$parameters
     if(anyNA(eta)) {

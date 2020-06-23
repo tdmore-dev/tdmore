@@ -67,9 +67,20 @@ describe("doseSimulation", {
       list( regimen=rec$regimen, extra=list(recommendation=rec) )
     })
 
-    z <- autoplot(sim$fit[[1]], newdata=seq(0, 32, by=0.1)) +
-      autolayer(sim$recommendation[[1]])
-    expect_doppelganger("Recommendation hits target", z)
+    z <- autoplot(sim$iterationFit[[1]], newdata=seq(0, 32, by=0.1)) +
+      autolayer(sim$recommendation[[1]]) +
+      autolayer(sim$fit[[1]], se.fit=F, regimen=sim$recommendation[[1]]$regimen, linetype=2, color="purple")
+    if(interactive()) expect_doppelganger("Recommendation hits target_1", z)
+
+    z <- autoplot(sim$iterationFit[[2]], newdata=seq(0, 32, by=0.1)) +
+      autolayer(sim$recommendation[[2]]) +
+      autolayer(sim$fit[[1]], se.fit=F, regimen=sim$recommendation[[2]]$regimen, linetype=2, color="purple")
+    if(interactive()) expect_doppelganger("Recommendation hits target_2", z)
+
+    z <- autoplot(sim$iterationFit[[3]], newdata=seq(0, 32, by=0.1)) +
+      autolayer(sim$recommendation[[3]]) +
+      autolayer(sim$fit[[1]], se.fit=F, regimen=sim$recommendation[[3]]$regimen, linetype=2, color="purple")
+    if(interactive()) expect_doppelganger("Recommendation hits target_3", z)
 
   })
 })

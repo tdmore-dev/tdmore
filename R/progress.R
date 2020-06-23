@@ -1,74 +1,57 @@
-#' A facade object to use Shiny Progress with dplyr
+#' A facade object to use Shiny Progress as if they are a progress::progress_bar
 #'
 #' @description
 #' Used to translate dplyr progress to a Shiny progress bar
 #' @export
-ShinyToDplyrProgressFacade <- R6::R6Class("Progress",
+ShinyToProgressFacade <- R6::R6Class("progress_bar",
   public = list(
     #' @field proxy Shiny Progress object
     proxy=NULL,
 
-    #' @field n total ticks for dplyr progress; can be reinitialized
-    n = NULL,
+    #' @field total total ticks for progress; can be reinitialized
+    total = NULL,
 
-    #' @field i current tick for dplyr progress; can be reinitialized
+    #' @field i current tick for progress; can be reinitialized
     i = 0,
 
     #' @field offset offset for Shiny Progress
     offset=0,
-
-    #' @field amount total advanced amount in Shiny after the dplyr progress is done
-    amount=1,
 
     #' @description
     #' Initialize a shiny progress to dplyr facade. This can either be called with the `proxy` and `amount`
     #' arguments for a first initialization (e.g. when using `new`), or with
     #' `n` and `min_time` arguments for the dplyr-like initialization
     #'
-    #' @param n Total number of items
+    #' @param total Total number of items
     #' @param min_time Progress bar will wait until at least `min_time`
     #'   seconds have elapsed before displaying any results.
     #' @param proxy Shiny Progress object
-    #' @param amount amount advanced in Shiny Progress
     #' @param ... ignored
     #' @return an object that can be used in `.progress` arguments for dplyr
-    initialize = function(n=1, min_time = 0, proxy=NULL, amount=1, ...) {
+    initialize = function(total=1, proxy=NULL, ...) {
       if(!is.null(proxy)) {
         self$proxy <- proxy
         self$offset <- proxy$getValue()
         if(is.null(self$offset)) self$offset <- 0 #no value defined yet
-        self$amount <- amount
-        if(self$offset + self$amount > proxy$getMax()) stop("Current proxy value + offset exceeds proxy max")
       }
-      self$n <- n
+      self$total <- total
       self$i <- 0
     },
+
     #' @description
     #' Advance a tick
     tick = function() {
       self$i = self$i + 1
-      self
-    },
-    #' @description
-    #' Stop the timer; advance until the end
-    stop = function() {
-      self$proxy$set(value=self$offset + self$amount)
-      self
-    },
-    #' @description
-    #' Print out the progress; transfers the progress to Shiny
-    #' @param ... ignored
-    print = function(...) {
-      value <- self$offset + self$i / self$n * self$amount
-      self$proxy$set(value=value)
+      self$proxy$set(value=self$offset + self$i / self$total )
       invisible(self)
+      self
     }
   )
 )
 
 
 ## This is used to create dplyr-compatible Progress objects
-MIN_WAIT_TIME <- 3
+MIN_WAIT_TIME <- 1
 
 # R6 does not have any way to find out if an object is instance of a class
 # This heuristic is as close as we can get: does the public description match?
@@ -77,19 +60,31 @@ matchesR6 <- function(x, class) {
     setequal(c( names(class$public_fields), names(class$public_methods), ".__enclos_env__" ), names(x)) #all public fields match
 }
 
-to_dplyr_progress <- function(x) {
+## This generates a `progress_bar` from the progress package
+to_progress <- function(x) {
   if(isTRUE(x) || (is.character(x) && x == "text"))
-    return( dplyr::progress_estimated(n=1, min_time=MIN_WAIT_TIME) )
+    return(
+      progress::progress_bar$new(total=1, show_after=MIN_WAIT_TIME)
+      )
   if((isFALSE(x) || (is.character(x) && x == "none")) || (is.null(x)))
-    return( dplyr::progress_estimated(1, min_time=Inf) )
+    #progress bar that is never shown
+    # Inf is not supported by progress
+    return( progress::progress_bar$new(total=1, show_after=1e12) )
   if(R6::is.R6(x) && inherits(x, "Progress")) {
     # it could be a dplyr::Progress object or a shiny::Progress object...
     if(matchesR6(x, shiny::Progress)) {
-      return( ShinyToDplyrProgressFacade$new(proxy=x) )
+      return( ShinyToProgressFacade$new(proxy=x) )
     } else {
-      return( x )
+      stop("dplyr progress_estimated is deprecated")
+    }
+  }
+  if(R6::is.R6(x) && inherits(x, "progress_bar")) {
+    if(matchesR6(x, progress::progress_bar)) {
+      return(x)
+    } else {
+      stop("unknown progress bar type progress_bar")
     }
   }
 
-  stop("Cannot translate .progress argument to a dplyr-compatible progress function...")
+  stop("Cannot translate .progress argument to a progress-compatible progress function...")
 }

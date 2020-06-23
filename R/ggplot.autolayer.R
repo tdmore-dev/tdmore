@@ -184,10 +184,12 @@ parameterPlot.tdmorefit <- function(x, newdata, vars, ...) {
   if(is.null(vars) || length(vars) == 0) stop("No observed_variables metadata specified!")
   df <- stats::predict(x, newdata=newdata) %>% tidyr::pivot_longer(cols=!!vars, values_to="IPRED")
   dfBase <- stats::predict(as.population(x), newdata=newdata) %>% tidyr::pivot_longer(cols=!!vars, values_to="PRED")
-  df <- dplyr::bind_cols(df, dfBase)
+  df$PRED <- dfBase$PRED
+  #df <- dplyr::bind_cols(df, dfBase)
 
   for(i in observedVariables$variables) {
-    z <- z + geom_line(aes_(x=~TIME, y=~IPRED/PRED - 1, linetype=i), data=dplyr::filter(df, .data$name == !!i) )
+    z <- z + geom_line(aes_(x=~TIME, y=~IPRED/PRED - 1, linetype=i),
+                       data=dplyr::filter(df, .data$name == !!i) )
   }
 
   z + labs(x="Time" , y="Deviation from typical value ", linetype="")

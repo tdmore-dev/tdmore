@@ -4,7 +4,9 @@
 \name{theopp_nlmixr}
 \alias{theopp_nlmixr}
 \title{NlmixrUI object describing theophylline 1-compartment model with oral absorption}
-\format{A fitted Nlmixr model}
+\format{
+A fitted Nlmixr model
+}
 \usage{
 theopp_nlmixr
 }
