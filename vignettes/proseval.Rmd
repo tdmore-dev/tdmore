@@ -147,8 +147,8 @@ We now have a list of prospective evaluations for every subject. Suppose we want
 ```{r}
 # Calculate predictions for all data, using the fits
 target <- prosevalDb %>% 
-  left_join(db %>% tidyr::nest(-ID), by="ID") %>% # add original data
-  tidyr::unnest(data, ipred, .sep=".") %>% # unnest, creating data.CONC and ipred.CONC columns
+  left_join(db %>% tidyr::nest(data=c(TIME, CONC)), by="ID") %>% # add original data
+  tidyr::unnest(cols=c(data, ipred), names_sep=".") %>% # unnest, creating data.CONC and ipred.CONC columns
   group_by(ID, OBS) %>% 
   filter(row_number() == OBS[1]+1) %>%  #pick the next week as a target
   mutate(IRES = data.CONC-ipred.CONC)
