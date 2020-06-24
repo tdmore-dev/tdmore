@@ -255,33 +255,25 @@
 <p>We now have a list of prospective evaluations for every subject. Suppose we want to use the model to modify the dose for next week. In that case, we want to check how well a prospective evaluation predicts next week.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># Calculate predictions for all data, using the fits</span>
 <span class="no">target</span> <span class="kw">&lt;-</span> <span class="no">prosevalDb</span> <span class="kw">%&gt;%</span>
-  <span class="fu">left_join</span>(<span class="no">db</span> <span class="kw">%&gt;%</span> <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">nest</a></span>(-<span class="no">ID</span>), <span class="kw">by</span><span class="kw">=</span><span class="st">"ID"</span>) <span class="kw">%&gt;%</span> <span class="co"># add original data</span>
-  <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>(<span class="no">data</span>, <span class="no">ipred</span>, <span class="kw">.sep</span><span class="kw">=</span><span class="st">"."</span>) <span class="kw">%&gt;%</span> <span class="co"># unnest, creating data.CONC and ipred.CONC columns</span>
+  <span class="fu">left_join</span>(<span class="no">db</span> <span class="kw">%&gt;%</span> <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">nest</a></span>(<span class="kw">data</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">TIME</span>, <span class="no">CONC</span>)), <span class="kw">by</span><span class="kw">=</span><span class="st">"ID"</span>) <span class="kw">%&gt;%</span> <span class="co"># add original data</span>
+  <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>(<span class="kw">cols</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">data</span>, <span class="no">ipred</span>), <span class="kw">names_sep</span><span class="kw">=</span><span class="st">"."</span>) <span class="kw">%&gt;%</span> <span class="co"># unnest, creating data.CONC and ipred.CONC columns</span>
   <span class="fu">group_by</span>(<span class="no">ID</span>, <span class="no">OBS</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="fu">row_number</span>() <span class="kw">==</span> <span class="no">OBS</span>[<span class="fl">1</span>]+<span class="fl">1</span>) <span class="kw">%&gt;%</span>  <span class="co">#pick the next week as a target</span>
-  <span class="fu">mutate</span>(<span class="kw">IRES</span> <span class="kw">=</span> <span class="no">data.CONC</span>-<span class="no">ipred.CONC</span>)</pre></body></html></div>
-<pre><code>## Warning: All elements of `...` must be named.
-## Did you want `data = c(TIME, CONC)`?</code></pre>
-<pre><code>## Warning: unnest() has a new interface. See ?unnest for details.
-## Try `df %&gt;% unnest(c(data, ipred))`, with `mutate()` if needed</code></pre>
-<pre><code>## Warning: The `.sep` argument of `unnest()` is deprecated as of tidyr 1.0.0.
-## Use `names_sep = '.'` instead.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_warnings()` to see where this warning was generated.</code></pre>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu">ggplot</span>(<span class="no">target</span>, <span class="fu">aes</span>(<span class="kw">x</span><span class="kw">=</span><span class="no">IRES</span>)) +
+  <span class="fu">mutate</span>(<span class="kw">IRES</span> <span class="kw">=</span> <span class="no">data.CONC</span>-<span class="no">ipred.CONC</span>)
+
+<span class="fu">ggplot</span>(<span class="no">target</span>, <span class="fu">aes</span>(<span class="kw">x</span><span class="kw">=</span><span class="no">IRES</span>)) +
   <span class="fu">stat_ecdf</span>() +
   <span class="fu">geom_vline</span>(<span class="kw">xintercept</span><span class="kw">=</span><span class="fl">0</span>) +
   <span class="fu">facet_wrap</span>(~<span class="no">OBS</span>) +
   <span class="fu">labs</span>(<span class="kw">title</span><span class="kw">=</span><span class="st">"Absolute prediction error on day i+1\nUsing on all data available on day i"</span>)</pre></body></html></div>
 <p><img src="proseval_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">parameters</span> <span class="kw">&lt;-</span> <span class="no">prosevalDb</span> <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">parameters</span> <span class="kw">&lt;-</span> <span class="no">prosevalDb</span> <span class="kw">%&gt;%</span>
   <span class="fu">group_by</span>(<span class="no">ID</span>, <span class="no">OBS</span>) <span class="kw">%&gt;%</span>
   <span class="fu">group_modify</span>(~<span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="no">.x</span>$<span class="no">fit</span><span class="kw">[[</span><span class="fl">1</span>]], <span class="kw">newdata</span><span class="kw">=</span><span class="fl">0</span>)) <span class="kw">%&gt;%</span> <span class="co">#predict time=0</span>
   <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="kw">key</span><span class="kw">=</span><span class="no">key</span>, <span class="kw">value</span><span class="kw">=</span><span class="no">value</span>, <span class="no">Ka</span>:<span class="no">V2</span>) <span class="kw">%&gt;%</span>
   <span class="fu">group_by</span>(<span class="no">ID</span>, <span class="no">key</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">relative</span><span class="kw">=</span>(<span class="no">value</span>-<span class="no">value</span>[<span class="fl">1</span>])/<span class="no">value</span>)</pre></body></html></div>
-<pre><code>## Warning: Grouping rowwise data frame strips rowwise nature</code></pre>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">parameters</span> <span class="kw">%&gt;%</span>
+  <span class="fu">mutate</span>(<span class="kw">relative</span><span class="kw">=</span>(<span class="no">value</span>-<span class="no">value</span>[<span class="fl">1</span>])/<span class="no">value</span>)
+<span class="no">parameters</span> <span class="kw">%&gt;%</span>
   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="kw">x</span><span class="kw">=</span><span class="no">OBS</span>, <span class="kw">y</span><span class="kw">=</span><span class="no">relative</span>*<span class="fl">100</span>)) +
   <span class="fu">facet_wrap</span>(~<span class="no">key</span>, <span class="kw">scales</span><span class="kw">=</span><span class="st">"free"</span>) +
   <span class="fu">geom_point</span>() +
@@ -294,7 +286,7 @@
 <h3 class="hasAnchor">
 <a href="#how-does-this-impact-dose-adaptation" class="anchor"></a>How does this impact dose adaptation?</h3>
 <p>The better a model can predict the future, the more accurate it can calculate the dose to reach a given target. A rough indication for “% on target” is to calculate <code>IPRED / DV</code>. If this is higher than 1, then the model is overpredicting (and will underdose). If this is lower than 1, the model is underpredicting (and will overdose). Assuming your target window is e.g. between 10 and 15, the log-mean is <code><a href="https://rdrr.io/r/base/Log.html">exp( mean( log(c(10,15)) ) )</a></code> and the relative error should be between <code>0.81</code> and <code>1.22</code>.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu">ggplot</span>(<span class="no">target</span>, <span class="fu">aes</span>(<span class="kw">x</span><span class="kw">=</span><span class="no">ipred.CONC</span> / <span class="no">data.CONC</span>)) +
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu">ggplot</span>(<span class="no">target</span>, <span class="fu">aes</span>(<span class="kw">x</span><span class="kw">=</span><span class="no">ipred.CONC</span> / <span class="no">data.CONC</span>)) +
   <span class="fu">stat_ecdf</span>() +
   <span class="fu">scale_x_log10</span>(<span class="kw">limits</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>, <span class="fl">2</span>)) +
   <span class="fu">geom_vline</span>(<span class="kw">xintercept</span><span class="kw">=</span><span class="fl">1</span>) +
@@ -302,12 +294,13 @@
   <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="kw">x</span><span class="kw">=</span><span class="fl">1.8</span>, <span class="kw">y</span><span class="kw">=</span><span class="fl">0.5</span>, <span class="kw">label</span><span class="kw">=</span><span class="no">label</span>), <span class="kw">data</span><span class="kw">=</span><span class="no">.</span> <span class="kw">%&gt;%</span> <span class="fu">group_by</span>(<span class="no">OBS</span>) <span class="kw">%&gt;%</span> <span class="fu">summarize</span>(<span class="kw">label</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="fu">between</span>(<span class="no">ipred.CONC</span>/<span class="no">data.CONC</span>, <span class="fl">0.81</span>, <span class="fl">1.22</span>))*<span class="fl">100</span>), <span class="st">"%"</span>))) +
   <span class="fu">facet_wrap</span>(~<span class="no">OBS</span>) +
   <span class="fu">labs</span>(<span class="kw">title</span><span class="kw">=</span><span class="st">"Relative prediction error on day i+1\nUsing on all data available on day i"</span>, <span class="kw">caption</span><span class="kw">=</span><span class="st">"White boxes represent % of patients in target"</span>)</pre></body></html></div>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <p><img src="proseval_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 </div>
 <div id="code-appendix" class="section level3">
 <h3 class="hasAnchor">
 <a href="#code-appendix" class="anchor"></a>Code appendix</h3>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tdmore</span>)
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tdmore</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
@@ -372,7 +365,7 @@
 <span class="no">N</span> <span class="kw">&lt;-</span> <span class="fl">10</span>
 <span class="no">population</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tdmore/man/estimate.html">estimate</a></span>(<span class="no">m1</span>, <span class="kw">regimen</span><span class="kw">=</span><span class="no">regimen</span>)
 <span class="no">dbPred</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="no">population</span>, <span class="kw">newdata</span><span class="kw">=</span><span class="no">obs</span>, <span class="kw">se</span><span class="kw">=</span><span class="no">T</span>, <span class="kw">level</span><span class="kw">=</span><span class="fl">NA</span>, <span class="kw">mc.maxpts</span><span class="kw">=</span><span class="no">N</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">rename</a></span>(<span class="kw">ID</span><span class="kw">=</span><span class="no">sample</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span>(<span class="kw">ID</span><span class="kw">=</span><span class="no">sample</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">ID</span>, <span class="no">TIME</span>, <span class="no">CONC</span>)
 <span class="co"># We add residual error by sampling from the original model</span>
 <span class="co"># This is probably too pessimistic; residual error is rarely truly random...</span>
@@ -405,8 +398,8 @@
 <span class="no">prosevalDb</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tdmore/man/dataTibble.html">dataTibble</a></span>(<span class="kw">object</span><span class="kw">=</span><span class="no">m1</span>, <span class="kw">regimen</span><span class="kw">=</span><span class="no">regimen</span>, <span class="kw">observed</span><span class="kw">=</span><span class="no">db</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/tdmore/man/posthoc.html">proseval</a></span>(<span class="kw">control</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">factr</span><span class="kw">=</span><span class="fl">1e14</span>))
 <span class="co"># Calculate predictions for all data, using the fits</span>
 <span class="no">target</span> <span class="kw">&lt;-</span> <span class="no">prosevalDb</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/join.html">left_join</a></span>(<span class="no">db</span> <span class="kw">%&gt;%</span> <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">nest</a></span>(-<span class="no">ID</span>), <span class="kw">by</span><span class="kw">=</span><span class="st">"ID"</span>) <span class="kw">%&gt;%</span> <span class="co"># add original data</span>
-  <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>(<span class="no">data</span>, <span class="no">ipred</span>, <span class="kw">.sep</span><span class="kw">=</span><span class="st">"."</span>) <span class="kw">%&gt;%</span> <span class="co"># unnest, creating data.CONC and ipred.CONC columns</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">db</span> <span class="kw">%&gt;%</span> <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">nest</a></span>(<span class="kw">data</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">TIME</span>, <span class="no">CONC</span>)), <span class="kw">by</span><span class="kw">=</span><span class="st">"ID"</span>) <span class="kw">%&gt;%</span> <span class="co"># add original data</span>
+  <span class="kw pkg">tidyr</span><span class="kw ns">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>(<span class="kw">cols</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">data</span>, <span class="no">ipred</span>), <span class="kw">names_sep</span><span class="kw">=</span><span class="st">"."</span>) <span class="kw">%&gt;%</span> <span class="co"># unnest, creating data.CONC and ipred.CONC columns</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">ID</span>, <span class="no">OBS</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html">row_number</a></span>() <span class="kw">==</span> <span class="no">OBS</span>[<span class="fl">1</span>]+<span class="fl">1</span>) <span class="kw">%&gt;%</span>  <span class="co">#pick the next week as a target</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">IRES</span> <span class="kw">=</span> <span class="no">data.CONC</span>-<span class="no">ipred.CONC</span>)

@@ -203,30 +203,17 @@
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># Take a blood sample</span>
 <span class="no">observed</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="no">m1</span>, <span class="kw">regimen</span><span class="kw">=</span><span class="no">actual</span>, <span class="kw">newdata</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">TIME</span><span class="kw">=</span><span class="fl">30</span>*<span class="fl">24</span>+<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">16</span>, <span class="fl">0</span>), <span class="kw">CONC</span><span class="kw">=</span><span class="fl">NA</span>))
 <span class="no">observed</span></pre></body></html></div>
-<table class="table huxtable">
-<col>
-<col>
-<tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">TIME</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">CONC</td>
-</tr>
-<tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">704</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">6.16</td>
-</tr>
-<tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">720</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">5.19</td>
-</tr>
-</table>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># We estimate individual parameters</span>
+<pre><code>##   TIME     CONC
+## 1  704 6.155929
+## 2  720 5.194396</code></pre>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># We estimate individual parameters</span>
 <span class="co"># as if the virtual subject took his medication</span>
 <span class="co"># properly</span>
 <span class="no">ipred</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tdmore/man/estimate.html">estimate</a></span>(<span class="no">m1</span>, <span class="no">observed</span>, <span class="no">regimen</span>)
 <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(<span class="no">ipred</span>)</pre></body></html></div>
 <pre><code>##           EKa           ECL           EV1           EV2            EQ 
 ##  0.0000000000  1.2384564464  0.0233203384 -0.0004283304  0.0022528398</code></pre>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">mapping</span><span class="kw">=</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span><span class="kw">=</span><span class="no">TIME</span>, <span class="kw">y</span><span class="kw">=</span><span class="no">CONC</span>)) +
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">mapping</span><span class="kw">=</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span><span class="kw">=</span><span class="no">TIME</span>, <span class="kw">y</span><span class="kw">=</span><span class="no">CONC</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">color</span><span class="kw">=</span><span class="st">"Reality"</span>), <span class="kw">data</span><span class="kw">=</span><span class="no">nonAdhering</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">data</span><span class="kw">=</span><span class="no">observed</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">color</span><span class="kw">=</span><span class="st">"Population"</span>), <span class="kw">data</span><span class="kw">=</span><span class="no">adhering</span>) +
@@ -235,11 +222,11 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">color</span><span class="kw">=</span><span class="st">"Prediction"</span>),
     <span class="kw">data</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="no">ipred</span>, <span class="kw">regimen</span><span class="kw">=</span><span class="no">regimen</span>, <span class="kw">newdata</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">TIME</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>, <span class="fl">30</span>*<span class="fl">24</span>), <span class="kw">CONC</span><span class="kw">=</span><span class="fl">NA</span>)))</pre></body></html></div>
 <p><img src="testing_adherence_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">standardDeviations</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(<span class="no">ipred</span>) / <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span>(<span class="no">m1</span>$<span class="no">omega</span>))
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">standardDeviations</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span>(<span class="no">ipred</span>) / <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span>(<span class="no">m1</span>$<span class="no">omega</span>))
 <span class="no">standardDeviations</span></pre></body></html></div>
 <pre><code>##           EKa           ECL           EV1           EV2            EQ 
 ##  0.0000000000  3.1601339289  0.0767874167 -0.0009384978  0.0070688412</code></pre>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">i</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="no">standardDeviations</span>)) <span class="kw">&gt;</span> <span class="fl">0.975</span>)
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">i</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="no">standardDeviations</span>)) <span class="kw">&gt;</span> <span class="fl">0.975</span>)
 <span class="kw">if</span>(<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">i</span>) <span class="kw">&gt;</span> <span class="fl">0</span>) {
   <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"This subject has unlikely (outside 95% CI) parameter estimates for "</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">i</span>),<span class="st">". There may be a treatment adherence issue."</span>)
 }</pre></body></html></div>
@@ -248,7 +235,7 @@
 <div id="code-appendix" class="section level3">
 <h3 class="hasAnchor">
 <a href="#code-appendix" class="anchor"></a>Code appendix</h3>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">0</span>)
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">0</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">nlmixr</span>)
 
 <span class="no">modelCode</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(){
