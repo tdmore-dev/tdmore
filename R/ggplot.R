@@ -127,7 +127,8 @@ PredictionLayer <- ggplot2::ggproto(
   compute_statistic = function(self, data, layout) {
     ## First interpolate the data-frame if required
     n <- self$interpolation_n
-    data <- plyr::ddply(data, "PANEL", function(data) { # per panel
+    data <- data %>% dplyr::group_by(PANEL) %>% dplyr::do({ # per panel
+      data <- .data
       if(length(n)==1) {
         scales <- layout$get_scales(data$PANEL[1])
         range <- range( c(scales$x$dimension(), layout$coord$limits$x), na.rm=TRUE )
@@ -160,7 +161,7 @@ PredictionLayer <- ggplot2::ggproto(
       for(i in setdiff(names(result), names(data))) data[,i] <- result[,i] ## add missing columns
 
       data
-    })
+    }) %>% dplyr::ungroup()
 
     super <- ggplot2::ggproto_parent(ggplot2:::Layer, self)
     data <- super$compute_statistic(data, layout)
