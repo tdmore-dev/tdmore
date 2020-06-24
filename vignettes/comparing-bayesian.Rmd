@@ -16,6 +16,8 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 library(ggplot2)
+round_any = function(x, accuracy, f=round){f(x/ accuracy) * accuracy}
+
 set.seed(1234)
 ```
 
@@ -125,7 +127,7 @@ optimize <- function(fit, regimen, truth) {
   lastTime <- last(fit$observed$TIME)
   Fct <- 10 / lastConcentration
   i <- regimen$TIME > lastTime
-  regimen$AMT[i] <- plyr::round_any( regimen$AMT[i] * Fct, 20) #round to tablet size
+  regimen$AMT[i] <- round_any( regimen$AMT[i] * Fct, 20) #round to tablet size
   return( list(regimen=regimen) )
 }
 
@@ -152,7 +154,7 @@ optimize <- function(fit, regimen, truth) {
   if(is.na(nextTarget)) return()
   recommendation <- findDose(fit, regimen=regimen, doseRows=which(regimen$TIME > maxTime), 
            target = data.frame(TIME=nextTarget, CONC=10))
-  recommendation$regimen$AMT <- plyr::round_any(recommendation$regimen$AMT, 20) #round to tablet size
+  recommendation$regimen$AMT <- round_any(recommendation$regimen$AMT, 20) #round to tablet size
   return( list(regimen=recommendation$regimen) )
 }
 
