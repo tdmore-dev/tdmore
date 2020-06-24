@@ -59,11 +59,13 @@ ensurePackagePresent <- function(pkgName="tdmore", quiet=TRUE) {
   ## If it is in R_LIBS_USER, then we refuse: this was installed through Build and Install, and is an old version!
   ## If no good version is available, then install the library in a temporary path and return this path
   pkgPat <- path.package(pkgName, quiet=T)
-  if(is.null(pkgPat) || pkgName %in% devtools::dev_packages() || startsWith(pkgPat, Sys.getenv("R_LIBS_USER")) ) {
+  r_libs_user <- Sys.getenv("R_LIBS_USER")
+  if(nchar(r_libs_user) == 0) r_libs_user <- "DOES_NOT_EXIST"
+  if(is.null(pkgPat) || pkgName %in% devtools::dev_packages() || startsWith(pkgPat, r_libs_user) ) {
     if(!quiet) message("Package ", pkgName, appendLF=F)
     if(!quiet && is.null(pkgPat)) message(" is not available. ", appendLF=F)
     if(!quiet && pkgName %in% devtools::dev_packages()) message(" is loaded as dev package. ", appendLF=F)
-    if(!quiet && pkgName %in% devtools::dev_packages()) message(" is available in R_LIBS_USER. ", appendLF=F)
+    if(!quiet && startsWith(pkgPat, r_libs_user)) message(" is available in R_LIBS_USER. ", appendLF=F)
     if(!quiet) message("Installing new version...")
     #Either the package is not available
     #or it is currently in the dev packages
