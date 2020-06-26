@@ -118,7 +118,7 @@ PredictionLayer <- ggplot2::ggproto(
       names(dummy) <- colnames(data)
       data <- rbind(data, dummy)
     }
-    data
+    as.data.frame(data)
   },
   setup_layer = function(self, data, plot) {
     self$plot <- plot ## Store the plot for later use
@@ -165,7 +165,7 @@ PredictionLayer <- ggplot2::ggproto(
 
     super <- ggplot2::ggproto_parent(ggplot2:::Layer, self)
     data <- super$compute_statistic(data, layout)
-    data
+    as.data.frame(data)
   }
 )
 
