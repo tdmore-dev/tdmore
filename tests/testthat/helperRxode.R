@@ -20,7 +20,6 @@
 ## ---------------------------
 library(testthat)
 library(RxODE)
-library(vdiffr)
 
 myVersion <- NULL
 rxOdeVersion <- function() {
@@ -42,19 +41,21 @@ rxOdeVersion <- function() {
   return(myVersion)
 }
 
-message("Tests using RxODE version: ", rxOdeVersion())
-
 rxOdePath <- function(...) {
   testthat::test_path("ref", rxOdeVersion(), ...)
 }
 
+setup({
+  message("Tests using RxODE version: ", rxOdeVersion())
+  message("Reference path: ", normalizePath(rxOdePath()))
+})
+
 ## Change the path for different versions of RxODE...
-expect_doppelganger <- function(title, fig, path=NULL, ...) {
+expect_doppelganger <- function(title, fig, path=rxOdePath()) {
   # expect_doppelganger changes the path as test_path("..", "figs", path)
   # too bad; vdiffr::manage_cases() also expects the files in that path
-  vdiffr::expect_doppelganger(title, fig,
-                              path=rxOdePath(),
-                              ...)
+  #stop("THIS FUNCTION IS CALLED with title=", title, ", fig=(notShown), and path=", path)
+  vdiffr::expect_doppelganger(title=title, fig=fig, path=path, verbose=TRUE)
 }
 
 expect_known_value <- function(object, file, ...) {
