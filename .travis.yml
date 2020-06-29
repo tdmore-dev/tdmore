@@ -39,6 +39,10 @@ install:
 script:
   - Rscript -e 'devtools::check()'
 
+stages:
+  - name: after_success
+    if: branch = master
+
 after_success:
   - Rscript -e 'library(covr);codecov(quiet=FALSE, token=Sys.getenv("CODECOV_TOKEN"))'
   - Rscript -e 'library(pkgdown);pkgdown::build_site()'
