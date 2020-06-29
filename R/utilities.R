@@ -64,8 +64,8 @@ ensurePackagePresent <- function(pkgName="tdmore", quiet=TRUE) {
   if(is.null(pkgPat) || pkgName %in% devtools::dev_packages() || startsWith(pkgPat, r_libs_user) ) {
     if(!quiet) message("Package ", pkgName, appendLF=F)
     if(!quiet && is.null(pkgPat)) message(" is not available. ", appendLF=F)
-    if(!quiet && pkgName %in% devtools::dev_packages()) message(" is loaded as dev package. ", appendLF=F)
-    if(!quiet && startsWith(pkgPat, r_libs_user)) message(" is available in R_LIBS_USER. ", appendLF=F)
+    else if(!quiet && pkgName %in% devtools::dev_packages()) message(" is loaded as dev package. ", appendLF=F)
+    else if(!quiet && startsWith(pkgPat, r_libs_user)) message(" is available in R_LIBS_USER. ", appendLF=F)
     if(!quiet) message("Installing new version...")
     #Either the package is not available
     #or it is currently in the dev packages
