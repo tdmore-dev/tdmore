@@ -10,8 +10,8 @@ RUN apt-get update && apt-get install -y libudunits2-dev
 RUN R -e 'install.packages("renv")'
 COPY renv.lock .
 RUN R -e 'renv::restore(library=.libPaths()[1])'
-## this installs an .Rprofile and an renv directory
-## We can deactivate renv again, as we restored to the library directory anyway
+## this restores the renv.lock to the system library
+## because it is the system library, no .Rprofile or renv/ directory is created
 
 ## Install phantomjs
 RUN apt-get update && apt-get install -y lbzip2
