@@ -20,6 +20,7 @@ cache:
   packages: true
 
 install:
+  - apt-get install -y libudunits2-dev lbzip2
   - Rscript -e "if (!requireNamespace('renv', quietly = TRUE)) install.packages('renv')"
   - Rscript -e "renv::restore()"
   # Install PhantomJS (if not cached)
@@ -28,9 +29,8 @@ install:
 script:
   - Rscript -e 'devtools::check()'
 
-apt_packages:
-  - libudunits2-dev
-  - lbzip2 #for phantomjs install
+# apt_packages is an travis-r-specific key, applied in the *script* section
+# we override the *script* section
 
 after_success:
   - Rscript -e 'library(covr);codecov(quiet=FALSE)'
