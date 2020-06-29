@@ -19,15 +19,6 @@ cache:
   - $TRAVIS_BUILD_DIR/renv/library
   packages: true
 
-install:
-  - Rscript -e "if (!requireNamespace('renv', quietly = TRUE)) install.packages('renv')"
-  - Rscript -e "renv::restore()"
-  # Install PhantomJS (if not cached)
-  - Rscript -e 'shinytest::installDependencies()'
-
-script:
-  - Rscript -e 'devtools::check()'
-
 # apt_packages is an travis-r-specific key, applied in the *script* section
 # we override the *script* section
 # instead, we need to use the 'apt' addon
@@ -36,6 +27,16 @@ addons:
     packages:
       - libudunits2-dev
       - lbzip2
+
+install:
+  - Rscript -e "if (!requireNamespace('renv', quietly = TRUE)) install.packages('renv')"
+  # use renv purely to restore the packages from renv.lock
+  - Rscript -e "renv::restore(library=.libPaths()[1])"
+  # Install PhantomJS (if not cached)
+  - Rscript -e 'shinytest::installDependencies()'
+
+script:
+  - Rscript -e 'devtools::check()'
 
 after_success:
   - Rscript -e 'library(covr);codecov(quiet=FALSE)'
