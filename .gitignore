@@ -5,3 +5,5 @@
 tdmore.d/**
 rx_*
 inst/benchmark/*.benchmark
+doc
+Meta

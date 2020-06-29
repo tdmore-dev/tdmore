@@ -18,3 +18,5 @@
 ^.covrignore$
 ^pkgdown$
 ^.dockerignore$
+^doc$
+^Meta$
