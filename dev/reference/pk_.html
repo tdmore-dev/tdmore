@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tdmore</a>
-        <span class="version label label-warning" data-toggle="tooltip" data-placement="bottom" title="Parameter estimation is stable, but dose recommendation API is subject to change">1.1.0.900</span>
+        <span class="version label label-warning" data-toggle="tooltip" data-placement="bottom" title="The full API is stable, but sometimes limited">1.2.0.900</span>
       </span>
     </div>
 
@@ -97,43 +97,6 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/comparing-bayesian.html">Comparing historic and bayesian dosing</a>
-    </li>
-    <li>
-      <a href="../articles/dosing-regimen.html">Simulating different dosing regimen</a>
-    </li>
-    <li>
-      <a href="../articles/ggplot.html">Using ggplot to visualize tdmore results</a>
-    </li>
-    <li>
-      <a href="../articles/mpc.html">Model-predictive control</a>
-    </li>
-    <li>
-      <a href="../articles/proseval.html">Prospective evaluation</a>
-    </li>
-    <li>
-      <a href="../articles/tdmore_multiple_endpoints.html">Multiple endpoints in TDMore</a>
-    </li>
-    <li>
-      <a href="../articles/testing_adherence.html">Testing adherence using TDMore</a>
-    </li>
-  </ul>
-</li>
-<li>
-  <a href="../book/index.html">
-    <span class="fa fa-book"></span>
-     
-    Book
-  </a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -165,98 +128,98 @@
     <p>Algebraic equations for PK models</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pk1cptiv_</span>(<span class='no'>t</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+    <pre class="usage"><span class='fu'>pk1cptiv_</span><span class='op'>(</span><span class='va'>t</span>, A1 <span class='op'>=</span> <span class='fl'>0</span>, <span class='va'>TIME</span>, <span class='va'>AMT</span>, <span class='va'>V</span>, <span class='va'>K</span>, SS <span class='op'>=</span> <span class='fl'>0</span>, II <span class='op'>=</span> <span class='cn'>Inf</span><span class='op'>)</span>
 
-<span class='fu'>pk1cptinfusion_</span>(<span class='no'>t</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>RATE</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+<span class='fu'>pk1cptinfusion_</span><span class='op'>(</span><span class='va'>t</span>, A1 <span class='op'>=</span> <span class='fl'>0</span>, <span class='va'>TIME</span>, <span class='va'>AMT</span>, <span class='va'>RATE</span>, <span class='va'>V</span>, <span class='va'>K</span>, SS <span class='op'>=</span> <span class='fl'>0</span>, II <span class='op'>=</span> <span class='cn'>Inf</span><span class='op'>)</span>
 
-<span class='fu'>pk1cptoral_</span>(<span class='no'>t</span>, <span class='kw'>A0</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>KA</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+<span class='fu'>pk1cptoral_</span><span class='op'>(</span><span class='va'>t</span>, A0 <span class='op'>=</span> <span class='fl'>0</span>, A1 <span class='op'>=</span> <span class='fl'>0</span>, <span class='va'>TIME</span>, <span class='va'>AMT</span>, <span class='va'>V</span>, <span class='va'>K</span>, <span class='va'>KA</span>, SS <span class='op'>=</span> <span class='fl'>0</span>, II <span class='op'>=</span> <span class='cn'>Inf</span><span class='op'>)</span>
 
-<span class='fu'>pk2cptiv_</span>(<span class='no'>t</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>TIME</span>, <span class='no'>AMT</span>, <span class='no'>V</span>, <span class='no'>K</span>, <span class='no'>K12</span>, <span class='no'>K21</span>, <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>)
+<span class='fu'>pk2cptiv_</span><span class='op'>(</span><span class='va'>t</span>, A1 <span class='op'>=</span> <span class='fl'>0</span>, A2 <span class='op'>=</span> <span class='fl'>0</span>, <span class='va'>TIME</span>, <span class='va'>AMT</span>, <span class='va'>V</span>, <span class='va'>K</span>, <span class='va'>K12</span>, <span class='va'>K21</span>, SS <span class='op'>=</span> <span class='fl'>0</span>, II <span class='op'>=</span> <span class='cn'>Inf</span><span class='op'>)</span>
 
-<span class='fu'>pk2cptinfusion_</span>(
-  <span class='no'>t</span>,
-  <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='no'>TIME</span>,
-  <span class='no'>AMT</span>,
-  <span class='no'>RATE</span>,
-  <span class='no'>V</span>,
-  <span class='no'>K</span>,
-  <span class='no'>K12</span>,
-  <span class='no'>K21</span>,
-  <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>
-)
+<span class='fu'>pk2cptinfusion_</span><span class='op'>(</span>
+  <span class='va'>t</span>,
+  A1 <span class='op'>=</span> <span class='fl'>0</span>,
+  A2 <span class='op'>=</span> <span class='fl'>0</span>,
+  <span class='va'>TIME</span>,
+  <span class='va'>AMT</span>,
+  <span class='va'>RATE</span>,
+  <span class='va'>V</span>,
+  <span class='va'>K</span>,
+  <span class='va'>K12</span>,
+  <span class='va'>K21</span>,
+  SS <span class='op'>=</span> <span class='fl'>0</span>,
+  II <span class='op'>=</span> <span class='cn'>Inf</span>
+<span class='op'>)</span>
 
-<span class='fu'>pk2cptoral_</span>(
-  <span class='no'>t</span>,
-  <span class='kw'>A0</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='no'>TIME</span>,
-  <span class='no'>AMT</span>,
-  <span class='no'>V</span>,
-  <span class='no'>K</span>,
-  <span class='no'>KA</span>,
-  <span class='no'>K12</span>,
-  <span class='no'>K21</span>,
-  <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>
-)
+<span class='fu'>pk2cptoral_</span><span class='op'>(</span>
+  <span class='va'>t</span>,
+  A0 <span class='op'>=</span> <span class='fl'>0</span>,
+  A1 <span class='op'>=</span> <span class='fl'>0</span>,
+  A2 <span class='op'>=</span> <span class='fl'>0</span>,
+  <span class='va'>TIME</span>,
+  <span class='va'>AMT</span>,
+  <span class='va'>V</span>,
+  <span class='va'>K</span>,
+  <span class='va'>KA</span>,
+  <span class='va'>K12</span>,
+  <span class='va'>K21</span>,
+  SS <span class='op'>=</span> <span class='fl'>0</span>,
+  II <span class='op'>=</span> <span class='cn'>Inf</span>
+<span class='op'>)</span>
 
-<span class='fu'>pk3cptiv_</span>(
-  <span class='no'>t</span>,
-  <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>A3</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='no'>TIME</span>,
-  <span class='no'>AMT</span>,
-  <span class='no'>V</span>,
-  <span class='no'>K</span>,
-  <span class='no'>K12</span>,
-  <span class='no'>K21</span>,
-  <span class='no'>K13</span>,
-  <span class='no'>K31</span>,
-  <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>
-)
+<span class='fu'>pk3cptiv_</span><span class='op'>(</span>
+  <span class='va'>t</span>,
+  A1 <span class='op'>=</span> <span class='fl'>0</span>,
+  A2 <span class='op'>=</span> <span class='fl'>0</span>,
+  A3 <span class='op'>=</span> <span class='fl'>0</span>,
+  <span class='va'>TIME</span>,
+  <span class='va'>AMT</span>,
+  <span class='va'>V</span>,
+  <span class='va'>K</span>,
+  <span class='va'>K12</span>,
+  <span class='va'>K21</span>,
+  <span class='va'>K13</span>,
+  <span class='va'>K31</span>,
+  SS <span class='op'>=</span> <span class='fl'>0</span>,
+  II <span class='op'>=</span> <span class='cn'>Inf</span>
+<span class='op'>)</span>
 
-<span class='fu'>pk3cptinfusion_</span>(
-  <span class='no'>t</span>,
-  <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>A3</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='no'>TIME</span>,
-  <span class='no'>AMT</span>,
-  <span class='no'>RATE</span>,
-  <span class='no'>V</span>,
-  <span class='no'>K</span>,
-  <span class='no'>K12</span>,
-  <span class='no'>K21</span>,
-  <span class='no'>K13</span>,
-  <span class='no'>K31</span>,
-  <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>
-)
+<span class='fu'>pk3cptinfusion_</span><span class='op'>(</span>
+  <span class='va'>t</span>,
+  A1 <span class='op'>=</span> <span class='fl'>0</span>,
+  A2 <span class='op'>=</span> <span class='fl'>0</span>,
+  A3 <span class='op'>=</span> <span class='fl'>0</span>,
+  <span class='va'>TIME</span>,
+  <span class='va'>AMT</span>,
+  <span class='va'>RATE</span>,
+  <span class='va'>V</span>,
+  <span class='va'>K</span>,
+  <span class='va'>K12</span>,
+  <span class='va'>K21</span>,
+  <span class='va'>K13</span>,
+  <span class='va'>K31</span>,
+  SS <span class='op'>=</span> <span class='fl'>0</span>,
+  II <span class='op'>=</span> <span class='cn'>Inf</span>
+<span class='op'>)</span>
 
-<span class='fu'>pk3cptoral_</span>(
-  <span class='no'>t</span>,
-  <span class='kw'>A0</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>A3</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='no'>TIME</span>,
-  <span class='no'>AMT</span>,
-  <span class='no'>V</span>,
-  <span class='no'>K</span>,
-  <span class='no'>KA</span>,
-  <span class='no'>K12</span>,
-  <span class='no'>K21</span>,
-  <span class='no'>K13</span>,
-  <span class='no'>K31</span>,
-  <span class='kw'>SS</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>II</span> <span class='kw'>=</span> <span class='fl'>Inf</span>
-)</pre>
+<span class='fu'>pk3cptoral_</span><span class='op'>(</span>
+  <span class='va'>t</span>,
+  A0 <span class='op'>=</span> <span class='fl'>0</span>,
+  A1 <span class='op'>=</span> <span class='fl'>0</span>,
+  A2 <span class='op'>=</span> <span class='fl'>0</span>,
+  A3 <span class='op'>=</span> <span class='fl'>0</span>,
+  <span class='va'>TIME</span>,
+  <span class='va'>AMT</span>,
+  <span class='va'>V</span>,
+  <span class='va'>K</span>,
+  <span class='va'>KA</span>,
+  <span class='va'>K12</span>,
+  <span class='va'>K21</span>,
+  <span class='va'>K13</span>,
+  <span class='va'>K31</span>,
+  SS <span class='op'>=</span> <span class='fl'>0</span>,
+  II <span class='op'>=</span> <span class='cn'>Inf</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -350,7 +313,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tdmore</a>
-        <span class="version label label-warning" data-toggle="tooltip" data-placement="bottom" title="Parameter estimation is stable, but dose recommendation API is subject to change">1.1.0.900</span>
+        <span class="version label label-warning" data-toggle="tooltip" data-placement="bottom" title="The full API is stable, but sometimes limited">1.2.0.900</span>
       </span>
     </div>
 
@@ -97,43 +97,6 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/comparing-bayesian.html">Comparing historic and bayesian dosing</a>
-    </li>
-    <li>
-      <a href="../articles/dosing-regimen.html">Simulating different dosing regimen</a>
-    </li>
-    <li>
-      <a href="../articles/ggplot.html">Using ggplot to visualize tdmore results</a>
-    </li>
-    <li>
-      <a href="../articles/mpc.html">Model-predictive control</a>
-    </li>
-    <li>
-      <a href="../articles/proseval.html">Prospective evaluation</a>
-    </li>
-    <li>
-      <a href="../articles/tdmore_multiple_endpoints.html">Multiple endpoints in TDMore</a>
-    </li>
-    <li>
-      <a href="../articles/testing_adherence.html">Testing adherence using TDMore</a>
-    </li>
-  </ul>
-</li>
-<li>
-  <a href="../book/index.html">
-    <span class="fa fa-book"></span>
-     
-    Book
-  </a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -165,35 +128,35 @@
     <p>These functions perform estimate for multiple individuals at the same time.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>posthoc</span>(
-  <span class='no'>x</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>,
-  <span class='kw'>.prediction</span> <span class='kw'>=</span> <span class='st'>"ipred"</span>,
-  <span class='kw'>.elapsed</span> <span class='kw'>=</span> <span class='st'>"elapsed"</span>,
-  <span class='kw'>.id</span> <span class='kw'>=</span> <span class='st'>"ID"</span>
-)
+    <pre class="usage"><span class='fu'>posthoc</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>...</span>,
+  .fit <span class='op'>=</span> <span class='st'>"fit"</span>,
+  .prediction <span class='op'>=</span> <span class='st'>"ipred"</span>,
+  .elapsed <span class='op'>=</span> <span class='st'>"elapsed"</span>,
+  .id <span class='op'>=</span> <span class='st'>"ID"</span>
+<span class='op'>)</span>
 
-<span class='fu'>proseval</span>(
-  <span class='no'>x</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>,
-  <span class='kw'>.prediction</span> <span class='kw'>=</span> <span class='st'>"ipred"</span>,
-  <span class='kw'>.elapsed</span> <span class='kw'>=</span> <span class='st'>"elapsed"</span>,
-  <span class='kw'>.obs</span> <span class='kw'>=</span> <span class='st'>"OBS"</span>
-)
+<span class='fu'>proseval</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>...</span>,
+  .fit <span class='op'>=</span> <span class='st'>"fit"</span>,
+  .prediction <span class='op'>=</span> <span class='st'>"ipred"</span>,
+  .elapsed <span class='op'>=</span> <span class='st'>"elapsed"</span>,
+  .obs <span class='op'>=</span> <span class='st'>"OBS"</span>
+<span class='op'>)</span>
 
-<span class='fu'>doseSimulation</span>(
-  <span class='no'>x</span>,
-  <span class='no'>...</span>,
-  <span class='no'>optimize</span>,
-  <span class='no'>predict</span>,
-  <span class='kw'>.fit</span> <span class='kw'>=</span> <span class='st'>"fit"</span>,
-  <span class='kw'>.iterationFit</span> <span class='kw'>=</span> <span class='st'>"iterationFit"</span>,
-  <span class='kw'>.next_observed</span> <span class='kw'>=</span> <span class='st'>"next_observed"</span>,
-  <span class='kw'>.next_regimen</span> <span class='kw'>=</span> <span class='st'>"next_regimen"</span>,
-  <span class='kw'>.verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-)</pre>
+<span class='fu'>doseSimulation</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>...</span>,
+  <span class='va'>optimize</span>,
+  <span class='va'>predict</span>,
+  .fit <span class='op'>=</span> <span class='st'>"fit"</span>,
+  .iterationFit <span class='op'>=</span> <span class='st'>"iterationFit"</span>,
+  .next_observed <span class='op'>=</span> <span class='st'>"next_observed"</span>,
+  .next_regimen <span class='op'>=</span> <span class='st'>"next_regimen"</span>,
+  .verbose <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -297,16 +260,19 @@ and the 'regimen' data (that is replaced by the adapted regimen)</p>
 This predicts the next observation.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>magrittr</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: magrittr</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>ggplot2</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: ggplot2</span></div><div class='input'><span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'>dataTibble</span>(
-    <span class='kw'>object</span><span class='kw'>=</span><span class='fu'>getModel</span>(<span class='st'>"meropenem"</span>),
-    <span class='kw'>observed</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>ID</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span>), <span class='kw'>TIME</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>8</span>,<span class='fl'>10</span>,<span class='fl'>8</span>,<span class='fl'>10</span>), <span class='kw'>CONC</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1.5</span>,<span class='fl'>0.3</span>,<span class='fl'>0.8</span>,<span class='fl'>0.2</span>))
-)
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='no'>data</span> <span class='kw'>%&gt;%</span>
-  <span class='fu'>posthoc</span>(<span class='kw'>regimen</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>TIME</span><span class='kw'>=</span><span class='fl'>0</span>, <span class='kw'>AMT</span><span class='kw'>=</span><span class='fl'>1000</span>))
-<span class='no'>fit</span> <span class='kw'>%&gt;%</span> <span class='kw pkg'>tidyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://tidyr.tidyverse.org/reference/nest.html'>unnest</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>observed</span>, <span class='no'>ipred</span>), <span class='kw'>names_sep</span><span class='kw'>=</span><span class='st'>"."</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span>(<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span>(<span class='kw'>x</span><span class='kw'>=</span><span class='no'>ipred.TIME</span>)) +
-  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span>(<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>observed.CONC</span>)) +
-  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span>(<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>ipred.CONC</span>, <span class='kw'>group</span><span class='kw'>=</span><span class='no'>ID</span>)) +
-  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/facet_wrap.html'>facet_wrap</a></span>(~<span class='no'>ID</span>)</div><div class='img'><img src='posthoc-1.png' alt='' width='700' height='433' /></div></pre>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'>magrittr</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: magrittr</span></div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='http://ggplot2.tidyverse.org'>ggplot2</a></span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: ggplot2</span></div><div class='input'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dataTibble.html'>dataTibble</a></span><span class='op'>(</span>
+    object<span class='op'>=</span><span class='fu'><a href='getModel.html'>getModel</a></span><span class='op'>(</span><span class='st'>"example"</span><span class='op'>)</span>,
+    observed<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>ID<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span><span class='op'>)</span>, TIME<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>8</span>,<span class='fl'>10</span>,<span class='fl'>8</span>,<span class='fl'>10</span><span class='op'>)</span>, CONC<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1.5</span>,<span class='fl'>0.3</span>,<span class='fl'>0.8</span>,<span class='fl'>0.2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>)</span>
+<span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='va'>data</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>posthoc</span><span class='op'>(</span>regimen<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>TIME<span class='op'>=</span><span class='fl'>0</span>, AMT<span class='op'>=</span><span class='fl'>1000</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>fit</span> <span class='op'>%&gt;%</span> <span class='fu'>tidyr</span><span class='fu'>::</span><span class='fu'><a href='https://tidyr.tidyverse.org/reference/nest.html'>unnest</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>observed</span>, <span class='va'>ipred</span><span class='op'>)</span>, names_sep<span class='op'>=</span><span class='st'>"."</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='va'>ipred.TIME</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>y<span class='op'>=</span><span class='va'>observed.CONC</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>y<span class='op'>=</span><span class='va'>ipred.CONC</span>, group<span class='op'>=</span><span class='va'>ID</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/facet_wrap.html'>facet_wrap</a></span><span class='op'>(</span><span class='op'>~</span><span class='va'>ID</span><span class='op'>)</span>
+</div><div class='img'><img src='posthoc-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -322,7 +288,7 @@ This predicts the next observation.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

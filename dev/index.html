@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>In silico simulation of virtual subject profiles and dose adaptation • tdmore</title>
+<title>In silico evaluation of precision dosing • tdmore</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -17,12 +17,11 @@
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="In silico simulation of virtual subject profiles and dose adaptation">
-<meta property="og:description" content="Easily define a Nonlinear Mixed-Effects Model,
-    perform a posthoc fit for a virtual subject, and
-    explore new dosing regimen in a user-defined search space.
-    Finally, select the best dose and evaluate future target attainment.
-    A shiny app can be created by using the `shinytdmore` package.">
+<script src="pkgdown.js"></script><meta property="og:title" content="In silico evaluation of precision dosing">
+<meta property="og:description" content="Define a Nonlinear Mixed-Effects Model,
+    perform a posthoc fit for a dataset, and
+    explore new dosing regimen for this group of subjects.
+    Evaluate precision dosing performance.">
 <meta property="og:image" content="/logo.svg">
 <meta name="robots" content="noindex">
 <meta name="robots" content="noindex">
@@ -44,7 +43,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">tdmore</a>
-        <span class="version label label-warning" data-toggle="tooltip" data-placement="bottom" title="Parameter estimation is stable, but dose recommendation API is subject to change">1.1.0.900</span>
+        <span class="version label label-warning" data-toggle="tooltip" data-placement="bottom" title="The full API is stable, but sometimes limited">1.2.0.900</span>
       </span>
     </div>
 
@@ -61,43 +60,6 @@
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="articles/comparing-bayesian.html">Comparing historic and bayesian dosing</a>
-    </li>
-    <li>
-      <a href="articles/dosing-regimen.html">Simulating different dosing regimen</a>
-    </li>
-    <li>
-      <a href="articles/ggplot.html">Using ggplot to visualize tdmore results</a>
-    </li>
-    <li>
-      <a href="articles/mpc.html">Model-predictive control</a>
-    </li>
-    <li>
-      <a href="articles/proseval.html">Prospective evaluation</a>
-    </li>
-    <li>
-      <a href="articles/tdmore_multiple_endpoints.html">Multiple endpoints in TDMore</a>
-    </li>
-    <li>
-      <a href="articles/testing_adherence.html">Testing adherence using TDMore</a>
-    </li>
-  </ul>
-</li>
-<li>
-  <a href="book/index.html">
-    <span class="fa fa-book"></span>
-     
-    Book
-  </a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -119,36 +81,26 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
-<div data-align="center">
-
-</div>
 <div id="tdmore" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#tdmore" class="anchor"></a>tdmore <img src="logo.svg" align="right" alt="" width="120">
+</h1></div>
+<!-- badges: start -->
 
-<p><code>tdmore</code> provides an easy interface for the execution of post-hoc bayesian estimation of parameter vectors of virtual individuals given a population model and for the in silico assessment of dose individualization strategies.</p>
-<p>The package is intended to make it easy to define your own models and use them for in silico assessments and educational purposes.</p>
+<p><code>tdmore</code> provides an easy interface to perform bayesian fit of virtual individuals in a dataset, using a user-provided population model. It allows to explore new dosing regimen for this group of subjects, and to evaluate precision dosing performance. Learn more in <code><a href="articles/tdmore.html">vignette("tdmore")</a></code> or <code><a href="reference/tdmore.html">?tdmore</a></code>.</p>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Install development version from GitHub</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"tdmore-dev/tdmore"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="license" class="section level1">
-<h1 class="hasAnchor">
-<a href="#license" class="anchor"></a>License</h1>
-<p>This project does not include a license. This means that all work is under exclusive copyright. Nobody else can use, copy, distribute or modify this work.</p>
-<p>The Github terms of service apply. We allow others to view and fork the repository. Please note that this is not sufficient to then copy, distribute or modify this work further.</p>
-<p>Please see <a href="https://choosealicense.com/no-permission/" class="uri">https://choosealicense.com/no-permission/</a> for more information.</p>
-<p>Through publishing, we allow others to use this R package and to perform in silico evaluation of individualized dosing strategies. Under no circumstances should the software be used for patient care. Installing this package using <code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github</a></code> is allowed.</p>
-<p>The official copyright holder of this work is the KU Leuven university.</p>
+<div id="how-to-use" class="section level2">
+<h2 class="hasAnchor">
+<a href="#how-to-use" class="anchor"></a>How to use</h2>
+<p>Please refer to the articles in the pkgdown site.</p>
 </div>
-<div id="limitations" class="section level1">
-<h1 class="hasAnchor">
-<a href="#limitations" class="anchor"></a>Limitations</h1>
-<p>This software is a research project, and cannot be considered as a medical device.</p>
 </div>
-<div id="contribution-guidelines" class="section level1">
-<h1 class="hasAnchor">
-<a href="#contribution-guidelines" class="anchor"></a>Contribution guidelines</h1>
-<p>Currently, the license does not allow to modify the code any further. Once this changes, refer to the below for contribution.</p>
-<p>Please find the contribution guidelines <a href="CONTRIBUTING.html">here</a>. This document also contains some technical documentation. To make contributions to this project, you will need to sign a transfer of copyright statement. Please find it <a href="TODO">here</a>.</p>
-</div>
-
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -168,12 +120,6 @@
 </li>
 </ul>
 </div>
-<div class="community">
-<h2>Community</h2>
-<ul class="list-unstyled">
-<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
-</ul>
-</div>
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
@@ -188,8 +134,10 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.com/tdmore-dev/tdmore"> <img src="https://travis-ci.com/tdmore-dev/tdmore.svg?token=xctp8qEX8rnVyGDrjTyu&amp;branch=master" alt="Build status"></a></li>
-<li><a href="https://codecov.io/gh/tdmore-dev/tdmore"> <img src="https://codecov.io/gh/tdmore-dev/tdmore/branch/master/graph/badge.svg?token=ifRzKCFY4B"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://cran.r-project.org/package=tdmore"><img src="https://www.r-pkg.org/badges/version/tdmore" alt="CRAN Status"></a></li>
+<li><a href="https://travis-ci.com/tdmore-dev/tdmore"><img src="https://travis-ci.com/tdmore-dev/tdmore.svg?token=xctp8qEX8rnVyGDrjTyu&amp;branch=master" alt="Travis build status"></a></li>
+<li><a href="https://codecov.io/gh/tdmore-dev/tdmore"><img src="https://codecov.io/gh/tdmore-dev/tdmore/branch/master/graph/badge.svg?token=ifRzKCFY4B" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
 </div>
@@ -201,7 +149,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
