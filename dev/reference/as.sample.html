@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Automatically guesses the target troughs for a given regimen — getTroughs • tdmore</title>
+<title>Create a tiible of N random tdmorefit instances — as.sample • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Automatically guesses the target troughs for a given regimen — getTroughs" />
-<meta property="og:description" content="Automatically guesses the target troughs for a given regimen" />
+<meta property="og:title" content="Create a tiible of N random tdmorefit instances — as.sample" />
+<meta property="og:description" content="Create a tiible of N random tdmorefit instances" />
 <meta property="og:image" content="/logo.svg" />
 
 <meta name="robots" content="noindex" />
@@ -119,49 +119,36 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Automatically guesses the target troughs for a given regimen</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/optimize.R'><code>R/optimize.R</code></a></small>
-    <div class="hidden name"><code>getTroughs.Rd</code></div>
+    <h1>Create a tiible of N random tdmorefit instances</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/ebe.R'><code>R/ebe.R</code></a></small>
+    <div class="hidden name"><code>as.sample.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Automatically guesses the target troughs for a given regimen</p>
+    <p>Create a tiible of N random tdmorefit instances</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getTroughs</span><span class='op'>(</span><span class='va'>model</span>, <span class='va'>regimen</span>, deltamin <span class='op'>=</span> <span class='fl'>1</span><span class='op'>/</span><span class='fl'>4</span>, deltaplus <span class='op'>=</span> <span class='fl'>1</span><span class='op'>/</span><span class='fl'>4</span>, adj <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>as.sample</span><span class='op'>(</span><span class='va'>x</span>, N <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>model</th>
-      <td><p>tdmore model with formulation metadata</p></td>
+      <th>x</th>
+      <td><p>a tdmorefit or tdmore object</p></td>
     </tr>
     <tr>
-      <th>regimen</th>
-      <td><p>a treatment regimen</p></td>
-    </tr>
-    <tr>
-      <th>deltamin</th>
-      <td><p>how much can we move the trough back to match an existing treatment time? in percentage of interdose-interval</p></td>
-    </tr>
-    <tr>
-      <th>deltaplus</th>
-      <td><p>how much can we move the trough forward to match an existing treatment time? in percentage of interdose-interval
-This method emits an error if any other treatment is found in the interval between `time` and `time+ii*(1-deltamin)`</p></td>
-    </tr>
-    <tr>
-      <th>adj</th>
-      <td><p>some prediction models will display the peak rather than the trough if we use the exact treatment time.
-To counteract this, we subtract an infitisemal small number. Specify an actual number,
-or specify TRUE to subtract a single bit from the mantissa (the lowest theoretical amount to ensure the returned
-value is lower than the treatment TIME)</p></td>
+      <th>N</th>
+      <td><p>the number of random subjects to create</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>a numeric vector with the corresponding troughs</p>
+    <p>This method samples ETA parameters from the variance-covariance
+matrix of a given tdmorefit object. If a tdmore object is provided,
+the population is used.</p>
+<p>The regimen needs to be provided to know the number of a</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

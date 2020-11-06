@@ -132,11 +132,112 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-base-setup-for-defining-a-tdmore-model" class="hasAnchor"><a href="#section-base-setup-for-defining-a-tdmore-model" class="anchor"></a>Base setup for defining a tdmore model</h2>
-          <p class="section-desc"><p>Parameter estimation and dose recommendation needs a model. The methods below allow you to construct a model using <code>nlmixr</code>, <code>RxODE</code>, or algebraic equations.</p></p>
+          <h2 id="section-evaluate-precision-dosing" class="hasAnchor"><a href="#section-evaluate-precision-dosing" class="anchor"></a>Evaluate precision dosing</h2>
+          <p class="section-desc"><p>All these functions need a model, see section ‘Models’</p></p>
         </th>
       </tr>
       
+      
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-fit-population-data" class="hasAnchor"><a href="#section-fit-population-data" class="anchor"></a>Fit population data</h3>
+          <p class="section-desc"><p>These functions perform posthoc and/or proseval on population data</p></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="dataTibble.html">dataTibble()</a></code> </p>
+        </td>
+        <td><p>Utility function to create a data tibble.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="posthoc.html">posthoc()</a></code> <code><a href="posthoc.html">proseval()</a></code> </p>
+        </td>
+        <td><p>Find the individual parameters for a set of virtual subjects in a population,
+either based on all available data (posthoc), or including data piece-wise as time progresses (proseval).</p></td>
+      </tr>
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-add-predictions-for-the-population" class="hasAnchor"><a href="#section-add-predictions-for-the-population" class="anchor"></a>Add predictions for the population</h3>
+          <p class="section-desc"><p>These functions can be used to append predictions to each tdmorefit instance in the population</p></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="predict.tdmorefit.html">predict(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Predict new data using a model fit</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="logLik.tdmorefit.html">logLik(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Calculate the log-likelihood of the predicted values.
+If fixed values were used to obtain the tdmorefit, they are considered estimated and are included in the population log-likelihood.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="as.population.html">as.population()</a></code> </p>
+        </td>
+        <td><p>Create a typical value subject</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="as.sample.html">as.sample()</a></code> </p>
+        </td>
+        <td><p>Create a tiible of N random tdmorefit instances</p></td>
+      </tr>
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-simulate-precision-dosing" class="hasAnchor"><a href="#section-simulate-precision-dosing" class="anchor"></a>Simulate precision dosing</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="doseSimulation.html">findDose()</a></code> <code><a href="doseSimulation.html">findDoses()</a></code> <code><a href="doseSimulation.html">doseSimulation()</a></code> </p>
+        </td>
+        <td><p>Simulate dose adaptation in a population</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-models" class="hasAnchor"><a href="#section-models" class="anchor"></a>Models</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-tdmore-models" class="hasAnchor"><a href="#section-tdmore-models" class="anchor"></a>Tdmore models</h3>
+          <p class="section-desc"><p>Parameter estimation and dose recommendation needs a model. The methods below allow you to construct a model using <code>nlmixr</code>, <code>RxODE</code>, or algebraic equations.</p></p>
+        </th>
+      </tr>
       
     </tbody><tbody>
       
@@ -153,22 +254,15 @@
           <p><code><a href="errorModel.html">errorModel()</a></code> </p>
         </td>
         <td><p>Instantiate a new error model.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="as.population.html">as.population()</a></code> </p>
-        </td>
-        <td><p>Transform a tdmore fit object into a population fit
-This is done by re-executing the 'estimate' function, but with no observed data</p></td>
       </tr>
     </tbody><tbody>
+      
       <tr>
         <th colspan="2">
-          <h2 id="section-model-metadata" class="hasAnchor"><a href="#section-model-metadata" class="anchor"></a>Model metadata</h2>
+          <h3 id="section-metadata" class="hasAnchor"><a href="#section-metadata" class="anchor"></a>Metadata</h3>
           <p class="section-desc"><p>Model metadata allows to intelligently guess certain default settings</p></p>
         </th>
       </tr>
-      
       
     </tbody><tbody>
       
@@ -237,13 +331,13 @@ and should be included in a plot.</p></td>
         <td><p>Get the observed variables from the tdmore model.</p></td>
       </tr>
     </tbody><tbody>
+      
       <tr>
         <th colspan="2">
-          <h2 id="section-algebraic-models" class="hasAnchor"><a href="#section-algebraic-models" class="anchor"></a>Algebraic models</h2>
+          <h3 id="section-algebraic-models" class="hasAnchor"><a href="#section-algebraic-models" class="anchor"></a>Algebraic models</h3>
           <p class="section-desc"><p>Use an algebraic model in tdmore</p></p>
         </th>
       </tr>
-      
       
     </tbody><tbody>
       
@@ -288,13 +382,13 @@ fetches the arguments from the caller's environment.</p></td>
         <td><p>Execute the appropriate PK model, based on the same rules as used by Monolix</p></td>
       </tr>
     </tbody><tbody>
+      
       <tr>
         <th colspan="2">
-          <h2 id="section-model-predictive-control" class="hasAnchor"><a href="#section-model-predictive-control" class="anchor"></a>Model-predictive control</h2>
+          <h3 id="section-model-predictive-control" class="hasAnchor"><a href="#section-model-predictive-control" class="anchor"></a>Model-predictive control</h3>
           <p class="section-desc"><p>Replace empirical bayesian estimation with model-predictive control in a tdmore model</p></p>
         </th>
       </tr>
-      
       
     </tbody><tbody>
       
@@ -307,13 +401,13 @@ fetches the arguments from the caller's environment.</p></td>
         <td><p>MPC is a generic function to make a tdmore model compatible with MPC.</p></td>
       </tr>
     </tbody><tbody>
+      
       <tr>
         <th colspan="2">
-          <h2 id="section-mixture-models" class="hasAnchor"><a href="#section-mixture-models" class="anchor"></a>Mixture models</h2>
+          <h3 id="section-mixture-models" class="hasAnchor"><a href="#section-mixture-models" class="anchor"></a>Mixture models</h3>
           <p class="section-desc"><p>A mixture model combines two subpopulations with an a priori probability of belonging to either model A or model B</p></p>
         </th>
       </tr>
-      
       
     </tbody><tbody>
       
@@ -332,13 +426,13 @@ fetches the arguments from the caller's environment.</p></td>
         <td><p>Create a TDMore mixture model, based on several options for a discrete covariate.</p></td>
       </tr>
     </tbody><tbody>
+      
       <tr>
         <th colspan="2">
-          <h2 id="section-make-predictions-on-populations" class="hasAnchor"><a href="#section-make-predictions-on-populations" class="anchor"></a>Make predictions on populations</h2>
-          <p class="section-desc"><p>These functions accept a dataTibble object, and performs simulations and predictions</p></p>
+          <h3 id="section-example-models" class="hasAnchor"><a href="#section-example-models" class="anchor"></a>Example models</h3>
+          <p class="section-desc"><p>Example datasets, with their respective population PK model as estimated by nlmixr.</p></p>
         </th>
       </tr>
-      
       
     </tbody><tbody>
       
@@ -346,39 +440,46 @@ fetches the arguments from the caller's environment.</p></td>
       <tr>
         
         <td>
-          <p><code><a href="dataTibble.html">dataTibble()</a></code> </p>
+          <p><code><a href="theopp.html">theopp</a></code> </p>
         </td>
-        <td><p>Utility function to create a data tibble.</p></td>
+        <td><p>Theophylline dataset, as included in the NONMEM distribution.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="posthoc.html">posthoc()</a></code> <code><a href="posthoc.html">proseval()</a></code> <code><a href="posthoc.html">doseSimulation()</a></code> </p>
+          <p><code><a href="theopp_nlmixr.html">theopp_nlmixr</a></code> </p>
         </td>
-        <td><p>These functions perform estimate for multiple individuals at the same time.</p></td>
+        <td><p>NlmixrUI object describing theophylline 1-compartment model with oral absorption</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="optimize.html">optimize()</a></code> </p>
+          <p><code><a href="pheno.html">pheno</a></code> </p>
         </td>
-        <td><p>Optimize the regimen, using the metadata defined by the model</p></td>
+        <td><p>Phenobarbitol dataset, as included in the NONMEM distribution.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="findDose.html">findDose()</a></code> </p>
+          <p><code><a href="pheno_nlmixr.html">pheno_nlmixr</a></code> </p>
         </td>
-        <td><p>Find the dose required to hit a target.</p></td>
+        <td><p>NlmixrUI object describing Phenobarbitol 1-compartment model with IV administration
+and allometric scaling on weight</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="predict.tdmorefit.html">predict(<i>&lt;tdmorefit&gt;</i>)</a></code> </p>
+          <p><code><a href="getModel.html">getModel()</a></code> </p>
         </td>
-        <td><p>Predict new data using a model fit</p></td>
+        <td><p>This searches for the given model name in a directory</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="defaultModel.html">defaultModel()</a></code> </p>
+        </td>
+        <td><p>Get the first available model name in the given directory</p></td>
       </tr>
     </tbody><tbody>
       <tr>
         <th colspan="2">
           <h2 id="section-plotting" class="hasAnchor"><a href="#section-plotting" class="anchor"></a>Plotting</h2>
-          <p class="section-desc"><p>These functions can be used to plot base tdmore objects</p></p>
+          <p class="section-desc"><p>These functions can be used to plot more detail for predictions</p></p>
         </th>
       </tr>
       
@@ -424,56 +525,6 @@ fetches the arguments from the caller's environment.</p></td>
         <td><p>This creates a special type of ggplot2 Layer object.
 The layer searches for a tdmorefit object in either the plot, or its own arguments.
 It then calls the `predict()` function and provides this data.frame instead of the original data</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-example-models" class="hasAnchor"><a href="#section-example-models" class="anchor"></a>Example models</h2>
-          <p class="section-desc"><p>Two well-known example datasets, with their respective population PK model, as estimated by nlmixr.</p></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="theopp.html">theopp</a></code> </p>
-        </td>
-        <td><p>Theophylline dataset, as included in the NONMEM distribution.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="theopp_nlmixr.html">theopp_nlmixr</a></code> </p>
-        </td>
-        <td><p>NlmixrUI object describing theophylline 1-compartment model with oral absorption</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pheno.html">pheno</a></code> </p>
-        </td>
-        <td><p>Phenobarbitol dataset, as included in the NONMEM distribution.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pheno_nlmixr.html">pheno_nlmixr</a></code> </p>
-        </td>
-        <td><p>NlmixrUI object describing Phenobarbitol 1-compartment model with IV administration
-and allometric scaling on weight</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getModel.html">getModel()</a></code> </p>
-        </td>
-        <td><p>This searches for the given model name in a directory</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="defaultModel.html">defaultModel()</a></code> </p>
-        </td>
-        <td><p>Get the first available model name in the given directory</p></td>
       </tr>
     </tbody>
     </table>

@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>These functions perform estimate for multiple individuals at the same time. — posthoc • tdmore</title>
+<title>Find the individual parameters for a set of virtual subjects in a population,
+either based on all available data (posthoc), or including data piece-wise as time progresses (proseval). — posthoc • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +47,10 @@
 
 
 
-<meta property="og:title" content="These functions perform estimate for multiple individuals at the same time. — posthoc" />
-<meta property="og:description" content="These functions perform estimate for multiple individuals at the same time." />
+<meta property="og:title" content="Find the individual parameters for a set of virtual subjects in a population,
+either based on all available data (posthoc), or including data piece-wise as time progresses (proseval). — posthoc" />
+<meta property="og:description" content="Find the individual parameters for a set of virtual subjects in a population,
+either based on all available data (posthoc), or including data piece-wise as time progresses (proseval)." />
 <meta property="og:image" content="/logo.svg" />
 
 <meta name="robots" content="noindex" />
@@ -119,13 +122,15 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>These functions perform estimate for multiple individuals at the same time.</h1>
+    <h1>Find the individual parameters for a set of virtual subjects in a population,
+either based on all available data (posthoc), or including data piece-wise as time progresses (proseval).</h1>
     <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/proseval.R'><code>R/proseval.R</code></a></small>
     <div class="hidden name"><code>posthoc.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>These functions perform estimate for multiple individuals at the same time.</p>
+    <p>Find the individual parameters for a set of virtual subjects in a population,
+either based on all available data (posthoc), or including data piece-wise as time progresses (proseval).</p>
     </div>
 
     <pre class="usage"><span class='fu'>posthoc</span><span class='op'>(</span>
@@ -144,18 +149,6 @@
   .prediction <span class='op'>=</span> <span class='st'>"ipred"</span>,
   .elapsed <span class='op'>=</span> <span class='st'>"elapsed"</span>,
   .obs <span class='op'>=</span> <span class='st'>"OBS"</span>
-<span class='op'>)</span>
-
-<span class='fu'>doseSimulation</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  <span class='va'>...</span>,
-  <span class='va'>optimize</span>,
-  <span class='va'>predict</span>,
-  .fit <span class='op'>=</span> <span class='st'>"fit"</span>,
-  .iterationFit <span class='op'>=</span> <span class='st'>"iterationFit"</span>,
-  .next_observed <span class='op'>=</span> <span class='st'>"next_observed"</span>,
-  .next_regimen <span class='op'>=</span> <span class='st'>"next_regimen"</span>,
-  .verbose <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -196,32 +189,6 @@ with that name, storing the required computation time (`System.time`) for that f
       <td><p>Either a string or NULL. If a string, the output will contain a column
 with that name, describing how many observations were taken into account</p></td>
     </tr>
-    <tr>
-      <th>optimize</th>
-      <td><p>an optimization function for dose simulation, corresponding to function(fit, regimen, truth), and returning a list(nextTime, regimen)</p></td>
-    </tr>
-    <tr>
-      <th>predict</th>
-      <td><p>a prediction function for dose simulation, corresponding to function(truth, newRegimen, nextTime)
-If missing, we simply predict using the true fit.
-We evaluate the nextObservations time points using the 'true' model and the new regimen.</p></td>
-    </tr>
-    <tr>
-      <th>.iterationFit</th>
-      <td><p>column name for the iteration fit</p></td>
-    </tr>
-    <tr>
-      <th>.next_observed</th>
-      <td><p>What will be the predicted next observation?</p></td>
-    </tr>
-    <tr>
-      <th>.next_regimen</th>
-      <td><p>What will be the next regimen?</p></td>
-    </tr>
-    <tr>
-      <th>.verbose</th>
-      <td><p>Be verbose when simulating?</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -238,31 +205,11 @@ The next fit will only use one observation.
 The next fit will use two observations.
 And so on.</p>
 <p>Please note that ipred incorporates all time-varying covariates, even if these may be considered to be "in the future".</p>
-    <h2 class="hasAnchor" id="dosesimulation"><a class="anchor" href="#dosesimulation"></a>DoseSimulation</h2>
-
-    
-
-<p>This tool simulates a dose adaptation run for an individual.
-We expect a .fit column in the data, that represents the best model fit for the given subject.
-All other columns are passed to the posthoc function when calculating the next fit, except for
-the 'observed' data (that is replaced by the simulated data)
-and the 'regimen' data (that is replaced by the adapted regimen)</p>
-<p>The DoseSimulation iterates as follows:
-1) A fit is generated using the up-to-now observed concentrations
-2) The optimize method is called with the following arguments:
-  optimize( fit, regimen, truth )
-  It is up to the optimizer to determine how to optimize the treatment regimen.
-  The optimizer returns a list( nextTime=nextObservations, regimen=newRegimen, extra=tibble() )
-  If nextTime is not a finite number, we stop the simulation.
-  If nextTime is missing, we use the next observation from the posthocfit.
-3) The predict method is called with the following arguments:
-  predict(truth, newRegimen, nextTime)
-This predicts the next observation.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'>magrittr</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Loading required package: magrittr</span></div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='http://ggplot2.tidyverse.org'>ggplot2</a></span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading required package: ggplot2</span></div><div class='input'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dataTibble.html'>dataTibble</a></span><span class='op'>(</span>
+<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dataTibble.html'>dataTibble</a></span><span class='op'>(</span>
     object<span class='op'>=</span><span class='fu'><a href='getModel.html'>getModel</a></span><span class='op'>(</span><span class='st'>"example"</span><span class='op'>)</span>,
     observed<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>ID<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span><span class='op'>)</span>, TIME<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>8</span>,<span class='fl'>10</span>,<span class='fl'>8</span>,<span class='fl'>10</span><span class='op'>)</span>, CONC<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1.5</span>,<span class='fl'>0.3</span>,<span class='fl'>0.8</span>,<span class='fl'>0.2</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>)</span>
