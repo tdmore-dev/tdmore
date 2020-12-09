@@ -1,0 +1,216 @@
+---
+title: "TDMore, a tool for exploring MIPD performance"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TDMore, a tool for exploring MIPD performance}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+### About this vignette
+This shows you how to take a dataset, fit a model, and apply tdmore to investigate
+predictive performance and precision dosing.
+
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+set.seed(0) 
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(tdmore)
+```
+
+### Source dataset
+We will use a well-known example dataset: `pheno`.
+
+```{r}
+pheno %>% filter(ID %in% c(1,2))
+```
+
+### Building your model
+We will fit a 1-compartment model to this dataset using nlmixr.
+
+```{r, eval=FALSE}
+library(nlmixr)
+library(tidyverse)
+modelCode <- function() {
+  ini({
+    LTHETA2 <- log(50)
+    LTHETA3 <- log(0.1)
+    #variances
+    ETA2 ~ 1
+    ETA3 ~ 1
+    EPS1 <- 0.1
+  })
+  model({
+    LWT = log(WT / 70)
+    V=exp(LTHETA2+LWT+ETA2)
+    CL=exp(LTHETA3+LWT*0.75+ETA3)
+
+    d/dt(centr) = -CL/V*centr
+    CONC=centr/V
+    CONC ~ add(EPS1)
+  })
+}
+
+pheno_nlmixr <- pheno %>%
+  nlmixr(modelCode, data=., est="focei")
+```
+
+### Adapting the model for tdmore
+
+An nlmixr model already contains both the structural model and the description of inter-individual variability and residual variability.
+
+```{r}
+m1 <- tdmore(pheno_nlmixr)
+summary(m1)
+```
+
+Alternatively, you can specify your model using `RxODE` or `algebraic` equations. In these cases, you have to specify the inter-individual variability and residual variability manually.
+
+### Performing a posthoc {-}
+Now that we have a model, we can perform a posthoc fit on retrospective data. We will first convert the dataset to tdmore format.
+
+```{r}
+regimen <- pheno %>% filter(EVID==1) %>% select(ID, TIME, AMT)
+observed <- pheno %>% filter(EVID==0 & MDV == 0) %>% transmute(ID, TIME, CONC=DV)
+covariates <- pheno %>% select(ID, TIME, WT)
+db <- dataTibble(object=m1, regimen, observed, covariates)
+
+#We will only perform the evaluation for the first 5 subjects, for performance reasons
+db <- db[1:5, ]
+```
+
+And then perform a posthoc fit.
+```{r}
+posthocPrediction <- posthoc(db)
+print(posthocPrediction)
+```
+
+You can plot a single fit from this easily using `autoplot`.
+```{r}
+autoplot(posthocPrediction$fit[[1]], se.fit=FALSE)
+```
+
+### Quantifying prediction accuracy {-}
+Let us now explore how well we can predict future concentrations. Proseval creates a tibble with a fit per concentration.
+
+```{r}
+prosevalResults <- proseval(db)
+head(prosevalResults)
+```
+
+We can use this data to plot how well we can predict the future for this population. The `OBS` variable describes how many previous concentrations are included in the fit.
+
+```{r}
+prosevalResults %>% 
+  unnest(cols=c(observed, ipred), names_sep=".") %>%
+  group_by(ID, OBS) %>% mutate(INCLUDED = row_number() <= OBS) %>%
+  ggplot(aes(x=ipred.TIME, y=ipred.CONC - observed.CONC)) +
+  geom_smooth(se=F) +
+  geom_hline(yintercept=0) +
+  geom_hline(yintercept=c(-1.96, 1.96)*m1$res_var[[1]]$sigma(), linetype=2) +
+  geom_point(aes(color=INCLUDED)) +
+  scale_x_continuous(breaks=seq(0, 999, by=24)) +
+  facet_wrap(~OBS, labeller=label_both)
+```
+
+The concentration data early post-treatment is insufficient to accurately predict the future time course. 
+
+### Exploring MIPD performance
+We can now simulate precision dosing using this model.
+
+```{r, message=FALSE, warning=FALSE}
+## We need to add some metadata to the model to easily optimize
+m2 <- m1 %>%
+  metadata(formulation("Default", "mg", dosing_interval=24)) %>%
+  metadata(target(min=30, max=30))
+
+## The modified simulation database:
+## keep ID, fit, and covariates
+## the fit is used as the "truth" to predict new concentrations
+## the new regimen assumes a default 24h-based administration
+simulationDb <- posthocPrediction %>% ungroup() %>%
+  select(ID, fit, covariates) %>%
+  mutate(regimen=list(data.frame(TIME=seq(0, 140, by=24), AMT=NA, FORM="Default")),
+         object=list(m2)) 
+
+## Adjustment option 1: measure at each trough
+measureAtTrough <- function(fit, regimen, truth) {
+  if(nrow(fit$observed) == 0) {
+    rec <- findDoses(fit)
+    list(nextTime=regimen$TIME[2]-0.01, regimen=rec$regimen)
+  } else {
+    now <- max(fit$observed$TIME) + 3
+    regimen$FIX <- !(regimen$TIME > now)
+    rec <- findDoses(fit, regimen=regimen)
+    nextTime <- regimen$TIME[match(FALSE, regimen$FIX)] #next trough
+    list(nextTime=nextTime-0.01, regimen=rec$regimen)
+  }
+}
+
+## Adjustment option 2: measure 8h before trough, so you can still adapt
+measure8hBeforeTrough <- function(fit, regimen, truth) {
+  if(nrow(fit$observed) == 0) {
+    rec <- findDoses(fit)
+    list(nextTime=regimen$TIME[2]-8, regimen=rec$regimen)
+  } else {
+    now <- max(fit$observed$TIME) + 3
+    regimen$FIX <- !(regimen$TIME > now)
+    rec <- findDoses(fit, regimen=regimen)
+    nextTime <- regimen$TIME[match(FALSE, regimen$FIX)+1] #next trough
+    list(nextTime=nextTime-8, regimen=rec$regimen)
+  }
+}
+
+## Adjustment option 3: rich profile at the beginning
+richProfileAtBeginning <- function(fit, regimen, truth) {
+  richProfile <- c(1, 3, 4, 6, 8, 10)
+  if(nrow(fit$observed) == 0) {
+    rec <- findDoses(fit)
+    return( list(nextTime=richProfile[1], regimen=rec$regimen) )
+  }
+  
+  nextTime <- richProfile[nrow(fit$observed) + 1]
+  regimen$FIX <- FALSE
+  regimen$FIX[1] <- TRUE #loading dose cannot be changed
+  if(nrow(fit$observed) == length(richProfile)) {
+    rec <- findDoses(fit, regimen=regimen)
+    regimen <- rec$regimen
+  }
+  list(nextTime=nextTime, regimen=regimen)
+}
+
+simulationResult <- doseSimulation(simulationDb, optimize=measureAtTrough) %>% mutate(method="A. At Trough")
+simulationResult2 <- doseSimulation(simulationDb, optimize=measure8hBeforeTrough) %>% mutate(method="B. 8h before trough")
+simulationResult3 <- doseSimulation(simulationDb, optimize=richProfileAtBeginning) %>% mutate(method="C. Rich profile")
+
+fullResult <- bind_rows(simulationResult, simulationResult2, simulationResult3) %>%
+  group_by(ID, method) %>% filter(row_number() == n()) %>% #only keep the last regimen
+  mutate(ipred = purrr::map2(fit, next_regimen, ~predict(.x, regimen=.y, newdata=0:144)))
+
+head(fullResult)
+```
+
+The `doseSimulation` function has performed an iterative estimate - adapt routine. It uses `nextTime` to know when to simulate the next concentration sample, re-estimate the individual fit, and allow dose adaptation.
+
+The final result is a dataset detailing every dose adaptation step. The final regimen can be found at the last line for each subject. We use this regimen to predict concentration from 0 to 150 hours.
+This can be used to show in silico dosing performance.
+
+```{r}
+ggplot(fullResult, aes(x=TIME, y=CONC)) +
+  geom_line(data=. %>% unnest(cols=ipred), aes(group=interaction(method,ID), color=method)) +
+  geom_point(data=. %>% unnest(cols=observed)) +
+  geom_hline(yintercept=30, linetype=2) +
+  geom_hline(yintercept=30+c(1.96, -1.96)*m1$res_var[[1]]$add, linetype=2, alpha=0.3) +
+  theme(legend.position="none") +
+  facet_wrap(~method)
+```
+
+The dots in the above figure show simulated concentration samples, used to refine the individual fit. The lines are the resulting concentrations from the "true" fit.
+
+Conclusion? For our simple example, simulations indicate measuring 8h before trough (strategy B) is the superior approach, as it reaches the target sooner with similar accuracy to measuring at trough (strategy A). Note that the high additive residual error of `r m1$res_var[[1]]$add` limits the information obtained from each concentration sample.
+
+### Code appendix
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+```

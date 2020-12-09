@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+tdmore.d/**
+rx_*
+inst/benchmark/*.benchmark
+doc
+Meta
+.Rprofile
+docs

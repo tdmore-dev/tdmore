@@ -1,0 +1,9 @@
+## We manage to cover all shinytests as well
+## When using covr::package_coverage, the package is first installed in a temp location.
+## Then, the package loader is modified to automatically instrument all code onLoad.
+## As long as we ensure this instrumented package is used, all package code will indeed be tracked by covr,
+## even if an external shinytest process is used.
+##
+## We do need to make sure that the shinytest process is gracefully terminated. This is not the case when
+## using a regular app$stop()
+## Any code in inst/ or other places is not tracked by covr. This should not be the goal anyway...

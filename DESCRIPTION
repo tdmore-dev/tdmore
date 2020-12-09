@@ -1,0 +1,35 @@
+Package: tdmore
+Type: Package
+Title: In silico evaluation of precision dosing
+Version: 1.2.0.900
+Authors@R: c(
+  person("Ruben", "Faelens", role = c("aut", "cre"), email = "ruben.faelens@kuleuven.be", comment=c(ORCID="0000-0002-7234-2443")),
+  person("Nicolas", "Luyckx", role=c("aut", "csl")),
+  person("Quentin", "Leirens", role=c("aut", "csl")),
+  person("Thomas", "Bouillon", role="dgs"),
+  person("Pieter", "Annaert", role="dgs"),
+  person("Daniel", "Roshammar", role="dgs"),
+  person("KULeuven", role="cph"),
+  person("FWO TBM Grant", role="fnd")
+  )
+Description: tdmore is a research tool to investigate precision dosing.
+  It provides an easy interface to perform bayesian fit of
+  a virtual population, using a user-provided population model,
+  and allows to explore new dosing regimen for this population. One of these
+  dosing regimen can be implemented as precision dosing, allowing you to compare 
+  performance versus classical techniques.
+Depends: R (>= 3.5.0)
+Imports: dplyr, stats, RxODE (>= 0.9.0), nlmixr (>= 1.1.0-9), ggplot2 (>= 3.0.0), magrittr,
+  zoo, rlang, purrr, Matrix, mvnfast, data.table, optimr, optextras, tibble, R6, roxygen2
+License: AGPL-3
+Encoding: UTF-8
+Language: en-US
+LazyData: true
+Suggests: progress, callr, knitr, rmarkdown, testthat, devtools, vdiffr, svglite, rprojroot,
+ pkgdown, bookdown, miniUI, shiny, readr, stringr, tidyr (>= 1.0.0), shinytest, withr,
+ benchmarkme, microbenchmark, plotly, MCMCpack, mnormt, gridExtra
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
+URL: https://github.com/tdmore-dev/tdmore, https://tdmore-dev.github.io/tdmore/
+BugReports: https://github.com/tdmore-dev/tdmore/issues
+Config/testthat/edition: 3

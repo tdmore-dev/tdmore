@@ -1,0 +1,122 @@
+## This file configures the building process for pkgdown::build_site()
+template:
+  params:
+    noindex: true # tells search engines not to index the site
+
+home:
+  strip_header: false
+
+development:
+  mode: auto  # detect based on version number
+  version_label: warning
+  version_tooltip: "The full API is stable, but sometimes limited"
+
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - news
+    right: github
+
+reference:
+- title: Evaluate precision dosing
+  desc: >
+    All these functions need a model, see section 'Models'
+- subtitle: Fit population data
+  desc: >
+    These functions perform posthoc and/or proseval on population data
+  contents:
+  - dataTibble
+  - posthoc
+  - proseval
+
+- subtitle: Add predictions for the population
+  desc: >
+    These functions can be used to append predictions to each tdmorefit instance
+    in the population
+  contents:
+  - predict.tdmorefit
+  - logLik.tdmorefit
+  - as.population
+  - as.sample
+
+- subtitle: Simulate precision dosing
+  contents:
+  - doseSimulation
+  - findDose
+  - findDoses
+
+- title: Models
+- subtitle: Tdmore models
+  desc: >
+    Parameter estimation and dose recommendation needs a model. The methods below
+    allow you to construct a model using `nlmixr`, `RxODE`, or algebraic equations.
+  contents:
+  - tdmore
+  - errorModel
+
+- subtitle: Metadata
+  desc: >
+    Model metadata allows to intelligently guess certain default settings
+  contents:
+  - metadata
+  - getDosingInterval
+  - covariate
+  - output
+  - formulation
+  - target
+  - getMetadataByName
+  - getMetadataByClass
+  - observed_variables
+  - getObservedVariables
+
+- subtitle: Algebraic models
+  desc: >
+    Use an algebraic model in tdmore
+  contents:
+  - algebraic
+  - tdmore.algebraic
+  - linCmt
+  - pk_
+  - pk
+  - pkmodel
+
+- subtitle: Model-predictive control
+  desc: >
+    Replace empirical bayesian estimation with model-predictive control in a tdmore model
+  contents:
+  - mpc
+
+- subtitle: Mixture models
+  desc: >
+    A mixture model combines two subpopulations with an a priori probability
+    of belonging to either model A or model B
+  contents:
+  - tdmore_mixture
+  - tdmore_mixture_covariates
+
+- subtitle: Example models
+  desc: >
+    Example datasets, with their respective population PK model as
+    estimated by nlmixr.
+  contents:
+  - theopp
+  - theopp_nlmixr
+  - pheno
+  - pheno_nlmixr
+  - getModel
+  - defaultModel
+
+- title: Plotting
+  desc: >
+    These functions can be used to plot more detail for predictions
+  contents:
+  - autoplot.tdmore
+  - autoplot.tdmorefit
+  - autolayer.recommendation
+  - autoplot.tdmorefit_mixture
+  - parameterPlot.tdmorefit
+  - predictionLayer

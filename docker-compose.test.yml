@@ -1,0 +1,12 @@
+## To run tests manually:
+## docker-compose -f docker-compose.test.yml build
+## docker-compose -f docker-compose.test.yml run sut
+
+
+#cli.unicode results in Docker errors
+#see https://github.com/docker/toolbox/issues/695
+#for more information
+
+sut:
+  build: .
+  command: R -e 'options(cli.unicode = FALSE); devtools::test(stop_on_failure=TRUE)'
