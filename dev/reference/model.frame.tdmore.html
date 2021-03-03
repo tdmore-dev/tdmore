@@ -6,9 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create an 'observed variables' object.
-This metadata indicates that these variables are interesting outputs of the model,
-and should be included in a plot. — observed_variables • tdmore</title>
+<title>Get the specified data values, with the upper and lower bounds provided by the residual error model — model.frame.tdmore • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,12 +46,8 @@ and should be included in a plot. — observed_variables • tdmore</title>
 
 
 
-<meta property="og:title" content="Create an 'observed variables' object.
-This metadata indicates that these variables are interesting outputs of the model,
-and should be included in a plot. — observed_variables" />
-<meta property="og:description" content="Create an 'observed variables' object.
-This metadata indicates that these variables are interesting outputs of the model,
-and should be included in a plot." />
+<meta property="og:title" content="Get the specified data values, with the upper and lower bounds provided by the residual error model — model.frame.tdmore" />
+<meta property="og:description" content="Get the specified data values, with the upper and lower bounds provided by the residual error model" />
 <meta property="og:image" content="/logo.svg" />
 
 <meta name="robots" content="noindex" />
@@ -125,33 +119,54 @@ and should be included in a plot." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create an 'observed variables' object.
-This metadata indicates that these variables are interesting outputs of the model,
-and should be included in a plot.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/metadata.R'><code>R/metadata.R</code></a></small>
-    <div class="hidden name"><code>observed_variables.Rd</code></div>
+    <h1>Get the specified data values, with the upper and lower bounds provided by the residual error model</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/model.R'><code>R/model.R</code></a></small>
+    <div class="hidden name"><code>model.frame.tdmore.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Create an 'observed variables' object.
-This metadata indicates that these variables are interesting outputs of the model,
-and should be included in a plot.</p>
+    <p>Get the specified data values, with the upper and lower bounds provided by the residual error model</p>
     </div>
 
-    <pre class="usage"><span class='fu'>observed_variables</span><span class='op'>(</span><span class='va'>variables</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='co'># S3 method for tdmore</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/model.frame.html'>model.frame</a></span><span class='op'>(</span><span class='va'>formula</span>, <span class='va'>data</span>, se <span class='op'>=</span> <span class='cn'>FALSE</span>, level <span class='op'>=</span> <span class='fl'>0.95</span>, onlyOutput <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>variables</th>
-      <td><p>variables to be observed</p></td>
+      <th>formula</th>
+      <td><p>a TDMore object</p></td>
+    </tr>
+    <tr>
+      <th>data</th>
+      <td><p>data.frame with at least a TIME column
+Or alternatively, a numeric vector.
+Or NULL, to get an empty data.frame with TIME and a column for every output variable.</p></td>
+    </tr>
+    <tr>
+      <th>se</th>
+      <td><p>TRUE to generate an additional xx.upper and xx.lower column for every xx column in the data dataset</p></td>
+    </tr>
+    <tr>
+      <th>level</th>
+      <td><p>numeric value to specify the confidence interval</p></td>
+    </tr>
+    <tr>
+      <th>onlyOutput</th>
+      <td><p>only keep TIME and output variables in the data.frame</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>ignored</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a tdmore_observed_variables object</p>
+    <p>a data.frame similar to data. It contains at least column TIME.
+If a numeric vector was specified as `data`, the output is a data.frame with TIME column and additional NA-filled columns corresponding to the residual error variables.
+If `se` is TRUE, the data.frame has additional columns xx.lower and xx.upper for all columns that match the residual error model.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

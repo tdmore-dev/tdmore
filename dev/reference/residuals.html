@@ -6,9 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create an 'observed variables' object.
-This metadata indicates that these variables are interesting outputs of the model,
-and should be included in a plot. — observed_variables • tdmore</title>
+<title>Get the residual values of a predicted value vs the observed value — residuals.tdmore • tdmore</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,12 +46,8 @@ and should be included in a plot. — observed_variables • tdmore</title>
 
 
 
-<meta property="og:title" content="Create an 'observed variables' object.
-This metadata indicates that these variables are interesting outputs of the model,
-and should be included in a plot. — observed_variables" />
-<meta property="og:description" content="Create an 'observed variables' object.
-This metadata indicates that these variables are interesting outputs of the model,
-and should be included in a plot." />
+<meta property="og:title" content="Get the residual values of a predicted value vs the observed value — residuals.tdmore" />
+<meta property="og:description" content="Get the residual values of a predicted value vs the observed value" />
 <meta property="og:image" content="/logo.svg" />
 
 <meta name="robots" content="noindex" />
@@ -125,33 +119,50 @@ and should be included in a plot." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create an 'observed variables' object.
-This metadata indicates that these variables are interesting outputs of the model,
-and should be included in a plot.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/metadata.R'><code>R/metadata.R</code></a></small>
-    <div class="hidden name"><code>observed_variables.Rd</code></div>
+    <h1>Get the residual values of a predicted value vs the observed value</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tdmore-dev/tdmore/blob/master/R/model.R'><code>R/model.R</code></a></small>
+    <div class="hidden name"><code>residuals.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Create an 'observed variables' object.
-This metadata indicates that these variables are interesting outputs of the model,
-and should be included in a plot.</p>
+    <p>Get the residual values of a predicted value vs the observed value</p>
     </div>
 
-    <pre class="usage"><span class='fu'>observed_variables</span><span class='op'>(</span><span class='va'>variables</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='co'># S3 method for tdmore</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/residuals.html'>residuals</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>predicted</span>, <span class='va'>observed</span>, weighted <span class='op'>=</span> <span class='cn'>FALSE</span>, inverse <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>variables</th>
-      <td><p>variables to be observed</p></td>
+      <th>object</th>
+      <td><p>A TDMore object</p></td>
+    </tr>
+    <tr>
+      <th>predicted</th>
+      <td><p>What was predicted, as data.frame</p></td>
+    </tr>
+    <tr>
+      <th>observed</th>
+      <td><p>The observed values, as data.frame</p></td>
+    </tr>
+    <tr>
+      <th>weighted</th>
+      <td><p>Should the residuals be divided by the standard deviation of the error model?</p></td>
+    </tr>
+    <tr>
+      <th>inverse</th>
+      <td><p>if TRUE, perform the inverse operation (assume `predicted` has IPRED values, and `observed` has IRES/IWRES values)</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>ignored</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a tdmore_observed_variables object</p>
+    <p>The `predicted` data.frame, with all output values replaced by IRES or IWRES</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
