@@ -151,7 +151,7 @@ predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covar
 #'
 #' @importFrom stats dnorm
 #' @importFrom stats residuals
-#' @engine
+#' @export
 residuals.tdmore <- function(object, predicted, observed, weighted=FALSE, inverse=FALSE, ...) {
   tdmore <- object
   for (err in tdmore$res_var) {
@@ -196,7 +196,7 @@ residuals.tdmore <- function(object, predicted, observed, weighted=FALSE, invers
 #' a data.frame similar to data. It contains at least column TIME.
 #' If a numeric vector was specified as `data`, the output is a data.frame with TIME column and additional NA-filled columns corresponding to the residual error variables.
 #' If `se` is TRUE, the data.frame has additional columns xx.lower and xx.upper for all columns that match the residual error model.
-#' @engine
+#' @export
 model.frame.tdmore <- function(formula, data, se=FALSE, level=0.95, onlyOutput=FALSE, ...) {
   tdmore <- formula
   if(is.null(data)) data <- numeric()

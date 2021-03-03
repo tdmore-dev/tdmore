@@ -20,16 +20,26 @@ predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, c
 #'
 #' @importFrom dplyr filter
 #' @engine
-estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), ..., .progress=NULL) {
+estimate_tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), ..., .progress=NULL) {
   p <- to_progress(.progress)
+  objectNoMpc <- object
+  class(objectNoMpc) <- setdiff(class(object), "tdmore_mpc")
 
   if(!"OCC" %in% colnames(regimen)) {
     warning("OCC column missing, adding...")
     regimen$OCC <- seq_len(nrow(regimen))
   }
   stopifnot(is.null(fix)) #MPC assumes FIX is empty
-  if(nrow(regimen)==0) return(NextMethod()) #nothing to be done!
-  if(is.null(observed) || nrow(observed)==0) return(NextMethod())
+  if(nrow(regimen)==0 || is.null(observed) || nrow(observed)==0) {
+    fit <- estimate(
+      objectNoMpc,
+      observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix,
+      method=method, se.fit=se.fit, lower=lower, upper=upper, multistart=multistart,
+      control=control, ..., .progress=.progress
+    )
+    fit$tdmore <- object
+    return(fit)
+  }
 
   # advance the fit per occasion
   occasions <- tibble(
@@ -45,8 +55,8 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
     #only observations in the current occasion (and before, since those parameters cannot move anymore anyway)
     #thisObserved <- filter(observed, .data$TIME <= to) #we count ON the occasion as well
     thisObserved <- filter(observed, .data$TIME > from & .data$TIME <= to) #we count ON the occasion as well
-    fit <- estimate.default(
-      object, observed=thisObserved, regimen=thisRegimen, covariates=covariates, par=par, fix=fix, method=method, se.fit=se.fit,
+    fit <- estimate(
+      objectNoMpc, observed=thisObserved, regimen=thisRegimen, covariates=covariates, par=par, fix=fix, method=method, se.fit=se.fit,
       lower=lower, upper=upper, multistart=multistart, control=control, ...
     )
     fix <<- coef(fit)
@@ -73,6 +83,7 @@ estimate.tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
     fit$varcov <- Matrix::.bdiag(varcovs) %>% as.matrix()
   }
   fit$observed <- observed
+  fit$tdmore <- object
 
   return(fit)
 }

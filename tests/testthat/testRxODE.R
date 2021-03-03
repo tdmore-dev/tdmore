@@ -25,12 +25,6 @@ tdmore <- m1 %>%
   tdmore(omega=omegas,
          res_var=list(errorModel("CONC", prop=0.23))) #Model has 23% proportional error
 
-tdmoreMonolixSS <- m1 %>%
-  tdmore(omega=omegas,
-         res_var=list(errorModel("CONC", prop=0.23)), #Model has 23% proportional error
-          nbSSDoses = 5
-  )
-
 regimen <- data.frame(
   TIME=seq(0, 3)*24,
   AMT=5 #5mg
@@ -44,18 +38,19 @@ expect_snapshot_output(
   print(summary(tdmore))
 )
 
-tdmore:::model_predict.RxODE(m1, times=seq(0:16), regimen=regimen, parameters=c(ECL=0, EVc=0))
+tdmore:::model_predict.RxODE(m1, times=seq(0,16), regimen=regimen, parameters=c(ECL=0, EVc=0))
 
 # Default tdmore plot
-plot(tdmore, regimen, se.fit=F)
+tdmore:::predict.tdmore(tdmore, newdata=seq(0,16), regimen=regimen)
+plot(tdmore, regimen=regimen, se.fit=F)
 
 # Compute PRED
-pred <- tdmore %>% tdmore:::estimate.default(regimen = regimen)
+pred <- tdmore %>% tdmore:::estimate(regimen = regimen)
 expect_equal(pred$res, c(EVc=0.0, ECL=0.0))
 
 # Compute IPRED
 observed <- data.frame(TIME=c(2), CONC=c(0.040))
-ipred <- tdmore %>% tdmore:::estimate.default(observed = observed, regimen = regimen)
+ipred <- tdmore %>% tdmore:::estimate(observed = observed, regimen = regimen)
 expect_equal(round(ipred$res, digits=4), c(EVc=0.1175, ECL=0.0336))
 
 # Default IPRED plot
@@ -89,6 +84,11 @@ expect_snapshot_value(
   "serialize"
 )
 
+tdmoreMonolixSS <- m1 %>%
+  tdmore(omega=omegas,
+         res_var=list(errorModel("CONC", prop=0.23)), #Model has 23% proportional error
+         nbSSDoses = 5
+  )
 expect_snapshot_value(
   predict(as.population(tdmoreMonolixSS), newdata=seq(0, 14)+12*10, regimen=data.frame(TIME=0+12*10, AMT=100, II=12, SS=1)),
   "serialize"
@@ -107,7 +107,7 @@ expect_snapshot_value(
 
 expect_error(
  predict(pop, newdata=seq(0, 14), regimen=data.frame(TIME=0, AMT=100, II=12, SS=1, ADDL=1)),
- regexp = "ss with addl not supported yet"
+ regexp = "'ss' with 'addl' not supported"
 )
 
 

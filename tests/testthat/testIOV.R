@@ -45,7 +45,7 @@ ggplot(data1, aes(x = TIME, y=CONC)) + geom_line()
 observed <- data.frame(TIME=c(7, 23, 75), CONC=c(1.25, 0.55, 0.8))
 
 # Simple estimate test with IOV
-fit <- tdmore:::estimate.default(object = m1, regimen = regimen, observed = observed)
+fit <- tdmore:::estimate(object = m1, regimen = regimen, observed = observed)
 expectedValues <- c(ECL=-0.0102, EKA=0.0463, ECL_IOV=0.1026, EKA_IOV=0.0137, ECL_IOV=-0.1060, EKA_IOV=-0.0021)
 expect_equal(coef(fit), expectedValues, tolerance=1e-3)
 

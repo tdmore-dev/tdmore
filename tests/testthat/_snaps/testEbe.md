@@ -1,7 +1,7 @@
 # Test all other ebe methods
 
     Call:
-    tdmore:::estimate.default(object = m1, observed = observed, regimen = regimen, 
+    tdmore:::estimate(object = m1, observed = observed, regimen = regimen, 
         covariates = c(WT = 70))
     Coef:
            ECL        EV1 
@@ -10,7 +10,7 @@
 ---
 
     Call:
-    tdmore:::estimate.default(object = m1, observed = observed, regimen = regimen, 
+    tdmore:::estimate(object = m1, observed = observed, regimen = regimen, 
         covariates = c(WT = 70))
     Coef:
            ECL        EV1 
@@ -50,7 +50,7 @@
 ---
 
     Call:
-    tdmore:::estimate.default(object = m1, observed = observed, regimen = regimen, 
+    tdmore:::estimate(object = m1, observed = observed, regimen = regimen, 
         covariates = c(WT = 70))
     Coef:
            ECL        EV1 

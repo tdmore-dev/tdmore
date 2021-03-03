@@ -109,51 +109,6 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #' @importFrom stats optim
 #' @engine
 estimate <- function(object, observed, regimen, covariates, par, fix,
-                     method, se.fit,
-                     lower, upper,
-                     multistart,
-                     control, ...) {
-  UseMethod("estimate")
-}
-
-#' @engine
-estimate.tdmore <- function(object, observed, regimen, covariates, par, fix,
-                            method, se.fit,
-                            lower, upper,
-                            multistart,
-                            control, ...) {
-  NextMethod()
-}
-
-#' @engine
-estimate.tdmore_set <- function(object, observed, regimen, covariates, par, fix,
-                                method, se.fit,
-                                lower, upper,
-                                multistart,
-                                control, ...) {
-  NextMethod()
-}
-
-#' @engine
-estimate.tdmore_mixture <- function(object, observed, regimen, covariates, par, fix,
-                                    method, se.fit,
-                                    lower, upper,
-                                    multistart,
-                                    control, ...) {
-  NextMethod()
-}
-
-#' @engine
-estimate.tdmorefit <- function(object, observed, regimen, covariates, par, fix,
-                               method, se.fit,
-                               lower, upper,
-                               multistart,
-                               control, ...) {
-  NextMethod()
-}
-
-#' @engine
-estimate.default <- function(object, observed, regimen, covariates, par, fix,
                              method="L-BFGS-B", se.fit=TRUE,
                              lower=NA, upper=NA,
                              multistart=F,
@@ -166,6 +121,19 @@ estimate.default <- function(object, observed, regimen, covariates, par, fix,
   if(missing(par)) par <- NULL
   if(missing(fix)) fix <- NULL
   if(is.null(control$trace)) control$trace <- 0
+
+  if(inherits(object, "tdmore_mpc")) {
+    return( estimate_tdmore_mpc(
+      object=object, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix,
+      method=method, se.fit=se.fit,
+      lower=lower, upper=upper,
+      multistart=multistart,
+      control=control,
+      ...,
+      .progress=.progress
+    ))
+  }
+
   if(length(method) > 1) {
     ## Multiple methods specified
     ## Try them one at a time
@@ -882,7 +850,7 @@ logLik.tdmorefit <- function(object, type=c('ll', 'pop', 'pred'), par=coef(objec
 #' @param ... ignored
 #'
 #' @return The original tdmore object
-#' @engine
+#' @export
 formula.tdmorefit <- function(x, ...) {x$tdmore}
 
 #' Get the observed values used to provide this model fit.
@@ -898,7 +866,7 @@ formula.tdmorefit <- function(x, ...) {x$tdmore}
 #' If `se` was specified, then a column xx.upper and xx.lower with the
 #' lower and upper confidence interval (based on the residual error model) is added.
 #'
-#' @engine
+#' @export
 model.frame.tdmorefit <- function(formula, data=NULL, se=FALSE, level=0.95, onlyOutput=FALSE, ...) {
   if(is.null(data)) data <- formula$observed
   result <- model.frame.tdmore(formula=formula$tdmore, data=data, se=se, level=level, onlyOutput=onlyOutput, ...)
@@ -984,6 +952,7 @@ expandOmega <- function(tdmore, occasions) {
 #'
 #' @importFrom stats residuals
 #' @noRd
+#' @export
 residuals.tdmorefit <- function(object, data, weighted=FALSE, ...) {
   res <- residuals(object$tdmore, stats::predict(object), model.frame(object), weighted=weighted, ...)
   if(missing(data)) return(res)

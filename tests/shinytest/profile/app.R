@@ -17,7 +17,7 @@ regimen <- data.frame(
 )
 
 observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
-ipred <- model %>% tdmore:::estimate.default(observed = observed, regimen = regimen)
+ipred <- model %>% tdmore:::estimate(observed = observed, regimen = regimen)
 ipred$res <- round(ipred$res, digits=6) #round so inter-machine differences do not pop up...
 ipred$varcov <- round(ipred$varcov, digits=6)
 

@@ -107,10 +107,12 @@ This performs a step-wise optimization of multiple doses.
 }}
 
 \examples{
+library(dplyr)
+library(ggplot2)
 m1 <- getModel()
 db <- m1 \%>\%
-  as.population(covariates=c(WT=70)) \%>\%
-  as.sample(N=10)
+    as.population(covariates=c(WT=70)) \%>\%
+    as.sample(N=10)
 optimResult <- doseSimulation(db,
     regimen=data.frame(TIME=0, AMT=5),
     optimize=function(fit, regimen, truth) {
@@ -120,8 +122,9 @@ optimResult <- doseSimulation(db,
         regimen=rec$regimen
       )
     })
-predictions <- optimResult \%>\% ungroup() \%>\% mutate(
-  ipred = purrr::map2(fit, next_regimen, ~predict(.x, regimen=.y, covariates=c(WT=70), newdata=0:24))
+predictions <- optimResult \%>\% dplyr::ungroup() \%>\% dplyr::mutate(
+  ipred = purrr::map2(fit, next_regimen,
+      ~predict(.x, regimen=.y, newdata=0:24))
 )
 z1 <- predictions \%>\% tidyr::unnest(cols=ipred) \%>\%
   ggplot(aes(x=TIME, y=CONC, color=factor(OBS))) +

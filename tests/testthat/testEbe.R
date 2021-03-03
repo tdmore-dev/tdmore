@@ -36,14 +36,14 @@ test_that("negative predictions should not mess up the error model", {
   tdmore:::predict.tdmore(m2, regimen=regimen, covariates=c(WT=70), newdata=seq(0, 48))
   expect_failure( #no warnings should be produced
     expect_warning(
-      tdmore:::estimate.default(m2, regimen=regimen, covariates=c(WT=70), observed=data.frame(TIME=c(0.5, 1), depot=c(0.5, 0.02)))
+      tdmore:::estimate(m2, regimen=regimen, covariates=c(WT=70), observed=data.frame(TIME=c(0.5, 1), depot=c(0.5, 0.02)))
     )
   )
 })
 
 test_that("Test all other ebe methods", {
   observed <- data.frame(TIME=10, CONC=0.04)
-  fit <- tdmore:::estimate.default(m1, observed=observed,
+  fit <- tdmore:::estimate(m1, observed=observed,
                   regimen=regimen, covariates=c(WT=70))
   expect_snapshot_output( print(fit) )
   expect_snapshot_output( summary(fit) )
@@ -61,7 +61,7 @@ test_that("Test all other ebe methods", {
   expect_true( !is.tdmorefit(m1) )
 
   #How would a subject with higher bodyweight look? Can we re-estimate?
-  fit2 <- tdmore:::estimate.default(fit, covariates=c(WT=75))
+  fit2 <- tdmore:::estimate(fit, covariates=c(WT=75))
   expect_snapshot_output( summary(fit) )
 
   # test predict
@@ -79,21 +79,21 @@ test_that("Test all other ebe methods", {
 
 test_that("We can use multiple methods and pick the best one", {
   observed <- data.frame(TIME=10, CONC=0.04)
-  fit <- tdmore:::estimate.default(m1, observed=observed, regimen=regimen, covariates=c(WT=70))
+  fit <- tdmore:::estimate(m1, observed=observed, regimen=regimen, covariates=c(WT=70))
 
-  cg <- tdmore:::estimate.default(fit, lower=NULL, upper=NULL, method="CG")
+  cg <- tdmore:::estimate(fit, lower=NULL, upper=NULL, method="CG")
   expect_equal( coef(cg), coef(fit), tolerance=1e-6 )
 
   assign("deps", 1e-4, optextras::optsp) #fix for grfwd in optextras
-  rcgmin <- tdmore:::estimate.default(fit, lower=NULL, upper=NULL, method="Rcgmin")
-  nlminb <- tdmore:::estimate.default(fit, lower=NULL, upper=NULL, method="nlminb")
+  rcgmin <- tdmore:::estimate(fit, lower=NULL, upper=NULL, method="Rcgmin")
+  nlminb <- tdmore:::estimate(fit, lower=NULL, upper=NULL, method="nlminb")
 
   #SANN returns all 0, because it does not work
   #And it takes a long time to boot...
-  #sann <- tdmore:::estimate.default(fit, lower=NULL, upper=NULL, method="SANN")
+  #sann <- tdmore:::estimate(fit, lower=NULL, upper=NULL, method="SANN")
   #expect_true( all(coef(sann) == 0) )
 
-  multi <- tdmore:::estimate.default(fit, lower=NULL, upper=NULL, method=c("nlminb", "Rcgmin"))
+  multi <- tdmore:::estimate(fit, lower=NULL, upper=NULL, method=c("nlminb", "Rcgmin"))
   expect_equal( coef(multi), coef(rcgmin) )
   expect_true( logLik(rcgmin) > logLik(nlminb) )
 
@@ -103,33 +103,33 @@ test_that("We can use multiple methods and pick the best one", {
 
 
   out <- capture.output(
-    multistart <- tdmore:::estimate.default(fit, multistart=TRUE)
+    multistart <- tdmore:::estimate(fit, multistart=TRUE)
   )
 
   out <- capture.output(
-    multistart <- tdmore:::estimate.default(fit, multistart=c(ECL=2, EV1=2))
+    multistart <- tdmore:::estimate(fit, multistart=c(ECL=2, EV1=2))
   )
   out <- capture.output(
-    multistart <- tdmore:::estimate.default(fit, multistart=c(ECL=2))
+    multistart <- tdmore:::estimate(fit, multistart=c(ECL=2))
   )
 
-  fitNoSe <- tdmore:::estimate.default(fit, se.fit=F)
+  fitNoSe <- tdmore:::estimate(fit, se.fit=F)
   expect_true( all( diag(vcov(fitNoSe)) < 1e-8 ) )
 
-  fixed <- tdmore:::estimate.default(fit, fix=c(EV1=1.2))
+  fixed <- tdmore:::estimate(fit, fix=c(EV1=1.2))
   expect_equal( coef(fixed)['EV1'] %>% unname , 1.2 )
 
   out <- capture.output(
-    multiFix <- tdmore:::estimate.default(fit, fix=c(EV1=1.2), multistart=c(ECL=2))
+    multiFix <- tdmore:::estimate(fit, fix=c(EV1=1.2), multistart=c(ECL=2))
   )
   expect_equal(coef(multiFix), coef(fixed), tolerance=1e-5)
   expect_equal(logLik(multiFix), logLik(fixed))
 
   expect_error({
-    tdmore:::estimate.default(fit, fix=c(EV1=1, EV1=2))
+    tdmore:::estimate(fit, fix=c(EV1=1, EV1=2))
   }) # EV1 appears twice!
   expect_error({
-    tdmore:::estimate.default(fit, fix=c(EV1=1, ECL=2))
+    tdmore:::estimate(fit, fix=c(EV1=1, ECL=2))
   }) #all parameters fixed...
 })
 
@@ -141,7 +141,7 @@ describe("sampleMC is aware of IOV", {
   tdmore:::predict.tdmore(m2, regimen, newdata=c(0, 1, 2, 3)*24)
 
   ## Regimen in the tdmorefit object
-  population <- tdmore:::estimate.default(m2, regimen=regimen)
+  population <- tdmore:::estimate(m2, regimen=regimen)
   ipred <- predict(population, newdata=c(0, 1, 2, 3)*24, se.fit=TRUE, mc.maxpts=1, level=NA)
   expect_equal( unique(ipred$CL) %>% length , 4)
   ECL_IOV_Columns <- which( colnames(ipred) == "ECL_IOV")
@@ -158,13 +158,13 @@ describe("sampleMC is aware of IOV", {
   expect_equal( ipred$CL, 9.87 * exp(ipred$ECL + diag(as.matrix(ipred[,ECL_IOV_Columns]))))
 
   ## No occasions in the original tdmorefit
-  expect_error(tdmore:::estimate.default(m2), "This model has IOV, a regimen has to be specified")
+  expect_error(tdmore:::estimate(m2), "This model has IOV, a regimen has to be specified")
 })
 
 
 describe("We can generate uncertainty using MCMC", {
   observed <- data.frame(TIME=c(10, 12), CONC=c(0.04, 0.03))
-  tdmorefit <- tdmore:::estimate.default(m1, observed=observed, regimen=regimen, covariates=c(WT=70))
+  tdmorefit <- tdmore:::estimate(m1, observed=observed, regimen=regimen, covariates=c(WT=70))
 
   N <- 5000
   out1 <- sampleMC_norm(tdmorefit, mc.maxpts=N)$mc

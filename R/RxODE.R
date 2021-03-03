@@ -129,6 +129,7 @@ model_prepare.RxODE <- function(model, times, regimen=data.frame(TIME=numeric())
   # now covariates is NULL, or a data.frame
 
   # All arguments look good, let's prepare the simulation
+  regimen$AMT[is.na(regimen$AMT)] <- 0 #remove NA
   ev <- data.table::rbindlist( c(list(list(time=times, evid=0)), as.RxODE_regimen(regimen)), fill=TRUE ) %>%
     dplyr::arrange(.data$time)
 

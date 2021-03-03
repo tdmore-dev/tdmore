@@ -117,7 +117,7 @@ PredictionLayer <- ggplot2::ggproto(
     self$predict <- function(...) {
       params <- c(self$params, list(...) ) #give original parameters preference
       params <- params[ unique(names(params)) ]
-      do.call(what=predict, args=params)
+      do.call(what=stats::predict, args=params)
     }
     data <- self$predict(newdata=layerData)  ## Already pass a prediction, even though it may be a prediction no data
     if(nrow(data)==0) {
@@ -140,7 +140,9 @@ PredictionLayer <- ggplot2::ggproto(
       data <- data[data$PANEL == panel, ]
       if(length(n)==1) {
         scales <- layout$get_scales(data$PANEL[1])
-        range <- range( c(scales$x$dimension(), layout$coord$limits$x), na.rm=TRUE )
+        xLimits <- c(scales$x$dimension(), layout$coord$limits$x)
+        xLimits[is.infinite(xLimits)] <- NA
+        range <- range(xLimits, na.rm=TRUE )
         if(any(!is.finite(range))) stop("Prediction layer does not know where to interpolate.\nPlease specify an x-coordinate range for this plot using e.g. coord_cartesian(), or add some actual data.")
         xseq <- seq(range[1], range[2], length.out=n)
         events <- getEvents(self$params$tdmorefit, self$params$object, self$params$regimen, self$params$covariates)

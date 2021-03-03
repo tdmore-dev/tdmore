@@ -19,7 +19,7 @@ regimen <- data.frame(
 
 # Estimate and plot IPRED
 observed <- data.frame(TIME=c(9, 16), CONC=c(30, 8))
-ipred <- m1 %>% tdmore:::estimate.default(observed = observed, regimen = regimen)
+ipred <- m1 %>% tdmore:::estimate(observed = observed, regimen = regimen)
 test_that("IRES and IWRES make sense", {
   expect_snapshot_output(residuals(ipred, weighted=FALSE))
   expect_snapshot_output(residuals(ipred, weighted=TRUE))
