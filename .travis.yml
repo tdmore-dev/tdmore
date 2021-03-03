@@ -30,6 +30,7 @@ addons:
       - lbzip2
       - libharfbuzz-dev
       - libfribidi-dev
+      - libmpfr-dev
 
 install:
   - Rscript -e "if (!requireNamespace('renv', quietly = TRUE)) install.packages('renv')"
