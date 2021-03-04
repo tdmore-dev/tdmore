@@ -4,7 +4,7 @@ FROM rocker/tidyverse:latest
 WORKDIR /app/tdmore
 
 ## Install compile-time package dependencies
-RUN apt-get update && apt-get install -y libudunits2-dev lbzip2 libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+RUN apt-get update && apt-get install -y libudunits2-dev lbzip2 libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libmpfr-dev libgmp-dev cmake
 
 ## Initialize renv, see https://environments.rstudio.com/docker#r-packages
 RUN R -e 'install.packages("renv")'
