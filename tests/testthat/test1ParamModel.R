@@ -3,7 +3,6 @@ library(RxODE)
 library(nlmixr)
 library(ggplot2)
 library(testthat)
-library(vdiffr)
 
 set.seed(0)
 
