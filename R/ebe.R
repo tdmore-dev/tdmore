@@ -112,7 +112,7 @@ estimate <- function(object, observed, regimen, covariates, par, fix,
                              method="L-BFGS-B", se.fit=TRUE,
                              lower=NA, upper=NA,
                              multistart=F,
-                             control=list(trace=getOption("tdmore.trace", default=interactive()*1), REPORT=10, factr=1e13),
+                             control=list(trace=getOption("tdmore.trace", default=(!testthat::is_testing()&interactive())*1), REPORT=10, factr=1e13),
                              ...,
                              .progress=NULL) {
   if(missing(observed)) observed <- NULL
