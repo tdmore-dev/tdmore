@@ -95,10 +95,10 @@
     },
     "RcppArmadillo": {
       "Package": "RcppArmadillo",
-      "Version": "0.10.2.1.0",
+      "Version": "0.10.2.2.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a2de53472129933a29975e7cfa3ffe28"
+      "Hash": "8772b10276b4b4a3dfaa5043f9ad94f8"
     },
     "RcppEigen": {
       "Package": "RcppEigen",
@@ -123,15 +123,15 @@
     },
     "RxODE": {
       "Package": "RxODE",
-      "Version": "1.0.5",
+      "Version": "1.0.6",
       "Source": "GitHub",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "RxODE",
       "RemoteUsername": "nlmixrdevelopment",
+      "RemoteRepo": "RxODE",
       "RemoteRef": "HEAD",
-      "RemoteSha": "39d815ad6a808ddd1972e5d6178ac4820b425269",
-      "Hash": "c091c56dd6ea10f8b9b3325288f7bf7c"
+      "RemoteSha": "f3160ef378e0675ab8b91a3f6a952a4fc96860a5",
+      "RemoteHost": "api.github.com",
+      "Hash": "51439f9f35583a95610cd41da9cb6d6c"
     },
     "SparseM": {
       "Package": "SparseM",
@@ -177,10 +177,10 @@
     },
     "benchmarkme": {
       "Package": "benchmarkme",
-      "Version": "1.0.6",
+      "Version": "1.0.7",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "7657aec563ee84d219cc511293fcc297"
+      "Hash": "9213add5a4904660aeaf207bb62e515e"
     },
     "benchmarkmeData": {
       "Package": "benchmarkmeData",
@@ -793,15 +793,15 @@
     },
     "nlmixr": {
       "Package": "nlmixr",
-      "Version": "2.0.1",
+      "Version": "2.0.2",
       "Source": "GitHub",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "nlmixr",
       "RemoteUsername": "nlmixrdevelopment",
+      "RemoteRepo": "nlmixr",
       "RemoteRef": "HEAD",
-      "RemoteSha": "422f4d15ead3e204cb0384ff8571d302344a53d1",
-      "Hash": "77a646b524f30c7521aaf6eae3c73433"
+      "RemoteSha": "a9acdcb720e9af1fe469982fa138574e1e3971ce",
+      "RemoteHost": "api.github.com",
+      "Hash": "24a661b26dcb6673c6abb0978eb2440d"
     },
     "numDeriv": {
       "Package": "numDeriv",
@@ -959,10 +959,10 @@
     },
     "ragg": {
       "Package": "ragg",
-      "Version": "1.1.1",
+      "Version": "1.1.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "4e0557cb2fddc4b9ef3f6679c60a3f4a"
+      "Hash": "3f0ac98597bebdc31b747def3eb9b6ca"
     },
     "rappdirs": {
       "Package": "rappdirs",
@@ -1008,10 +1008,10 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.13.0",
+      "Version": "0.13.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "9f10d9db5b50400c348920c5c603385e"
+      "Hash": "be02499761baab60d58b808efd08c3fc"
     },
     "rex": {
       "Package": "rex",
@@ -1127,10 +1127,10 @@
     },
     "stringfish": {
       "Package": "stringfish",
-      "Version": "0.15.0",
+      "Version": "0.15.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a040e1ad54d81192109f91a7f73cc782"
+      "Hash": "339e60ca7a6bd8bff091cb9f77dd4412"
     },
     "stringi": {
       "Package": "stringi",
@@ -1183,10 +1183,10 @@
     },
     "textshaping": {
       "Package": "textshaping",
-      "Version": "0.3.1",
+      "Version": "0.3.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "8a660b6017010f0599569f5a7a06d566"
+      "Hash": "fff317575e7191e2d077292309bed575"
     },
     "tibble": {
       "Package": "tibble",
@@ -1232,10 +1232,10 @@
     },
     "utf8": {
       "Package": "utf8",
-      "Version": "1.1.4",
+      "Version": "1.2.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "4a5081acfb7b81a572e4384a7aaf2af1"
+      "Hash": "c3ad47dc6da0751f18ed53c4613e3ac7"
     },
     "vctrs": {
       "Package": "vctrs",
@@ -1288,10 +1288,10 @@
     },
     "xfun": {
       "Package": "xfun",
-      "Version": "0.21",
+      "Version": "0.22",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "f3ddcca198959a42e8cb6b06c30d4f1e"
+      "Hash": "eab2f8ba53809c321813e72ecbbd19ba"
     },
     "xml2": {
       "Package": "xml2",
@@ -1330,10 +1330,10 @@
     },
     "zoo": {
       "Package": "zoo",
-      "Version": "1.8-8",
+      "Version": "1.8-9",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "c2ea03282caa1f6972dc84fc5bf671cc"
+      "Hash": "035d1c7c12593038c26fb1c2fd40c4d2"
     }
   }
 }
