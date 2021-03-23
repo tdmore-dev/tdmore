@@ -164,10 +164,8 @@
 <a href="#adapting-the-model-for-tdmore" class="anchor"></a>Adapting the model for tdmore</h3>
 <p>An nlmixr model already contains both the structural model and the description of inter-individual variability and residual variability.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tdmore.html">tdmore</a></span><span class="op">(</span><span class="va">pheno_nlmixr</span><span class="op">)</span></code></pre></div>
-<pre><code>## qs v0.24.1.</code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tdmore.html">tdmore</a></span><span class="op">(</span><span class="va">pheno_nlmixr</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span></code></pre></div>
 <pre><code>## Structural model: RxODE 
 ## 
 ## Parameters:
@@ -186,7 +184,7 @@
 <h3 class="hasAnchor">
 <a href="#performing-a-posthoc" class="anchor"></a>Performing a posthoc</h3>
 <p>Now that we have a model, we can perform a posthoc fit on retrospective data. We will first convert the dataset to tdmore format.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">regimen</span> <span class="op">&lt;-</span> <span class="va">pheno</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">EVID</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">ID</span>, <span class="va">TIME</span>, <span class="va">AMT</span><span class="op">)</span>
 <span class="va">observed</span> <span class="op">&lt;-</span> <span class="va">pheno</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">EVID</span><span class="op">==</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">MDV</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">transmute</a></span><span class="op">(</span><span class="va">ID</span>, <span class="va">TIME</span>, CONC<span class="op">=</span><span class="va">DV</span><span class="op">)</span>
 <span class="va">covariates</span> <span class="op">&lt;-</span> <span class="va">pheno</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">ID</span>, <span class="va">TIME</span>, <span class="va">WT</span><span class="op">)</span>
@@ -195,7 +193,7 @@
 <span class="co">#We will only perform the evaluation for the first 5 subjects, for performance reasons</span>
 <span class="va">db</span> <span class="op">&lt;-</span> <span class="va">db</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span></code></pre></div>
 <p>And then perform a posthoc fit.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">posthocPrediction</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/posthoc.html">posthoc</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">posthocPrediction</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 5 x 8
@@ -208,7 +206,7 @@
 ## 4     4 &lt;tdmor… &lt;df[,2] [1… &lt;df[,2] [3… &lt;df[,2] [14 … &lt;tdmor… &lt;proc_ti… &lt;df[,2]…
 ## 5     5 &lt;tdmor… &lt;df[,2] [1… &lt;df[,2] [3… &lt;df[,2] [14 … &lt;tdmor… &lt;proc_ti… &lt;df[,2]…</code></pre>
 <p>You can plot a single fit from this easily using <code>autoplot</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">posthocPrediction</span><span class="op">$</span><span class="va">fit</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, se.fit<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p><img src="tdmore_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 </div>
@@ -216,7 +214,7 @@
 <h3 class="hasAnchor">
 <a href="#quantifying-prediction-accuracy" class="anchor"></a>Quantifying prediction accuracy</h3>
 <p>Let us now explore how well we can predict future concentrations. Proseval creates a tibble with a fit per concentration.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">prosevalResults</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/posthoc.html">proseval</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">prosevalResults</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 6 x 9
@@ -230,7 +228,7 @@
 ## 5     2 &lt;tdmor… &lt;df[,2] [… &lt;df[,2] [… &lt;df[,2] [15… &lt;tdmo… &lt;proc_t… &lt;df[,2…     1
 ## 6     2 &lt;tdmor… &lt;df[,2] [… &lt;df[,2] [… &lt;df[,2] [15… &lt;tdmo… &lt;proc_t… &lt;df[,2…     2</code></pre>
 <p>We can use this data to plot how well we can predict the future for this population. The <code>OBS</code> variable describes how many previous concentrations are included in the fit.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">prosevalResults</span> <span class="op">%&gt;%</span> 
   <span class="fu">unnest</span><span class="op">(</span>cols<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">observed</span>, <span class="va">ipred</span><span class="op">)</span>, names_sep<span class="op">=</span><span class="st">"."</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">ID</span>, <span class="va">OBS</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>INCLUDED <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html">row_number</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="va">OBS</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -249,7 +247,7 @@
 <h3 class="hasAnchor">
 <a href="#exploring-mipd-performance" class="anchor"></a>Exploring MIPD performance</h3>
 <p>We can now simulate precision dosing using this model.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## We need to add some metadata to the model to easily optimize</span>
 <span class="va">m2</span> <span class="op">&lt;-</span> <span class="va">m1</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/metadata.html">metadata</a></span><span class="op">(</span><span class="fu"><a href="../reference/formulation.html">formulation</a></span><span class="op">(</span><span class="st">"Default"</span>, <span class="st">"mg"</span>, dosing_interval<span class="op">=</span><span class="fl">24</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -341,7 +339,7 @@
 ## Iteration # 3 
 ## Iteration # 4 
 ## Iteration # 5</code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">simulationResult2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/findDose.html">doseSimulation</a></span><span class="op">(</span><span class="va">simulationDb</span>, optimize<span class="op">=</span><span class="va">measure8hBeforeTrough</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>method<span class="op">=</span><span class="st">"B. 8h before trough"</span><span class="op">)</span></code></pre></div>
 <pre><code>## Iteration # 0 
 ## Iteration # 1 
@@ -373,7 +371,7 @@
 ## Iteration # 3 
 ## Iteration # 4 
 ## Iteration # 5</code></pre>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">simulationResult3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/findDose.html">doseSimulation</a></span><span class="op">(</span><span class="va">simulationDb</span>, optimize<span class="op">=</span><span class="va">richProfileAtBeginning</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>method<span class="op">=</span><span class="st">"C. Rich profile"</span><span class="op">)</span></code></pre></div>
 <pre><code>## Iteration # 0 
 ## Iteration # 1 
@@ -410,7 +408,7 @@
 ## Iteration # 4 
 ## Iteration # 5 
 ## Iteration # 6</code></pre>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fullResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="va">simulationResult</span>, <span class="va">simulationResult2</span>, <span class="va">simulationResult3</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">ID</span>, <span class="va">method</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html">row_number</a></span><span class="op">(</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co">#only keep the last regimen</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>ipred <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">next_regimen</span>, <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">.x</span>, regimen<span class="op">=</span><span class="va">.y</span>, newdata<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">144</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -430,7 +428,7 @@
 ## #   ipred &lt;list&gt;</code></pre>
 <p>The <code>doseSimulation</code> function has performed an iterative estimate - adapt routine. It uses <code>nextTime</code> to know when to simulate the next concentration sample, re-estimate the individual fit, and allow dose adaptation.</p>
 <p>The final result is a dataset detailing every dose adaptation step. The final regimen can be found at the last line for each subject. We use this regimen to predict concentration from 0 to 150 hours. This can be used to show in silico dosing performance.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">fullResult</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">TIME</span>, y<span class="op">=</span><span class="va">CONC</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">.</span> <span class="op">%&gt;%</span> <span class="fu">unnest</span><span class="op">(</span>cols<span class="op">=</span><span class="va">ipred</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>group<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/interaction.html">interaction</a></span><span class="op">(</span><span class="va">method</span>,<span class="va">ID</span><span class="op">)</span>, color<span class="op">=</span><span class="va">method</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">.</span> <span class="op">%&gt;%</span> <span class="fu">unnest</span><span class="op">(</span>cols<span class="op">=</span><span class="va">observed</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -445,7 +443,7 @@
 <div id="code-appendix" class="section level3">
 <h3 class="hasAnchor">
 <a href="#code-appendix" class="anchor"></a>Code appendix</h3>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span> 
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
