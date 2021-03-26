@@ -5,7 +5,16 @@
 #' @engine
 pop_ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FALSE) {
   stopifnot(all.equal(rownames(omega), names(par)) )
-  pdf <- mvnfast::dmvn( par, mu=par*0, sigma=omega, log=TRUE, isChol=isChol )
+
+  if(isTRUE( getOption("tdmore.mvtnorm", default=FALSE)) && requireNamespace("mvnfast") ) {
+    pdf <- mvnfast::dmvn( X=par, mu=par*0, sigma=omega, log=TRUE, isChol=isChol )
+  } else {
+    if(isChol) {
+      omega <- solve(chol2inv(omega))
+    }
+    pdf <- mvtnorm::dmvnorm(x=par, mean=par*0, sigma=omega, log=TRUE)
+  }
+
   sum <- sum( pdf )
   return(sum)
 }

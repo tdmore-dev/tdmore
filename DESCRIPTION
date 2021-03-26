@@ -20,14 +20,14 @@ Description: tdmore is a research tool to investigate precision dosing.
   performance versus classical techniques.
 Depends: R (>= 3.5.0)
 Imports: dplyr, stats, RxODE (>= 0.9.0), nlmixr (>= 1.1.0-9), ggplot2 (>= 3.0.0), magrittr,
-  zoo, rlang, purrr, Matrix, mvnfast, data.table, optimr, optextras, tibble, R6, roxygen2
+  zoo, rlang, purrr, Matrix, mvtnorm, data.table, optimr, optextras, tibble, R6, roxygen2
 License: AGPL-3
 Encoding: UTF-8
 Language: en-US
 LazyData: true
 Suggests: progress, callr, knitr, rmarkdown, testthat, devtools, vdiffr, svglite, rprojroot,
  pkgdown, bookdown, miniUI, shiny, readr, stringr, tidyr (>= 1.0.0), shinytest, withr,
- benchmarkme, microbenchmark, plotly, MCMCpack, mnormt, gridExtra
+ benchmarkme, microbenchmark, plotly, MCMCpack, mnormt, gridExtra, mvnfast
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 URL: https://github.com/tdmore-dev/tdmore, https://tdmore-dev.github.io/tdmore/
