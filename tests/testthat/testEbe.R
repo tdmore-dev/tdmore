@@ -47,7 +47,7 @@ test_that("Test all other ebe methods", {
                   regimen=regimen, covariates=c(WT=70))
   expect_snapshot_output( print(fit) )
   expect_snapshot_output( summary(fit) )
-  expect_snapshot_output( print(confint(fit)) )
+  expect_snapshot_value( confint(fit), style="serialize", tolerance=1E-4 )
   expect_equal( tdmore:::model.frame.tdmorefit(fit), observed )
   expect_snapshot_output( print(fitted(fit)) )
   expect_equal( logLik(fit), 3.98965892617313 )
