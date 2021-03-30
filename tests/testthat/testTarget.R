@@ -60,10 +60,11 @@ describe("getTroughs", {
     )), c(24+10, 24+10+12))
   })
 
-  it("errors if another treatment too early", {
-    expect_error(getTroughs(myModel, tibble::tibble(
+  it("warning if another treatment too early", {
+    expect_warning(x <- getTroughs(myModel, tibble::tibble(
       TIME=c(24, 24+6),
       FORM="CompoundA"
-    )), "A treatment was detected .*")
+    )), "A treatment was planned.*")
+    expect_equal(x, c(30, 42))
   })
 })

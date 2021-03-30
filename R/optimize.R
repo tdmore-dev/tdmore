@@ -220,7 +220,11 @@ getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=TRUE) {
     function(start, min, val, max) {
       x <- regimen$TIME
       error <- x > start & x < min #any treatments in the no-go zone?
-      if(any(error)) stop("A treatment was detected between ", start, " and ", min, " at ", regimen$TIME[error])
+      if(any(error)) {
+        warning("A treatment was planned/administered earlier than allowed by the inter-dose interval. ",
+        "Treatment at ", regimen$TIME[error], " is planned in zone [", start, ", ", min, "]. We will use that treatment time as the 'trough'. ")
+        return(x[ error ][1])
+      }
 
       i <- x >= min & x <= max #is any existing treatment within the min-max interval?
       if(any(i)) {
@@ -252,15 +256,20 @@ getTroughs <- function(model, regimen, deltamin=1/4, deltaplus=1/4, adj=TRUE) {
 #' @export
 findDoses <- function(fit, regimen=fit$regimen, targetMetadata=NULL) {
   if(! "FIX" %in% colnames(regimen) ) regimen$FIX <- FALSE
-  target <- list(
-    TIME=getTroughs(fit$tdmore, regimen[regimen$FIX==FALSE, ], adj=TRUE)
-  )
   if(is.null(targetMetadata) || all(is.na(targetMetadata))) {
     targetMetadata <- tdmore::getMetadataByClass(fit$tdmore, "tdmore_target")
     if(is.null(targetMetadata)) stop("No target defined in model metadata")
   }
-
   stopifnot( all( c("min", "max") %in% names(targetMetadata) ) )
+  #stopifnot( all( c("min", "max", "deltamin", "deltaplus") %in% names(targetMetadata) ) )
+
+  # target <- list(
+  #   TIME=getTroughs(fit$tdmore, regimen[regimen$FIX==FALSE, ], adj=TRUE, deltamin=targetMetadata$deltamin, deltaplus = targetMetadata$deltaplus)
+  # )
+  target <- list(
+    TIME=getTroughs(fit$tdmore, regimen[regimen$FIX==FALSE, ], adj=TRUE)
+  )
+
 
   outputVar <- fit$tdmore$res_var[[1]]$var
   targetValue <- mean( c(targetMetadata$min, targetMetadata$max) )
