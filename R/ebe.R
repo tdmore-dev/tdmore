@@ -503,7 +503,7 @@ confint.tdmorefit <- function(object, ...) {
 #' @noRd
 #' @export
 fitted.tdmorefit <- function(object, ...) {
-  predict.tdmore(object=object$tdmore, newdata=object$observed, regimen=object$regimen, parameters=object$res, covariates=object$covariate)
+  stats::predict(object=object$tdmore, newdata=object$observed, regimen=object$regimen, parameters=object$res, covariates=object$covariate)
 }
 
 #' Generate parameter samples using uncertainty around the fit.

@@ -49,7 +49,7 @@ findDose <- function(fit, regimen=fit$regimen, doseRows=NULL, interval=c(0, 1E10
 
       mcRootFunction <- function(AMT) {
         myRegimen <- updateRegimen(regimen = regimen, doseRows = doseRows, newDose = AMT)
-        obs <- predict.tdmore(object = fit$tdmore, newdata = target, regimen = myRegimen, parameters = res, covariates = fit$covariates)
+        obs <- stats::predict(object = fit$tdmore, newdata = target, regimen = myRegimen, parameters = res, covariates = fit$covariates)
         obs[, colnames(obs) != "TIME", drop=TRUE] - target[, colnames(target) != "TIME", drop=TRUE]
       }
 

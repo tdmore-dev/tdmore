@@ -98,11 +98,9 @@ is.tdmore <- function(x) {
 #' @inheritParams model.frame.tdmore
 #' @param ... extra arguments for the call to the model
 #'
-#' @details
-#' TODO: This is such an important function, that it merits a little more documentation
 #'
 #' @return A data.frame with all observed values at the given time points
-#' @engine
+#' @export
 predict.tdmore <- function(object, newdata, regimen=NULL, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
   tdmore <- object
   checkCovariates(tdmore, covariates)
