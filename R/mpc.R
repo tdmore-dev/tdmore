@@ -2,7 +2,7 @@
 #'
 #' @inheritParams predict.tdmore
 #' @return a data.frame with all observed values at the given time points
-#' @engine
+#' @export
 predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, covariates=NULL, se=FALSE, level=0.95, ...) {
   for(par in object$iov) {
     i <- which(names(parameters) == par)
