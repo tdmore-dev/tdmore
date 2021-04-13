@@ -22,8 +22,6 @@ predict.tdmore_mpc <- function(object, newdata, regimen=NULL, parameters=NULL, c
 #' @engine
 estimate_tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=NULL, par=NULL, fix=NULL, method="L-BFGS-B", se.fit=TRUE, lower=NULL, upper=NULL, multistart=F, control=list(), ..., .progress=NULL) {
   p <- to_progress(.progress)
-  objectNoMpc <- object
-  class(objectNoMpc) <- setdiff(class(object), "tdmore_mpc")
 
   if(!"OCC" %in% colnames(regimen)) {
     warning("OCC column missing, adding...")
@@ -32,10 +30,10 @@ estimate_tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
   stopifnot(is.null(fix)) #MPC assumes FIX is empty
   if(nrow(regimen)==0 || is.null(observed) || nrow(observed)==0) {
     fit <- estimate(
-      objectNoMpc,
+      object,
       observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix,
       method=method, se.fit=se.fit, lower=lower, upper=upper, multistart=multistart,
-      control=control, ..., .progress=.progress
+      control=control, ..., .progress=.progress, .mpc=FALSE
     )
     fit$tdmore <- object
     return(fit)
@@ -56,8 +54,8 @@ estimate_tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
     #thisObserved <- filter(observed, .data$TIME <= to) #we count ON the occasion as well
     thisObserved <- filter(observed, .data$TIME > from & .data$TIME <= to) #we count ON the occasion as well
     fit <- estimate(
-      objectNoMpc, observed=thisObserved, regimen=thisRegimen, covariates=covariates, par=par, fix=fix, method=method, se.fit=se.fit,
-      lower=lower, upper=upper, multistart=multistart, control=control, ...
+      object, observed=thisObserved, regimen=thisRegimen, covariates=covariates, par=par, fix=fix, method=method, se.fit=se.fit,
+      lower=lower, upper=upper, multistart=multistart, control=control, ..., .progress=.progress, .mpc=FALSE
     )
     fix <<- coef(fit)
     fit

@@ -106,6 +106,7 @@ ll <- function(par, omega, fix, tdmore, observed, regimen, covariates, isChol=FA
 #'
 #' @param control control options for `estimate`
 #' If trace > 0, the estimation function also reports errors when calculating log-likelihood.
+#' @param .mpc if FALSE, assume normal EBE estimation
 #' @param ... extra parameters to pass to the optim function
 #' A good example is to specify `control=list(trace=1, REPORT=10, factr=1e13)` to improve performance.
 #' This will `trace` the estimation progress
@@ -123,7 +124,7 @@ estimate <- function(object, observed, regimen, covariates, par, fix,
                              multistart=F,
                              control=list(trace=getOption("tdmore.trace", default=(!testthat::is_testing()&interactive())*1), REPORT=10, factr=1e13),
                              ...,
-                             .progress=NULL) {
+                             .progress=NULL, .mpc=TRUE) {
   if(missing(observed)) observed <- NULL
   if(missing(regimen)) regimen <- NULL
   if(missing(covariates)) covariates <- NULL
@@ -131,7 +132,7 @@ estimate <- function(object, observed, regimen, covariates, par, fix,
   if(missing(fix)) fix <- NULL
   if(is.null(control$trace)) control$trace <- 0
 
-  if(inherits(object, "tdmore_mpc")) {
+  if(.mpc && inherits(object, "tdmore_mpc")) {
     return( estimate_tdmore_mpc(
       object=object, observed=observed, regimen=regimen, covariates=covariates, par=par, fix=fix,
       method=method, se.fit=se.fit,
