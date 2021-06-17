@@ -184,3 +184,28 @@ ipred <- estimate(pop, observed=observed)
 plot(ipred, se.fit=F) + coord_cartesian(xlim=c(0, 4))
 parameterPlot.tdmorefit(ipred, newdata=seq(0, 4, by=0.1))
 
+
+
+testthat::expect_error({
+  regimen <- data.frame(
+    TIME=c(1.5, 2.5, 2.5, 3.5),
+    AMT=2,
+    OCC=c(1,2,3,4)
+  )
+  pop <- estimate(m1_mpc, regimen=regimen, covariates=c(theta, WT=70), observed=data.frame(TIME=3.8, CONC=1.5))
+}, regexp="Occasion .* is not supported...")
+
+
+regimen <- data.frame(
+  TIME=c(1.5, 2.5, 2.5, 3.5),
+  AMT=2,
+  OCC=c(1,2,2,3)
+)
+pop <- estimate(m1_mpc, regimen=regimen, covariates=c(theta, WT=70), observed=data.frame(TIME=3.8, CONC=1.5))
+
+#The below should not give a warning...
+regimen <- data.frame(
+  TIME=c(1.5, 2.5, 2.5, 3.5),
+  AMT=2
+)
+pop <- estimate(m1_mpc, regimen=regimen, covariates=c(theta, WT=70), observed=data.frame(TIME=3.8, CONC=1.5))

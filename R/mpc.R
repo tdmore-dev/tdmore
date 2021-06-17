@@ -25,8 +25,11 @@ estimate_tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
 
   if(!"OCC" %in% colnames(regimen)) {
     warning("OCC column missing, adding...")
-    regimen$OCC <- seq_len(nrow(regimen))
+    #regimen$OCC <- seq_along(regimen$TIME)
+    uniqueTimes <- unique(regimen$TIME)
+    regimen$OCC <- match(regimen$TIME, uniqueTimes)
   }
+
   stopifnot(is.null(fix)) #MPC assumes FIX is empty
   if(nrow(regimen)==0 || is.null(observed) || nrow(observed)==0) {
     fit <- estimate(
@@ -46,6 +49,9 @@ estimate_tdmore_mpc <- function(object, observed=NULL, regimen=NULL, covariates=
   occasions$from <- regimen$TIME[ match(occasions$OCC, regimen$OCC) ] #shows first match
   occasions$from[1] <- 0
   occasions$to <- c(occasions$from[-1], Inf)
+
+  i <- which(occasions$from == occasions$to)
+  if(length(i)>0) stop("Occasion ", occasions$OCC[i], " from ", occasions$from[i], " to ", occasions$to[i], " is not supported...")
 
   fix <- c()
   estim <- function(from, to) {
