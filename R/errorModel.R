@@ -29,7 +29,7 @@ errorModel <- function(var="CONC", add=0, prop=0, type=NULL) {
 
   ## How do we calculate the standard deviation for these error models?
   myFunctions <- list(
-    constant=function(ipred) {add},
+    constant=function(ipred) {ipred*0 + add},
     proportional=function(ipred) {abs(prop*ipred)},
     combined1=function(ipred) {add + abs(prop*ipred)},
     combined2=function(ipred) {sqrt( add^2 + (prop*ipred)^2 )}
