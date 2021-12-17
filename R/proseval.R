@@ -69,6 +69,7 @@ posthoc <- function(x, ..., .fit="fit", .prediction="ipred", .elapsed="elapsed",
 #' And so on.
 #'
 #' Please note that ipred incorporates all time-varying covariates, even if these may be considered to be "in the future".
+#' The 'par' argument in dataTibble can optionally be a list, with a starting value for each iteration.
 #' @export
 proseval <- function(x, ..., .fit="fit", .prediction="ipred", .elapsed="elapsed", .obs="OBS") {
   if(is.null(.fit)) stop(".fit column needs to be present for proseval to work")
@@ -84,6 +85,9 @@ proseval <- function(x, ..., .fit="fit", .prediction="ipred", .elapsed="elapsed"
       argsPosthoc <- x
       if(i == 0) argsPosthoc['observed'] <- list(NULL)
       else argsPosthoc$observed <- x$observed[ seq_len(i), ]
+      if(is.list(x$par)) {
+        argsPosthoc$par <- if(i>0) x$par[[i]] else NULL
+      }
       res <- posthoc(argsPosthoc, ..., .fit=.fit, .prediction=NULL, .elapsed=.elapsed)
       fit <- res[[.fit]][[1]]
       res[["observed"]] <- list(x$observed) #always use the same OBSERVED data.frame

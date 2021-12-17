@@ -52,6 +52,29 @@ describe("proseval", {
       )
     }
   })
+  it("uses the par argument, also if it is a list", {
+    observed <- data.frame(TIME=c(3, 6), CONC=c(8, 4))
+    db <- dataTibble(object=m1, observed=observed)
+    fitsOutput <- capture.output(
+      {proseval(db, regimen=regimen, covariates=cov, control=list(trace=2))}
+    )
+
+    fitsOutput2 <- capture.output(
+      {proseval(db, par=c(ECL=2, EV1=2), regimen=regimen, covariates=cov, control=list(trace=2))}
+    )
+
+    db$par <- NA
+    db$par[1] <- list( lapply(list(fit1, fit2), coef) )
+    fitsOutput3 <- capture.output(
+      {proseval(db, regimen=regimen, covariates=cov, control=list(trace=2))}
+    )
+
+    for(i in seq_along(reference)) {
+      expect_equal( coef(reference[[i]]),
+                    coef(fits$fit[[i]])
+      )
+    }
+  })
 
   it("should *not* split the covariates as well", {
     observed <- data.frame(TIME=c(3, 6), CONC=c(8, 4))
